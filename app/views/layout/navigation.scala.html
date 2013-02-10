@@ -1,0 +1,62 @@
+@()
+
+@import be.objectify.deadbolt.java.views.html.{subjectPresent, restrict}
+@import be.objectify.deadbolt.core.utils.TemplateUtils.{as,la}
+@import security.SecurityRoles
+
+@subjectPresent() {
+    <nav>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" data-ng-href="#/">Genesis</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="">
+                                <a data-ng-href="#/cra">CRA</a>
+                            </li>
+                            <li class="">
+                                <a data-ng-href="#/absence">Absences</a>
+                            </li>
+                            <li class="">
+                                <a data-ng-href="#/claim">Note de frais</a>
+                            </li>
+                            @restrict(la(as(SecurityRoles.production.getName),as(SecurityRoles.admin.getName))) {
+                                <li class="">
+                                    <a data-ng-href="#/remuneration">Rémunération</a>
+                                </li>
+                            }
+                        </ul>
+                        <ul class="nav pull-right">
+                            @restrict(la(as(SecurityRoles.production.getName),as(SecurityRoles.admin.getName))) {
+                                <li class="">
+                                    <a data-ng-href="#/parameter">Paramétrage</a>
+                                </li>
+                            }
+                            @restrict(la(as(SecurityRoles.admin.getName))) {
+                                <li class="">
+                                    <a data-ng-href="#/backoffice">Backoffice</a>
+                                </li>
+                            }
+                            <li class="active">
+                                <a data-ng-href="#/my-account" title="Mon compte">
+                                    <i class="icon-user"></i><span class="visible-phone">&nbsp;</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-ng-href="@routes.Authentication.logout" title="Se déconnecter">
+                                    <i class="icon-signout"></i><span class="visible-phone">&nbsp;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+}

@@ -1,0 +1,83 @@
+<div class="row-fluid">
+	<div class="span6">
+		<form class="form-horizontal well well-small" data-ng-controller="MyAccountGeneralCtrl">
+			<fieldset>
+				<legend>{{account.firstName}} {{account.lastName}}</legend>
+				<div class="control-group">
+					<label class="control-label" for="firstName">Prénom <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="firstName" required="required" data-ng-model="account.firstName">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="lastName">Nom <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="lastName" required="required" data-ng-model="account.lastName">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="trigramme">Trigramme <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="trigramme" required="required" data-ng-model="account.trigramme">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="email">E-mail <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="email" class="span10" id="email" required="required" data-ng-model="account.email">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="manager">Responsable</label>
+
+					<div class="controls">
+						<select class="span10" id="manager" data-ng-model="account.manager">
+						</select>
+					</div>
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
+				</div>
+
+			</fieldset>
+		</form>
+	</div>
+	<div class="row-fluid">
+		<div class="span4 offset1">
+			<form class="form-horizontal well">
+				<fieldset>
+					<legend>Changement de mot de passe</legend>
+					<div class="control-group">
+						<label class="control-label" for="curr-password">Mot de passe actuel <i class="icon-mandatory"></i></label>
+
+						<div class="controls">
+							<input type="password" class="span10" id="curr-password" required="required">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="new-password">Nouveau mot de passe <i class="icon-mandatory"></i></label>
+
+						<div class="controls">
+							<input type="password" class="span10" id="new-password" required="required">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="confirm-password">Confirmez le nouveau mot de passe <i class="icon-mandatory"></i></label>
+
+						<div class="controls">
+							<input type="password" class="span10" id="confirm-password" required="required">
+						</div>
+					</div>
+					<div class="form-actions">
+						<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
+					</div>
+
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,59 @@
+@defining(
+    play.Play.isProd match {
+        case true => ".min.js"
+        case false => ".js"
+    }
+) { extension =>
+    @* jQuery *@
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery@extension"></script>
+    @* JS router *@
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    @* lodash *@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.0.0-rc.3/lodash@extension"></script>
+    @* underscore string *@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
+    @* moment *@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.2/moment@extension"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.2/lang/fr.js"></script>
+    @* bootstrap *@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap@extension"></script>
+    @* datepicker https://github.com/eternicode/bootstrap-datepicker *@
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/bootstrap-datepicker-20130124" + extension)"></script>
+    @* angularjs *@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular@extension"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular-resource@extension"></script>
+    @* fallback*@
+    <script type="text/javascript">
+            window.jQuery || document.write('<script src="@routes.Assets.at("javascripts/vendors/jquery-1.9.0" + extension)"><\/script>');
+        window._ || document.write('<script src="@routes.Assets.at("javascripts/vendors/lodash-1.0.0-rc.3" + extension)"><\/script>');
+        window._.str || document.write('<script src="@routes.Assets.at("javascripts/vendors/underscore.string-2.3.0" + extension)"><\/script>');
+        window.moment || document.write('<script src="@routes.Assets.at("javascripts/vendors/moment-1.7.2" + extension)"><\/script>');
+        window.$.fn.collapse || document.write('<script src="@routes.Assets.at("javascripts/vendors/bootstrap-2.3.0" + extension)"><\/script>');
+        window.angular || document.write('<script src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/angular" + extension)"><\/script>')
+        window.angular.$resource || document.write('<script src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/angular-resource" + extension)"><\/script>')
+    </script>
+
+        @* angularjs local *@
+        <script type="text/javascript" type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/i18n/angular-locale_fr-fr.js")"></script>
+}
+
+@if(play.Play.isProd){
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/genesis.min.js")"></script>
+} else {
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/app.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/AbsenceCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/BackOfficeCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/ClaimCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/CraCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/account/MyAccountCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/account/PartTimeCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/account/ActivePartTimeCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/ParameterCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/RemunerationCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/services/AccountRes.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/services/ManagerRes.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/bDatepicker.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/filters/weekDayFilter.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/filters/momentDayFilter.js")"></script>
+
+}

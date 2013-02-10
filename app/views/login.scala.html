@@ -1,0 +1,30 @@
+@()
+
+@import layout.header
+
+<!DOCTYPE html>
+<html lang="fr">
+    @header()
+    <body>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span4 offset4">
+                    <form class="well" method="post" action="@routes.Authentication.authenticate()">
+                        <fieldset>
+                            <legend>Genesis - CRA</legend>
+                            <input type="hidden" name="redirect" value="@*flash.get("redirect").map(url => url)*@">
+                            <label class="control-label" for="username">Utilisateur</label>
+                            <input type="text" class="span7" name="username" id="username" required="required">
+                            <label class="control-label" for="password">Mot de passe</label>
+                            <input type="password" class="span7" name="password" id="password" required="required">
+                            <span class="label label-important">flash.get("errormsg").map(errormsg => errormsg)</span>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary pull-right">Connexion</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

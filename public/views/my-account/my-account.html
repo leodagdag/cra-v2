@@ -1,0 +1,13 @@
+<div class="row-fluid">
+	<div class="span2">
+		<ul class="nav nav-list nav-pills nav-stacked">
+			<li data-ng-class="{active: activeSubSection.name == 'general'}"><a data-ng-click="activateSubSection('general')">Général</a></li>
+			<li data-ng-class="{active: activeSubSection.name == 'vehicle'}"><a data-ng-click="activateSubSection('vehicle')">Véhicule</a></li>
+			<li data-ng-class="{active: activeSubSection.name == 'affected-missions'}"><a data-ng-click="activateSubSection('affected-missions')">Mission</a></li>
+			<li data-ng-class="{active: activeSubSection.name == 'part-time'}"><a data-ng-click="activateSubSection('part-time')">Temps partiel</a></li>
+		</ul>
+	</div>
+	<div class="span10">
+		<div data-ng-include src="activeSubSection.page"></div>
+	</div>
+</div>
