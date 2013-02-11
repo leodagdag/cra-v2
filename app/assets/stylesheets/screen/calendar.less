@@ -1,0 +1,113 @@
+// Mixin couleur de fond
+.backgroundColorMixin(@from, @to) {
+	background-color: @from; // Only for IE !
+	background: -webkit-linear-gradient(top left, @from, @to);
+	background: -moz-linear-gradient(top left, @from, @to);
+	background: linear-gradient(top left, @from, @to);
+}
+
+.calendar {
+	@customerBC: #00008b;
+	@preSaleBC: green;
+	@internalWorkBC: yellow;
+	@holidayBC: red;
+	@notPaidBC: pink;
+	@specialBC: orange;
+
+	.toolbar {
+
+	}
+	.month {
+		cursor: default;
+		.day {
+			&.pastOrFuture {
+				opacity: 0.5;
+				.icon-comment, .icon-comment-alt {
+					cursor: default;
+				}
+			}
+			border-top: 1px solid #d3d3d3;
+			border-left: 1px solid #d3d3d3;
+			border-right: 1px solid #808080;
+			border-bottom: 1px solid #808080;
+			width: 100%;
+			margin: 0;
+			.head {
+				margin: 2px;
+				background-color: rgb(230, 230, 230);
+				&.saturday {
+					.backgroundColorMixin(rgb(230,230,230), fade(gray, 50%));
+				}
+				&.sunday {
+					.backgroundColorMixin(gray, fade(gray, 50%));
+				}
+				.visible-desktop {
+					display: block !important
+				}
+				td {
+					text-align: center;
+				}
+			}
+			.halfday {
+				border-radius: 5px;
+				margin: 2px;
+				background-color: #f5f5f5;
+				text-align: center;
+				&.customer {
+					background-color: @customerBC;
+					color: #ffffff;
+				}
+				&.pre-sale {
+					background-color: @preSaleBC;
+					color: #ffffff;
+				}
+				&.internal-work {
+					background-color: @internalWorkBC;
+					color: #000000;
+				}
+				&.holiday {
+					background-color: @holidayBC;
+					color: #ffffff;
+				}
+				&.not-paid {
+					background-color: @notPaidBC;
+					color: #000000;
+				}
+				&.special {
+					background-color: @specialBC;
+					color: #000000;
+				}
+			}
+		}
+		.icon-trash {
+			color: red;
+		}
+		.icon-comment {
+			color: #2f96b4;
+		}
+	}
+
+	.legend {
+		.text {
+			margin-left: 0px;
+		}
+		.customer {
+			background-color: @customerBC;
+		}
+		.pre-sale {
+			background-color: @preSaleBC;
+		}
+		.internal-work {
+			background-color: @internalWorkBC;
+		}
+		.holiday {
+			background-color: @holidayBC;
+		}
+		.not-paid {
+			background-color: @notPaidBC;
+		}
+		.special {
+			background-color: @specialBC;
+		}
+	}
+}

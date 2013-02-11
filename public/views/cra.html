@@ -1,1 +1,61 @@
-<h1>Cra</h1>
+<div class="calendar">
+	<div class="row-fluid toolbar" data-cra-toolbar data-ng-controller="CraToolbarCtrl">
+	</div>
+	<div class="row-fluid" data-ng-controller="CraMonthCtrl">
+		<div class="span12">
+			<table class="table table-condensed month">
+				<thead>
+					<tr>
+						<th><i class="icon-check-empty"></i></th>
+						<th>lun.</th>
+						<th>mar.</th>
+						<th>mer.</th>
+						<th>jeu.</th>
+						<th>ven.</th>
+						<th>sam.</th>
+						<th>dim.</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr data-ng-repeat="week in weeks">
+						<th>
+							{{week.number}}&nbsp;<i class="icon-check"></i>
+						</th>
+						<td data-ng-repeat="day in week.days">
+							<table class="day" data-ng-class="{pastOrFuture : day.inPastOrFuture}">
+								<tbody>
+									<tr class="head" data-ng-class="{saturday: day.isSaturday, sunday: day.isSunday}">
+										<td>
+											<i class="icon-check pull-left" data-ng-show="!day.inPastOrFuture"></i>
+											<span>{{day.date | dayOfMonth}}</span>
+											<i class="icon-comment" data-ng-show="day.comment"></i>
+											<i class="icon-comment-alt" data-ng-show="!day.comment"></i>
+											<i class="icon-trash pull-right" data-ng-show="day.morning || day.afternoon"></i>
+
+										</td>
+									</tr>
+									<tr>
+										<td class="halfday" data-ng-class="day.morning.type">
+											{{day.morning.label}}
+											<i class="icon-trash pull-right" data-ng-show="day.morning"></i>
+											<span data-ng-show="!day.morning">&nbsp;</span>
+										</td>
+									</tr>
+									<tr>
+										<td class="halfday" data-ng-class="day.afternoon.type">
+											{{day.afternoon.label}}
+											<i class="icon-trash pull-right" data-ng-show="day.afternoon"></i>
+											<span data-ng-show="!day.afternoon">&nbsp;</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row-fluid legend" data-cra-navigation data-ng-controller="CraLegendCtrl">
+	</div>
+</div>

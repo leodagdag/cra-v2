@@ -1,0 +1,24 @@
+/* have to set explicit for IE8 !*/
+body {
+	padding-top: 60px;
+	position: relative;
+}
+
+/* for lower screen size */
+@media (max-width: 979px) {
+	body {
+		padding-top: 0px;
+		position: static;
+	}
+}
+
+.icon-mandatory:before {
+	content: "*";
+	color: red;
+}
+
+.icon-trash, .icon-comment, .icon-comment-alt, .icon-check, .icon-check-empty {
+	cursor: pointer;
+}
+
+

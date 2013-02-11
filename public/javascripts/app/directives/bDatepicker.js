@@ -1,5 +1,5 @@
 angular.module('bDatepicker', []).
-	directive('bDatepicker', function(){
+        directive('bDatepicker', function(){
 		return {
 			require: '?ngModel',
 			restrict: 'A',
