@@ -33,7 +33,7 @@ public class PartTime {
     public DateTime endDate;
     private Date _endDate;
 
-    public Integer weekDay;
+    public Integer dayOfWeek;
     public String moment;
     public Integer frequency;
 

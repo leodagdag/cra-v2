@@ -1,6 +1,8 @@
 'use strict';
 
-var app = angular.module("app", ['ngResource', 'authServiceProvider', 'bDatepicker', 'craLegendDirective', 'craToolbarDirective', 'dayOfMonthFilter', 'weekDayFilter', 'momentDayFilter']);
+var app = angular.module("app", ['ngResource', 'authServiceProvider',
+	'bDatepicker', 'craLegendDirective', 'craToolbarDirective',
+	'dayOfMonthFilter', 'weekDayFilter', 'momentDayFilter', 'monthOfYearFilter', 'capitalizeFilter']);
 
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider

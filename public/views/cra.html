@@ -1,13 +1,13 @@
-<div class="calendar">
-	<div class="row-fluid toolbar" data-cra-toolbar data-ng-controller="CraToolbarCtrl">
+<div class="calendar" data-ng-init="fetch()">
+	<div class="row-fluid toolbar" data-cra-toolbar>
 	</div>
 	<div class="row-fluid" data-ng-controller="CraMonthCtrl">
 		<div class="span12">
+			<h5>{{month | monthOfYear | capitalize}} {{year}}</h5>
 			<table class="table table-condensed month">
 				<thead>
 					<tr>
 						<th>
-							<!--i class="icon-check-empty"></i-->
 							<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture">
 						</th>
 						<th>lun.</th>
@@ -29,7 +29,6 @@
 								<tbody>
 									<tr class="head" data-ng-class="{saturday: day.isSaturday, sunday: day.isSunday}">
 										<td>
-											<!--i class="icon-check pull-left" data-ng-show="!day.inPastOrFuture"></i-->
 											<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture">
 											<span>{{day.date | dayOfMonth}}</span>
 											<i class="icon-comment" data-ng-show="day.comment"></i>
@@ -60,6 +59,6 @@
 			</table>
 		</div>
 	</div>
-	<div class="row-fluid legend" data-cra-legend data-ng-controller="CraLegendCtrl">
+	<div class="row-fluid legend" data-cra-legend>
 	</div>
 </div>

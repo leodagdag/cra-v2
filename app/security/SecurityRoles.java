@@ -15,5 +15,7 @@ public enum SecurityRoles implements Role {
         return name();
     }
 
-
+	public static final String role_admin =  "admin";
+	public static final String role_production=  "production";
+	public static final String role_user =  "user";
 }

@@ -20,7 +20,7 @@ public class Global extends GlobalSettings {
 
 	@Override
 	public Handler onRouteRequest(Http.RequestHeader request) {
-		Logger.info(String.format("Call from[%s] - [%s %s]", request.remoteAddress(), request.method(), request.path()));
+		Logger.debug(String.format("Call from[%s] - [%s %s]", request.remoteAddress(), request.method(), request.path()));
 		return super.onRouteRequest(request);
 	}
 }

@@ -11,6 +11,9 @@ GET     /login                          controllers.Authentication.login()
 POST    /auth                           controllers.Authentication.authenticate()
 GET     /logout                         controllers.Authentication.logout()
 
+# Cra
+# ~~~~
+GET     /cra/:trigramme/:year/:month    controllers.Cras.fetch(trigramme: String, year: java.lang.Integer, month: java.lang.Integer)
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser             controllers.HtmlPages.unsupportedBrowser
