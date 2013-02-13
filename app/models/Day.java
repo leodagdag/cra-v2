@@ -67,15 +67,19 @@ public class Day {
 	@SuppressWarnings({"unused"})
 	@PrePersist
 	private void prePersist() {
-		_date = date != null ? date.toDate() : null;
-		year = _date != null ? new DateTime(_date).getYear() : null;
-		month = _date != null ? new DateTime(_date).getMonthOfYear() : null;
+		if (date != null) {
+			_date = date.toDate();
+			year = new DateTime(_date).getYear();
+			month = new DateTime(_date).getMonthOfYear();
+		}
 	}
 
 	@SuppressWarnings({"unused"})
 	@PostLoad
 	private void postLoad() {
-		date = _date != null ? new DateTime(_date.getTime()) : null;
+		if (_date != null) {
+			date = new DateTime(_date.getTime());
+		}
 	}
 
 	public List<ObjectId> missionIds() {

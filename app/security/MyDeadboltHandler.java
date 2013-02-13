@@ -7,6 +7,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import controllers.routes;
 import models.User;
+import play.Logger;
 import play.api.http.MediaRange;
 import play.api.mvc.Security;
 import play.mvc.Http;
@@ -30,7 +31,7 @@ public class MyDeadboltHandler extends AbstractDeadboltHandler {
 	}
 
 	@Override
-	public Result onAccessFailure(Http.Context context, String content) {
+	public Result onAuthFailure(Http.Context context, String content) {
 		context.session().clear();
 		MediaRange mr = Iterables.find(context.request().acceptedTypes(), new Predicate<MediaRange>() {
 			@Override

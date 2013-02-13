@@ -13,9 +13,9 @@ object ApplicationBuild extends Build {
 		// Morphia & MongoDB
 		"leodagdag" %% "play2-morphia-plugin" % "0.0.14",
 		// security
-		"be.objectify" %% "deadbolt-java" % "2.0-SNAPSHOT",
+		"be.objectify" %% "deadbolt-java" % "2.1-SNAPSHOT",
 		// email
-		"com.typesafe" %% "play-plugins-mailer" % "2.1-RC2",
+		"com.typesafe" %% "play-plugins-mailer" % "2.1.0",
 		// PDF
 		"com.itextpdf" % "itextpdf" % "5.3.4"
 	)
