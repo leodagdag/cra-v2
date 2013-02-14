@@ -21,20 +21,22 @@ public class CraDTO {
 	public Integer year;
 	public Integer month;
 	public String comment;
+	public Boolean isValidated;
 	public List<WeekDTO> weeks = Lists.newArrayList();
 
 	public CraDTO() {
 	}
 
-	public CraDTO(final JCra JCra, final List<JDay> JDays, final ImmutableMap<ObjectId, JMission> missions) {
-		this.id = JCra.id;
-		this.year = JCra.year;
-		this.month = JCra.month;
-		this.comment = JCra.comment;
-		this.weeks.addAll(WeekDTO.of(JDays,missions));
+	public CraDTO(final JCra jCra, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> missions) {
+		this.id = jCra.id;
+		this.year = jCra.year;
+		this.month = jCra.month;
+		this.comment = jCra.comment;
+		this.isValidated = jCra.isValidated;
+		this.weeks.addAll(WeekDTO.of(jDays,missions));
 	}
 
-	public static CraDTO of(final JCra JCra, final List<JDay> JDays, final ImmutableMap<ObjectId, JMission> missions) {
-		return new CraDTO(JCra, JDays, missions);
+	public static CraDTO of(final JCra jCra, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions) {
+		return new CraDTO(jCra, jDays, jMissions);
 	}
 }

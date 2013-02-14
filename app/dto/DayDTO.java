@@ -31,23 +31,23 @@ public class DayDTO {
 	public DayDTO() {
 	}
 
-	public DayDTO(final JDay JDay, final ImmutableMap<ObjectId, JMission> missions) {
-		this.id = JDay.id;
-		this.date = JDay.date;
-		this.morning = HalfDayDTO.of(JDay.morning,missions);
-		this.afternoon = HalfDayDTO.of(JDay.afternoon,missions);
-		this.comment = JDay.comment;
-		this.isSaturday = JDay.isSaturday();
-		this.isSunday = JDay.isSunday();
-		this.isDayOff = JDay.isDayOff();
+	public DayDTO(final JDay jDay, final ImmutableMap<ObjectId, JMission> jMissions) {
+		this.id = jDay.id;
+		this.date = jDay.date;
+		this.morning = HalfDayDTO.of(jDay.morning,jMissions);
+		this.afternoon = HalfDayDTO.of(jDay.afternoon,jMissions);
+		this.comment = jDay.comment;
+		this.isSaturday = jDay.isSaturday();
+		this.isSunday = jDay.isSunday();
+		this.isDayOff = jDay.isDayOff();
 	}
 
-	public static List<DayDTO> of(final List<JDay> JDays, final ImmutableMap<ObjectId, JMission> missions) {
-		return Lists.newArrayList(Collections2.transform(JDays, new Function<JDay, DayDTO>() {
+	public static List<DayDTO> of(final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions) {
+		return Lists.newArrayList(Collections2.transform(jDays, new Function<JDay, DayDTO>() {
 			@Nullable
 			@Override
-			public DayDTO apply(@Nullable final JDay JDay) {
-				return new DayDTO(JDay,missions);
+			public DayDTO apply(@Nullable final JDay jDay) {
+				return new DayDTO(jDay,jMissions);
 			}
 		}));
 	}

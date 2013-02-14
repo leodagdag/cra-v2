@@ -26,7 +26,6 @@ object TimeUtils {
 
 	def getLastDateOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1).dayOfMonth.withMaximumValue
 
-	def getNbDaysOffInMonth(year: Int, month: Int) = (0 to getLastDayOfMonth(year, month)).foldLeft(0)((acc, curr) => if (DaysOff.isDayOff(new DateTime(year, month, curr))) acc + 1 else acc)
-
+	def getNbDaysOffInMonth(year: Int, month: Int) = (1 to getLastDayOfMonth(year, month) filter (day => DaysOff.isDayOff(new DateTime(year, month, day)))).size
 
 }

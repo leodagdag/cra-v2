@@ -22,19 +22,19 @@ import static play.libs.Json.toJson;
 /**
  * @author f.patin
  */
-public class Cras extends Controller {
+public class JCras extends Controller {
 
 	@Restrict(value = {@Group(JSecurityRoles.role_user), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	public static Result fetch(final String trigramme, final Integer year, final Integer month) {
 		final JUser user = JUser.idByTrigramme(trigramme);
 		final JCra cra = JCra.find(user.id, year, month);
-		final List<JDay> JDays = JDay.find(cra.id, year, month);
+		final List<JDay> jDays = JDay.find(cra.id, year, month);
 		final List<ObjectId> missionsIds = Lists.newArrayList();
-		for (JDay JDay : JDays) {
-			missionsIds.addAll(JDay.missionIds());
+		for (JDay jDay : jDays) {
+			missionsIds.addAll(jDay.missionIds());
 		}
-		final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(missionsIds);
+		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
 
-		return ok(toJson(CraDTO.of(cra, JDays, missions)));
+		return ok(toJson(CraDTO.of(cra, jDays, jMissions)));
 	}
 }

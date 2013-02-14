@@ -6,6 +6,18 @@ var app = angular.module("app", ['ngResource', 'authServiceProvider',
 
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
+		.when("/cra/:trigramme/:year/:month", {
+			templateUrl: "public/views/cra.html",
+			controller: 'CraCtrl'
+		})
+		.when("/cra/:trigramme", {
+			templateUrl: "public/views/cra.html",
+			controller: 'CraCtrl'
+		})
+		.when("/cra/:year/:month", {
+			templateUrl: "public/views/cra.html",
+			controller: 'CraCtrl'
+		})
 		.when("/cra", {
 			templateUrl: "public/views/cra.html",
 			controller: 'CraCtrl'

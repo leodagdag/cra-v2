@@ -22,7 +22,7 @@ object Application extends BaseController {
 			import routes.javascript._
 			Ok(
 				Routes.javascriptRouter("jsRoutes")(
-					Cras.fetch
+					JCras.fetch
 				)
 			).as("text/javascript")
 	}

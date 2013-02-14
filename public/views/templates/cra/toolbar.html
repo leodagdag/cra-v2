@@ -4,9 +4,9 @@
 			<button class="btn btn-small"><</button>
 			<button class="btn btn-small">></button>
 		</div>
-		<button class="btn btn-small btn-success">Valider</button>
-		<button class="btn btn-small btn-danger">Invalider</button>
-		<button class="btn btn-small btn-info"><i class="icon-comment"></i> Commentaire</button>
+		<button class="btn btn-small btn-success" data-ng-show="!cra.isValidated">Valider</button>
+		<button class="btn btn-small btn-danger" data-ng-show="cra.isValidated">Invalider</button>
+		<button class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}"><i class="icon-comment"></i> Commentaire</button>
 		<div class="btn-group">
 			<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 				<i class="icon-print"></i> Imprimer

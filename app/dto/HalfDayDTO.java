@@ -17,13 +17,13 @@ public class HalfDayDTO {
 	public HalfDayDTO() {
 	}
 
-	public HalfDayDTO(final JHalfDay JHalfDay, final JMission mission) {
-		this.label = mission.code;
-		this.missionType = mission.missionType;
-		this.isSpecial = JHalfDay.isSpecial();
+	public HalfDayDTO(final JHalfDay jHalfDay, final JMission jMission) {
+		this.label = jMission.code;
+		this.missionType = jMission.missionType;
+		this.isSpecial = jHalfDay.isSpecial();
 	}
 
-	public static HalfDayDTO of(final JHalfDay JHalfDay, final ImmutableMap<ObjectId, JMission> missions) {
-		return new HalfDayDTO(JHalfDay, missions.get(JHalfDay.missionId));
+	public static HalfDayDTO of(final JHalfDay jHalfDay, final ImmutableMap<ObjectId, JMission> jMission) {
+		return new HalfDayDTO(jHalfDay, jMission.get(jHalfDay.missionId));
 	}
 }

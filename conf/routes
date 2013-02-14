@@ -17,7 +17,7 @@ GET     /cra/:trigramme/:year/:month/:day   controllers.Days.fetch(trigramme: St
 
 # Cra
 # ~~~~
-GET     /cra/:trigramme/:year/:month    controllers.Cras.fetch(trigramme: String, year: java.lang.Integer, month: java.lang.Integer)
+GET     /cra/:trigramme/:year/:month    controllers.JCras.fetch(trigramme: String, year: java.lang.Integer, month: java.lang.Integer)
 
 # HtmlPage
 # ~~~~

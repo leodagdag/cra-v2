@@ -3,7 +3,7 @@
 	</div>
 	<div class="row-fluid" data-ng-controller="CraMonthCtrl">
 		<div class="span12">
-			<h5>{{month | monthOfYear | capitalize}} {{year}}</h5>
+			<h5>{{cra.month | monthOfYear | capitalize}} {{cra.year}}</h5>
 			<table class="table table-condensed month">
 				<thead>
 					<tr>
@@ -20,7 +20,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr data-ng-repeat="week in weeks">
+					<tr data-ng-repeat="week in cra.weeks">
 						<th>
 							<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture">&nbsp;{{week.number}}
 						</th>
@@ -38,14 +38,14 @@
 										</td>
 									</tr>
 									<tr>
-										<td class="halfday" data-ng-class="day.morning.type">
+										<td class="halfday" data-ng-class="day.morning.missionType">
 											{{day.morning.label}}
 											<i class="icon-trash pull-right" data-ng-show="day.morning"></i>
 											<span data-ng-show="!day.morning">&nbsp;</span>
 										</td>
 									</tr>
 									<tr>
-										<td class="halfday" data-ng-class="day.afternoon.type">
+										<td class="halfday" data-ng-class="day.afternoon.missionType">
 											{{day.afternoon.label}}
 											<i class="icon-trash pull-right" data-ng-show="day.afternoon"></i>
 											<span data-ng-show="!day.afternoon">&nbsp;</span>
