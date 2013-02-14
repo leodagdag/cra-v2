@@ -5,7 +5,7 @@ import be.objectify.deadbolt.core.models.Role;
 /**
  * @author f.patin
  */
-public enum SecurityRoles implements Role {
+public enum JSecurityRoles implements Role {
     admin,
     production,
     user;

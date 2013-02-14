@@ -3,8 +3,8 @@ package dto;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import models.Day;
-import models.Mission;
+import models.JDay;
+import models.JMission;
 import org.bson.types.ObjectId;
 import org.springframework.util.CollectionUtils;
 
@@ -22,20 +22,20 @@ public class WeekDTO {
 	public WeekDTO() {
 	}
 
-	public WeekDTO(final Integer number, final List<Day> days, final ImmutableMap<ObjectId, Mission> missions) {
+	public WeekDTO(final Integer number, final List<JDay> JDays, final ImmutableMap<ObjectId, JMission> missions) {
 		this.number = number;
-		this.days.addAll(DayDTO.of(days,missions));
+		this.days.addAll(DayDTO.of(JDays,missions));
 	}
 
-	public static List<WeekDTO> of(final List<Day> days, final ImmutableMap<ObjectId, Mission> missions) {
-		if (!CollectionUtils.isEmpty(days)) {
-			Map<Integer, List<Day>> weeks = Maps.newHashMap();
-			for (Day day : days) {
-				final int weekOfYear = day.date.getWeekOfWeekyear();
+	public static List<WeekDTO> of(final List<JDay> JDays, final ImmutableMap<ObjectId, JMission> missions) {
+		if (!CollectionUtils.isEmpty(JDays)) {
+			Map<Integer, List<JDay>> weeks = Maps.newHashMap();
+			for (JDay JDay : JDays) {
+				final int weekOfYear = JDay.date.getWeekOfWeekyear();
 				if (!weeks.containsKey(weekOfYear)) {
-					weeks.put(weekOfYear, new ArrayList<Day>());
+					weeks.put(weekOfYear, new ArrayList<JDay>());
 				}
-				weeks.get(weekOfYear).add(day);
+				weeks.get(weekOfYear).add(JDay);
 			}
 			final List<WeekDTO> result = Lists.newArrayListWithCapacity(weeks.keySet().size());
 			for (Integer weekNumber : weeks.keySet()) {

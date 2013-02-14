@@ -9,12 +9,12 @@ import org.bson.types.ObjectId;
 /**
  * @author f.patin
  */
-@Entity
+@Entity("Customer")
 @Indexes({
 	@Index(value = "code", unique = true),
 	@Index("isGenesis")
 })
-public class Customer {
+public class JCustomer {
 
 	@Id
 	public ObjectId id;

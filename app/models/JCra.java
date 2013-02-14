@@ -8,8 +8,8 @@ import org.bson.types.ObjectId;
 /**
  * @author f.patin
  */
-@Entity
-public class Cra {
+@Entity("Cra")
+public class JCra {
 
 	@Id
 	public ObjectId id;
@@ -24,8 +24,8 @@ public class Cra {
 
 	public Boolean validated;
 
-	public static Cra find(final ObjectId userId, final Integer year, final Integer month) {
-		return MorphiaPlugin.ds().createQuery(Cra.class)
+	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
+		return MorphiaPlugin.ds().createQuery(JCra.class)
 			.field("userId").equal(userId)
 			.field("year").equal(year)
 			.field("month").equal(month)

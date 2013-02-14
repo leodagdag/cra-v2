@@ -13,20 +13,20 @@ import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.collect.Lists;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
-import security.SecurityRole;
+import security.JSecurityRole;
 
 import java.util.List;
 
 /**
  * @author f.patin
  */
-@Entity
+@Entity("User")
 @Indexes({
 	@Index("username"),
 	@Index("username, password"),
 	@Index("trigramme")
 })
-public class User implements Subject {
+public class JUser implements Subject {
 
 
 	@Id
@@ -41,7 +41,7 @@ public class User implements Subject {
 
 	@Override
 	public List<? extends Role> getRoles() {
-		return Lists.newArrayList(new SecurityRole(role));
+		return Lists.newArrayList(new JSecurityRole(role));
 	}
 
 	@Override
@@ -51,19 +51,19 @@ public class User implements Subject {
 
 	@Override
 	public String getIdentifier() {
-		return null;
+		return username;
 	}
 
-	private static Query<User> queryToFindMe(final ObjectId id) {
-		return MorphiaPlugin.ds().createQuery(User.class).field(Mapper.ID_KEY).equal(id);
+	private static Query<JUser> queryToFindMe(final ObjectId id) {
+		return MorphiaPlugin.ds().createQuery(JUser.class).field(Mapper.ID_KEY).equal(id);
 	}
 
-	private static Query<User> queryToFindMe(final String trigramme) {
-		return MorphiaPlugin.ds().createQuery(User.class).field("trigramme").equal(trigramme);
+	private static Query<JUser> queryToFindMe(final String trigramme) {
+		return MorphiaPlugin.ds().createQuery(JUser.class).field("trigramme").equal(trigramme);
 	}
 
-	public static User findAuthorisedUser(final String username, final String password) {
-		return MorphiaPlugin.ds().createQuery(User.class)
+	public static JUser findAuthorisedUser(final String username, final String password) {
+		return MorphiaPlugin.ds().createQuery(JUser.class)
 			.field("username").equal(username)
 			.field("password").equal(password)
 			.retrievedFields(true, "username", "password", "role")
@@ -71,15 +71,15 @@ public class User implements Subject {
 			.get();
 	}
 
-	public static User getSubject(final String username) {
-		return MorphiaPlugin.ds().createQuery(User.class)
+	public static Subject getSubject(final String username) {
+		return MorphiaPlugin.ds().createQuery(JUser.class)
 			.field("username").equal(username)
-			.retrievedFields(true, "username", "password", "role")
+			.retrievedFields(true, "username", "role")
 			.disableValidation()
 			.get();
 	}
 
-	public static User idByTrigramme(final String trigramme) {
+	public static JUser idByTrigramme(final String trigramme) {
 		return queryToFindMe(trigramme)
 			.retrievedFields(true, "id")
 			.disableValidation()

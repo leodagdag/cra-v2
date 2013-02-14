@@ -16,7 +16,7 @@ import java.util.Date;
  * @author f.patin
  */
 @Embedded
-public class Period {
+public class JPeriod {
 
 	public ObjectId missionId;
 

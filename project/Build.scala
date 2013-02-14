@@ -4,11 +4,11 @@ import play.Project._
 
 object ApplicationBuild extends Build {
 
-  val appName         = "cra-v2"
-  val appVersion      = "1.0-SNAPSHOT"
+	val appName = "cra-v2"
+	val appVersion = "1.0-SNAPSHOT"
 
-  	val appDependencies = Seq(
-	    // Add your project dependencies here,
+	val appDependencies = Seq(
+		// Add your project dependencies here,
 		javaCore,
 		// Morphia & MongoDB
 		"leodagdag" %% "play2-morphia-plugin" % "0.0.14",
@@ -17,16 +17,22 @@ object ApplicationBuild extends Build {
 		// email
 		"com.typesafe" %% "play-plugins-mailer" % "2.1.0",
 		// PDF
-		"com.itextpdf" % "itextpdf" % "5.3.4"
+		"com.itextpdf" % "itextpdf" % "5.3.4",
+		// security
+		"be.objectify" %% "deadbolt-scala" % "2.1-SNAPSHOT",
+		// MongoDB
+		"org.reactivemongo" %% "play2-reactivemongo" % "0.9-SNAPSHOT"
 	)
 
-  val main = play.Project(appName, appVersion, appDependencies)
+	val main = play.Project(appName, appVersion, appDependencies)
 		.settings(
 		lessEntryPoints <<= baseDirectory(appLessEntryPoints)
 	)
 		.settings(
 		// Morphia & MongoDB
 		resolvers += "LeoDagDag repository" at "http://leodagdag.github.com/repository/",
+		// ReactiveMongo
+		resolvers += "ReactiveMongo Snapshot" at "https://oss.sonatype.org/content/repositories/snapshots",
 		// Deadbolt
 		resolvers += Resolver.url("Objectify Play Repository", url("http://schaloner.github.com/releases/"))(Resolver.ivyStylePatterns),
 		resolvers += Resolver.url("Objectify Play Snapshot Repository", url("http://schaloner.github.com/snapshots/"))(Resolver.ivyStylePatterns),

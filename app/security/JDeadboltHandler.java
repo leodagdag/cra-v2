@@ -6,10 +6,8 @@ import be.objectify.deadbolt.java.DynamicResourceHandler;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import controllers.routes;
-import models.User;
-import play.Logger;
+import models.JUser;
 import play.api.http.MediaRange;
-import play.api.mvc.Security;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
@@ -19,7 +17,7 @@ import javax.annotation.Nullable;
 /**
  * @author f.patin
  */
-public class MyDeadboltHandler extends AbstractDeadboltHandler {
+public class JDeadboltHandler extends AbstractDeadboltHandler {
 	@Override
 	public Result beforeAuthCheck(Http.Context context) {
 		return null;
@@ -27,7 +25,7 @@ public class MyDeadboltHandler extends AbstractDeadboltHandler {
 
 	@Override
 	public Subject getSubject(Http.Context context) {
-		return User.getSubject(context.session().get("username"));
+		return JUser.getSubject(context.session().get("username"));
 	}
 
 	@Override

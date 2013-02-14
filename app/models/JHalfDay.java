@@ -15,24 +15,24 @@ import java.util.List;
  * @author f.patin
  */
 @Embedded
-public class HalfDay {
+public class JHalfDay {
 
 	public ObjectId missionId;
 
-	public List<Period> periods = Lists.newArrayList();
+	public List<JPeriod> JPeriods = Lists.newArrayList();
 
 	@JsonProperty("isSpecial")
 	public Boolean isSpecial() {
-		return !Iterables.isEmpty(periods);
+		return !Iterables.isEmpty(JPeriods);
 	}
 
 	public List<ObjectId> missionIds() {
 		if (isSpecial()) {
-			return Lists.newArrayList(Collections2.transform(periods, new Function<Period, ObjectId>() {
+			return Lists.newArrayList(Collections2.transform(JPeriods, new Function<JPeriod, ObjectId>() {
 				@Nullable
 				@Override
-				public ObjectId apply(@Nullable final Period period) {
-					return period.missionId;
+				public ObjectId apply(@Nullable final JPeriod JPeriod) {
+					return JPeriod.missionId;
 				}
 			}));
 		} else {

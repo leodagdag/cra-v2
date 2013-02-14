@@ -1,8 +1,8 @@
 package dto;
 
 import com.google.common.collect.ImmutableMap;
-import models.HalfDay;
-import models.Mission;
+import models.JHalfDay;
+import models.JMission;
 import org.bson.types.ObjectId;
 
 /**
@@ -17,13 +17,13 @@ public class HalfDayDTO {
 	public HalfDayDTO() {
 	}
 
-	public HalfDayDTO(final HalfDay halfDay, final Mission mission) {
+	public HalfDayDTO(final JHalfDay JHalfDay, final JMission mission) {
 		this.label = mission.code;
 		this.missionType = mission.missionType;
-		this.isSpecial = halfDay.isSpecial();
+		this.isSpecial = JHalfDay.isSpecial();
 	}
 
-	public static HalfDayDTO of(final HalfDay halfDay, final ImmutableMap<ObjectId, Mission> missions) {
-		return new HalfDayDTO(halfDay, missions.get(halfDay.missionId));
+	public static HalfDayDTO of(final JHalfDay JHalfDay, final ImmutableMap<ObjectId, JMission> missions) {
+		return new HalfDayDTO(JHalfDay, missions.get(JHalfDay.missionId));
 	}
 }

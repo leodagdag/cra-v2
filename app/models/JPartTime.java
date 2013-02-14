@@ -13,8 +13,8 @@ import java.util.Date;
 /**
  * @author f.patin
  */
-@Entity
-public class PartTime {
+@Entity("PartTime")
+public class JPartTime {
 
     @Id
     public ObjectId id;
@@ -61,6 +61,6 @@ public class PartTime {
     }
 
     @SuppressWarnings({"unused"})
-    public PartTime() {
+    public JPartTime() {
     }
 }

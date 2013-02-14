@@ -5,7 +5,7 @@ import be.objectify.deadbolt.core.models.Role;
 /**
  * @author f.patin
  */
-public class SecurityRole implements Role {
+public class JSecurityRole implements Role {
     public String name;
 
     @Override
@@ -13,7 +13,7 @@ public class SecurityRole implements Role {
         return name;
     }
 
-    public SecurityRole(String name) {
+    public JSecurityRole(String name) {
         this.name = name;
     }
 }

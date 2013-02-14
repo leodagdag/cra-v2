@@ -45,7 +45,7 @@ var cra = db.Cra.findOne({year: 2013, month: 2});
 /*
  * Day
  */
-db.Day.insert({craId: cra._id, _date: new Date(cra.year, cra.month, NumberInt(1)),
+db.Day.insert({craId: cra._id, _date: new Date(cra.year, cra.month - 1, NumberInt(1)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
 	morning: {

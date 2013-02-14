@@ -5,14 +5,15 @@ import be.objectify.deadbolt.java.actions.Restrict;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import dto.CraDTO;
-import models.Cra;
-import models.Day;
-import models.Mission;
-import models.User;
+import models.JCra;
+import models.JDay;
+import models.JMission;
+import models.JUser;
 import org.bson.types.ObjectId;
 import play.mvc.Controller;
 import play.mvc.Result;
-import security.SecurityRoles;
+import security.JDeadboltHandler;
+import security.JSecurityRoles;
 
 import java.util.List;
 
@@ -23,17 +24,17 @@ import static play.libs.Json.toJson;
  */
 public class Cras extends Controller {
 
-	@Restrict({@Group(SecurityRoles.role_user), @Group(SecurityRoles.role_production), @Group(SecurityRoles.role_admin)})
+	@Restrict(value = {@Group(JSecurityRoles.role_user), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	public static Result fetch(final String trigramme, final Integer year, final Integer month) {
-		final User user = User.idByTrigramme(trigramme);
-		final Cra cra = Cra.find(user.id, year, month);
-		final List<Day> days = Day.find(cra.id, year, month);
+		final JUser user = JUser.idByTrigramme(trigramme);
+		final JCra cra = JCra.find(user.id, year, month);
+		final List<JDay> JDays = JDay.find(cra.id, year, month);
 		final List<ObjectId> missionsIds = Lists.newArrayList();
-		for (Day day : days) {
-			missionsIds.addAll(day.missionIds());
+		for (JDay JDay : JDays) {
+			missionsIds.addAll(JDay.missionIds());
 		}
-		final ImmutableMap<ObjectId, Mission> missions = Mission.codeAndMissionType(missionsIds);
+		final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(missionsIds);
 
-		return ok(toJson(CraDTO.of(cra, days, missions)));
+		return ok(toJson(CraDTO.of(cra, JDays, missions)));
 	}
 }

@@ -1,13 +1,13 @@
-@()
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler)(implicit request: play.api.mvc.Request[Any])
 
-@import layout.{header, navigation, scripts}
+@import layout._
 
 <!DOCTYPE html>
 
 <html lang="en" data-ng-app="app" data-authenticator="">
 	@header()
 	<body>
-		@navigation()
+		@navigation(handler)
 		<div class="container-fluid">
 			<div data-ng-view=""></div>
 		</div>

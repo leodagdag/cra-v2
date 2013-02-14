@@ -14,7 +14,7 @@ import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.joda.time.DateTime;
 import utils.deserializer.DateTimeDeserializer;
-import utils.time.TimerHelper;
+import utils.time.TimeUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -22,13 +22,13 @@ import java.util.List;
 /**
  * @author f.patin
  */
-@Entity
+@Entity("Day")
 @Indexes({
 	@Index("craId"),
 	@Index("_date"),
 	@Index("year, month")
 })
-public class Day {
+public class JDay {
 
 	@Id
 	public ObjectId id;
@@ -45,23 +45,23 @@ public class Day {
 	public Integer month;
 
 	@Embedded
-	public HalfDay morning;
+	public JHalfDay morning;
 
 	@Embedded
-	public HalfDay afternoon;
+	public JHalfDay afternoon;
 
 	public String comment;
 
 	public Boolean isSaturday() {
-		return date != null && TimerHelper.isSaturday(date);
+		return date != null && TimeUtils.isSaturday(date);
 	}
 
 	public Boolean isSunday() {
-		return date != null && TimerHelper.isSunday(date);
+		return date != null && TimeUtils.isSunday(date);
 	}
 
 	public Boolean isDayOff() {
-		return date != null && TimerHelper.isDayOff(date);
+		return date != null && TimeUtils.isDayOff(date);
 	}
 
 	@SuppressWarnings({"unused"})
@@ -93,8 +93,8 @@ public class Day {
 		return result;
 	}
 
-	public static List<Day> find(final ObjectId userId, final Integer year, final Integer month) {
-		return MorphiaPlugin.ds().createQuery(Day.class)
+	public static List<JDay> find(final ObjectId userId, final Integer year, final Integer month) {
+		return MorphiaPlugin.ds().createQuery(JDay.class)
 			.field("craId").equal(userId)
 			.field("year").equal(year)
 			.field("month").equal(month)

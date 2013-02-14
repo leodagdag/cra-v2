@@ -27,13 +27,13 @@ import java.util.List;
 /**
  * @author f.patin
  */
-@Entity
+@Entity("Mission")
 @Indexes({
 	@Index(value = "code", unique = true),
 	@Index("customerId"),
 	@Index("_startDate, _endDate")
 })
-public class Mission {
+public class JMission {
 	@Id
 	public ObjectId id;
 
@@ -80,23 +80,23 @@ public class Mission {
 		}
 	}
 
-	public static ImmutableMap<ObjectId, Mission> codeAndMissionType(final List<ObjectId> missionsIds) {
+	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds) {
 		if (!CollectionUtils.isEmpty(missionsIds)) {
-			List<Mission> missions = MorphiaPlugin.ds().createQuery(Mission.class)
+			List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
 				.field(Mapper.ID_KEY).in(missionsIds)
 				.retrievedFields(true, "code", "missionType")
 				.disableValidation()
 				.asList();
 
-			return Maps.uniqueIndex(missions, new Function<Mission, ObjectId>() {
+			return Maps.uniqueIndex(missions, new Function<JMission, ObjectId>() {
 				@Nullable
 				@Override
-				public ObjectId apply(@Nullable final Mission mission) {
+				public ObjectId apply(@Nullable final JMission mission) {
 					return mission.id;
 				}
 			});
 		}  else {
-			return new ImmutableMap.Builder<ObjectId, Mission>().build();
+			return new ImmutableMap.Builder<ObjectId, JMission>().build();
 		}
 	}
 }

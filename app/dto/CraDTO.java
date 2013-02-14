@@ -2,9 +2,9 @@ package dto;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import models.Cra;
-import models.Day;
-import models.Mission;
+import models.JCra;
+import models.JDay;
+import models.JMission;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import utils.serializer.ObjectIdSerializer;
@@ -26,15 +26,15 @@ public class CraDTO {
 	public CraDTO() {
 	}
 
-	public CraDTO(final Cra cra, final List<Day> days, final ImmutableMap<ObjectId, Mission> missions) {
-		this.id = cra.id;
-		this.year = cra.year;
-		this.month = cra.month;
-		this.comment = cra.comment;
-		this.weeks.addAll(WeekDTO.of(days,missions));
+	public CraDTO(final JCra JCra, final List<JDay> JDays, final ImmutableMap<ObjectId, JMission> missions) {
+		this.id = JCra.id;
+		this.year = JCra.year;
+		this.month = JCra.month;
+		this.comment = JCra.comment;
+		this.weeks.addAll(WeekDTO.of(JDays,missions));
 	}
 
-	public static CraDTO of(final Cra cra, final List<Day> days, final ImmutableMap<ObjectId, Mission> missions) {
-		return new CraDTO(cra, days, missions);
+	public static CraDTO of(final JCra JCra, final List<JDay> JDays, final ImmutableMap<ObjectId, JMission> missions) {
+		return new CraDTO(JCra, JDays, missions);
 	}
 }
