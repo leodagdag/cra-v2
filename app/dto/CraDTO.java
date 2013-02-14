@@ -33,7 +33,7 @@ public class CraDTO {
 		this.month = jCra.month;
 		this.comment = jCra.comment;
 		this.isValidated = jCra.isValidated;
-		this.weeks.addAll(WeekDTO.of(jDays,missions));
+		this.weeks.addAll(WeekDTO.of(jDays,missions, jCra.year, jCra.month));
 	}
 
 	public static CraDTO of(final JCra jCra, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions) {

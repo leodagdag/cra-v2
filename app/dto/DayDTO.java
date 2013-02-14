@@ -27,11 +27,12 @@ public class DayDTO {
 	public Boolean isSaturday;
 	public Boolean isSunday;
 	public Boolean isDayOff;
+	public Boolean inPastOrFuture;
 
 	public DayDTO() {
 	}
 
-	public DayDTO(final JDay jDay, final ImmutableMap<ObjectId, JMission> jMissions) {
+	public DayDTO(final JDay jDay, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
 		this.id = jDay.id;
 		this.date = jDay.date;
 		this.morning = HalfDayDTO.of(jDay.morning,jMissions);
@@ -40,14 +41,15 @@ public class DayDTO {
 		this.isSaturday = jDay.isSaturday();
 		this.isSunday = jDay.isSunday();
 		this.isDayOff = jDay.isDayOff();
+		this.inPastOrFuture = jDay.inPastOrFuture(year, month);
 	}
 
-	public static List<DayDTO> of(final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions) {
+	public static List<DayDTO> of(final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
 		return Lists.newArrayList(Collections2.transform(jDays, new Function<JDay, DayDTO>() {
 			@Nullable
 			@Override
 			public DayDTO apply(@Nullable final JDay jDay) {
-				return new DayDTO(jDay,jMissions);
+				return new DayDTO(jDay,jMissions, year, month);
 			}
 		}));
 	}

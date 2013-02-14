@@ -8,59 +8,73 @@ import org.joda.time.{DateTimeConstants, DateTime}
  * @author f.patin
  */
 object DaysOff {
+
 	def isDayOff(date: DateTime): Boolean = {
 		val dayOfYear: Int = date.getDayOfYear
 		val monthOfYear: Int = date.getMonthOfYear
 		val dayOfMonth: Int = date.getDayOfMonth
 		val year: Int = date.getYear
+		// 1er Janvier
 		if (dayOfYear == 1) {
 			return true
 		}
+		// 1er Mai
 		if (monthOfYear == 5 && dayOfMonth == 1) {
 			return true
 		}
+		// 8 Mai
 		if (monthOfYear == 5 && dayOfMonth == 8) {
 			return true
 		}
+		// 14 Juiller
 		if (monthOfYear == 7 && dayOfMonth == 14) {
 			return true
 		}
+		// 15 Août
 		if (monthOfYear == 8 && dayOfMonth == 15) {
 			return true
 		}
+		// 1er Novembre
 		if (monthOfYear == 11 && dayOfMonth == 1) {
 			return true
 		}
+		// 11 Novembre
 		if (monthOfYear == 11 && dayOfMonth == 11) {
 			return true
 		}
+		// 25 Décembre
 		if (monthOfYear == 12 && dayOfMonth == 25) {
 			return true
 		}
+		// Easter
 		val easter: DateTime = getEaster(year)
 		val easterMonth: Int = easter.getMonthOfYear
 		val easterDay: Int = easter.getDayOfMonth
 		if (easterMonth == monthOfYear && easterDay == dayOfMonth) {
 			return true
 		}
+		// Easter Monday
 		val easterMonday: DateTime = easter.plusDays(1)
 		val easterMondayMonth: Int = easterMonday.getMonthOfYear
 		val easterMondayDay: Int = easterMonday.getDayOfMonth
 		if (easterMondayMonth == monthOfYear && easterMondayDay == dayOfMonth) {
 			return true
 		}
+		// Ascension
 		val ascension: DateTime = easter.plusDays(39)
 		val ascensionMonth: Int = ascension.getMonthOfYear
 		val ascensionDay: Int = ascension.getDayOfMonth
 		if (ascensionMonth == monthOfYear && ascensionDay == dayOfMonth) {
 			return true
 		}
+		// Pentecost
 		val pentecost: DateTime = easter.plusDays(49)
 		val pentecostMonth: Int = pentecost.getMonthOfYear
 		val pentecostDay: Int = pentecost.getDayOfMonth
 		if (pentecostMonth == monthOfYear && pentecostDay == dayOfMonth) {
 			return true
 		}
+		// Pentecost Monday
 		val pentecostMonday: DateTime = easter.plusDays(50)
 		val pentecostMondayMonth: Int = pentecostMonday.getMonthOfYear
 		val pentecostMondayDay: Int = pentecostMonday.getDayOfMonth

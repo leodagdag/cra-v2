@@ -24,6 +24,10 @@ public class HalfDayDTO {
 	}
 
 	public static HalfDayDTO of(final JHalfDay jHalfDay, final ImmutableMap<ObjectId, JMission> jMission) {
-		return new HalfDayDTO(jHalfDay, jMission.get(jHalfDay.missionId));
+		if (jHalfDay != null) {
+			return new HalfDayDTO(jHalfDay, jMission.get(jHalfDay.missionId));
+		} else {
+			return null;
+		}
 	}
 }

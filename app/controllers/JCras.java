@@ -28,7 +28,7 @@ public class JCras extends Controller {
 	public static Result fetch(final String trigramme, final Integer year, final Integer month) {
 		final JUser user = JUser.idByTrigramme(trigramme);
 		final JCra cra = JCra.find(user.id, year, month);
-		final List<JDay> jDays = JDay.find(cra.id, year, month);
+		final List<JDay> jDays = JDay.find(cra.id, year, month, true);
 		final List<ObjectId> missionsIds = Lists.newArrayList();
 		for (JDay jDay : jDays) {
 			missionsIds.addAll(jDay.missionIds());
