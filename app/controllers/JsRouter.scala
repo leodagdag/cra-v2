@@ -13,6 +13,8 @@ object JsRouter extends Controller {
 			Ok(
 				Routes.javascriptRouter("jsRoutes")(
 					JCras.fetch,
+					JCras.validate,
+					JCras.invalidate,
 					JUsers.employees,
 					Authentication.profile
 				)

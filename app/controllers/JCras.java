@@ -26,8 +26,8 @@ public class JCras extends Controller {
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	public static Result fetch(final String username, final Integer year, final Integer month) {
-		final JUser user = JUser.idByUsername(username);
-		JCra cra = JCra.find(user.id, year, month);
+		final ObjectId userId = JUser.idByUsername(username);
+		JCra cra = JCra.find(userId, year, month);
 		final List<JDay> jDays = Lists.newArrayList();
 		final List<ObjectId> missionsIds = Lists.newArrayList();
 
@@ -41,4 +41,19 @@ public class JCras extends Controller {
 		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
 		return ok(toJson(CraDTO.of(cra, jDays, jMissions)));
 	}
+
+	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
+	public static Result validate(final String username, final Integer year, final Integer month) {
+		final ObjectId userId = JUser.idByUsername(username);
+		JCra.validate(userId, year, month);
+		return ok(toJson("Cra validated !"));
+	}
+
+	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
+	public static Result invalidate(final String username, final Integer year, final Integer month) {
+		final ObjectId userId = JUser.idByUsername(username);
+		JCra.invalidate(userId, year, month);
+		return ok(toJson("Cra validated !"));
+	}
+
 }

@@ -7,7 +7,6 @@ import play.modules.reactivemongo.ReactiveMongoPlugin
 import reactivemongo.api.QueryBuilder
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
-import reactivemongo.bson.handlers.BSONReader
 import reactivemongo.bson.handlers.DefaultBSONHandlers.{DefaultBSONDocumentWriter, DefaultBSONReaderHandler}
 import reactivemongo.bson.{BSONObjectID, BSONBoolean, BSONDocument, BSONInteger, BSONString}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,8 +26,6 @@ case class User(id: Option[BSONObjectID],
                 email: String,
                 managerId: Option[BSONObjectID],
                 isManager: Boolean)
-
-
 
 
 object User extends ToIndex {
@@ -58,11 +55,17 @@ object User extends ToIndex {
 		User.db.find[JsObject](query).toList()
 	}
 
+	def id(username: String) = {
+		val s = BSONDocument("username" -> BSONString(username))
+		val p = BSONDocument("_id" -> BSONInteger(1))
+		val q = QueryBuilder()
+			.query(s)
+			.projection(p)
+		implicit val reader =  models.BSONObjectIDReader
+		db.find[BSONObjectID](q).headOption()
 
+	}
 }
-
-
-
 
 
 object Manager {

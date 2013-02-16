@@ -91,13 +91,13 @@ object Profile {
 	}
 
 	def apply(username: String) = {
-		val criteria = BSONDocument("username" -> BSONString(username))
+		val s = BSONDocument("username" -> BSONString(username))
 		val p = BSONDocument(
 			"username" -> BSONInteger(1),
 			"role" -> BSONInteger(1)
 		)
 		val query = QueryBuilder()
-			.query(criteria)
+			.query(s)
 			.projection(p)
 		implicit val reader = ProfileBSONReader
 		User.db.find[Profile](query).headOption()

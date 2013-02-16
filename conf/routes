@@ -19,7 +19,8 @@ GET     /cra/:username/:year/:month/:day   controllers.Days.fetch(username: Stri
 # Cra
 # ~~~~
 GET     /cra/:username/:year/:month    controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
-
+POST    /cra/:username/:year/:month/validate    controllers.JCras.validate(username: String, year: java.lang.Integer, month: java.lang.Integer)
+POST    /cra/:username/:year/:month/invalidate    controllers.JCras.invalidate(username: String, year: java.lang.Integer, month: java.lang.Integer)
 #
 GET     /users/employees               controllers.JUsers.employees()
 # HtmlPage

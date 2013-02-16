@@ -39,7 +39,7 @@ var bart = db.User.findOne({username: 'bart'});
 /*
  * Cra
  */
-db.Cra.insert({year: NumberInt(2013), month: NumberInt(2), userId: bart._id, comment: 'Commentaire cra...', validated: false});
+db.Cra.insert({year: NumberInt(2013), month: NumberInt(2), userId: bart._id, comment: 'Commentaire cra...', isValidated: false});
 var cra = db.Cra.findOne({year: 2013, month: 2});
 
 /*

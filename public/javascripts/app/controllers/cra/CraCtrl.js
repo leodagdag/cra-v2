@@ -4,7 +4,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		/* Toolbar */
 		var initialEmployee = $routeParams.username || ($rootScope.profile.role === $rootScope.Roles.EMPLOYEE ? $rootScope.profile.username : $scope.employee);
 		var initialYear = {
-			'id': _.find(YearsConst, function(y) {
+			'id': _.find(YearsConst,function(y) {
 				return y.label === ($routeParams.year || moment().year()).toString()
 			}).id,
 			'label': ($routeParams.year || moment().year()).toString()
@@ -41,12 +41,11 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 
-
 		/* Cra */
 		$scope.cra = {};
 
 		$scope.search = function() {
-			$log.log("search()",$scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
+			$log.log("search()", $scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 			loadCra($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 		};
 
@@ -54,12 +53,32 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			if($rootScope.profile.role === $rootScope.Roles.EMPLOYEE) {
 				loadCra(initialEmployee, initialYear.label, initialMonth.id);
 			}
+		};
 
+		$scope.validate = function() {
+			var route = jsRoutes.controllers.JCras.validate($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
+			$http({
+				method: route.method,
+				url: route.url
+			})
+				.success(function(cra, status, headers, config) {
+					$scope.cra.isValidated = true;
+				});
+		};
+
+		$scope.invalidate = function() {
+			var route = jsRoutes.controllers.JCras.invalidate($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
+			$http({
+				method: route.method,
+				url: route.url
+			})
+				.success(function(cra, status, headers, config) {
+					$scope.cra.isValidated = false;
+				});
 		};
 
 		var loadCra = function(username, year, month) {
 			var route = jsRoutes.controllers.JCras.fetch(username, year, month);
-			$log.log('route', route)
 			$http({
 				method: route.method,
 				url: route.url

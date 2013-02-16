@@ -81,11 +81,11 @@ public class JUser implements Subject {
 			.get();
 	}
 
-	public static JUser idByUsername(final String username) {
+	public static ObjectId idByUsername(final String username) {
 		return queryToFindMe(username)
 			.retrievedFields(true, "id")
 			.disableValidation()
-			.get();
+			.get().id;
 	}
 
 	public static List<JUser> byRole(final String role) {

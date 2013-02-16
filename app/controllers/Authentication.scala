@@ -34,11 +34,10 @@ object Authentication extends BaseController {
 						Auth.checkAuthentication((loggedIn._1, loggedIn._2)).map {
 							(check: Option[Auth]) =>
 								check match {
-									case Some(auth) => {
+									case Some(auth) =>
 										loggedIn._3.map(next => Results.Redirect(routes.Application.index() + "#" + next))
 											.getOrElse(Results.Redirect(routes.Application.index()))
 											.withSession(request.session + (Security.username -> auth.username))
-									}
 									case None => Results.Redirect(routes.Authentication.login())
 										.withSession(request.session - Security.username)
 										.flashing(("errormsg" -> "Utilisateur ou mot de passe incorrect"))
