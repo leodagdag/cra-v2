@@ -112,7 +112,7 @@
 									<span data-ng-show="pt.endDate">jusqu'à {{pt.endDate | date:'dd/MM/yyyy'}}.</span>
 									<span data-ng-hide="pt.endDate">sans date de fin.</span>
 									<br>
-									Le {{pt.weekDay | weekDay}} {{pt.moment | momentDay}},<br>
+									Le {{pt.weekDay | dayOfWeek}} {{pt.moment | momentOfDay}},<br>
 									toutes les {{pt.frequency}} semaine(s).
 								</li>
 							</ul>

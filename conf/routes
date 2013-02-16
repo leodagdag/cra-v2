@@ -10,22 +10,25 @@ GET     /                               controllers.Application.index()
 GET     /login                          controllers.Authentication.login()
 POST    /auth                           controllers.Authentication.authenticate()
 GET     /logout                         controllers.Authentication.logout()
+GET     /profile                        controllers.Authentication.profile()
 
 # Day
 # ~~~~
-GET     /cra/:trigramme/:year/:month/:day   controllers.Days.fetch(trigramme: String, year: Int, month: Int, day: Int)
+GET     /cra/:username/:year/:month/:day   controllers.Days.fetch(username: String, year: Int, month: Int, day: Int)
 
 # Cra
 # ~~~~
-GET     /cra/:trigramme/:year/:month    controllers.JCras.fetch(trigramme: String, year: java.lang.Integer, month: java.lang.Integer)
+GET     /cra/:username/:year/:month    controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
 
+#
+GET     /users/employees               controllers.JUsers.employees()
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser             controllers.HtmlPages.unsupportedBrowser
 
 # Javascript routing
 # ~~~~
-GET     /assets/javascripts/routes      controllers.Application.javascriptRoutes()
+GET     /assets/javascripts/routes      controllers.JsRouter.javascriptRoutes()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                   controllers.Assets.at(path="/public", file)

@@ -8,7 +8,9 @@ import com.github.jmkgreen.morphia.annotations.Indexes;
 import com.github.jmkgreen.morphia.annotations.PostLoad;
 import com.github.jmkgreen.morphia.annotations.PrePersist;
 import com.github.jmkgreen.morphia.annotations.Transient;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import leodagdag.play2morphia.MorphiaPlugin;
@@ -110,14 +112,23 @@ public class JDay {
 		return result;
 	}
 
-	public static List<JDay> find(final ObjectId userId, final Integer year, final Integer month, final Boolean withPastAndFuture) {
+	public static List<JDay> find(final ObjectId craId, final Integer year, final Integer month, final Boolean withPastAndFuture) {
 		final List<DateTime> dts = Lists.newArrayList(TimeUtils.getDaysOfMonth(year, month, withPastAndFuture));
-
-		List<JDay> days = MorphiaPlugin.ds().createQuery(JDay.class)
-			.field("craId").equal(userId)
-			.field("_date").in(Transformer.dateTime2Date(dts))
-			.asList();
-
+		final List<JDay> days = Lists.newArrayList();
+		if (craId != null) {
+			days.addAll(MorphiaPlugin.ds().createQuery(JDay.class)
+				.field("craId").equal(craId)
+				.field("_date").in(Transformer.dateTime2Date(dts))
+				.asList());
+		} else {
+			days.addAll(Collections2.transform(dts, new Function<DateTime, JDay>() {
+				@Nullable
+				@Override
+				public JDay apply(@Nullable final DateTime dt) {
+					return new JDay(dt);
+				}
+			}));
+		}
 		for (final DateTime dt : dts) {
 			final JDay existDay = Iterables.find(days, new Predicate<JDay>() {
 				@Override
@@ -125,7 +136,7 @@ public class JDay {
 					return jDay.date.isEqual(dt);
 				}
 			}, null);
-			if (null == existDay) {
+			if (existDay == null) {
 				days.add(new JDay(dt));
 			}
 		}

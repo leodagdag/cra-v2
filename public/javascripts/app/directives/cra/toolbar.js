@@ -1,8 +1,9 @@
 angular.module('craToolbarDirective', []).
 	directive('craToolbar', function () {
+		'use strict';
 		return {
 			restrict:'EA',
 			replace: false,
-			templateUrl:'public/views/templates/cra/toolbar.html'
+			templateUrl:'public/html/templates/cra/toolbar.html'
 		};
 	});

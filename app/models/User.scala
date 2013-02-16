@@ -1,9 +1,7 @@
 package models
 
-import org.joda.time.DateTime
-import play.api.Logger
 import play.api.Play.current
-import play.api.libs.json.{JsNumber, JsBoolean, Json, JsArray, JsString, JsValue, Format, JsObject}
+import play.api.libs.json.JsObject
 import play.modules.reactivemongo.PlayBsonImplicits._
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import reactivemongo.api.QueryBuilder
@@ -11,7 +9,7 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.handlers.BSONReader
 import reactivemongo.bson.handlers.DefaultBSONHandlers.{DefaultBSONDocumentWriter, DefaultBSONReaderHandler}
-import reactivemongo.bson.{BSONObjectID, BSONArray, BSONDateTime, BSONBoolean, BSONDocument, BSONInteger, BSONString}
+import reactivemongo.bson.{BSONObjectID, BSONBoolean, BSONDocument, BSONInteger, BSONString}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -31,6 +29,8 @@ case class User(id: Option[BSONObjectID],
                 isManager: Boolean)
 
 
+
+
 object User extends ToIndex {
 
 	private val dbName = "User"
@@ -42,18 +42,28 @@ object User extends ToIndex {
 		List(
 			Index(List("username" -> Ascending), unique = true),
 			Index(List("username" -> Ascending, "password" -> Ascending), unique = true),
+			Index(List("lastName" -> Ascending, "firstName" -> Ascending)),
 			Index(List("isManager" -> Ascending))
-		).foreach {index => ensureIndex(index)(db)}
+		).foreach {
+			index => ensureIndex(index)(db)
+		}
 	}
 
+
 	def all = {
+		val criteria = BSONDocument()
 		val query = QueryBuilder()
-			.query(BSONDocument())
+			.query(criteria)
 		implicit val readerO = JsObjectReader
 		User.db.find[JsObject](query).toList()
 	}
 
+
 }
+
+
+
+
 
 object Manager {
 	def managers: Future[List[JsObject]] = {

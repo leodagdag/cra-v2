@@ -24,17 +24,21 @@ import static play.libs.Json.toJson;
  */
 public class JCras extends Controller {
 
-	@Restrict(value = {@Group(JSecurityRoles.role_user), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
-	public static Result fetch(final String trigramme, final Integer year, final Integer month) {
-		final JUser user = JUser.idByTrigramme(trigramme);
-		final JCra cra = JCra.find(user.id, year, month);
-		final List<JDay> jDays = JDay.find(cra.id, year, month, true);
+	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
+	public static Result fetch(final String username, final Integer year, final Integer month) {
+		final JUser user = JUser.idByUsername(username);
+		JCra cra = JCra.find(user.id, year, month);
+		final List<JDay> jDays = Lists.newArrayList();
 		final List<ObjectId> missionsIds = Lists.newArrayList();
+
+		if (cra == null) {
+			cra = new JCra(year, month);
+		}
+		jDays.addAll(JDay.find(cra.id, year, month, true));
 		for (JDay jDay : jDays) {
 			missionsIds.addAll(jDay.missionIds());
 		}
 		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
-
 		return ok(toJson(CraDTO.of(cra, jDays, jMissions)));
 	}
 }

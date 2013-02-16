@@ -1,6 +1,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler)(implicit request: play.api.mvc.Request[Any])
 
-@import layout._
+@import layout.{header, navigation, scripts}
+
 
 <!DOCTYPE html>
 
@@ -11,6 +12,6 @@
 		<div class="container-fluid">
 			<div data-ng-view=""></div>
 		</div>
-		@scripts()
+		@scripts(handler)
 	</body>
 </html>

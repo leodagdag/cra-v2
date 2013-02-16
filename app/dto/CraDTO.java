@@ -36,7 +36,9 @@ public class CraDTO {
 		this.weeks.addAll(WeekDTO.of(jDays,missions, jCra.year, jCra.month));
 	}
 
+
 	public static CraDTO of(final JCra jCra, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions) {
 		return new CraDTO(jCra, jDays, jMissions);
 	}
+
 }

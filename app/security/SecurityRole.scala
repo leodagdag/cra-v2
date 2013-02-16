@@ -12,5 +12,5 @@ case class SecurityRole(code: String) extends Role {
 object SecurityRole {
 	val administrator = "admin"
 	val production = "production"
-	val user = "user"
+	val employee = "employee"
 }

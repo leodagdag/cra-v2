@@ -1,9 +1,10 @@
 angular.module('craLegendDirective', []).
 	directive('craLegend', function() {
+		'use strict';
 		return {
 			restrict: 'EA',
 			replace: false,
-			templateUrl: 'public/views/templates/cra/legend.html',
+			templateUrl: 'public/html/templates/cra/legend.html',
 			link: function(scope, element, attrs) {
 				var isOpen = false,
 					btn = angular.element(element.find('button')),

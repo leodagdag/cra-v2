@@ -22,7 +22,15 @@ public class JCra {
 
 	public String comment;
 
-	public Boolean isValidated;
+	public Boolean isValidated = Boolean.FALSE;
+
+	public JCra() {
+	}
+
+	public JCra(final Integer year, final Integer month) {
+		this.year = year;
+		this.month = month;
+	}
 
 	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
 		return MorphiaPlugin.ds().createQuery(JCra.class)

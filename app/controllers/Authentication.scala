@@ -3,11 +3,11 @@ package controllers
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{text, optional, tuple, nonEmptyText}
-import play.api.libs.json.JsString
+import play.api.libs.json.{Writes, Json, JsString, __}
 import play.api.mvc.{Action, Security, Results}
 import scala.Some
-import security.Auth
-
+import security.{Profile, MyDeadboltHandler, Auth}
+import play.api.libs.functional.syntax._
 
 /**
  * @author f.patin
@@ -32,12 +32,12 @@ object Authentication extends BaseController {
 				loggedIn => {
 					Async {
 						Auth.checkAuthentication((loggedIn._1, loggedIn._2)).map {
-							check =>
+							(check: Option[Auth]) =>
 								check match {
-									case Some(ok) => {
+									case Some(auth) => {
 										loggedIn._3.map(next => Results.Redirect(routes.Application.index() + "#" + next))
 											.getOrElse(Results.Redirect(routes.Application.index()))
-											.withSession(request.session + (Security.username -> loggedIn._1))
+											.withSession(request.session + (Security.username -> auth.username))
 									}
 									case None => Results.Redirect(routes.Authentication.login())
 										.withSession(request.session - Security.username)
@@ -57,5 +57,23 @@ object Authentication extends BaseController {
 	def logout = Action {
 		request =>
 			Results.Redirect(routes.Authentication.login()).withSession(request.session - Security.username)
+	}
+
+	val fromProfile = (
+		(__ \ "username").write[String] and
+			(__ \ "role").write[String]
+		)(unlift(Profile.unapply))
+
+	def profile = Restrictions(everybody, new MyDeadboltHandler()) {
+		Action {
+			 request =>
+				Async {
+					Profile(request.session.get("username").get)
+					.map{
+						(profile: Option[Profile]) => Ok(Json.toJson(profile.get)(fromProfile))}
+					.recover{case e: Throwable => InternalServerError(JsString(s"exception ${e.getMessage}"))}
+				}
+		}
+
 	}
 }

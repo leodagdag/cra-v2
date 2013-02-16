@@ -1,16 +1,14 @@
 package security
 
-
 import be.objectify.deadbolt.core.models.{Subject, Permission}
-import concurrent.Future
-
+import models.User
 import play.libs.Scala
 import reactivemongo.api.QueryBuilder
 import reactivemongo.bson.handlers.DefaultBSONHandlers.{DefaultBSONDocumentWriter, DefaultBSONReaderHandler}
 import reactivemongo.bson.handlers.{BSONWriter, BSONReader}
 import reactivemongo.bson.{BSONInteger, BSONString, BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
-import models.User
+import play.api.libs.json.JsObject
 
 
 /**
@@ -44,7 +42,6 @@ object Auth {
 	}
 
 
-
 	implicit object AuthBSONWriter extends BSONWriter[Auth] {
 		def toBSON(auth: Auth) = {
 			BSONDocument(
@@ -56,9 +53,14 @@ object Auth {
 		}
 	}
 
-	def checkAuthentication(auth: (String, String)): Future[Option[Auth]] = {
+	def checkAuthentication(auth: (String, String)) = {
 		val crit = BSONDocument("username" -> BSONString(auth._1), "password" -> BSONString(auth._2))
-		val projection = BSONDocument("_id" -> BSONInteger(1), "username" -> BSONInteger(1), "password" -> BSONInteger(1), "role" -> BSONInteger(1))
+		val projection = BSONDocument(
+			"_id" -> BSONInteger(1),
+			"username" -> BSONInteger(1),
+			"password" -> BSONInteger(1),
+			"role" -> BSONInteger(1)
+		)
 		val q = QueryBuilder()
 			.query(crit)
 			.projection(projection)
@@ -68,5 +70,36 @@ object Auth {
 	def asSubject(username: String) = {
 		val q: QueryBuilder = QueryBuilder().query(BSONDocument("username" -> new BSONString(username)))
 		db.find[Subject](q).headOption
+	}
+
+}
+
+case class Profile(username: String,
+                   role: String) {
+}
+
+object Profile {
+
+	object ProfileBSONReader extends BSONReader[Profile] {
+		def fromBSON(document: BSONDocument): Profile = {
+			val doc = document.toTraversable
+			Profile(
+				doc.getAs[BSONString]("username").get.value,
+				doc.getAs[BSONString]("role").get.value
+			)
+		}
+	}
+
+	def apply(username: String) = {
+		val criteria = BSONDocument("username" -> BSONString(username))
+		val p = BSONDocument(
+			"username" -> BSONInteger(1),
+			"role" -> BSONInteger(1)
+		)
+		val query = QueryBuilder()
+			.query(criteria)
+			.projection(p)
+		implicit val reader = ProfileBSONReader
+		User.db.find[Profile](query).headOption()
 	}
 }

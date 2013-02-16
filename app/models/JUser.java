@@ -13,7 +13,9 @@ import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.collect.Lists;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import security.JSecurityRole;
+import utils.serializer.ObjectIdSerializer;
 
 import java.util.List;
 
@@ -24,7 +26,7 @@ import java.util.List;
 @Indexes({
 	@Index("username"),
 	@Index("username, password"),
-	@Index("trigramme")
+	@Index("lastName, firstName")
 })
 public class JUser implements Subject {
 
@@ -58,8 +60,8 @@ public class JUser implements Subject {
 		return MorphiaPlugin.ds().createQuery(JUser.class).field(Mapper.ID_KEY).equal(id);
 	}
 
-	private static Query<JUser> queryToFindMe(final String trigramme) {
-		return MorphiaPlugin.ds().createQuery(JUser.class).field("trigramme").equal(trigramme);
+	private static Query<JUser> queryToFindMe(final String username) {
+		return MorphiaPlugin.ds().createQuery(JUser.class).field("username").equal(username);
 	}
 
 	public static JUser findAuthorisedUser(final String username, final String password) {
@@ -79,10 +81,19 @@ public class JUser implements Subject {
 			.get();
 	}
 
-	public static JUser idByTrigramme(final String trigramme) {
-		return queryToFindMe(trigramme)
+	public static JUser idByUsername(final String username) {
+		return queryToFindMe(username)
 			.retrievedFields(true, "id")
 			.disableValidation()
 			.get();
+	}
+
+	public static List<JUser> byRole(final String role) {
+		return MorphiaPlugin.ds().createQuery(JUser.class)
+			.field("role").equal(role)
+			.retrievedFields(true, "username", "firstName", "lastName", "role")
+			.disableValidation()
+			.order("lastName, firstName")
+			.asList();
 	}
 }
