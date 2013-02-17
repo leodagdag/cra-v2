@@ -12,11 +12,14 @@ object JsRouter extends Controller {
 			import routes.javascript._
 			Ok(
 				Routes.javascriptRouter("jsRoutes")(
+					Authentication.profile,
+					Days.delete,
+					Days.deleteHalfDay,
+					Cras.invalidate,
+					Cras.validate,
+
 					JCras.fetch,
-					JCras.validate,
-					JCras.invalidate,
-					JUsers.employees,
-					Authentication.profile
+					JUsers.employees
 				)
 			).as("text/javascript")
 	}

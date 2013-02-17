@@ -3,14 +3,14 @@ angular.module('momentOfDayFilter', [])
 		'use strict';
 		return function(momentDay) {
 			switch(momentDay) {
-				case 'DAY':
+				case 'day':
 					return 'journée';
-				case 'MORNING':
+				case 'morning':
 					return 'matin';
-				case 'AFTERNOON':
+				case 'afternoon':
 					return 'après-midi';
 				default:
-					return "j'sais pas";
+					return "j'sais pas ;)";
 			}
 		}
 	});

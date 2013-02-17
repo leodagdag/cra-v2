@@ -14,14 +14,16 @@ GET     /profile                        controllers.Authentication.profile()
 
 # Day
 # ~~~~
-GET     /cra/:username/:year/:month/:day   controllers.Days.fetch(username: String, year: Int, month: Int, day: Int)
+DELETE  /cra/:id/day/:date              controllers.Days.delete(id: String, date: Long)
+DELETE  /cra/:id/day/:date/:momentOfDay controllers.Days.deleteHalfDay(id: String, date: Long, momentOfDay:String)
 
 # Cra
 # ~~~~
-GET     /cra/:username/:year/:month    controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
-POST    /cra/:username/:year/:month/validate    controllers.JCras.validate(username: String, year: java.lang.Integer, month: java.lang.Integer)
-POST    /cra/:username/:year/:month/invalidate    controllers.JCras.invalidate(username: String, year: java.lang.Integer, month: java.lang.Integer)
-#
+GET     /cra/:username/:year/:month             controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
+POST    /cra/:id/validate                       controllers.Cras.validate(id: String)
+POST    /cra/:id/invalidate                     controllers.Cras.invalidate(id: String)
+# User
+# ~~~~
 GET     /users/employees               controllers.JUsers.employees()
 # HtmlPage
 # ~~~~

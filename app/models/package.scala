@@ -36,7 +36,7 @@ package object models {
 		DateTime.parse(date, dtf)
 	}
 
-	implicit object BSONObjectIDReader extends BSONReader[BSONObjectID] {
+	object BSONObjectIDReader extends BSONReader[BSONObjectID] {
 		def fromBSON(document: BSONDocument): BSONObjectID = {
 			val doc = document.toTraversable
 			BSONObjectID(

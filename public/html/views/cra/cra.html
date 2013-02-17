@@ -1,7 +1,7 @@
 <div class="calendar" data-ng-init="init()">
 	<div class="row-fluid toolbar" data-cra-toolbar data-ng-init="initToolbar()">
 	</div>
-	<div class="row-fluid" data-ng-controller="CraMonthCtrl">
+	<div class="row-fluid">
 		<div class="span12">
 			<h5>{{cra.month | monthOfYear | capitalize}} {{cra.year}}</h5>
 			<table class="table table-condensed month">
@@ -20,12 +20,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr data-ng-repeat="week in cra.weeks">
+					<tr data-ng-repeat="week in cra.weeks" data-ng-init="weekIndex = $index">
 						<th>
 							<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture">&nbsp;{{week.number}}
 						</th>
 						<td data-ng-repeat="day in week.days">
-							<table class="day" data-ng-class="{pastOrFuture : day.inPastOrFuture}">
+							<table class="day" data-ng-class="{pastOrFuture : day.inPastOrFuture}" data-ng-href="">
 								<tbody>
 									<tr class="head" data-ng-class="{saturday: day.isSaturday, sunday: day.isSunday}">
 										<td>
@@ -33,21 +33,20 @@
 											<span>{{day.date | dayOfMonth}}</span>
 											<i class="icon-comment" data-ng-show="day.comment"></i>
 											<i class="icon-comment-alt" data-ng-show="!day.comment"></i>
-											<i class="icon-trash pull-right" data-ng-show="day.morning || day.afternoon"></i>
-
+											<i class="icon-trash pull-right" data-ng-show="day.morning || day.afternoon" data-ng-click="deleteDay(weekIndex, day.date, $index)"></i>
 										</td>
 									</tr>
 									<tr>
 										<td class="halfday" data-ng-class="day.morning.missionType">
 											{{day.morning.label}}
-											<i class="icon-trash pull-right" data-ng-show="day.morning"></i>
+											<i class="icon-trash pull-right" data-ng-show="day.morning" data-ng-click="deleteHalfDay(weekIndex, day.date, $index,'morning')"></i>
 											<span data-ng-show="!day.morning">&nbsp;</span>
 										</td>
 									</tr>
 									<tr>
 										<td class="halfday" data-ng-class="day.afternoon.missionType">
 											{{day.afternoon.label}}
-											<i class="icon-trash pull-right" data-ng-show="day.afternoon"></i>
+											<i class="icon-trash pull-right" data-ng-show="day.afternoon" data-ng-click="deleteHalfDay(weekIndex, day.date, $index,'afternoon')"></i>
 											<span data-ng-show="!day.afternoon">&nbsp;</span>
 										</td>
 									</tr>

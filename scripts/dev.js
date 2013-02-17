@@ -23,9 +23,9 @@ db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vent
 db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday' });
 db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not-paid' });
 var mission_customer = db.Mission.findOne({customerId: customer1._id});
-var pre_sale = db.Mission.findOne({customerId: customer1._id});
-var holiday = db.Mission.findOne({customerId: customer1._id});
-var part_time = db.Mission.findOne({customerId: customer1._id});
+var pre_sale = db.Mission.findOne({customerId: genesis._id, missionType: 'pre-sale' });
+var holiday = db.Mission.findOne({customerId: genesis._id, missionType: 'holiday'});
+var part_time = db.Mission.findOne({customerId: genesis._id, missionType: 'not-paid' });
 
 /*
  * User
@@ -57,3 +57,25 @@ db.Day.insert({craId: cra._id, _date: new Date(cra.year, cra.month - 1, NumberIn
 	comment: 'Commentaire day ...'
 });
 
+db.Day.insert({craId: cra._id, _date: new Date(cra.year, cra.month - 1, NumberInt(5)),
+	year: NumberInt(cra.year),
+	month: NumberInt(cra.month),
+	morning: {
+		missionId: pre_sale._id
+	},
+	afternoon: {
+		missionId: pre_sale._id
+	},
+	comment: 'Commentaire day ...'
+});
+db.Day.insert({craId: cra._id, _date: new Date(cra.year, cra.month - 1, NumberInt(13)),
+	year: NumberInt(cra.year),
+	month: NumberInt(cra.month),
+	morning: {
+		missionId: pre_sale._id
+	},
+	afternoon: {
+		missionId: pre_sale._id
+	},
+	comment: 'Commentaire day ...'
+});

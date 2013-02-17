@@ -65,6 +65,10 @@ app.config(['$routeProvider',
 				templateUrl: "public/html/views/cra/cra.html",
 				controller: 'CraCtrl'
 			})
+			.when("/cra/:username/:year/:month/:days", {
+				templateUrl: "public/html/views/cra/day.html",
+				controller: 'DayCtrl'
+			})
 			.when("/absence", {
 				templateUrl: "public/html/views/absence.html",
 				controller: 'AbsenceCtrl'

@@ -14,18 +14,19 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			'label': _.str.capitalize(moment.months[$routeParams.month || (moment().month())])
 		};
 
+		$scope.criterias = {
+			'employees': [],
+			'years': YearsConst,
+			'months': MonthsConst,
+			'showEmployees': false,
+			'selected': {
+				'employee': initialEmployee,
+				'year': initialYear,
+				'month': initialMonth
+			}
+		};
+
 		$scope.initToolbar = function() {
-			$scope.criterias = {
-				'employees': [],
-				'years': YearsConst,
-				'months': MonthsConst,
-				'showEmployees': false,
-				'selected': {
-					'employee': initialEmployee,
-					'year': initialYear,
-					'month': initialMonth
-				}
-			};
 			if($rootScope.profile.role !== $rootScope.Roles.EMPLOYEE) {
 				$scope.criterias.showEmployees = true;
 				var route = jsRoutes.controllers.JUsers.employees();
@@ -56,7 +57,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.validate = function() {
-			var route = jsRoutes.controllers.JCras.validate($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
+			var route = jsRoutes.controllers.Cras.validate($scope.cra.id);
 			$http({
 				method: route.method,
 				url: route.url
@@ -67,7 +68,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.invalidate = function() {
-			var route = jsRoutes.controllers.JCras.invalidate($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
+			var route = jsRoutes.controllers.Cras.invalidate($scope.cra.id);
 			$http({
 				method: route.method,
 				url: route.url
@@ -75,6 +76,51 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				.success(function(cra, status, headers, config) {
 					$scope.cra.isValidated = false;
 				});
+		};
+
+		$scope.deleteDay = function(wIndex, date, dIndex) {
+			var route = jsRoutes.controllers.Days.delete($scope.cra.id, date);
+			$http({
+				method: route.method,
+				url: route.url
+			})
+				.success(function(day, status, headers, config) {
+					removeDay($scope.cra.weeks[wIndex].days[dIndex])
+				})
+				.error(function(data, status, headers, config) {
+					$log.error(data, status);
+				});
+		};
+
+		$scope.deleteHalfDay = function(wIndex, date, dIndex, momentOfDay) {
+			var day = $scope.cra.weeks[wIndex].days[dIndex];
+			if(!day.morning || !day.afternoon) {
+				$scope.deleteDay(wIndex, date, dIndex);
+			} else {
+				var route = jsRoutes.controllers.Days.deleteHalfDay($scope.cra.id, date, momentOfDay);
+				$http({
+					method: route.method,
+					url: route.url
+				})
+					.success(function(halfDay, status, headers, config) {
+						var mOfD = momentOfDay.toLowerCase();
+						removeHalfDay(day, mOfD);
+					})
+					.error(function(data, status, headers, config) {
+						$log.error(data, status);
+					});
+			}
+		};
+
+		var removeHalfDay = function(day, mOfD) {
+			day[mOfD] = null;
+		};
+
+		var removeDay = function(day) {
+			day.id = null;
+			day.comment = null;
+			day.morning = null;
+			day.afternoon = null;
 		};
 
 		var loadCra = function(username, year, month) {
@@ -89,6 +135,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				});
 		};
 
-	}]);
+	}])
+;
 
 

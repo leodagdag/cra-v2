@@ -42,18 +42,4 @@ public class JCras extends Controller {
 		return ok(toJson(CraDTO.of(cra, jDays, jMissions)));
 	}
 
-	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
-	public static Result validate(final String username, final Integer year, final Integer month) {
-		final ObjectId userId = JUser.idByUsername(username);
-		JCra.validate(userId, year, month);
-		return ok(toJson("Cra validated !"));
-	}
-
-	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
-	public static Result invalidate(final String username, final Integer year, final Integer month) {
-		final ObjectId userId = JUser.idByUsername(username);
-		JCra.invalidate(userId, year, month);
-		return ok(toJson("Cra validated !"));
-	}
-
 }

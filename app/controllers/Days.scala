@@ -2,9 +2,10 @@ package controllers
 
 import models.Day
 import play.api.Logger
-import play.api.libs.json.{JsObject, Json, JsString}
+import play.api.libs.json.{ Json, JsString}
 import play.api.mvc.Action
 import security.MyDeadboltHandler
+import reactivemongo.core.commands.LastError
 
 
 /**
@@ -12,29 +13,43 @@ import security.MyDeadboltHandler
  */
 object Days extends BaseController {
 
-	def create = Restrictions(everybody, new MyDeadboltHandler()) {
-		Action(parse.json) {
-			request =>
-				Ok("it works !")
-		}
-	}
-
-	def fetch(username: String, year: Int, month: Int, day: Int) = Restrictions(everybody, new MyDeadboltHandler()) {
+	def delete(craId: String, date: Long) = Restrictions(everybody, new MyDeadboltHandler()) {
 		Action {
-			request =>
+			implicit request =>
 				Async {
-					Day.fetch("51199fa58ba867c9874680f2", 2013, 3, 1)
-						.map {
-						(day: Option[JsObject]) =>
-							Ok(Json.toJson(day))
-					}
-						.recover {
+					Day.delete(craId, date).map {
+						(lastError: LastError) =>
+							if(lastError.ok){
+								Ok("Journée supprimée")
+							} else {
+								InternalServerError(Json.toJson(lastError.errMsg))
+							}
+					}.recover {
 						case e =>
-							Logger.error("authenticate", e)
+							Logger.error("delete", e)
 							InternalServerError(JsString(s"exception ${e.getMessage}"))
 					}
 				}
 		}
 	}
 
+	def deleteHalfDay(craId: String, date: Long, momentOfDay: String) = Restrictions(everybody, new MyDeadboltHandler()) {
+		Action {
+			implicit request =>
+				Async {
+					Day.delete(craId, date, momentOfDay).map {
+						(lastError: LastError) =>
+							if(lastError.ok){
+								Ok("Demi-journée supprimée")
+							} else {
+								InternalServerError(Json.toJson(lastError.errMsg))
+							}
+					}.recover {
+						case e =>
+							Logger.error("deleteHalfDay", e)
+							InternalServerError(JsString(s"exception ${e.getMessage}"))
+					}
+				}
+		}
+	}
 }
