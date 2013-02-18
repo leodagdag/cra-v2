@@ -1,8 +1,54 @@
 <div class="row-fluid" data-ng-controller="SpecialDayCtrl">
-	<h5>Special</h5>
-	<div class="span12">
-		<form>
-
+	<div class="span5 offset2">
+		<form class="well well-small" data-ng-submit="add(form)">
+			<table class="table table-condensed middle-vertical-align" id="newPeriod">
+				<thead>
+					<tr>
+						<th>Client</th>
+						<th colspan="2">Quand</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td rowspan="2">
+							<select data-ng-model="form.missionId" required="required">
+								<option data-ng-repeat="am in affectedMissions" value="{{am.id}}">{{am.code}}</option>
+							</select>
+						</td>
+						<td>
+							<label class="radio inline">
+								<input type="radio" name="periodType" data-ng-model="form.periodType" value="isMorning" required="required">Matin
+							</label>
+						</td>
+						<td>
+							<label class="radio inline">
+								<input type="radio" name="periodType" data-ng-model="form.periodType" value="isAfternoon" required="required">Après-midi
+							</label>
+						</td>
+						<td rowspan="2">
+							<button type="submit" class="btn btn-small btn-primary"><i class="icon-plus"></i></button>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div class="inline">
+								<input type="radio" name="periodType" data-ng-model="form.periodType" value="isSpecial" required="required">
+								<input type="time" class="input-mini timeInput" data-ng-model="form.startTime" pattern="([01]\d|2[0-3]):([0-5]\d)" title="format HH:mm">
+								<input type="time" class="input-mini timeInput" data-ng-model="form.endTime" pattern="([01]\d|2[0-3]):([0-5]\d)" title="format HH:mm">
+							</div>
+						</td>
+					</tr>
+					<tr id="overlapPeriodLine" class="hide">
+						<td colspan="5">
+                            <span class="label label-important" id="overlapPeriod">
+                                <span id="overlapPeriodMsg"></span>
+                                <i class="icon-remove" id="closeOverlapPeriod"></i>
+                            </span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</form>
 	</div>
 </div>

@@ -1,19 +1,30 @@
 <div class="row-fluid" data-ng-controller="NormalDayCtrl">
 	<div class="span4 offset2">
-		<form class="form-horizontal well">
+		<form class="form-horizontal well" data-ng-submit="localSave()">
 			<fieldset>
 				<div class="control-group">
 					<label class="control-label" for="morning">Matin</label>
 
 					<div class="controls">
-						<select id="morning"></select>
+						<select id="morning" data-ng-model="localDay.morning.missionId">
+							<option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == localDay.morning.missionId">{{am.code}}</option>
+						</select>
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label" for="afternoon">Après-midi</label>
 
 					<div class="controls">
-						<select id="afternoon"></select>
+						<select id="afternoon" data-ng-model="localDay.afternoon.missionId">
+							<option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == localDay.afternoon.missionId">{{am.code}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="comment">Commentaire</label>
+
+					<div class="controls">
+						<textarea id="comment" rows="3" data-ng-model="localDay.comment"></textarea>
 					</div>
 				</div>
 				<div class="form-actions">
