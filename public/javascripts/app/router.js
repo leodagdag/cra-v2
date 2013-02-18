@@ -15,7 +15,7 @@ app.config(['$routeProvider',
 				controller: 'CraCtrl',
 				resolve:{'profile' : 'Profile' }
 			})
-			.when("/day/:username/:id/:days", {
+			.when("/day/:username/:id/:year/:month/:days", {
 				templateUrl: "public/html/views/cra/day.html",
 				controller: 'DayCtrl',
 				resolve:{'profile' : 'Profile'}

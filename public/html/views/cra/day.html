@@ -1,13 +1,14 @@
-<div data-ng-init="init()">
+<div>
 	<div class="row-fluid">
 		<div class="span4 offset2">
 			<h5>{{title}}</h5>
+			<p>{{$scope}}</p>
 		</div>
 	</div>
 	<div class="row-fluid">
 
 		<div class="span4 offset2">
-			<ul class="nav nav-pills">
+			<ul class="nav nav-pills" data-ng-init="initTabs()">
 				<li data-ng-class="{active: activeSubSection.name == 'normal'}">
 					<a data-ng-click="activateSubSection('normal')">Normale</a>
 				</li>

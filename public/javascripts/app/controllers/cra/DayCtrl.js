@@ -13,36 +13,41 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 			$scope.activeSubSection.page = $scope.subSections[name];
 		};
 
-		$scope.ctx = {};
-		$scope.ctx.username = $routeParams.username;
-		$scope.init = function() {
-			$log.log($routeParams);
-			$scope.ctx.craId = $routeParams.id;
-			$scope.ctx.dates = _.map($routeParams.days.split(','), function(i) {
-				return Number(i);
-			});
-			$scope.ctx.date = $scope.ctx.dates[0];
-			var days = _.map($scope.ctx.dates, function(date) {
+		$scope.username = $routeParams.username;
+		$scope.craId = $routeParams.id;
+		$scope.year = $routeParams.year;
+		$scope.month = $routeParams.month;
+		$scope.dates = _($routeParams.days.split(','))
+			.map(function(i) {
+				return moment(Number(i) + '/' + ($routeParams.month) + '/' + $routeParams.year, 'DD/MM/YYYY').valueOf();
+			})
+			.valueOf();
+		$scope.date = $scope.dates[0];
+		$scope.days = _($scope.dates)
+			.map(function(date) {
 				return moment(date).date();
-			});
-			$scope.title = _.str.toSentence(days, ', ', ' et ') + ' ' + _.str.capitalize(moment($scope.ctx.date).format('MMMM YYYY'));
+			})
+			.valueOf();
+		$scope.title = _.str.toSentence($scope.days, ', ', ' et ') + ' ' + _.str.capitalize(moment($scope.date).format('MMMM YYYY'));
 
-			var route = jsRoutes.controllers.JDays.fetch($scope.ctx.craId, $scope.ctx.date);
+		$scope.initTabs = function() {
+			$log.log($routeParams);
+			var route = jsRoutes.controllers.JDays.fetch($scope.craId, $scope.date);
 			$http({
 				method: route.method,
 				url: route.url
 			})
 				.success(function(day, status, headers, config) {
-					$scope.ctx.day = day;
+					$scope.day = day;
 					$scope.activateSubSection((day.isSpecial) ? 'special' : 'normal');
-					route = jsRoutes.controllers.JUsers.affectedMissions($scope.ctx.username, _.head($scope.ctx.dates), $scope.ctx.dates[$scope.ctx.dates.length - 1]);
+					route = jsRoutes.controllers.JUsers.affectedMissions($scope.username, _.head($scope.dates), $scope.dates[$scope.dates.length - 1]);
 					$http({
 						method: route.method,
 						url: route.url
 					})
 						.success(function(affectedMissions, status, headers, config) {
 							$log.log('affectedMissions', affectedMissions);
-							$scope.ctx.affectedMissions = affectedMissions;
+							$scope.affectedMissions = affectedMissions;
 						})
 						.error(function(data, status, headers, config) {
 							$log.error(data, status);
@@ -51,8 +56,8 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 				.error(function(data, status, headers, config) {
 					$log.error(data, status);
 				});
-			$log.log('ctx', $scope.ctx);
 		};
+
 	}]);
 
 

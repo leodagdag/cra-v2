@@ -155,8 +155,16 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 
 		$scope.openDay = function() {
 			$log.log('openDay');
-
-			$location.path('/day/' + $scope.criterias.selected.employee + '/' + $scope.cra.id + '/' + _.sortBy($scope.selectedDays).join(','))
+			var days = _($scope.selectedDays)
+				.map(function(d) {
+					return moment(d).date();
+				})
+				.sortBy()
+				.compact()
+				.join(',')
+				.valueOf();
+			// "/day/:username/:id/:year/:month/:days"
+			$location.path(_.str.sprintf("/day/%s/%s/%s/%s/%s", $scope.criterias.selected.employee, $scope.cra.id, $scope.cra.year, $scope.cra.month, days))
 		};
 
 		var removeHalfDay = function(day, mOfD) {
