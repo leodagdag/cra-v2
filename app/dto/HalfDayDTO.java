@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 public class HalfDayDTO {
 
 	public String label;
+	public String missionId;
 	public String missionType;
 	public Boolean isSpecial = Boolean.FALSE;
 
@@ -19,6 +20,7 @@ public class HalfDayDTO {
 
 	public HalfDayDTO(final JHalfDay jHalfDay, final JMission jMission) {
 		this.label = jMission.code;
+		this.missionId = jHalfDay.missionId.toString();
 		this.missionType = jMission.missionType;
 		this.isSpecial = jHalfDay.isSpecial();
 	}

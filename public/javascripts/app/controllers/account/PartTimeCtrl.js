@@ -2,9 +2,9 @@ app.controller('PartTimeNewCtrl', ['$scope', '$http', '$log', '$location',
 	function PartTimeNewCtrl($scope, $http, $log, $location) {
 		$scope.emptyDayOfWeek = false;
 		$scope.dayMoments = [
-			{moment: "DAY", label: "Journée"},
-			{moment: "MORNING", label: "Matin"},
-			{moment: "AFTERNOON", label: "Après-midi"}
+			{moment: "day", label: "Journée"},
+			{moment: "morning", label: "Matin"},
+			{moment: "afternoon", label: "Après-midi"}
 		];
 
 		$scope.newPartTime = {

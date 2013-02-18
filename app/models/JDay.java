@@ -150,4 +150,10 @@ public class JDay {
 	}
 
 
+	public static JDay find(final ObjectId craId, final DateTime dts) {
+		return MorphiaPlugin.ds().createQuery(JDay.class)
+			.field("craId").equal(craId)
+			.field("_date").equal(dts.toDate())
+			.get();
+	}
 }

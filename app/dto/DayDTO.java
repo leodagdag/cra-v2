@@ -28,6 +28,7 @@ public class DayDTO {
 	public Boolean isSunday;
 	public Boolean isDayOff;
 	public Boolean inPastOrFuture;
+	public Boolean isSpecial;
 
 	public DayDTO() {
 	}
@@ -35,22 +36,32 @@ public class DayDTO {
 	public DayDTO(final JDay jDay, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
 		this.id = jDay.id;
 		this.date = jDay.date;
-		this.morning = HalfDayDTO.of(jDay.morning,jMissions);
-		this.afternoon = HalfDayDTO.of(jDay.afternoon,jMissions);
+		this.morning = HalfDayDTO.of(jDay.morning, jMissions);
+		this.afternoon = HalfDayDTO.of(jDay.afternoon, jMissions);
 		this.comment = jDay.comment;
 		this.isSaturday = jDay.isSaturday();
 		this.isSunday = jDay.isSunday();
 		this.isDayOff = jDay.isDayOff();
 		this.inPastOrFuture = jDay.inPastOrFuture(year, month);
+		this.isSpecial = isSpecial(jDay);
 	}
+
 
 	public static List<DayDTO> of(final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
 		return Lists.newArrayList(Collections2.transform(jDays, new Function<JDay, DayDTO>() {
 			@Nullable
 			@Override
 			public DayDTO apply(@Nullable final JDay jDay) {
-				return new DayDTO(jDay,jMissions, year, month);
+				return new DayDTO(jDay, jMissions, year, month);
 			}
 		}));
+	}
+
+	public static DayDTO of(final JDay day, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
+		return new DayDTO(day, jMissions, year, month);
+	}
+
+	private Boolean isSpecial(final JDay day){
+		return (day.morning != null && day.morning.isSpecial()) || (day.afternoon != null && day.afternoon.isSpecial());
 	}
 }

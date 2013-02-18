@@ -16,6 +16,7 @@ GET     /profile                        controllers.Authentication.profile()
 # ~~~~
 DELETE  /cra/:id/day/:date              controllers.Days.delete(id: String, date: Long)
 DELETE  /cra/:id/day/:date/:momentOfDay controllers.Days.deleteHalfDay(id: String, date: Long, momentOfDay:String)
+GET     /day/:id/day/:date              controllers.JDays.fetch(id: String, date: Long)
 
 # Cra
 # ~~~~
@@ -24,11 +25,13 @@ POST    /cra/:id/validate                       controllers.Cras.validate(id: St
 POST    /cra/:id/invalidate                     controllers.Cras.invalidate(id: String)
 # User
 # ~~~~
-GET     /users/employees               controllers.JUsers.employees()
+GET     /users/:username/affectedMissions/:startDate/:endDate   controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)
+GET     /users/employees                                        controllers.JUsers.employees()
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser             controllers.HtmlPages.unsupportedBrowser
-
+GET     /template/tabs/tabs.html        controllers.HtmlPages.paneTemplate
+GET     /template/tabs/pane.html        controllers.HtmlPages.tabsTemplate
 # Javascript routing
 # ~~~~
 GET     /assets/javascripts/routes      controllers.JsRouter.javascriptRoutes()

@@ -1,8 +1,8 @@
-app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'YearsConst', 'MonthsConst',
-	function CraCtrl($rootScope, $scope, $http, $log, $location, $routeParams, YearsConst, MonthsConst) {
+app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'YearsConst', 'MonthsConst', 'RolesConst', 'profile',
+	function CraCtrl($rootScope, $scope, $http, $log, $location, $routeParams, YearsConst, MonthsConst, RolesConst, profile) {
 
 		/* Toolbar */
-		var initialEmployee = $routeParams.username || ($rootScope.profile.role === $rootScope.Roles.EMPLOYEE ? $rootScope.profile.username : $scope.employee);
+		var initialUsername = $routeParams.username || (profile.data.role === RolesConst.EMPLOYEE ? profile.data.username : $scope.employee);
 		var initialYear = {
 			'id': _.find(YearsConst,function(y) {
 				return y.label === ($routeParams.year || moment().year()).toString()
@@ -20,14 +20,20 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			'months': MonthsConst,
 			'showEmployees': false,
 			'selected': {
-				'employee': initialEmployee,
+				'employee': initialUsername,
 				'year': initialYear,
 				'month': initialMonth
 			}
 		};
 
+		$scope.init = function() {
+			if(profile.data.role === RolesConst.EMPLOYEE) {
+				loadCra(initialUsername, initialYear.label, initialMonth.id);
+			}
+		};
+
 		$scope.initToolbar = function() {
-			if($rootScope.profile.role !== $rootScope.Roles.EMPLOYEE) {
+			if(profile.data.role !== RolesConst.EMPLOYEE) {
 				$scope.criterias.showEmployees = true;
 				var route = jsRoutes.controllers.JUsers.employees();
 				$http({
@@ -44,16 +50,51 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 
 		/* Cra */
 		$scope.cra = {};
+		$scope.selectedWeeks = [];
+		$scope.selectedDays = [];
 
 		$scope.search = function() {
 			$log.log("search()", $scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 			loadCra($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 		};
 
-		$scope.init = function() {
-			if($rootScope.profile.role === $rootScope.Roles.EMPLOYEE) {
-				loadCra(initialEmployee, initialYear.label, initialMonth.id);
+
+		$scope.showCheckDay = function(day) {
+			return !day.inPastOrFuture;
+		};
+
+		$scope.checkDay = function(date) {
+			if(!_.contains($scope.selectedDays, date)) {
+				$scope.selectedDays.push(date);
 			}
+		};
+
+		$scope.toggleDay = function(date) {
+			if(_.contains($scope.selectedDays, date)) {
+				$scope.selectedDays = _.reject($scope.selectedDays, function(d) {
+					return date === d;
+				});
+			} else {
+				$scope.selectedDays.push(date);
+			}
+		};
+
+
+		$scope.toggleWeek = function(wIndex) {
+			var isSelected = _.contains($scope.selectedWeeks, wIndex);
+			if(isSelected) {
+				$scope.selectedWeeks = _.reject($scope.selectedWeeks, function(w) {
+					return wIndex === w;
+				});
+			} else {
+				$scope.selectedWeeks.push(wIndex);
+			}
+			$scope.selectedDays = _.compact(_.flatten(_.map($scope.selectedWeeks, function(wIdx) {
+				return _.map($scope.cra.weeks[wIdx].days, function(d) {
+					return (d.inPastOrFuture || d.isDayOff || d.isSaturday || d.isSunday || d.morning || d.afternoon) ? null : d.date;
+				});
+			})));
+
 		};
 
 		$scope.validate = function() {
@@ -112,6 +153,12 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			}
 		};
 
+		$scope.openDay = function() {
+			$log.log('openDay');
+
+			$location.path('/day/' + $scope.criterias.selected.employee + '/' + $scope.cra.id + '/' + _.sortBy($scope.selectedDays).join(','))
+		};
+
 		var removeHalfDay = function(day, mOfD) {
 			day[mOfD] = null;
 		};
@@ -132,6 +179,8 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				.success(function(cra, status, headers, config) {
 					$log.log('cra', cra);
 					$scope.cra = cra;
+					$scope.selectedWeeks = [];
+					$scope.selectedDays = [];
 				});
 		};
 

@@ -21,7 +21,7 @@ case class Mission(id: Option[BSONObjectID],
                    description: String,
                    missionType: String,
                    allowanceType: String,
-                   startDate: Option[DateTime],
+                   startDate: DateTime,
                    endDate: Option[DateTime]) {
 
 }

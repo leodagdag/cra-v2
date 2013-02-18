@@ -19,7 +19,10 @@ object JsRouter extends Controller {
 					Cras.validate,
 
 					JCras.fetch,
-					JUsers.employees
+					JDays.fetch,
+					JUsers.employees,
+					JUsers.affectedMissions
+
 				)
 			).as("text/javascript")
 	}

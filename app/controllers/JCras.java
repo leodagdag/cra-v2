@@ -38,7 +38,7 @@ public class JCras extends Controller {
 		for (JDay jDay : jDays) {
 			missionsIds.addAll(jDay.missionIds());
 		}
-		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
+		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds, false);
 		return ok(toJson(CraDTO.of(cra, jDays, jMissions)));
 	}
 

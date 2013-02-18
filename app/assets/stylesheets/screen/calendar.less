@@ -21,7 +21,7 @@
 	}
 	.month {
 		cursor: default;
-		.day {
+		.day { // table
 			&.pastOrFuture {
 				opacity: 0.5;
 				.icon-comment, .icon-comment-alt {
@@ -34,26 +34,24 @@
 			border-bottom: 1px solid #808080;
 			width: 100%;
 			margin: 0;
-			.head {
+			.head { // td
 				margin: 2px;
 				background-color: rgb(230, 230, 230);
+				text-align: center;
 				&.saturday {
 					.backgroundColorMixin(rgb(230,230,230), fade(gray, 50%));
 				}
 				&.sunday {
 					.backgroundColorMixin(gray, fade(gray, 50%));
 				}
-				.visible-desktop {
-					display: block !important
-				}
-				td {
-					text-align: center;
+				&.dayOff {
+					.backgroundColorMixin(fade(red, 50%), red);
 				}
 			}
 			.halfday {
 				margin: 2px;
 				background-color: #f5f5f5;
-				text-align: center;
+				text-align: right;
 				&.customer {
 					background-color: @customerBC;
 					color: #ffffff;

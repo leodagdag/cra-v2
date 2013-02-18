@@ -1,5 +1,5 @@
-angular.module('craLegendDirective', []).
-	directive('craLegend', function() {
+angular.module('craLegendDirective', [])
+	.directive('craLegend', function() {
 		'use strict';
 		return {
 			restrict: 'EA',
@@ -8,7 +8,7 @@ angular.module('craLegendDirective', []).
 			link: function(scope, element, attrs) {
 				var isOpen = false,
 					btn = angular.element(element.find('button')),
-					text= angular.element(element.find('#text'));
+					text = angular.element(element.find('#text'));
 
 				btn.bind('click', toggle);
 
@@ -18,8 +18,8 @@ angular.module('craLegendDirective', []).
 
 				function toggle() {
 					isOpen = !isOpen;
-					text.removeClass(isOpen ?  'hide' : 'show');
-					text.addClass(isOpen ?  'show' : 'hide')
+					text.removeClass(isOpen ? 'hide' : 'show');
+					text.addClass(isOpen ? 'show' : 'hide')
 				}
 			}
 		};

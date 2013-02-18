@@ -1,3 +1,25 @@
-<div class="day" data-ng-init="init()">
+<div data-ng-init="init()">
+	<div class="row-fluid">
+		<div class="span4 offset2">
+			<h5>{{title}}</h5>
+		</div>
+	</div>
+	<div class="row-fluid">
 
+		<div class="span4 offset2">
+			<ul class="nav nav-pills">
+				<li data-ng-class="{active: activeSubSection.name == 'normal'}">
+					<a data-ng-click="activateSubSection('normal')">Normale</a>
+				</li>
+				<li data-ng-class="{active: activeSubSection.name == 'special'}">
+					<a data-ng-click="activateSubSection('special')">Heure supplémentaire</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span12">
+			<div data-ng-include src="activeSubSection.page"></div>
+		</div>
+	</div>
 </div>

@@ -18,11 +18,13 @@ var customer1 = db.Customer.findOne({code: 'CODE_C_1'});
 /*
  * Mission
  */
-db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', missionType: 'customer'});
-db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre-sale'});
-db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday' });
-db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not-paid' });
-var mission_customer = db.Mission.findOne({customerId: customer1._id});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', missionType: 'customer', _startDate: new Date(2013, 0, 1), _endDate: new Date(2013, 4, 31)});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', missionType: 'customer', _startDate: new Date(2013, 1, 25), _endDate: new Date(2013, 4, 31)});
+db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre-sale', _startDate: new Date(2013, 0, 1)});
+db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', _startDate: new Date(2013, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not-paid', _startDate: new Date(2013, 0, 1)});
+var mission_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1'});
+var mission_customer2 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2'});
 var pre_sale = db.Mission.findOne({customerId: genesis._id, missionType: 'pre-sale' });
 var holiday = db.Mission.findOne({customerId: genesis._id, missionType: 'holiday'});
 var part_time = db.Mission.findOne({customerId: genesis._id, missionType: 'not-paid' });
@@ -31,7 +33,13 @@ var part_time = db.Mission.findOne({customerId: genesis._id, missionType: 'not-p
  * User
  */
 db.User.insert({username: 'lisa', password: 'lisa', role: 'admin', firstName: 'lisa', lastName: 'Simpson', trigramme: 'LSN', email: 'lisa@simpson.com'});
-db.User.insert({username: 'bart', password: 'bart', role: 'employee', firstName: 'bart', lastName: 'Simpson', trigramme: 'BSN', email: 'bart@simpson.com'});
+db.User.insert({username: 'bart', password: 'bart', role: 'employee', firstName: 'bart', lastName: 'Simpson', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission_customer1._startDate, _endDate: mission_customer1._endDate, missionId: mission_customer1._id},
+		{_startDate: mission_customer2._startDate, _endDate: mission_customer2._endDate, missionId: mission_customer2._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
 db.User.insert({username: 'homer', password: 'homer', role: 'employee', firstName: 'homer', lastName: 'Simpson', trigramme: 'HSN', email: 'homer@simpson.com'});
 db.User.insert({username: 'marge', password: 'marge', role: 'production', firstName: 'marge', lastName: 'Simpson', trigramme: 'MSN', email: 'marge@simpson.com'});
 var bart = db.User.findOne({username: 'bart'});
@@ -49,10 +57,10 @@ db.Day.insert({craId: cra._id, _date: new Date(cra.year, cra.month - 1, NumberIn
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
 	morning: {
-		missionId: mission_customer._id
+		missionId: mission_customer1._id
 	},
 	afternoon: {
-		missionId: mission_customer._id
+		missionId: mission_customer1._id
 	},
 	comment: 'Commentaire day ...'
 });

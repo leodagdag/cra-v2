@@ -24,7 +24,8 @@ angular.module('authServiceProvider', [])
 
 
 var app = angular.module('app', ['ngResource', 'authServiceProvider',
-		'bDatepicker', 'craLegendDirective', 'craToolbarDirective',
+		'ui.bootstrap',
+		'bDatepicker', 'craLegendDirective', 'craToolbarDirective', 'craCheckDayDirective', 'craCheckWeekDirective',
 		'dayOfMonthFilter', 'dayOfWeekFilter', 'momentOfDayFilter', 'monthOfYearFilter', 'capitalizeFilter'])
 	.constant('YearsConst', [
 		{'id': '1', 'label': '2012'},
@@ -45,79 +46,22 @@ var app = angular.module('app', ['ngResource', 'authServiceProvider',
 		{'id': '10', 'label': _.str.capitalize(moment.months[9])},
 		{'id': '11', 'label': _.str.capitalize(moment.months[10])},
 		{'id': '12', 'label': _.str.capitalize(moment.months[11])}
-	]);
-app.config(['$routeProvider',
-	function($routeProvider) {
-		$routeProvider
-			.when("/cra/:username/:year/:month", {
-				templateUrl: "public/html/views/cra/cra.html",
-				controller: 'CraCtrl'
-			})
-			.when("/cra/:username", {
-				templateUrl: "public/html/views/cra/cra.html",
-				controller: 'CraCtrl'
-			})
-			.when("/cra/:year/:month", {
-				templateUrl: "public/html/views/cra/cra.html",
-				controller: 'CraCtrl'
-			})
-			.when("/cra", {
-				templateUrl: "public/html/views/cra/cra.html",
-				controller: 'CraCtrl'
-			})
-			.when("/cra/:username/:year/:month/:days", {
-				templateUrl: "public/html/views/cra/day.html",
-				controller: 'DayCtrl'
-			})
-			.when("/absence", {
-				templateUrl: "public/html/views/absence.html",
-				controller: 'AbsenceCtrl'
-			})
-			.when("/claim", {
-				templateUrl: "public/html/views/claim.html",
-				controller: 'ClaimCtrl'
-			})
-			.when("/remuneration", {
-				templateUrl: "public/html/views/remuneration.html",
-				controller: 'RemunerationCtrl'
-			})
-			.when("/parameter", {
-				templateUrl: "public/html/views/parameter.html",
-				controller: 'ParameterCtrl'
-			})
-			.when("/backoffice", {
-				templateUrl: "public/html/views/back-office.html",
-				controller: 'BackOfficeCtrl'
-			})
-			.when("/my-account", {
-				templateUrl: "public/html/views/my-account/my-account.html",
-				controller: 'MyAccountCtrl'
-			})
-			.when("/my-account/:subSection", {
-				templateUrl: "public/html/views/my-account/my-account.html",
-				controller: 'MyAccountCtrl'
+	])
+	.constant('RolesConst', {
+		'EMPLOYEE': 'employee',
+		'PRODUCTION': 'production',
+		'ADMIN': 'admin'
+	});
+
+app.factory('Profile', ['$http', '$log',
+		function($http, $log) {
+			var route = jsRoutes.controllers.Authentication.profile();
+			return $http({
+				method: route.method,
+				url: route.url
 			});
-	}]);
+		}]);
 
-
-app.run(['$rootScope', '$http', '$log',
-	function($rootScope, $http, $log) {
-		$rootScope.Roles = {
-			'EMPLOYEE': 'employee',
-			'PRODUCTION': 'production',
-			'ADMIN': 'admin'
-		};
-
-		var route = jsRoutes.controllers.Authentication.profile();
-		$http({
-			method: route.method,
-			url: route.url
-		})
-			.success(function(profile, status, headers, config) {
-				$log.log('profile', profile);
-				$rootScope.profile = profile;
-			});
-	}]);
 
 /* based on https://github.com/bleporini/angular-authent */
 app.directive('authenticator', ['$location', '$window',

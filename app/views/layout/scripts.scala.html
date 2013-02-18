@@ -23,8 +23,9 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.2/lang/fr.js"></script>
     @* bootstrap *@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap@extension"></script>
-    @* datepicker https://github.com/eternicode/bootstrap-datepicker *@
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/bootstrap-datepicker-20130124" + extension)"></script>
+    @* datepicker *@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.0.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.0.0/js/locales/bootstrap-datepicker.fr.js"></script>
     @* angularjs *@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular@extension"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular-resource@extension"></script>
@@ -36,9 +37,7 @@
         window.moment || document.write('<script src="@routes.Assets.at("javascripts/vendors/moment-1.7.2" + extension)"><\/script>');
         window.$.fn.collapse || document.write('<script src="@routes.Assets.at("javascripts/vendors/bootstrap-2.3.0" + extension)"><\/script>');
         window.angular || document.write('<script src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/angular" + extension)"><\/script>')
-        window.angular.$resource || document.write('<script src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/angular-resource" + extension)"><\/script>')
     </script>
-
     @* angularjs local *@
     <script type="text/javascript" type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/i18n/angular-locale_fr-fr.js")"></script>
     @* angular-ui/bootstrap *@
@@ -49,6 +48,7 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/genesis.min.js")"></script>
 } else {
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/app.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/router.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/AbsenceCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/BackOfficeCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/ClaimCtrl.js")"></script>
@@ -61,9 +61,11 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/RemunerationCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/services/AccountRes.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/services/ManagerRes.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/bDatepicker.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/cra/legend.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/cra/toolbar.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/bDatepickerDirective.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/cra/legendDirective.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/cra/toolbarDirective.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/cra/checkDayDirective.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/cra/checkWeekDirective.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/filters/dayOfWeekFilter.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/filters/momentOfDayFilter.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/filters/dayOfMonthFilter.js")"></script>

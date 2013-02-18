@@ -8,6 +8,7 @@ import com.github.jmkgreen.morphia.annotations.PostLoad;
 import com.github.jmkgreen.morphia.annotations.PrePersist;
 import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
+import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -80,14 +81,17 @@ public class JMission {
 		}
 	}
 
-	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds) {
+	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds, final Boolean withoutHolidayAndCSS) {
 		if (!CollectionUtils.isEmpty(missionsIds)) {
-			List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
-				.field(Mapper.ID_KEY).in(missionsIds)
+			final Query<JMission> q = MorphiaPlugin.ds().createQuery(JMission.class)
+				.field(Mapper.ID_KEY).in(missionsIds);
+			if (withoutHolidayAndCSS) {
+				q.filter("missionType !=", "holiday");
+			}
+			final List<JMission> missions = q
 				.retrievedFields(true, "code", "missionType")
 				.disableValidation()
 				.asList();
-
 			return Maps.uniqueIndex(missions, new Function<JMission, ObjectId>() {
 				@Nullable
 				@Override
@@ -95,7 +99,7 @@ public class JMission {
 					return mission.id;
 				}
 			});
-		}  else {
+		} else {
 			return new ImmutableMap.Builder<ObjectId, JMission>().build();
 		}
 	}
