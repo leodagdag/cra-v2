@@ -28,7 +28,12 @@ object Global extends GlobalSettings {
 
 	override def onLoadConfig(config: Configuration, path: File, classloader: ClassLoader, mode: Mode.Mode): Configuration = {
 		Logger debug s"LoadConfig [$mode]"
-		lazy val altConfig = Configuration.from(Map("mongodb.db" -> s"${mode.toString.toLowerCase}_${config.getString("mongodb.db").get}"))
+		lazy val altConfig = Configuration.from(
+			Map(
+				"mongodb.db" -> s"${mode.toString.toLowerCase}_${config.getString("mongodb.db").get}",
+				"morphia.db.name" -> s"${mode.toString.toLowerCase}_${config.getString("morphia.db.name").get}"
+			)
+		)
 		mode match {
 			case Mode.Prod => super.onLoadConfig(config, path, classloader, mode)
 			case _ => super.onLoadConfig(config ++ altConfig, path, classloader, mode)
