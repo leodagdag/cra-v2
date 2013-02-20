@@ -17,7 +17,7 @@ GET     /profile                        controllers.Authentication.profile()
 DELETE  /cra/:id/day/:date              controllers.Days.delete(id: String, date: Long)
 DELETE  /cra/:id/day/:date/:momentOfDay controllers.Days.deleteHalfDay(id: String, date: Long, momentOfDay:String)
 GET     /cra/:id/day/:date              controllers.JDays.fetch(id: String, date: Long)
-POST    /cra/                           controllers.JDays.create()
+POST    /days/                           controllers.JDays.create()
 # Cra
 # ~~~~
 GET     /cra/:username/:year/:month             controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)

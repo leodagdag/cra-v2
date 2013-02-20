@@ -89,7 +89,7 @@ public class JUser implements Subject {
 			       .get();
 	}
 
-	public static ObjectId idByUsername(final String username) {
+	public static ObjectId findId(final String username) {
 		return queryToFindMe(username)
 			       .retrievedFields(true, "id")
 			       .disableValidation()

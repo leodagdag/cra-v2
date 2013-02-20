@@ -1,9 +1,12 @@
 package dto;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import models.JHalfDay;
 import models.JMission;
 import org.bson.types.ObjectId;
+
+import java.util.List;
 
 /**
  * @author f.patin
@@ -13,19 +16,25 @@ public class HalfDayDTO {
 	public String label;
 	public String missionId;
 	public String missionType;
+	public List<PeriodDTO> periods = Lists.newArrayList();
 	public Boolean isSpecial = Boolean.FALSE;
 
 	public HalfDayDTO() {
 	}
 
-	public HalfDayDTO(final JHalfDay jHalfDay, final JMission jMission) {
-		this.label = jMission.code;
-		this.missionId = jHalfDay.missionId.toString();
-		this.missionType = jMission.missionType;
-		this.isSpecial = jHalfDay.isSpecial();
+	public HalfDayDTO(final JHalfDay halfDay, final JMission mission) {
+		this.isSpecial = halfDay.isSpecial();
+		if (halfDay.isSpecial()) {
+			this.periods.addAll(PeriodDTO.of(halfDay.periods));
+			this.label = "special";
+		} else {
+			this.label = mission.code;
+			this.missionId = halfDay.missionId.toString();
+			this.missionType = mission.missionType;
+		}
 	}
 
-	public static HalfDayDTO of(final JHalfDay jHalfDay, final ImmutableMap<ObjectId, JMission> jMission) {
-		return (jHalfDay != null) ? new HalfDayDTO(jHalfDay, jMission.get(jHalfDay.missionId)) : null;
+	public static HalfDayDTO of(final JHalfDay halfDay, final ImmutableMap<ObjectId, JMission> mission) {
+		return (halfDay != null) ? new HalfDayDTO(halfDay, mission.get(halfDay.missionId)) : null;
 	}
 }

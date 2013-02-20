@@ -1,24 +1,25 @@
-
 app.config(['$routeProvider',
 	function($routeProvider) {
 		$routeProvider
 			.when("/cra/:username/:year/:month", {
 				templateUrl: "public/html/views/cra/cra.html",
-				controller: 'CraCtrl'
+				controller: 'CraCtrl',
+				resolve: {'profile': 'Profile' }
 			})
 			.when("/cra/:username", {
 				templateUrl: "public/html/views/cra/cra.html",
-				controller: 'CraCtrl'
+				controller: 'CraCtrl',
+				resolve: {'profile': 'Profile' }
 			})
 			.when("/cra", {
 				templateUrl: "public/html/views/cra/cra.html",
 				controller: 'CraCtrl',
-				resolve:{'profile' : 'Profile' }
+				resolve: {'profile': 'Profile' }
 			})
-			.when("/day/:username/:id/:year/:month/:days", {
+			.when("/day/:username/:craId/:year/:month/:days", {
 				templateUrl: "public/html/views/cra/day.html",
 				controller: 'DayCtrl',
-				resolve:{'profile' : 'Profile'}
+				resolve: {'profile': 'Profile'}
 			})
 			.when("/absence", {
 				templateUrl: "public/html/views/absence.html",

@@ -54,13 +54,13 @@ var app = angular.module('app', ['ngResource', 'authServiceProvider',
 	});
 
 app.factory('Profile', ['$http', '$log',
-		function($http, $log) {
-			var route = jsRoutes.controllers.Authentication.profile();
-			return $http({
-				method: route.method,
-				url: route.url
-			});
-		}]);
+	function($http, $log) {
+		var route = jsRoutes.controllers.Authentication.profile();
+		return $http({
+			method: route.method,
+			url: route.url
+		});
+	}]);
 
 
 /* based on https://github.com/bleporini/angular-authent */

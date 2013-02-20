@@ -59,6 +59,16 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 
+		$scope.class = function(halfday) {
+			if(!halfday) {
+				return "";
+			} else if(halfday.missionId) {
+				return halfday.missionType;
+			} else if(halfday.isSpecial) {
+				return 'special';
+			}
+			return "";
+		}
 		$scope.showCheckDay = function(day) {
 			return !day.inPastOrFuture;
 		};
@@ -78,7 +88,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				$scope.selectedDays.push(date);
 			}
 		};
-
 
 		$scope.toggleWeek = function(wIndex) {
 			var isSelected = _.contains($scope.selectedWeeks, wIndex);
@@ -154,7 +163,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.openDay = function() {
-			$log.log('openDay');
 			var days = _($scope.selectedDays)
 				.map(function(d) {
 					return moment(d).date();
@@ -163,7 +171,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				.compact()
 				.join(',')
 				.valueOf();
-			// "/day/:username/:id/:year/:month/:days"
+			// "/day/:username/:craId/:year/:month/:days"
 			$location.path(_.str.sprintf("/day/%s/%s/%s/%s/%s", $scope.criterias.selected.employee, $scope.cra.id, $scope.cra.year, $scope.cra.month, days))
 		};
 
@@ -191,6 +199,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 					$scope.selectedDays = [];
 				});
 		};
+
 
 	}])
 ;

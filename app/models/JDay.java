@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.mongodb.WriteConcern;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
+import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.joda.time.DateTime;
@@ -112,7 +113,7 @@ public class JDay extends Model implements MongoModel {
 			       .get();
 	}
 
-	public static void update(final List<JDay> days) {
+	public static void update(final ObjectId craId, final List<JDay> days) {
 		final List<Date> dates = Lists.newArrayList(Collections2.transform(days, new Function<JDay, Date>() {
 			@Nullable
 			@Override
@@ -122,16 +123,18 @@ public class JDay extends Model implements MongoModel {
 		}));
 		// Extract corresponding days in database
 		final List<JDay> oldDays = MorphiaPlugin.ds().createQuery(JDay.class)
+			                           .field("craId").equal(craId)
 			                           .field("_date").in(dates)
 			                           .asList();
-		// Check holidays and remove them
-		JHoliday.remove(Transformer.extractHolidays(oldDays));
-
-		// delete existing days
-		final List<ObjectId> oldDaysIds = Transformer.extractObjectId(new ArrayList<MongoModel>(oldDays));
-		MorphiaPlugin.ds().delete(MorphiaPlugin.ds().createQuery(JDay.class).field(Mapper.ID_KEY).in(oldDaysIds), WriteConcern.ACKNOWLEDGED);
+		if (CollectionUtils.isNotEmpty(oldDays)) {
+			// Check holidays and remove them
+			JHoliday.remove(Transformer.extractHolidays(oldDays));
+			// delete existing days
+			final List<ObjectId> oldDaysIds = Transformer.extractObjectId(new ArrayList<MongoModel>(oldDays));
+			MorphiaPlugin.ds().delete(MorphiaPlugin.ds().createQuery(JDay.class).field(Mapper.ID_KEY).in(oldDaysIds), WriteConcern.ACKNOWLEDGED);
+		}
 		// create new days
-		MorphiaPlugin.ds().save(days, WriteConcern.ACKNOWLEDGED);
+		MorphiaPlugin.ds().save(Transformer.setCraId(days, craId), WriteConcern.ACKNOWLEDGED);
 	}
 
 	public Boolean isSaturday() {

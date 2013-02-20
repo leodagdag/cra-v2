@@ -26,7 +26,7 @@ public class JCras extends Controller {
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	public static Result fetch(final String username, final Integer year, final Integer month) {
-		final ObjectId userId = JUser.idByUsername(username);
+		final ObjectId userId = JUser.findId(username);
 		JCra cra = JCra.find(userId, year, month);
 		final List<JDay> jDays = Lists.newArrayList();
 		final List<ObjectId> missionsIds = Lists.newArrayList();

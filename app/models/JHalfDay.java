@@ -19,16 +19,16 @@ public class JHalfDay {
 
 	public ObjectId missionId;
 
-	public List<JPeriod> JPeriods = Lists.newArrayList();
+	public List<JPeriod> periods = Lists.newArrayList();
 
 	@JsonProperty("isSpecial")
 	public Boolean isSpecial() {
-		return !Iterables.isEmpty(JPeriods);
+		return !Iterables.isEmpty(periods);
 	}
 
 	public List<ObjectId> missionIds() {
 		if (isSpecial()) {
-			return Lists.newArrayList(Collections2.transform(JPeriods, new Function<JPeriod, ObjectId>() {
+			return Lists.newArrayList(Collections2.transform(periods, new Function<JPeriod, ObjectId>() {
 				@Nullable
 				@Override
 				public ObjectId apply(@Nullable final JPeriod JPeriod) {

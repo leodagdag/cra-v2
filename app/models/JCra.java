@@ -54,8 +54,8 @@ public class JCra extends Model {
 		return MorphiaPlugin.ds().findAndModify(queryByUserId(userId), op);
 	}
 
-	public static JCra create(final String userId, final Integer year, final Integer month) {
-		JCra cra = new JCra(ObjectId.massageToObjectId(userId), year, month);
+	public static JCra create(final ObjectId userId, final Integer year, final Integer month) {
+		JCra cra = new JCra(userId, year, month);
 
 		return cra.insert();
 	}

@@ -20,15 +20,24 @@ object Transformer {
 	def extractHolidays(day: java.util.List[JDay]): java.util.List[JHalfDay] = {
 		val holidays: ImmutableList[ObjectId] = JMission.getHolidaysMissionId
 		day.asScala
-			.map(d => List(d.morning, d.afternoon))
-			.flatten
+			.flatMap(d => List(d.morning, d.afternoon))
 			.filter(h => if (h == null) false else holidays.asScala.contains(h.missionId))
 			.asJava
 	}
 
 	def extractObjectId(models: java.util.List[MongoModel]): java.util.List[ObjectId] = {
 		models.asScala
-			.map(_.id())
+			.map(_.id)
+			.asJava
+	}
+
+	def setCraId(days: java.util.List[JDay], craId: ObjectId): java.util.List[JDay] = {
+		days.asScala
+			.map {
+			d =>
+				d.craId = craId
+				d
+		}
 			.asJava
 	}
 }

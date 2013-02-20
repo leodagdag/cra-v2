@@ -3,7 +3,7 @@
 	</div>
 	<div class="row-fluid">
 		<div class="span12">
-			<h5>{{cra.month | monthOfYear | capitalize}} {{cra.year}} {{selectedWeeks}} {{selectedDays}}</h5>
+			<h5>{{cra.month | monthOfYear | capitalize}} {{cra.year}}</h5>
 			<table class="table table-condensed month">
 				<thead>
 					<tr>
@@ -22,7 +22,7 @@
 				<tbody>
 					<tr data-ng-repeat="week in cra.weeks" data-ng-init="weekIndex = $index">
 						<th>
-							<i data-cra-check-week>{{week.number}}</i>
+							<i data-cra-check-week></i>{{week.number}}
 						</th>
 						<td data-ng-repeat="day in week.days">
 							<table class="day" data-ng-class="{pastOrFuture : day.inPastOrFuture}">
@@ -37,20 +37,20 @@
 										</td>
 									</tr>
 									<tr>
-										<td class="halfday" data-ng-class="day.morning.missionType" data-ng-click="checkDay(day.date);openDay()">
+										<td class="halfday" data-ng-class="class(day.morning)" data-ng-click="checkDay(day.date);openDay()">
 											{{day.morning.label}}
 											<span>&nbsp;</span>
 										</td>
-										<td class="halfday" data-ng-class="day.morning.missionType">
+										<td class="halfday" data-ng-class="class(day.morning)">
 											<i class="icon-trash pull-right" data-ng-show="day.morning" data-ng-click="deleteHalfDay(weekIndex, day.date, $index,'morning')"></i>
 										</td>
 									</tr>
 									<tr>
-										<td class="halfday" data-ng-class="day.afternoon.missionType" data-ng-click="checkDay(day.date);openDay()">
+										<td class="halfday" data-ng-class="class(day.afternoon)" data-ng-click="checkDay(day.date);openDay()">
 											{{day.afternoon.label}}
 											<span>&nbsp;</span>
 										</td>
-										<td class="halfday" data-ng-class="day.afternoon.missionType">
+										<td class="halfday" data-ng-class="class(day.afternoon)">
 											<i class="icon-trash pull-right" data-ng-show="day.afternoon" data-ng-click="deleteHalfDay(weekIndex, day.date, $index,'afternoon')"></i>
 										</td>
 									</tr>

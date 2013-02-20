@@ -20,6 +20,7 @@ object JsRouter extends Controller {
 
 					JCras.fetch,
 					JDays.fetch,
+					JDays.create,
 					JUsers.employees,
 					JUsers.affectedMissions
 

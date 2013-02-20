@@ -20,10 +20,8 @@ public class JPeriod {
 
 	public ObjectId missionId;
 	@Transient
-	@JsonSerialize(using = LocalTimeSerializer.class)
 	public LocalTime startTime;
 	@Transient
-	@JsonSerialize(using = LocalTimeSerializer.class)
 	public LocalTime endTime;
 	private Date _startTime;
 	private Date _endTime;
