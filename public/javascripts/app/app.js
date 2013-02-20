@@ -26,7 +26,7 @@ angular.module('authServiceProvider', [])
 var app = angular.module('app', ['ngResource', 'authServiceProvider',
 		'ui.bootstrap',
 		'bDatepicker', 'craLegendDirective', 'craToolbarDirective', 'craCheckDayDirective', 'craCheckWeekDirective',
-		'dayOfMonthFilter', 'dayOfWeekFilter', 'momentOfDayFilter', 'monthOfYearFilter', 'capitalizeFilter'])
+		'dayOfMonthFilter', 'dayOfWeekFilter', 'momentOfDayFilter', 'monthOfYearFilter', 'capitalizeFilter', 'localTimeFilter'])
 	.constant('YearsConst', [
 		{'id': '1', 'label': '2012'},
 		{'id': '2', 'label': '2013'},

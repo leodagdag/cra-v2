@@ -10,6 +10,8 @@ import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import leodagdag.play2morphia.MorphiaPlugin;
@@ -30,34 +32,67 @@ import java.util.List;
  */
 @Entity("Mission")
 @Indexes({
-	@Index(value = "code", unique = true),
-	@Index("customerId"),
-	@Index("_startDate, _endDate")
+	         @Index(value = "code", unique = true),
+	         @Index("customerId"),
+	         @Index("_startDate, _endDate")
 })
 public class JMission {
 	@Id
 	public ObjectId id;
-
 	public ObjectId customerId;
-
 	public String code;
-
 	public String description;
-
 	public String missionType;
-
+	public Boolean isHoliday = Boolean.FALSE;
 	public String allowanceType;
 	@Transient
 	@JsonSerialize(using = DateTimeSerializer.class)
 	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime startDate;
-	private Date _startDate;
-
 	@Transient
 	@JsonSerialize(using = DateTimeSerializer.class)
 	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime endDate;
+	private Date _startDate;
 	private Date _endDate;
+
+	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds, final Boolean withoutHolidayAndCSS) {
+		if (!CollectionUtils.isEmpty(missionsIds)) {
+			final Query<JMission> q = MorphiaPlugin.ds().createQuery(JMission.class)
+				                          .field(Mapper.ID_KEY).in(missionsIds);
+			if (withoutHolidayAndCSS) {
+				q.filter("missionType !=", "holiday");
+			}
+			final List<JMission> missions = q
+				                                .retrievedFields(true, "code", "missionType")
+				                                .disableValidation()
+				                                .asList();
+			return Maps.uniqueIndex(missions, new Function<JMission, ObjectId>() {
+				@Nullable
+				@Override
+				public ObjectId apply(@Nullable final JMission mission) {
+					return mission.id;
+				}
+			});
+		} else {
+			return new ImmutableMap.Builder<ObjectId, JMission>().build();
+		}
+	}
+
+	public static ImmutableList<ObjectId> getHolidaysMissionId() {
+		final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
+			                                .field("isHoliday").equal(true)
+			                                .retrievedFields(true, "id")
+			                                .disableValidation()
+			                                .asList();
+		return new ImmutableList.Builder<ObjectId>().addAll(Collections2.transform(missions, new Function<JMission, ObjectId>() {
+			@Nullable
+			@Override
+			public ObjectId apply(@Nullable final JMission m) {
+				return m.id;
+			}
+		})).build();
+	}
 
 	@SuppressWarnings({"unused"})
 	@PrePersist
@@ -78,29 +113,6 @@ public class JMission {
 		}
 		if (_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
-		}
-	}
-
-	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds, final Boolean withoutHolidayAndCSS) {
-		if (!CollectionUtils.isEmpty(missionsIds)) {
-			final Query<JMission> q = MorphiaPlugin.ds().createQuery(JMission.class)
-				.field(Mapper.ID_KEY).in(missionsIds);
-			if (withoutHolidayAndCSS) {
-				q.filter("missionType !=", "holiday");
-			}
-			final List<JMission> missions = q
-				.retrievedFields(true, "code", "missionType")
-				.disableValidation()
-				.asList();
-			return Maps.uniqueIndex(missions, new Function<JMission, ObjectId>() {
-				@Nullable
-				@Override
-				public ObjectId apply(@Nullable final JMission mission) {
-					return mission.id;
-				}
-			});
-		} else {
-			return new ImmutableMap.Builder<ObjectId, JMission>().build();
 		}
 	}
 }

@@ -18,6 +18,8 @@ public class CraDTO {
 
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId id;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId userId;
 	public Integer year;
 	public Integer month;
 	public String comment;
@@ -29,6 +31,7 @@ public class CraDTO {
 
 	public CraDTO(final JCra jCra, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> missions) {
 		this.id = jCra.id;
+		this.userId = jCra.userId;
 		this.year = jCra.year;
 		this.month = jCra.month;
 		this.comment = jCra.comment;

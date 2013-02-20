@@ -30,9 +30,9 @@ import java.util.List;
  */
 @Entity("User")
 @Indexes({
-	@Index("username"),
-	@Index("username, password"),
-	@Index("lastName, firstName")
+	         @Index("username"),
+	         @Index("username, password"),
+	         @Index("lastName, firstName")
 })
 public class JUser implements Subject {
 
@@ -74,49 +74,49 @@ public class JUser implements Subject {
 
 	public static JUser findAuthorisedUser(final String username, final String password) {
 		return MorphiaPlugin.ds().createQuery(JUser.class)
-			.field("username").equal(username)
-			.field("password").equal(password)
-			.retrievedFields(true, "username", "password", "role")
-			.disableValidation()
-			.get();
+			       .field("username").equal(username)
+			       .field("password").equal(password)
+			       .retrievedFields(true, "username", "password", "role")
+			       .disableValidation()
+			       .get();
 	}
 
 	public static Subject getSubject(final String username) {
 		return MorphiaPlugin.ds().createQuery(JUser.class)
-			.field("username").equal(username)
-			.retrievedFields(true, "username", "role")
-			.disableValidation()
-			.get();
+			       .field("username").equal(username)
+			       .retrievedFields(true, "username", "role")
+			       .disableValidation()
+			       .get();
 	}
 
 	public static ObjectId idByUsername(final String username) {
 		return queryToFindMe(username)
-			.retrievedFields(true, "id")
-			.disableValidation()
-			.get().id;
+			       .retrievedFields(true, "id")
+			       .disableValidation()
+			       .get().id;
 	}
 
 	public static List<JUser> byRole(final String role) {
 		return MorphiaPlugin.ds().createQuery(JUser.class)
-			.field("role").equal(role)
-			.retrievedFields(true, "username", "firstName", "lastName", "role")
-			.disableValidation()
-			.order("lastName, firstName")
-			.asList();
+			       .field("role").equal(role)
+			       .retrievedFields(true, "username", "firstName", "lastName", "role")
+			       .disableValidation()
+			       .order("lastName, firstName")
+			       .asList();
 	}
 
 	public static ImmutableMap<ObjectId, JMission> affectedMissions(final String username, final Long start, final Long end) {
 		final DateTime startDate = new DateTime(start);
 		final DateTime endDate = new DateTime(end);
 		final JUser user = queryToFindMe(username)
-			.retrievedFields(true, "affectedMissions")
-			.disableValidation()
-			.get();
+			                   .retrievedFields(true, "affectedMissions")
+			                   .disableValidation()
+			                   .get();
 		final List<JAffectedMission> affectedMissions = Lists.newArrayList(Iterables.filter(user.affectedMissions, new Predicate<JAffectedMission>() {
 			@Override
 			public boolean apply(@Nullable final JAffectedMission affectedMission) {
 				if ((affectedMission.startDate == null || affectedMission.startDate.isBefore(startDate))
-					&& (affectedMission.endDate == null || affectedMission.endDate.isAfter(endDate))) {
+					    && (affectedMission.endDate == null || affectedMission.endDate.isAfter(endDate))) {
 					return true;
 				}
 				return false;

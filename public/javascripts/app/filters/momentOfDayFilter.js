@@ -9,6 +9,8 @@ angular.module('momentOfDayFilter', [])
 					return 'matin';
 				case 'afternoon':
 					return 'après-midi';
+				case 'special':
+					return "";
 				default:
 					return "j'sais pas ;)";
 			}

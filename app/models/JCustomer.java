@@ -11,8 +11,8 @@ import org.bson.types.ObjectId;
  */
 @Entity("Customer")
 @Indexes({
-	@Index(value = "code", unique = true),
-	@Index("isGenesis")
+	         @Index(value = "code", unique = true),
+	         @Index("isGenesis")
 })
 public class JCustomer {
 

@@ -6,14 +6,14 @@
 	background: linear-gradient(top left, @from, @to);
 }
 
-.calendar {
-	@customerBC: #00008b;
-	@preSaleBC: green;
-	@internalWorkBC: yellow;
-	@holidayBC: red;
-	@notPaidBC: pink;
-	@specialBC: orange;
+@customerBC: #00008b;
+@preSaleBC: green;
+@internalWorkBC: yellow;
+@holidayBC: red;
+@notPaidBC: pink;
+@specialBC: orange;
 
+.calendar {
 	.toolbar {
 		.form-inline {
 			margin: 0px;
@@ -107,6 +107,16 @@
 		}
 		.special {
 			background-color: @specialBC;
+		}
+	}
+}
+
+.calendar-day {
+	.special-day {
+		table.all-periods {
+			tr.special > td {
+				background-color: @specialBC;
+			}
 		}
 	}
 }

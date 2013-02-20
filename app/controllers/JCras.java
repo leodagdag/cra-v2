@@ -32,7 +32,7 @@ public class JCras extends Controller {
 		final List<ObjectId> missionsIds = Lists.newArrayList();
 
 		if (cra == null) {
-			cra = new JCra(year, month);
+			cra = new JCra(userId, year, month);
 		}
 		jDays.addAll(JDay.find(cra.id, year, month, true));
 		for (JDay jDay : jDays) {

@@ -19,16 +19,23 @@ import java.util.Date;
 public class JPeriod {
 
 	public ObjectId missionId;
-
 	@Transient
 	@JsonSerialize(using = LocalTimeSerializer.class)
 	public LocalTime startTime;
-	private Date _startTime;
-
 	@Transient
 	@JsonSerialize(using = LocalTimeSerializer.class)
 	public LocalTime endTime;
+	private Date _startTime;
 	private Date _endTime;
+
+	public JPeriod() {
+	}
+
+	public JPeriod(final ObjectId missionId, final LocalTime startTime, final LocalTime endTime) {
+		this.missionId = missionId;
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
 
 	@SuppressWarnings({"unused"})
 	@PrePersist
@@ -51,5 +58,4 @@ public class JPeriod {
 			endTime = new DateTime(_endTime.getTime()).toLocalTime();
 		}
 	}
-
 }

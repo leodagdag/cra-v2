@@ -1,6 +1,10 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.*;
+import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.annotations.Id;
+import com.github.jmkgreen.morphia.annotations.PostLoad;
+import com.github.jmkgreen.morphia.annotations.PrePersist;
+import com.github.jmkgreen.morphia.annotations.Transient;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -16,51 +20,51 @@ import java.util.Date;
 @Entity("PartTime")
 public class JPartTime {
 
-    @Id
-    public ObjectId id;
+	@Id
+	public ObjectId id;
 
-    public ObjectId userId;
+	public ObjectId userId;
 
-    @Transient
-    @JsonSerialize(using = DateTimeSerializer.class)
-    @JsonDeserialize(using = DateTimeDeserializer.class)
-    public DateTime startDate;
-    private Date _startDate;
+	@Transient
+	@JsonSerialize(using = DateTimeSerializer.class)
+	@JsonDeserialize(using = DateTimeDeserializer.class)
+	public DateTime startDate;
+	private Date _startDate;
 
-    @Transient
-    @JsonSerialize(using = DateTimeSerializer.class)
-    @JsonDeserialize(using = DateTimeDeserializer.class)
-    public DateTime endDate;
-    private Date _endDate;
+	@Transient
+	@JsonSerialize(using = DateTimeSerializer.class)
+	@JsonDeserialize(using = DateTimeDeserializer.class)
+	public DateTime endDate;
+	private Date _endDate;
 
-    public Integer dayOfWeek;
-    public String moment;
-    public Integer frequency;
+	public Integer dayOfWeek;
+	public String moment;
+	public Integer frequency;
 
 
-    @SuppressWarnings({"unused"})
-    @PrePersist
-    private void prePersist() {
-        if (startDate != null) {
-            _startDate = startDate.toDate();
-        }
-        if (endDate != null) {
-            _endDate = endDate.toDate();
-        }
-    }
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if (startDate != null) {
+			_startDate = startDate.toDate();
+		}
+		if (endDate != null) {
+			_endDate = endDate.toDate();
+		}
+	}
 
-    @SuppressWarnings({"unused"})
-    @PostLoad
-    private void postLoad() {
-        if (_startDate != null) {
-            startDate = new DateTime(_startDate.getTime());
-        }
-        if (_endDate != null) {
-            endDate = new DateTime(_endDate.getTime());
-        }
-    }
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if (_startDate != null) {
+			startDate = new DateTime(_startDate.getTime());
+		}
+		if (_endDate != null) {
+			endDate = new DateTime(_endDate.getTime());
+		}
+	}
 
-    @SuppressWarnings({"unused"})
-    public JPartTime() {
-    }
+	@SuppressWarnings({"unused"})
+	public JPartTime() {
+	}
 }
