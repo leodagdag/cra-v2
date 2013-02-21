@@ -1,6 +1,6 @@
 app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
 	function SpecialDayCtrl($scope, $http, $log, $location, $routeParams) {
-		var noon = moment('12', 'HH');
+		var noon = moment().hours(12).minutes(0).seconds(0).milliseconds(0);
 		var PeriodForm = function() {
 			return {
 				missionId: null,
@@ -12,16 +12,16 @@ app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$rout
 
 		var Period = function(p) {
 			if(p.startTime && p.endTime) {
-				var start = moment(p.startTime, 'HH:mm').year(0);
-				var st = moment(noon).hours(start.hours()).minutes(start.minutes()).valueOf();
-				var end = moment(p.endTime, 'HH:mm');
-				var et = moment(noon).hours(end.hours()).minutes(end.minutes()).valueOf();
+				var start = _.isNumber(p.startTime) ? moment(p.startTime) : moment(p.startTime, 'HH:mm'),
+					startTime = moment(noon).hours(start.hours()).minutes(start.minutes()).valueOf(),
+					end = _.isNumber(p.endTime) ? moment(p.endTime) : moment(p.endTime, 'HH:mm'),
+					endTime = moment(noon).hours(end.hours()).minutes(end.minutes()).valueOf();
 			}
 			return {
 				missionId: p.missionId,
 				periodType: p.periodType,
-				startTime: st || null,
-				endTime: et || null
+				startTime: startTime || null,
+				endTime: endTime || null
 			}
 		};
 
@@ -32,9 +32,25 @@ app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$rout
 			}
 		};
 
+		var extractPeriods = function(halfday) {
+			if(halfday && halfday.periods) {
+				return _(halfday.periods)
+					.map(function(p) {
+						return new Period(p)
+					}).valueOf();
+			}
+			return [];
+		};
+
 		$scope.form = new PeriodForm();
 		$scope.comment = $scope.day.comment;
-		$scope.periods = [];
+		$scope.periods = _.union(
+				extractPeriods($scope.day.morning),
+				extractPeriods($scope.day.afternoon)
+			)
+			.valueOf();
+
+		$log.log($scope.periods);
 
 		$scope.addPeriod = function(period) {
 			$scope.periods = _($scope.periods)
@@ -51,18 +67,15 @@ app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$rout
 				.valueOf();
 		};
 
-		$scope.getMissionLabel = function(id) {
-			return _.find($scope.affectedMissions,function(am) {
-				return am.id === id;
-			}).code;
-		};
 
 		$scope.isSpecial = function(p) {
 			return p.periodType === 'special';
 		};
 
 		$scope.localSave = function() {
-			var day = {};
+			var day = {
+				comment: $scope.comment
+			};
 			_.each($scope.periods, function(p) {
 				if(p.periodType === 'special') {
 					var halfDay = (moment(p.endTime).toDate() < noon.toDate()) ? 'morning' : 'afternoon';
@@ -85,5 +98,6 @@ app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$rout
 		};
 
 
-	}])
+	}
+])
 ;

@@ -135,7 +135,7 @@ public class JDays extends Controller {
 		public Long endTime;
 
 		public JPeriod to() {
-			return new JPeriod(ObjectId.massageToObjectId(missionId), new DateTime(startTime).toLocalTime(), new DateTime(startTime).toLocalTime());
+			return new JPeriod(ObjectId.massageToObjectId(missionId), new DateTime(startTime).toLocalTime(), new DateTime(endTime).toLocalTime());
 		}
 	}
 

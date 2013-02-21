@@ -22,7 +22,7 @@ public class HalfDayDTO {
 	public HalfDayDTO() {
 	}
 
-	public HalfDayDTO(final JHalfDay halfDay, final JMission mission) {
+	public HalfDayDTO(final JHalfDay halfDay, JMission mission) {
 		this.isSpecial = halfDay.isSpecial();
 		if (halfDay.isSpecial()) {
 			this.periods.addAll(PeriodDTO.of(halfDay.periods));
@@ -34,7 +34,7 @@ public class HalfDayDTO {
 		}
 	}
 
-	public static HalfDayDTO of(final JHalfDay halfDay, final ImmutableMap<ObjectId, JMission> mission) {
-		return (halfDay != null) ? new HalfDayDTO(halfDay, mission.get(halfDay.missionId)) : null;
+	public static HalfDayDTO of(final JHalfDay halfDay, final ImmutableMap<ObjectId, JMission> missions) {
+		return (halfDay != null) ? new HalfDayDTO(halfDay,  missions.get(halfDay.missionId)) : null;
 	}
 }

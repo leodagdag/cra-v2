@@ -1,3 +1,12 @@
+app.factory('Profile', ['$http', '$log',
+	function($http, $log) {
+		var route = jsRoutes.controllers.Authentication.profile();
+		return $http({
+			method: route.method,
+			url: route.url
+		});
+	}]);
+
 app.config(['$routeProvider',
 	function($routeProvider) {
 		$routeProvider

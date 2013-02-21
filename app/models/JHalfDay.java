@@ -31,8 +31,8 @@ public class JHalfDay {
 			return Lists.newArrayList(Collections2.transform(periods, new Function<JPeriod, ObjectId>() {
 				@Nullable
 				@Override
-				public ObjectId apply(@Nullable final JPeriod JPeriod) {
-					return JPeriod.missionId;
+				public ObjectId apply(@Nullable final JPeriod p) {
+					return p.missionId;
 				}
 			}));
 		} else {

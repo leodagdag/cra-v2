@@ -28,32 +28,48 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 				return moment(date).date();
 			})
 			.valueOf();
+		$scope.affectedMissions = [];
 		$scope.title = _.str.toSentence($scope.days, ', ', ' et ') + ' ' + _.str.capitalize(moment($scope.date).format('MMMM YYYY'));
 
-		var route = jsRoutes.controllers.JUsers.affectedMissions($scope.username, _.head($scope.dates), $scope.dates[$scope.dates.length - 1]);
-		$http({
-			method: route.method,
-			url: route.url
-		}).success(function(affectedMissions, status, headers, config) {
-				$scope.affectedMissions = affectedMissions;
-			})
-			.error(function(data, status, headers, config) {
-				$log.error(data, status);
-			});
+		$scope.loadData = function() {
+			var route = jsRoutes.controllers.JUsers.affectedMissions($scope.username, _.head($scope.dates), $scope.dates[$scope.dates.length - 1]);
+			$http({
+				method: route.method,
+				url: route.url
+			}).success(function(affectedMissions, status, headers, config) {
+					$scope.affectedMissions = affectedMissions;
+				})
+				.error(function(data, status, headers, config) {
+					$log.error(data, status);
+				});
 
-		route = jsRoutes.controllers.JDays.fetch($scope.craId, $scope.date);
-		$http({
-			method: route.method,
-			url: route.url
-		})
-			.success(function(day, status, headers, config) {
-				$scope.day = day;
-				$scope.activateSubSection((day.isSpecial) ? 'special' : 'normal');
-
+			route = jsRoutes.controllers.JDays.fetch($scope.craId, $scope.date);
+			$http({
+				method: route.method,
+				url: route.url
 			})
-			.error(function(data, status, headers, config) {
-				$log.error(data, status);
-			});
+				.success(function(day, status, headers, config) {
+					$log.log('day', day);
+					$scope.day = day;
+					$scope.activateSubSection((day.isSpecial) ? 'special' : 'normal');
+
+				})
+				.error(function(data, status, headers, config) {
+					$log.error(data, status);
+				});
+		};
+
+
+
+
+
+		$scope.getMissionLabel = function(id) {
+			return _.find($scope.affectedMissions,function(am) {
+				return am.id === id;
+			}).code;
+		};
+
+
 
 		$scope.save = function(d) {
 			var data = {

@@ -11,13 +11,6 @@ app.controller('NormalDayCtrl', ['$scope', '$http', '$log', '$location', '$route
 				comment: (day && !day.isSpecial) ? day.comment : null
 			};
 		};
-		var NormalDay = function(d) {
-			return {
-				morning: (d.morning) ? d.morning.missionId : null,
-				afternoon: (d.afternoon) ? d.afternoon.missionId : null,
-				comment: d.comment
-			}
-		};
 
 		$scope.form = new NormalForm($scope.day);
 

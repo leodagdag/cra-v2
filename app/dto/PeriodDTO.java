@@ -15,6 +15,7 @@ public class PeriodDTO {
 	public String missionId;
 	public Long startTime;
 	public Long endTime;
+	public String periodType = "special";
 
 	public PeriodDTO() {
 	}
