@@ -10,9 +10,10 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			'label': ($routeParams.year || moment().year()).toString()
 		};
 		var initialMonth = {
-			'id': ($routeParams.month || (moment().month() + 1)).toString(),
-			'label': _.str.capitalize(moment.months[$routeParams.month || (moment().month())])
+			'id': ($routeParams.month || (moment().month() + 1 )).toString(),
+			'label': _.str.capitalize(moment(($routeParams.month || (moment().month())).toString(), 'MMMM').format('MMMM'))
 		};
+
 
 		$scope.criterias = {
 			'employees': [],
