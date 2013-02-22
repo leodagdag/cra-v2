@@ -51,8 +51,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 
 		/* Cra */
 		$scope.cra = {};
-		$scope.selectedWeeks = [];
-		$scope.selectedDays = [];
 
 		$scope.search = function() {
 			$log.log("search()", $scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
@@ -69,43 +67,8 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				return 'special';
 			}
 			return "";
-		}
-		$scope.showCheckDay = function(day) {
-			return !day.inPastOrFuture;
 		};
 
-		$scope.checkDay = function(date) {
-			if(!_.contains($scope.selectedDays, date)) {
-				$scope.selectedDays.push(date);
-			}
-		};
-
-		$scope.toggleDay = function(date) {
-			if(_.contains($scope.selectedDays, date)) {
-				$scope.selectedDays = _.reject($scope.selectedDays, function(d) {
-					return date === d;
-				});
-			} else {
-				$scope.selectedDays.push(date);
-			}
-		};
-
-		$scope.toggleWeek = function(wIndex) {
-			var isSelected = _.contains($scope.selectedWeeks, wIndex);
-			if(isSelected) {
-				$scope.selectedWeeks = _.reject($scope.selectedWeeks, function(w) {
-					return wIndex === w;
-				});
-			} else {
-				$scope.selectedWeeks.push(wIndex);
-			}
-			$scope.selectedDays = _.compact(_.flatten(_.map($scope.selectedWeeks, function(wIdx) {
-				return _.map($scope.cra.weeks[wIdx].days, function(d) {
-					return (d.inPastOrFuture || d.isDayOff || d.isSaturday || d.isSunday || d.morning || d.afternoon) ? null : d.date;
-				});
-			})));
-
-		};
 
 		$scope.validate = function() {
 			var route = jsRoutes.controllers.Cras.validate($scope.cra.id);
@@ -129,6 +92,20 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				});
 		};
 
+		$scope.openDay = function() {
+			var days = _($scope.selectedDays)
+				.filter('checked')
+				.map(function(day) {
+					return moment(day.date).date();
+				})
+				.sortBy()
+				.compact()
+				.join(',')
+				.valueOf();
+			// "/day/:username/:craId/:year/:month/:days"
+			$location.path(_.str.sprintf("/day/%s/%s/%s/%s/%s", $scope.criterias.selected.employee, $scope.cra.id, $scope.cra.year, $scope.cra.month, days))
+		};
+
 		$scope.deleteDay = function(wIndex, date, dIndex) {
 			var route = jsRoutes.controllers.Days.delete($scope.cra.id, date);
 			$http({
@@ -141,6 +118,10 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				.error(function(data, status, headers, config) {
 					$log.error(data, status);
 				});
+		};
+
+		var removeHalfDay = function(day, mOfD) {
+			day[mOfD] = null;
 		};
 
 		$scope.deleteHalfDay = function(wIndex, date, dIndex, momentOfDay) {
@@ -163,29 +144,13 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			}
 		};
 
-		$scope.openDay = function() {
-			var days = _($scope.selectedDays)
-				.map(function(d) {
-					return moment(d).date();
-				})
-				.sortBy()
-				.compact()
-				.join(',')
-				.valueOf();
-			// "/day/:username/:craId/:year/:month/:days"
-			$location.path(_.str.sprintf("/day/%s/%s/%s/%s/%s", $scope.criterias.selected.employee, $scope.cra.id, $scope.cra.year, $scope.cra.month, days))
-		};
-
-		var removeHalfDay = function(day, mOfD) {
-			day[mOfD] = null;
-		};
-
 		var removeDay = function(day) {
 			day.id = null;
 			day.comment = null;
 			day.morning = null;
 			day.afternoon = null;
 		};
+
 
 		var loadCra = function(username, year, month) {
 			var route = jsRoutes.controllers.JCras.fetch(username, year, month);
@@ -196,12 +161,41 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				.success(function(cra, status, headers, config) {
 					$log.log('cra', cra);
 					$scope.cra = cra;
-					$scope.selectedWeeks = [];
-					$scope.selectedDays = [];
+					$scope.selectedMonth = {name: month, checked: false};
+					$scope.$watch('selectedMonth.checked', function() {
+						_.forEach($scope.selectedWeeks, function(week, wIdx) {
+							week.checked = $scope.selectedMonth.checked;
+							$scope.toggleWeek(wIdx);
+						});
+					});
+					$scope.selectedWeeks = _.map($scope.cra.weeks, function(week, i) {
+						return {number: week.number, checked: false}
+					});
+
+					$scope.selectedDays = _($scope.cra.weeks)
+						.map(function(week) {
+							return _.map(week.days, function(day, dIdx) {
+								return {index: dIdx, week_number: week.number, date:day.date, checked: false};
+							});
+						})
+						.flatten()
+						.valueOf();
 				});
 		};
 
-
+		$scope.toggleWeek = function(wIdx){
+			var week  = $scope.selectedWeeks[wIdx];
+			_.forEach($scope.selectedDays, function(day){
+				if(day.week_number === week.number
+					&& !$scope.cra.weeks[wIdx].days[day.index].inPastOrFuture
+					&& !$scope.cra.weeks[wIdx].days[day.index].isDayOff
+					&& !$scope.cra.weeks[wIdx].days[day.index].isSaturday
+					&& !$scope.cra.weeks[wIdx].days[day.index].isSunday
+					&& !($scope.cra.weeks[wIdx].days[day.index].morning || $scope.cra.weeks[wIdx].days[day.index].afternoon)){
+					day.checked = week.checked;
+				}
+			});
+		}
 	}])
 ;
 
