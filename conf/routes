@@ -12,6 +12,14 @@ POST    /auth                           controllers.Authentication.authenticate(
 GET     /logout                         controllers.Authentication.logout()
 GET     /profile                        controllers.Authentication.profile()
 
+# Holiday
+# ~~~~
+GET    /absences/cp/:username/:year             controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)
+GET    /absences/rtt/:username/:year             controllers.JAbsences.historyRTT(username: String, year: java.lang.Integer)
+GET    /absences/history/:username/:year             controllers.JAbsences.historyByYear(username: String, year: Integer)
+GET    /absences/history/:username             controllers.JAbsences.history(username: String)
+POST    /absences                       controllers.JAbsences.create()
+
 # Day
 # ~~~~
 DELETE  /cra/:id/day/:date              controllers.Days.delete(id: String, date: Long)

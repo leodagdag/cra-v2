@@ -44,16 +44,16 @@
 											<span>&nbsp;</span>
 										</td>
 										<td class="halfday" data-ng-class="class(day.morning)">
-											<i class="icon-trash pull-right" data-ng-show="day.morning" data-ng-click="deleteHalfDay(weekIndex, day.date, $index,'morning')"></i>
+											<i class="icon-trash pull-right" data-ng-show="day.morning" data-ng-click="deleteHalfDay(wIndex, day.date, $index,'morning')"></i>
 										</td>
 									</tr>
 									<tr>
-										<td class="halfday" data-ng-class="class(day.afternoon)" data-ng-click="checkDay(day.date);openDay()">
+										<td class="halfday" data-ng-class="class(day.afternoon)" data-ng-click="selectedDays[dIndex].checked = true;openDay()">
 											{{day.afternoon.label}}
 											<span>&nbsp;</span>
 										</td>
 										<td class="halfday" data-ng-class="class(day.afternoon)">
-											<i class="icon-trash pull-right" data-ng-show="day.afternoon" data-ng-click="deleteHalfDay(weekIndex, day.date, $index,'afternoon')"></i>
+											<i class="icon-trash pull-right" data-ng-show="day.afternoon" data-ng-click="deleteHalfDay(wIndex, day.date, $index,'afternoon')"></i>
 										</td>
 									</tr>
 								</tbody>

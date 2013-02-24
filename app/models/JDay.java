@@ -15,6 +15,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteConcern;
+import exceptions.IllegalDayOperation;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
@@ -75,7 +76,7 @@ public class JDay extends Model implements MongoModel {
 		if (craId != null) {
 			days.addAll(MorphiaPlugin.ds().createQuery(JDay.class)
 				            .field("craId").equal(craId)
-				            .field("_date").in(Transformer.dateTime2Date(allDates))
+				            .field("_date").in(TimeUtils.dateTime2Date(allDates))
 				            .asList());
 		} else {
 			days.addAll(Collections2.transform(allDates, new Function<DateTime, JDay>() {
@@ -113,7 +114,7 @@ public class JDay extends Model implements MongoModel {
 			       .get();
 	}
 
-	public static void update(final ObjectId craId, final List<JDay> days) {
+	public static void create(final ObjectId craId, final List<JDay> days) throws IllegalDayOperation {
 		final List<Date> dates = Lists.newArrayList(Collections2.transform(days, new Function<JDay, Date>() {
 			@Nullable
 			@Override
@@ -128,7 +129,9 @@ public class JDay extends Model implements MongoModel {
 			                           .asList();
 		if (CollectionUtils.isNotEmpty(oldDays)) {
 			// Check holidays and remove them
-			JHoliday.remove(Transformer.extractHolidays(oldDays));
+			if(Transformer.extractHolidays(oldDays).size() > 0){
+				throw new IllegalDayOperation("Vous ne pouvez pas modifier ces journées. Des congés existent.");
+			}
 			// delete existing days
 			final List<ObjectId> oldDaysIds = Transformer.extractObjectId(new ArrayList<MongoModel>(oldDays));
 			MorphiaPlugin.ds().delete(MorphiaPlugin.ds().createQuery(JDay.class).field(Mapper.ID_KEY).in(oldDaysIds), WriteConcern.ACKNOWLEDGED);
@@ -186,4 +189,39 @@ public class JDay extends Model implements MongoModel {
 	public ObjectId id() {
 		return id;
 	}
+
+	public static void add(final JAbsence absence) {
+		List<DateTime> dts = TimeUtils.datesOfWeek(absence.startDate, absence.endDate, true);
+		JCra cra = null;
+
+		for (DateTime dt : dts) {
+			if (cra == null || (cra.year != dt.getYear() || cra.month != dt.getMonthOfYear())) {
+				cra = JCra.getOrCreate(absence.userId, dt.getYear(), dt.getMonthOfYear());
+			}
+			// Search JDay...
+			JDay day = JDay.find(cra.id, dt);
+			// ..If not exist we create it.
+			if (day == null) {
+				day = new JDay(dt);
+				day.craId = cra.id;
+			}
+			day.comment = absence.comment;
+			if (dt.isEqual(absence.startDate)) {
+				if (Boolean.TRUE.equals(absence.startMorning)) {
+					day.morning = new JHalfDay(absence.missionId);
+				}
+				day.afternoon = new JHalfDay(absence.missionId);
+			} else if (dt.isEqual(absence.endDate)) {
+				day.morning = new JHalfDay(absence.missionId);
+				if (Boolean.TRUE.equals(absence.startAfternoon)) {
+					day.afternoon = new JHalfDay(absence.missionId);
+				}
+			} else {
+				day.morning = new JHalfDay(absence.missionId);
+				day.afternoon = new JHalfDay(absence.missionId);
+			}
+			day.insert();
+		}
+	}
+
 }

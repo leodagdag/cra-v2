@@ -21,6 +21,11 @@ object JsRouter extends Controller {
 					JCras.fetch,
 					JDays.fetch,
 					JDays.create,
+					JAbsences.create,
+					JAbsences.history,
+					JAbsences.historyByYear,
+					JAbsences.historyCP,
+					JAbsences.historyRTT,
 					JUsers.employees,
 					JUsers.affectedMissions
 

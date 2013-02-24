@@ -26,6 +26,13 @@ public class JHalfDay {
 		return !Iterables.isEmpty(periods);
 	}
 
+	public JHalfDay() {
+	}
+
+	public JHalfDay(final ObjectId missionId) {
+		this.missionId = missionId;
+	}
+
 	public List<ObjectId> missionIds() {
 		if (isSpecial()) {
 			return Lists.newArrayList(Collections2.transform(periods, new Function<JPeriod, ObjectId>() {

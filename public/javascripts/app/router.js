@@ -31,23 +31,29 @@ app.config(['$routeProvider',
 				resolve: {'profile': 'Profile'}
 			})
 			.when("/absence", {
-				templateUrl: "public/html/views/absence.html",
-				controller: 'AbsenceCtrl'
+				templateUrl: "public/html/views/absence/absence.html",
+				controller: 'AbsenceCtrl',
+				resolve: {'profile': 'Profile' }
+			})
+			.when("/absence/:subSection", {
+				templateUrl: "public/html/views/absence/absence.html",
+				controller: 'AbsenceCtrl',
+				resolve: {'profile': 'Profile' }
 			})
 			.when("/claim", {
-				templateUrl: "public/html/views/claim.html",
+				templateUrl: "public/html/views/claim/claim.html",
 				controller: 'ClaimCtrl'
 			})
 			.when("/remuneration", {
-				templateUrl: "public/html/views/remuneration.html",
+				templateUrl: "public/html/views/remuneration/remuneration.html",
 				controller: 'RemunerationCtrl'
 			})
 			.when("/parameter", {
-				templateUrl: "public/html/views/parameter.html",
+				templateUrl: "public/html/views/parameter/parameter.html",
 				controller: 'ParameterCtrl'
 			})
 			.when("/backoffice", {
-				templateUrl: "public/html/views/back-office.html",
+				templateUrl: "public/html/views/back-office/back-office.html",
 				controller: 'BackOfficeCtrl'
 			})
 			.when("/my-account", {

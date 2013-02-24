@@ -59,17 +59,11 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 				});
 		};
 
-
-
-
-
 		$scope.getMissionLabel = function(id) {
 			return _.find($scope.affectedMissions,function(am) {
 				return am.id === id;
 			}).code;
 		};
-
-
 
 		$scope.save = function(d) {
 			var data = {
@@ -96,6 +90,11 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 				.error(function(data, status, headers, config) {
 					$log.error(data);
 				});
+		}
+
+		$scope.back = function(){
+			///cra/:username/:year/:month
+			$location.path(_.str.sprintf('/cra/%s/%s/%s', $scope.username, $scope.year, $scope.month));
 		}
 	}]);
 

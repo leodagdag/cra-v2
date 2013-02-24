@@ -5,6 +5,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import dto.DayDTO;
+import exceptions.IllegalDayOperation;
 import models.JCra;
 import models.JDay;
 import models.JHalfDay;
@@ -14,6 +15,7 @@ import models.JUser;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -40,6 +42,7 @@ public class JDays extends Controller {
 		return ok(toJson(DayDTO.of(day, jMissions, dt.getYear(), dt.getMonthOfYear())));
 	}
 
+	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
 		final Form<CreateForm> form = Form.form(CreateForm.class).bind(request().body().asJson());
 		if (form.hasErrors()) {
@@ -50,14 +53,19 @@ public class JDays extends Controller {
 		final Integer year = createForm.year;
 		final Integer month = createForm.month;
 
-		final ObjectId craId = createForm.craId == null ? JCra.create(JUser.findId(username), year, month).id : ObjectId.massageToObjectId(createForm.craId);
+		final ObjectId craId = createForm.craId == null ? JCra.create(JUser.id(username), year, month).id : ObjectId.massageToObjectId(createForm.craId);
 
-		JDay.update(craId, createForm.days());
+		try {
+			JDay.create(craId, createForm.days());
+			return ok("Journée(s) sauvegardée(s)");
+		} catch (IllegalDayOperation e) {
+			return badRequest(toJson(e));
+		}
 
-		return ok("Journée(s) sauvegardée(s)");
 	}
 
 	public static class CreateForm {
+
 		public String username;
 		public String craId;
 		public Integer year;
@@ -82,12 +90,13 @@ public class JDays extends Controller {
 	}
 
 	public static class CreateDayForm {
+
 		public CreateHalfDayForm morning;
 		public CreateHalfDayForm afternoon;
 		public String comment;
 
 		public JHalfDay morning() {
-			if(this.morning == null ){
+			if (this.morning == null) {
 				return null;
 			}
 			final JHalfDay hd = new JHalfDay();
@@ -100,7 +109,7 @@ public class JDays extends Controller {
 		}
 
 		public JHalfDay afternoon() {
-			if(this.afternoon == null ){
+			if (this.afternoon == null) {
 				return null;
 			}
 			final JHalfDay hd = new JHalfDay();
@@ -115,6 +124,7 @@ public class JDays extends Controller {
 	}
 
 	public static class CreateHalfDayForm {
+
 		public String missionId;
 		public List<CreatePeriodForm> periods;
 
@@ -130,6 +140,7 @@ public class JDays extends Controller {
 	}
 
 	public static class CreatePeriodForm {
+
 		public String missionId;
 		public Long startTime;
 		public Long endTime;
@@ -138,6 +149,5 @@ public class JDays extends Controller {
 			return new JPeriod(ObjectId.massageToObjectId(missionId), new DateTime(startTime).toLocalTime(), new DateTime(endTime).toLocalTime());
 		}
 	}
-
 
 }

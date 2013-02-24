@@ -7,6 +7,10 @@ import com.github.jmkgreen.morphia.query.UpdateOperations;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import utils.time.TimeUtils;
+
+import java.util.List;
 
 /**
  * @author f.patin
@@ -31,13 +35,6 @@ public class JCra extends Model {
 		this.userId = userId;
 	}
 
-	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
-		return queryByUserId(userId)
-			       .field("year").equal(year)
-			       .field("month").equal(month)
-			       .get();
-	}
-
 	public static JCra validate(final ObjectId userId, final Integer year, final Integer month) {
 		UpdateOperations<JCra> op = MorphiaPlugin.ds().createUpdateOperations(JCra.class)
 			                            .set("isValidated", true);
@@ -54,9 +51,25 @@ public class JCra extends Model {
 		return MorphiaPlugin.ds().findAndModify(queryByUserId(userId), op);
 	}
 
+
+	public static JCra getOrCreate(final ObjectId userId, final Integer year, final Integer month) {
+		final JCra cra = find(userId, year, month);
+		if (cra != null) {
+			return cra;
+		} else {
+			return create(userId, year, month);
+		}
+	}
+
+	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
+		return queryByUserId(userId)
+			       .field("year").equal(year)
+			       .field("month").equal(month)
+			       .get();
+	}
+
 	public static JCra create(final ObjectId userId, final Integer year, final Integer month) {
 		JCra cra = new JCra(userId, year, month);
-
 		return cra.insert();
 	}
 }

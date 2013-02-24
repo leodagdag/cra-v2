@@ -12,13 +12,10 @@ import scala.collection.JavaConverters._
  */
 object Transformer {
 
-	// TODO Java conversion
-	def dateTime2Date(dts: java.util.List[DateTime]): java.util.List[Date] = {
-		dts.asScala.map(_.toDate).asJava
-	}
+
 
 	def extractHolidays(day: java.util.List[JDay]): java.util.List[JHalfDay] = {
-		val holidays: ImmutableList[ObjectId] = JMission.getHolidaysMissionId
+		val holidays: ImmutableList[ObjectId] = JMission.getAbsencesMissionIds
 		day.asScala
 			.flatMap(d => List(d.morning, d.afternoon))
 			.filter(h => if (h == null) false else holidays.asScala.contains(h.missionId))

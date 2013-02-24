@@ -13,7 +13,10 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import constants.AbsenceType;
+import constants.MissionType;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
@@ -24,6 +27,7 @@ import utils.deserializer.DateTimeDeserializer;
 import utils.serializer.DateTimeSerializer;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +47,7 @@ public class JMission {
 	public String code;
 	public String description;
 	public String missionType;
-	public Boolean isHoliday = Boolean.FALSE;
+	public String absenceType;
 	public String allowanceType;
 	@Transient
 	@JsonSerialize(using = DateTimeSerializer.class)
@@ -79,19 +83,47 @@ public class JMission {
 		}
 	}
 
-	public static ImmutableList<ObjectId> getHolidaysMissionId() {
-		final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
-			                                .field("isHoliday").equal(true)
-			                                .retrievedFields(true, "id")
-			                                .disableValidation()
-			                                .asList();
-		return new ImmutableList.Builder<ObjectId>().addAll(Collections2.transform(missions, new Function<JMission, ObjectId>() {
+	public static ImmutableList<JMission> getAbsencesMissions() {
+		return getAbsencesMissions(null);
+	}
+
+	public static ImmutableList<JMission> getAbsencesMissions(final AbsenceType absenceType) {
+		List<AbsenceType> criterias = Lists.newArrayList();
+
+		if (absenceType == null) {
+			criterias.addAll(Arrays.asList(AbsenceType.values()));
+		} else {
+			criterias.add(absenceType);
+		}
+
+		List<String> absenceTypes = Lists.newArrayList(Collections2.transform(criterias, new Function<AbsenceType, String>() {
 			@Nullable
 			@Override
-			public ObjectId apply(@Nullable final JMission m) {
-				return m.id;
+			public String apply(@Nullable final AbsenceType absenceType) {
+				return absenceType.name();
 			}
-		})).build();
+		}));
+		final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
+			                                .field("absenceType").in(absenceTypes)
+			                                .retrievedFields(true, Mapper.ID_KEY)
+			                                .disableValidation()
+			                                .asList();
+		return new ImmutableList.Builder<JMission>().addAll(missions).build();
+	}
+
+	public static ImmutableList<ObjectId> getAbsencesMissionIds() {
+		return getAbsencesMissionIds(null);
+	}
+
+	public static ImmutableList<ObjectId> getAbsencesMissionIds(final AbsenceType absenceType) {
+		final List<ObjectId> missionIds = Lists.newArrayList(Collections2.transform(getAbsencesMissions(absenceType), new Function<JMission, ObjectId>() {
+			@Nullable
+			@Override
+			public ObjectId apply(@Nullable final JMission mission) {
+				return mission.id;
+			}
+		}));
+		return new ImmutableList.Builder<ObjectId>().addAll(missionIds).build();
 	}
 
 	@SuppressWarnings({"unused"})

@@ -27,8 +27,8 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.0.0/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.0.0/js/locales/bootstrap-datepicker.fr.js"></script>
     @* angularjs *@
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular@extension"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular-resource@extension"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular@extension"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular-resource@extension"></script>
     @* fallback*@
     <script type="text/javascript">
         window.jQuery || document.write('<script src="@routes.Assets.at("javascripts/vendors/jquery-1.9.1" + extension)"><\/script>');
@@ -39,7 +39,7 @@
         window.angular || document.write('<script src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/angular" + extension)"><\/script>')
     </script>
     @* angularjs local *@
-    <script type="text/javascript" type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular-1.1.1/i18n/angular-locale_fr-fr.js")"></script>
+    <script type="text/javascript" type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular-locale_fr-fr-1.1.3.js")"></script>
     @* angular-ui/bootstrap *@
     <script type="text/javascript" type="text/javascript" src="@routes.Assets.at("javascripts/vendors/ui-bootstrap-0.1.0" + extension)"></script>
 }
@@ -49,9 +49,10 @@
 } else {
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/app.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/router.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/AbsenceCtrl.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/BackOfficeCtrl.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/ClaimCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/absence/AbsenceCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/absence/HistoryAbsenceCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/back-office/BackOfficeCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/claim/ClaimCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/cra/CraCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/cra/CraToolbarCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/cra/DayCtrl.js")"></script>
@@ -59,8 +60,8 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/cra/SpecialDayCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/account/MyAccountCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/account/PartTimeCtrl.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/ParameterCtrl.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/RemunerationCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/parameter/ParameterCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/remuneration/RemunerationCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/services/AccountRes.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/services/ManagerRes.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/directives/bDatepickerDirective.js")"></script>

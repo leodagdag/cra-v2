@@ -107,17 +107,19 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.deleteDay = function(wIndex, date, dIndex) {
-			var route = jsRoutes.controllers.Days.delete($scope.cra.id, date);
-			$http({
-				method: route.method,
-				url: route.url
-			})
-				.success(function(day, status, headers, config) {
-					removeDay($scope.cra.weeks[wIndex].days[dIndex])
+			if(confirm("Êtes vous sur de vouloir supprimer cette journée ?")) {
+				var route = jsRoutes.controllers.Days.delete($scope.cra.id, date);
+				$http({
+					method: route.method,
+					url: route.url
 				})
-				.error(function(data, status, headers, config) {
-					$log.error(data, status);
-				});
+					.success(function(day, status, headers, config) {
+						removeDay($scope.cra.weeks[wIndex].days[dIndex])
+					})
+					.error(function(data, status, headers, config) {
+						$log.error(data, status);
+					});
+			}
 		};
 
 		var removeHalfDay = function(day, mOfD) {
@@ -125,23 +127,27 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.deleteHalfDay = function(wIndex, date, dIndex, momentOfDay) {
+
 			var day = $scope.cra.weeks[wIndex].days[dIndex];
 			if(!day.morning || !day.afternoon) {
 				$scope.deleteDay(wIndex, date, dIndex);
 			} else {
-				var route = jsRoutes.controllers.Days.deleteHalfDay($scope.cra.id, date, momentOfDay);
-				$http({
-					method: route.method,
-					url: route.url
-				})
-					.success(function(halfDay, status, headers, config) {
-						var mOfD = momentOfDay.toLowerCase();
-						removeHalfDay(day, mOfD);
+				if(confirm("Êtes vous sur de vouloir supprimer cette demi-journée ?")) {
+					var route = jsRoutes.controllers.Days.deleteHalfDay($scope.cra.id, date, momentOfDay);
+					$http({
+						method: route.method,
+						url: route.url
 					})
-					.error(function(data, status, headers, config) {
-						$log.error(data, status);
-					});
+						.success(function(halfDay, status, headers, config) {
+							var mOfD = momentOfDay.toLowerCase();
+							removeHalfDay(day, mOfD);
+						})
+						.error(function(data, status, headers, config) {
+							$log.error(data, status);
+						});
+				}
 			}
+
 		};
 
 		var removeDay = function(day) {
@@ -175,7 +181,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 					$scope.selectedDays = _($scope.cra.weeks)
 						.map(function(week) {
 							return _.map(week.days, function(day, dIdx) {
-								return {index: dIdx, week_number: week.number, date:day.date, checked: false};
+								return {index: dIdx, week_number: week.number, date: day.date, checked: false};
 							});
 						})
 						.flatten()
@@ -183,15 +189,15 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				});
 		};
 
-		$scope.toggleWeek = function(wIdx){
-			var week  = $scope.selectedWeeks[wIdx];
-			_.forEach($scope.selectedDays, function(day){
+		$scope.toggleWeek = function(wIdx) {
+			var week = $scope.selectedWeeks[wIdx];
+			_.forEach($scope.selectedDays, function(day) {
 				if(day.week_number === week.number
 					&& !$scope.cra.weeks[wIdx].days[day.index].inPastOrFuture
 					&& !$scope.cra.weeks[wIdx].days[day.index].isDayOff
 					&& !$scope.cra.weeks[wIdx].days[day.index].isSaturday
 					&& !$scope.cra.weeks[wIdx].days[day.index].isSunday
-					&& !($scope.cra.weeks[wIdx].days[day.index].morning || $scope.cra.weeks[wIdx].days[day.index].afternoon)){
+					&& !($scope.cra.weeks[wIdx].days[day.index].morning || $scope.cra.weeks[wIdx].days[day.index].afternoon)) {
 					day.checked = week.checked;
 				}
 			});

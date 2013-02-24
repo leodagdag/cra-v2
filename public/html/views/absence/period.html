@@ -1,0 +1,48 @@
+<div class="row-fluid">
+	<div class="span12">
+		<form class="span9 offset1 well well-small">
+			<fieldset>
+				<div class="row-fluid">
+					<div class="span3">
+						<span>Motif</span>
+					</div>
+					<div class="span9">
+						<select data-ng-model="reason" data-ng-required="required">
+						</select>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span3">
+						<span>Début</span>
+					</div>
+					<div class="span9">
+						<input type="text" class="span4" data-b-datepicker data-ng-model="startDate" data-ng-required="required">
+						<input type="checkbox" data-ng-model="startMorning" data-ng-required="required"> Matin
+						<input type="checkbox" data-ng-model="startAfternoon" data-ng-required="required" data-ng-checked="true" disabled="disabled"> Après-midi
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span3">
+						<span>Fin</span>
+					</div>
+					<div class="span9">
+						<input type="text" class="span4" data-b-datepicker data-ng-model="endDate" data-ng-required="required">
+						<input type="checkbox" data-ng-model="endMorning" data-ng-required="required" data-ng-checked="true" disabled="disabled"> Matin
+						<input type="checkbox" data-ng-model="endAfternoon" data-ng-required="required"> Après-midi
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span3">
+						<span>Commentaire</span>
+					</div>
+					<div class="span9">
+						<textarea rows="3" data-ng-model="comment"></textarea>
+					</div>
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>

@@ -14,7 +14,7 @@ app.controller('MyAccountCtrl', ['$scope', '$http', '$log', '$location', '$route
 		$scope.activateSubSection = function(name) {
 			$scope.activeSubSection.name = name;
 			$scope.activeSubSection.page = $scope.subSections[name];
-			$location.url('/my-account/' + name);
+			$location.path('/my-account/' + name);
 		}
 	}]);
 
