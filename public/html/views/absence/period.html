@@ -1,13 +1,14 @@
 <div class="row-fluid">
 	<div class="span12">
-		<form class="span9 offset1 well well-small">
+		<form class="span9 offset1 well well-small" data-ng-controller="PeriodAbsenceCtrl" data-ng-submit="localSave()">
 			<fieldset>
 				<div class="row-fluid">
 					<div class="span3">
 						<span>Motif</span>
 					</div>
 					<div class="span9">
-						<select data-ng-model="reason" data-ng-required="required">
+						<select data-ng-model="mission" data-ng-required="required">
+                            <option data-ng-repeat="mission in missions" value="mission.id">{{mission.description}}</option>
 						</select>
 					</div>
 				</div>

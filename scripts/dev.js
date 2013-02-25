@@ -22,11 +22,17 @@ db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Descr
 db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', missionType: 'customer', _startDate: new Date(2013, 1, 1), _endDate: new Date(2013, 4, 31)});
 db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre-sale', _startDate: new Date(2013, 0, 1)});
 db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(2013, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'AE', description: 'Absence exceptionnelle', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(2013, 0, 1) });
 db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not-paid', _startDate: new Date(2013, 0, 1)});
 var mission_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1'});
 var mission_customer2 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2'});
 var pre_sale = db.Mission.findOne({customerId: genesis._id, missionType: 'pre-sale' });
-var holiday = db.Mission.findOne({customerId: genesis._id, missionType: 'holiday'});
+var holiday = db.Mission.findOne({customerId: genesis._id, code:'CP',missionType: 'holiday'});
+var rtte = db.Mission.findOne({customerId: genesis._id, code:'RTTE',missionType: 'holiday'});
+var rtts = db.Mission.findOne({customerId: genesis._id, code:'RTTS',missionType: 'holiday'});
+var ae = db.Mission.findOne({customerId: genesis._id, code:'AE',missionType: 'holiday'});
 var part_time = db.Mission.findOne({customerId: genesis._id, missionType: 'not-paid' });
 
 /*
@@ -38,6 +44,10 @@ db.User.insert({username: 'bart', password: 'bart', role: 'employee', firstName:
 		{_startDate: mission_customer1._startDate, _endDate: mission_customer1._endDate, missionId: mission_customer1._id},
 		{_startDate: mission_customer2._startDate, _endDate: mission_customer2._endDate, missionId: mission_customer2._id},
 		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
 		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
 	]});
 db.User.insert({username: 'homer', password: 'homer', role: 'employee', firstName: 'homer', lastName: 'Simpson', trigramme: 'HSN', email: 'homer@simpson.com'});

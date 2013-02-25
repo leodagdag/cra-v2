@@ -2,6 +2,7 @@ package dto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import models.JMission;
@@ -43,4 +44,14 @@ public class MissionDTO {
 			}
 		}));
 	}
+
+    public static List<MissionDTO> of(ImmutableList<JMission> missions) {
+        return Lists.newArrayList(Collections2.transform(missions, new Function<JMission, MissionDTO>() {
+            @Nullable
+            @Override
+            public MissionDTO apply(@Nullable final JMission mission) {
+                return new MissionDTO(mission);
+            }
+        }));
+    }
 }

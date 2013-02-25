@@ -20,6 +20,7 @@ GET    /absences/history/:username/:year             controllers.JAbsences.histo
 GET    /absences/history/:username             controllers.JAbsences.history(username: String)
 POST    /absences                       controllers.JAbsences.create()
 
+
 # Day
 # ~~~~
 DELETE  /cra/:id/day/:date              controllers.Days.delete(id: String, date: Long)
@@ -31,6 +32,11 @@ POST    /days/                           controllers.JDays.create()
 GET     /cra/:username/:year/:month             controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /cra/:id/validate                       controllers.Cras.validate(id: String)
 POST    /cra/:id/invalidate                     controllers.Cras.invalidate(id: String)
+
+# Mission
+# ~~~~
+GET    /absences                       controllers.JMissions.absences()
+
 # User
 # ~~~~
 GET     /users/:username/affectedMissions/:startDate/:endDate   controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)

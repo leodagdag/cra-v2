@@ -19,6 +19,19 @@ app.controller('AbsenceCtrl', ['$scope', '$http', '$log', '$location', '$routePa
 		$scope.init = function() {
 			if(!$routeParams.subSection) {
 				$location.path('/absence/day');
-			}
+			}       else {
+                var route = jsRoutes.controllers.JMissions.absences();
+                $http({
+                    method: route.method,
+                    url: route.url
+                })
+                    .success(function(missions, status, headers, config) {
+                        $log.debug('missions', missions);
+                        $scope.missions = missions;
+                    })
+                    .error(function(error, status, headers, config){
+                        $log.debug('error', error);
+                    });
+            }
 		};
 	}]);
