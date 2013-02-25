@@ -16,22 +16,41 @@ app.controller('AbsenceCtrl', ['$scope', '$http', '$log', '$location', '$routePa
 			$location.path('/absence/' + name);
 		};
 
+		$scope.history = [];
+
 		$scope.init = function() {
 			if(!$routeParams.subSection) {
 				$location.path('/absence/day');
-			}       else {
-                var route = jsRoutes.controllers.JMissions.absences();
-                $http({
-                    method: route.method,
-                    url: route.url
-                })
-                    .success(function(missions, status, headers, config) {
-                        $log.debug('missions', missions);
-                        $scope.missions = missions;
-                    })
-                    .error(function(error, status, headers, config){
-                        $log.debug('error', error);
-                    });
-            }
+			} else {
+				var route = jsRoutes.controllers.JMissions.absences();
+				$http({
+					method: route.method,
+					url: route.url
+				})
+					.success(function(missions, status, headers, config) {
+						$log.debug('missions', missions);
+						$scope.missions = missions;
+					})
+					.error(function(error, status, headers, config) {
+						$log.debug('error', error);
+					});
+			}
+		};
+
+		$scope.save = function(absence) {
+			$log.debug(absence);
+			absence.username = $scope.profile.username;
+			var route = jsRoutes.controllers.JAbsences.create();
+			$http({
+				method: route.method,
+				url: route.url,
+				data: absence
+			})
+				.success(function(result, status, headers, config) {
+					$log.debug('result', result);
+				})
+				.error(function(error, status, headers, config) {
+					$log.debug('error', error);
+				});
 		};
 	}]);

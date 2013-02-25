@@ -54,7 +54,11 @@ object TimeUtils {
 
 	}
 
-	def datesOfWeek(start: DateTime, end: DateTime, withoutDayOff: Boolean): java.util.List[DateTime] = {
+	def datesBetween(start: Long, end: Long, withoutDayOff: Boolean): java.util.List[DateTime] = {
+		datesBetween(new DateTime(start), new DateTime(end), withoutDayOff)
+	}
+
+	def datesBetween(start: DateTime, end: DateTime, withoutDayOff: Boolean): java.util.List[DateTime] = {
 		val duration = new Duration(start, end)
 		(0 until duration.toStandardDays.getDays + 1)
 			.filter(i => (TimeUtils.isNotSaturdayOrSunday(start.plusDays(i))) && (if (withoutDayOff) TimeUtils.isNotDayOff(start.plusDays(i)) else true))

@@ -49,25 +49,26 @@ public class JAbsences extends Controller {
 
 	public static Result historyByYear(final String username, final Integer year) {
 		final ObjectId userId = JUser.id(username);
-		List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER);
+		final List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER);
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 
 	public static Result historyCP(final String username, final Integer year) {
 		final ObjectId userId = JUser.id(username);
-		List<JAbsence> absences = JAbsence.fetch(userId, year, JUNE, year + 1, MAY, AbsenceType.CP);
+		final List<JAbsence> absences = JAbsence.fetch(userId, year, JUNE, year + 1, MAY, AbsenceType.CP);
+
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 
 	public static Result historyRTT(final String username, final Integer year) {
 		final ObjectId userId = JUser.id(username);
-		List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER, AbsenceType.RTT);
+		final List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER, AbsenceType.RTT);
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 
 	public static class CreateAbsenceForm {
 
-		public String userId;
+		public String username;
 		public String missionId;
 		public Long startDate;
 		public Boolean startMorning;
@@ -78,9 +79,8 @@ public class JAbsences extends Controller {
 		public String comment;
 
 		public JAbsence to() {
-			final ImmutableList<JMission> absences = JMission.getAbsencesMissions();
 			final JAbsence holiday = new JAbsence();
-			holiday.userId = ObjectId.massageToObjectId(this.userId);
+			holiday.userId = JUser.id(this.username);
 			holiday.startDate = new DateTime(this.startDate);
 			holiday.startMorning = this.startMorning;
 			holiday.startAfternoon = this.startAfternoon;
@@ -89,7 +89,6 @@ public class JAbsences extends Controller {
 			holiday.endAfternoon = this.endAfternoon;
 			holiday.missionId = ObjectId.massageToObjectId(this.missionId);
 			holiday.comment = this.comment;
-
 			return holiday;
 		}
 	}

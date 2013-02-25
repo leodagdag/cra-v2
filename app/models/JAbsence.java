@@ -28,7 +28,7 @@ import java.util.List;
  * @author f.patin
  */
 @Entity("Absence")
-public class JAbsence extends Model {
+public class JAbsence extends Model implements MongoModel{
 	@Id
 	public ObjectId id;
 	public ObjectId userId;
@@ -131,5 +131,10 @@ public class JAbsence extends Model {
 
 	public static List<JAbsence> fetch(final ObjectId userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth) {
 		return fetch(userId, startYear, startMonth, endYear, endMonth, null);
+	}
+
+	@Override
+	public ObjectId id() {
+		return this.id;
 	}
 }

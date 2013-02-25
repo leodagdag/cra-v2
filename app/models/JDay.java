@@ -191,7 +191,7 @@ public class JDay extends Model implements MongoModel {
 	}
 
 	public static void add(final JAbsence absence) {
-		List<DateTime> dts = TimeUtils.datesOfWeek(absence.startDate, absence.endDate, true);
+		List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
 		JCra cra = null;
 
 		for (DateTime dt : dts) {

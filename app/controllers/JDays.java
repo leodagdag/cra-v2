@@ -38,7 +38,7 @@ public class JDays extends Controller {
 		} else {
 			missionsIds.addAll(day.missionIds());
 		}
-		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds, false);
+		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
 		return ok(toJson(DayDTO.of(day, jMissions, dt.getYear(), dt.getMonthOfYear())));
 	}
 

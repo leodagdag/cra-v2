@@ -12,7 +12,6 @@ app.controller('DayAbsenceCtrl', ['$scope', '$http', '$log', '$location', '$rout
                 endAfternoon: $scope.afternoon,
                 comment: $scope.comment
             };
-            $log.debug('day', day);
             $scope.save(day);
         };
     }]);

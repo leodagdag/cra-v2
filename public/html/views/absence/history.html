@@ -1,13 +1,18 @@
 <div class="row-fluid" data-ng-controller="HistoryAbsenceCtrl" data-ng-init="init()">
 	<div class="span12">
 		<h6>Historique</h6>
-		<div class="row-fluid scrollable" data-ng-repeat="absence in history">
-			<div class="span10">
-				<span>RTTE du 02/04/2013 au 02/04/2013 => 4 jour(s)</span>
-				<i data-ng-class="{'icon-comment': true, 'icon-comment-alt': false}"></i>
-			</div>
-			<div class="span2">
-				<button class="btn btn-danger btn-mini" data-ng-click=""><i class="icon-trash"></i></button>
+
+		<div class="row-fluid">
+			<div class="span12 scrollable">
+				<div class="row-fluid " data-ng-repeat="absence in history">
+					<div class="span10">
+						<span>{{absence.code}} du {{absence.startDate | date}} au {{absence.endDate | date}} => {{absence.nbDays}} jour(s)</span>
+						<i data-ng-class="{'icon-comment': true, 'icon-comment-alt': false}"></i>
+					</div>
+					<div class="span2">
+						<button class="btn btn-danger btn-mini" data-ng-click=""><i class="icon-trash"></i></button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

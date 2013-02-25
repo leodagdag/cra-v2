@@ -16,19 +16,17 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import constants.AbsenceType;
-import constants.MissionType;
 import leodagdag.play2morphia.MorphiaPlugin;
+import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
-import org.springframework.util.CollectionUtils;
 import utils.deserializer.DateTimeDeserializer;
 import utils.serializer.DateTimeSerializer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +40,7 @@ import java.util.List;
 	         @Index("_startDate, _endDate")
 })
 public class JMission {
+
 	@Id
 	public ObjectId id;
 	public ObjectId customerId;
@@ -61,15 +60,11 @@ public class JMission {
 	private Date _startDate;
 	private Date _endDate;
 
-	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds, final Boolean withoutHolidayAndCSS) {
-		if (!CollectionUtils.isEmpty(missionsIds)) {
-			final Query<JMission> q = MorphiaPlugin.ds().createQuery(JMission.class)
-				                          .field(Mapper.ID_KEY).in(missionsIds);
-			if (withoutHolidayAndCSS) {
-				q.filter("missionType !=", "holiday");
-			}
-			final List<JMission> missions = q
-				                                .retrievedFields(true, Mapper.ID_KEY,"code", "missionType")
+	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds) {
+		if (CollectionUtils.isNotEmpty(missionsIds)) {
+			final List<JMission> missions =  MorphiaPlugin.ds().createQuery(JMission.class)
+				                                 .field(Mapper.ID_KEY).in(missionsIds)
+				                                .retrievedFields(true, Mapper.ID_KEY, "code", "missionType")
 				                                .disableValidation()
 				                                .asList();
 			return Maps.uniqueIndex(missions, new Function<JMission, ObjectId>() {
@@ -102,12 +97,12 @@ public class JMission {
 	}
 
 	public static ImmutableList<ObjectId> getAbsencesMissionIds(final AbsenceType absenceType) {
-        final List<String> absenceTypes = AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
-        final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
-                .field("absenceType").in(absenceTypes)
-                .retrievedFields(true, Mapper.ID_KEY)
-                .disableValidation()
-                .asList();
+		final List<String> absenceTypes = AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
+		final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
+			                                .field("absenceType").in(absenceTypes)
+			                                .retrievedFields(true, Mapper.ID_KEY)
+			                                .disableValidation()
+			                                .asList();
 
 		final List<ObjectId> missionIds = Lists.newArrayList(Collections2.transform(missions, new Function<JMission, ObjectId>() {
 			@Nullable

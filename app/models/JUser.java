@@ -129,6 +129,6 @@ public class JUser implements Subject {
 				return am.missionId;
 			}
 		}));
-		return JMission.codeAndMissionType(affectedMissionIds, false);
+		return JMission.codeAndMissionType(affectedMissionIds);
 	}
 }
