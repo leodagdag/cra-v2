@@ -59,7 +59,7 @@ public class JAbsence extends Model implements MongoModel{
 
 	}
 
-	public static void create(final JAbsence absence) throws AbsenceAlreadyExistException {
+	public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException {
 
 		// newAbsenceStartDate < dbAbsenceStartDate || dbAbsenceEndDate < newAbsenceEndDate
 		Query<JAbsence> dateQuery = MorphiaPlugin.ds().createQuery(JAbsence.class);
@@ -96,6 +96,7 @@ public class JAbsence extends Model implements MongoModel{
 		}
 		absence.insert();
 		JDay.add(absence);
+        return absence;
 	}
 
 	@SuppressWarnings({"unused"})

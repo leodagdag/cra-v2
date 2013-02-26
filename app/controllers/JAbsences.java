@@ -36,8 +36,7 @@ public class JAbsences extends Controller {
 		final CreateAbsenceForm createAbsenceForm = form.get();
 		final JAbsence absence = createAbsenceForm.to();
 		try {
-			JAbsence.create(absence);
-			return created(toJson("Demande d'absence créée !"));
+			return created(toJson(AbsenceDTO.of(JAbsence.create(absence))));
 		} catch (AbsenceAlreadyExistException e) {
 			return badRequest(toJson(e.getMessage()));
 		}
