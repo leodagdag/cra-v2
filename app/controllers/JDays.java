@@ -57,7 +57,7 @@ public class JDays extends Controller {
 
 		try {
 			JDay.create(craId, createForm.days());
-			return ok("Journée(s) sauvegardée(s)");
+			return created("Journée(s) sauvegardée(s)");
 		} catch (IllegalDayOperation e) {
 			return badRequest(toJson(e));
 		}

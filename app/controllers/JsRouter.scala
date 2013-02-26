@@ -28,6 +28,7 @@ object JsRouter extends Controller {
 					JAbsences.historyRTT,
 					JMissions.absences,
 					JUsers.employees,
+					JUsers.all,
 					JUsers.affectedMissions
 
 				)

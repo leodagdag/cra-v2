@@ -20,4 +20,9 @@ public class JUsers extends Controller {
 	public static Result affectedMissions(final String username, final Long startDate, final Long endDate){
 		return ok(toJson(MissionDTO.of(JUser.affectedMissions(username, startDate,endDate))));
 	}
+
+	public static Result all(){
+
+		return ok(toJson(JUser.all()));
+	}
 }

@@ -11,7 +11,6 @@ GET     /login                          controllers.Authentication.login()
 POST    /auth                           controllers.Authentication.authenticate()
 GET     /logout                         controllers.Authentication.logout()
 GET     /profile                        controllers.Authentication.profile()
-
 # Holiday
 # ~~~~
 GET    /absences/cp/:username/:year             controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)
@@ -19,8 +18,6 @@ GET    /absences/rtt/:username/:year             controllers.JAbsences.historyRT
 GET    /absences/history/:username/:year             controllers.JAbsences.historyByYear(username: String, year: Integer)
 GET    /absences/history/:username             controllers.JAbsences.history(username: String)
 POST    /absences                       controllers.JAbsences.create()
-
-
 # Day
 # ~~~~
 DELETE  /cra/:id/day/:date              controllers.Days.delete(id: String, date: Long)
@@ -32,7 +29,6 @@ POST    /days/                           controllers.JDays.create()
 GET     /cra/:username/:year/:month             controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /cra/:id/validate                       controllers.Cras.validate(id: String)
 POST    /cra/:id/invalidate                     controllers.Cras.invalidate(id: String)
-
 # Mission
 # ~~~~
 GET    /absences                       controllers.JMissions.absences()
@@ -41,12 +37,11 @@ GET    /absences                       controllers.JMissions.absences()
 # ~~~~
 GET     /users/:username/affectedMissions/:startDate/:endDate   controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)
 GET     /users/employees                                        controllers.JUsers.employees()
+GET     /users                                                  controllers.JUsers.all()
 
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser             controllers.HtmlPages.unsupportedBrowser
-GET     /template/tabs/tabs.html        controllers.HtmlPages.paneTemplate
-GET     /template/tabs/pane.html        controllers.HtmlPages.tabsTemplate
 # Javascript routing
 # ~~~~
 GET     /assets/javascripts/routes      controllers.JsRouter.javascriptRoutes()

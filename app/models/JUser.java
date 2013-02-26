@@ -19,8 +19,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import security.JSecurityRole;
+import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -38,6 +41,7 @@ public class JUser implements Subject {
 
 
 	@Id
+	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId id;
 	public String username;
 	public String password;
@@ -50,16 +54,19 @@ public class JUser implements Subject {
 	public List<JAffectedMission> affectedMissions = Lists.newArrayList();
 
 	@Override
+	@JsonIgnore
 	public List<? extends Role> getRoles() {
 		return Lists.newArrayList(new JSecurityRole(role));
 	}
 
 	@Override
+	@JsonIgnore
 	public List<? extends Permission> getPermissions() {
 		return null;
 	}
 
 	@Override
+	@JsonIgnore
 	public String getIdentifier() {
 		return username;
 	}
@@ -130,5 +137,12 @@ public class JUser implements Subject {
 			}
 		}));
 		return JMission.codeAndMissionType(affectedMissionIds);
+	}
+
+	public static List<JUser> all() {
+		return MorphiaPlugin.ds().createQuery(JUser.class)
+			.retrievedFields(false, "affectedMissions")
+			.disableValidation()
+			.asList();
 	}
 }
