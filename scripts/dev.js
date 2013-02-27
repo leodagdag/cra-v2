@@ -18,9 +18,9 @@ var customer1 = db.Customer.findOne({code: 'CODE_C_1'});
 /*
  * Mission
  */
-db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', missionType: 'customer', _startDate: new Date(2013, 0, 1), _endDate: new Date(2013, 4, 31)});
-db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', missionType: 'customer', _startDate: new Date(2013, 1, 1), _endDate: new Date(2013, 4, 31)});
-db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre-sale', _startDate: new Date(2013, 0, 1)});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(2013, 0, 1), _endDate: new Date(2013, 4, 31)});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', missionType: 'customer',isClaim: true, _startDate: new Date(2013, 1, 1), _endDate: new Date(2013, 4, 31)});
+db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre-sale',isClaim: true, _startDate: new Date(2013, 0, 1)});
 db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(2013, 0, 1) });
 db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });
 db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });

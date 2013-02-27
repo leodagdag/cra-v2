@@ -18,8 +18,6 @@ public class MissionDTO {
 
 	public String id;
 	public String code;
-	public String description;
-	public String missionType;
 
 	public MissionDTO() {
 	}
@@ -27,8 +25,6 @@ public class MissionDTO {
 	public MissionDTO(final JMission mission) {
 		this.id = mission.id.toString();
 		this.code = mission.code;
-		this.description = mission.description;
-		this.missionType = mission.missionType;
 	}
 
 	public static MissionDTO of(final JMission mission) {

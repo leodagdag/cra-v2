@@ -1,8 +1,11 @@
-app.controller('HistoryClaimCtrl', ['$scope', '$http', '$log', '$location',
-	function HistoryClaimCtrl($scope, $http, $log, $location) {
-		$scope.filter = {
-			year: moment().year(),
-			month: moment().month(),
-			orderBy: 'date'
-		};
-	}]);
+app.controller('HistoryClaimCtrl', ['$scope', '$http', '$log', '$location', 'MonthsConst',
+    function HistoryClaimCtrl($scope, $http, $log, $location, MonthsConst) {
+        $scope.months = _(MonthsConst)
+            .flatten()
+            .valueOf();
+        $scope.filter = {
+            year: moment().year(),
+            month: $scope.months[moment().month()].id,
+            orderBy: 'date'
+        };
+    }]);

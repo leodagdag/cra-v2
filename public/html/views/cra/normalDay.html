@@ -1,25 +1,24 @@
 <div class="row-fluid" data-ng-controller="NormalDayCtrl">
-	<div class="span3 offset4">
-		<form class="well well-small" data-ng-submit="localSave()">
-			<fieldset>
-				<label for="morning">Matin</label>
+    <div class="span3 offset4">
+        <form class="well well-small" data-ng-submit="localSave()">
+            <fieldset>
+                <label for="morning">Matin</label>
 
-				<select id="morning" data-ng-model="form.morning.missionId" autofocus>
-					<option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.morning.missionId">{{am.code}}</option>
-				</select>
-				<label for="afternoon">Après-midi</label>
+                <select id="morning" data-ng-model="form.morning.missionId" autofocus>
+                    <option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.morning.missionId">{{am.code}}</option>
+                </select>
+                <label for="afternoon">Après-midi</label>
 
-				<select id="afternoon" data-ng-model="form.afternoon.missionId">
-					<option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.afternoon.missionId">{{am.code}}</option>
-				</select>
-				<label for="comment">Commentaire</label>
+                <select id="afternoon" data-ng-model="form.afternoon.missionId">
+                    <option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.afternoon.missionId">{{am.code}}</option>
+                </select>
+                <label for="comment">Commentaire</label>
 
-				<textarea id="comment" rows="3" data-ng-model="form.comment"></textarea>
-
-				<hr>
-				<button type="submit" class="btn btn-primary">Sauvegarder</button>
-				<button type="button" class="btn" data-ng-click="back()">Annuler</button>
-			</fieldset>
-		</form>
-	</div>
+                <textarea class="input-block-level" id="comment" rows="3" data-ng-model="form.comment"></textarea>
+                <hr>
+                <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                <button type="button" class="btn" data-ng-click="back()">Annuler</button>
+            </fieldset>
+        </form>
+    </div>
 </div>

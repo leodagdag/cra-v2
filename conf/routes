@@ -31,7 +31,8 @@ POST    /cra/:id/validate                       controllers.Cras.validate(id: St
 POST    /cra/:id/invalidate                     controllers.Cras.invalidate(id: String)
 # Mission
 # ~~~~
-GET    /absences                       controllers.JMissions.absences()
+GET    /missions/absences                       controllers.JMissions.absences()
+GET    /missions/claims/:username                       controllers.JMissions.claims(username: String)
 
 # User
 # ~~~~

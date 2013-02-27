@@ -42,7 +42,8 @@ app.config(['$routeProvider',
 			})
 			.when("/claim", {
 				templateUrl: "public/html/views/claim/claim.html",
-				controller: 'ClaimCtrl'
+				controller: 'ClaimCtrl',
+                resolve: {'profile': 'Profile' }
 			})
 			.when("/remuneration", {
 				templateUrl: "public/html/views/remuneration/remuneration.html",
