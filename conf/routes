@@ -11,6 +11,10 @@ GET     /login                          controllers.Authentication.login()
 POST    /auth                           controllers.Authentication.authenticate()
 GET     /logout                         controllers.Authentication.logout()
 GET     /profile                        controllers.Authentication.profile()
+# Claims
+# ~~~~
+GET     /claims/:username/:year/:month               controllers.JClaims.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
+POST     /claims                                     controllers.JClaims.create()
 # Holiday
 # ~~~~
 GET    /absences/cp/:username/:year             controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)

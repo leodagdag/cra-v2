@@ -5,14 +5,15 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
                 username: username,
                 missionId: form.missionId,
                 date: moment(form.date, 'DD/MM/YYYY').valueOf(),
-                type: form.type,
+	            claimType: form.claimType,
                 amount: form.amount,
-                km: form.km,
+	            kilometer: form.kilometer,
                 journey: form.journey,
-                description: form.description
+	            comment: form.comment
             }
         };
         $scope.profile = profile.data;
+
         $scope.claimsType = ClaimTypeConst;
         $scope.form = {};
 
@@ -38,6 +39,18 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
         $scope.save = function () {
             $log.debug('$scope.form',$scope.form);
             var claim = new Claim($scope.profile.username, $scope.form);
-            $log.debug('claim',claim);
+            $log.debug('new claim',claim);
+	        var route = jsRoutes.controllers.JClaims.create();
+	        $http({
+		        method: route.method,
+		        url: route.url,
+		        data: claim
+	        })
+		        .success(function (claim, status, headers, config) {
+			        $log.debug('claim', claim);
+		        })
+		        .error(function (error, status, headers, config) {
+			        $log.debug('error', error);
+		        });
         };
     }]);

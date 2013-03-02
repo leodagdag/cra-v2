@@ -8,7 +8,6 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.{DefaultBSONDocumentWrite
 import reactivemongo.bson.handlers.{BSONWriter, BSONReader}
 import reactivemongo.bson.{BSONInteger, BSONString, BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.json.JsObject
 
 
 /**
@@ -54,24 +53,28 @@ object Auth {
 	}
 
 	def checkAuthentication(auth: (String, String)) = {
-		val crit = BSONDocument("username" -> BSONString(auth._1), "password" -> BSONString(auth._2))
-		val projection = BSONDocument(
+		val s = BSONDocument(
+			"username" -> BSONString(auth._1),
+			"password" -> BSONString(auth._2)
+		)
+		val p = BSONDocument(
 			"_id" -> BSONInteger(1),
 			"username" -> BSONInteger(1),
 			"password" -> BSONInteger(1),
 			"role" -> BSONInteger(1)
 		)
 		val q = QueryBuilder()
-			.query(crit)
-			.projection(projection)
+			.query(s)
+			.projection(p)
 		db.find[Auth](q).headOption
 	}
 
 	def asSubject(username: String) = {
-		val q: QueryBuilder = QueryBuilder().query(BSONDocument("username" -> new BSONString(username)))
+		val s = BSONDocument("username" -> new BSONString(username))
+		val q = QueryBuilder()
+			.query(s)
 		db.find[Subject](q).headOption
 	}
-
 }
 
 case class Profile(username: String,

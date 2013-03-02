@@ -2,10 +2,10 @@ package security
 
 import be.objectify.deadbolt.core.models.Subject
 import be.objectify.deadbolt.scala.{DeadboltHandler, DynamicResourceHandler}
-import scala.concurrent.Await
 import controllers.routes
 import play.api.http.{MediaRange, MimeTypes}
 import play.api.mvc.{Security, Results, Result, Request}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 /**
@@ -19,7 +19,7 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
 		request.session.get("username")
 			.map(username => Await.result(Auth.asSubject(username), 5.seconds))
 			.getOrElse(None)
-	)
+		)
 
 	def getDynamicResourceHandler[A](request: Request[A]): Option[DynamicResourceHandler] = ???
 

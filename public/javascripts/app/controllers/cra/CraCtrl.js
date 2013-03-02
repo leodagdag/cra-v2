@@ -103,7 +103,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				.join(',')
 				.valueOf();
 			// "/day/:username/:craId/:year/:month/:days"
-			$location.path(_.str.sprintf("/day/%s/%s/%s/%s/%s", $scope.criterias.selected.employee, $scope.cra.id, $scope.cra.year, $scope.cra.month, days))
+			$location.path(_.str.sprintf("/day/%s/%s/%s/%s/%s", $scope.criterias.selected.employee, ($scope.cra.id) ? $scope.cra.id : "", $scope.cra.year, $scope.cra.month, days))
 		};
 
 		$scope.deleteDay = function(wIndex, date, dIndex) {

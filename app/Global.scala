@@ -1,5 +1,8 @@
 
 import java.io.File
+import play.api.http.{MimeTypes, MediaRange}
+import play.api.libs.json.JsString
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Result, Handler, RequestHeader}
 import play.api.{Mode, Configuration, Logger, GlobalSettings, Application}
 
@@ -52,6 +55,9 @@ object Global extends GlobalSettings {
 
 	override def onError(request: RequestHeader, ex: Throwable): Result = {
 		Logger error(s"onError from[${request.remoteAddress}}] - [${request.method} ${request.path}]", ex)
-		super.onError(request, ex)
+		request.acceptedTypes
+			.find(mr => mr == MediaRange(MimeTypes.JAVASCRIPT) || mr == MediaRange(MimeTypes.JSON))
+			.map(m => InternalServerError(JsString(s"exception ${ex.getMessage}")))
+			.getOrElse(super.onError(request, ex))
 	}
 }

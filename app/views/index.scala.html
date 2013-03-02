@@ -5,11 +5,20 @@
 
 <!DOCTYPE html>
 
-<html lang="en" data-ng-app="app" data-authenticator="">
+<html lang="en" data-ng-app="app" data-authenticator>
 	@header()
 	<body>
 		@navigation(handler)
+
 		<div class="container-fluid">
+			<div class="row-fluid hide" data-ng-controller="AlertCtrl" data-ng-class="{'show': alerts.length != 0}">
+				<div class="span10 offset1">
+				<div class="alert alert-error" data-ng-repeat="alert in alerts" >
+					<button type="button" class="close" data-ng-click="close(alert.ts)">&times;</button>
+						<strong>Erreur !</strong> {{alert.msg}} <span class="pull-right">(voir la console)</span>
+				</div>
+				</div>
+			</div>
 			<div data-ng-view=""></div>
 		</div>
 		@scripts(handler)

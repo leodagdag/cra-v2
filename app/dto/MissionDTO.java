@@ -41,13 +41,17 @@ public class MissionDTO {
 		}));
 	}
 
-    public static List<MissionDTO> of(ImmutableList<JMission> missions) {
-        return Lists.newArrayList(Collections2.transform(missions, new Function<JMission, MissionDTO>() {
-            @Nullable
-            @Override
-            public MissionDTO apply(@Nullable final JMission mission) {
-                return new MissionDTO(mission);
-            }
-        }));
-    }
+	public static List<MissionDTO> of(ImmutableList<JMission> missions) {
+		return Lists.newArrayList(Collections2.transform(missions, new Function<JMission, MissionDTO>() {
+			@Nullable
+			@Override
+			public MissionDTO apply(@Nullable final JMission mission) {
+				return new MissionDTO(mission);
+			}
+		}));
+	}
+
+	public static MissionDTO of(final ObjectId id) {
+		return new MissionDTO(JMission.codeAndMissionType(id));
+	}
 }

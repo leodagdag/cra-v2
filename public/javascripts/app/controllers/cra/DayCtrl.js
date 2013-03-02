@@ -28,10 +28,11 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 				return moment(date).date();
 			})
 			.valueOf();
+		$scope.day = {};
 		$scope.affectedMissions = [];
 		$scope.title = _.str.toSentence($scope.days, ', ', ' et ') + ' ' + _.str.capitalize(moment($scope.date).format('MMMM YYYY'));
 
-		$scope.loadData = function() {
+		$scope.init = function() {
 			var route = jsRoutes.controllers.JUsers.affectedMissions($scope.username, _.head($scope.dates), $scope.dates[$scope.dates.length - 1]);
 			$http({
 				method: route.method,
@@ -43,20 +44,25 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 					$log.error(data, status);
 				});
 
-			route = jsRoutes.controllers.JDays.fetch($scope.craId, $scope.date);
-			$http({
-				method: route.method,
-				url: route.url
-			})
-				.success(function(day, status, headers, config) {
-					$log.log('day', day);
-					$scope.day = day;
-					$scope.activateSubSection((day.isSpecial) ? 'special' : 'normal');
 
+			if($scope.days.length === 1 && $scope.craId) {
+				route = jsRoutes.controllers.JDays.fetch($scope.craId, $scope.date);
+				$http({
+					method: route.method,
+					url: route.url
 				})
-				.error(function(data, status, headers, config) {
-					$log.error(data, status);
-				});
+					.success(function(day, status, headers, config) {
+						$log.log('day', day);
+						$scope.day = day;
+						$scope.activateSubSection((day.isSpecial) ? 'special' : 'normal');
+
+					})
+					.error(function(error, status, headers, config) {
+
+					});
+			} else {
+				$scope.activateSubSection('normal');
+			}
 		};
 
 		$scope.getMissionLabel = function(id) {
@@ -92,7 +98,7 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 				});
 		}
 
-		$scope.back = function(){
+		$scope.back = function() {
 			///cra/:username/:year/:month
 			$location.path(_.str.sprintf('/cra/%s/%s/%s', $scope.username, $scope.year, $scope.month));
 		}
