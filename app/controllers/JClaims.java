@@ -1,12 +1,12 @@
 package controllers;
 
+import caches.ResponseCache;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import dto.ClaimDTO;
-import models.JAbsence;
 import models.JClaim;
 import models.JMission;
 import models.JUser;
@@ -28,10 +28,11 @@ import static play.libs.Json.toJson;
  */
 public class JClaims extends Controller {
 
-	public static Result fetch(final String username, final Integer year, final Integer month) {
+	@ResponseCache.NoCacheResponse
+	public static Result history(final String username, final Integer year, final Integer month) {
 		final ObjectId userId = JUser.id(username);
-		final ImmutableList<JClaim> claims = JClaim.forUserId(userId, year, month);
-		final List<ObjectId> missionIds = Lists.newArrayList(Collections2.transform(claims, new Function<JClaim, ObjectId>() {
+		final ImmutableList<JClaim> claims = JClaim.forUser(userId, year, month);
+		final ImmutableList<ObjectId> missionIds = ImmutableList.copyOf(Collections2.transform(claims, new Function<JClaim, ObjectId>() {
 			@Nullable
 			@Override
 			public ObjectId apply(@Nullable final JClaim claim) {
@@ -43,7 +44,7 @@ public class JClaims extends Controller {
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
-	public static Result create(){
+	public static Result create() {
 		final Form<CreateClaimForm> form = Form.form(CreateClaimForm.class).bind(request().body().asJson());
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
@@ -53,7 +54,10 @@ public class JClaims extends Controller {
 		final JClaim claim = createClaimForm.to();
 		return ok(toJson(ClaimDTO.of(JClaim.create(claim))));
 
+	}
 
+	public static Result delete(final String id){
+		return ok(toJson(JClaim.delete(id)));
 	}
 	public static class CreateClaimForm {
 
@@ -72,8 +76,12 @@ public class JClaims extends Controller {
 			claim.missionId = ObjectId.massageToObjectId(this.missionId);
 			claim.date = new DateTime(this.date);
 			claim.claimType = this.claimType;
-			claim.amount = new BigDecimal(this.amount);
-			claim.kilometer = new BigDecimal(this.kilometer);
+			if (this.amount != null) {
+				claim.amount = new BigDecimal(this.amount);
+			}
+			if (this.kilometer != null) {
+				claim.kilometer = new BigDecimal(this.kilometer);
+			}
 			claim.journey = this.journey;
 			claim.comment = this.comment;
 			return claim;

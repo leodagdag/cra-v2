@@ -3,54 +3,61 @@
 # ~~~~
 
 # Home page
-GET     /                               controllers.Application.index()
+GET     /                                                           controllers.Application.index()
 
 # Authentication
 # ~~~~
-GET     /login                          controllers.Authentication.login()
-POST    /auth                           controllers.Authentication.authenticate()
-GET     /logout                         controllers.Authentication.logout()
-GET     /profile                        controllers.Authentication.profile()
+GET     /login                                                      controllers.Authentication.login()
+POST    /auth                                                       controllers.Authentication.authenticate()
+GET     /logout                                                     controllers.Authentication.logout()
+GET     /profile                                                    controllers.Authentication.profile()
 # Claims
 # ~~~~
-GET     /claims/:username/:year/:month               controllers.JClaims.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
-POST     /claims                                     controllers.JClaims.create()
+GET     /claims/:username/:year/:month                              controllers.JClaims.history(username: String, year: java.lang.Integer, month: java.lang.Integer)
+POST    /claims                                                     controllers.JClaims.create()
+DELETE  /claims/:id                                                 controllers.JClaims.delete(id: String)
 # Holiday
 # ~~~~
-GET    /absences/cp/:username/:year             controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)
-GET    /absences/rtt/:username/:year             controllers.JAbsences.historyRTT(username: String, year: java.lang.Integer)
-GET    /absences/history/:username/:year             controllers.JAbsences.historyByYear(username: String, year: Integer)
-GET    /absences/history/:username             controllers.JAbsences.history(username: String)
-POST    /absences                       controllers.JAbsences.create()
+GET    /absences/cp/:username/:year                                 controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)
+GET    /absences/rtt/:username/:year                                controllers.JAbsences.historyRTT(username: String, year: java.lang.Integer)
+GET    /absences/history/:username/:year                            controllers.JAbsences.historyByYear(username: String, year: Integer)
+GET    /absences/history/:username                                  controllers.JAbsences.history(username: String)
+POST   /absences                                                    controllers.JAbsences.create()
 # Day
 # ~~~~
-DELETE  /cra/:id/day/:date              controllers.Days.delete(id: String, date: Long)
-DELETE  /cra/:id/day/:date/:momentOfDay controllers.Days.deleteHalfDay(id: String, date: Long, momentOfDay:String)
-GET     /cra/:id/day/:date              controllers.JDays.fetch(id: String, date: Long)
-POST    /days/                           controllers.JDays.create()
+DELETE  /cra/:id/day/:date                                          controllers.Days.delete(id: String, date: Long)
+DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.Days.deleteHalfDay(id: String, date: Long, momentOfDay:String)
+GET     /cra/:id/day/:date                                          controllers.JDays.fetch(id: String, date: Long)
+POST    /days/                                                      controllers.JDays.create()
 # Cra
 # ~~~~
-GET     /cra/:username/:year/:month             controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
-POST    /cra/:id/validate                       controllers.Cras.validate(id: String)
-POST    /cra/:id/invalidate                     controllers.Cras.invalidate(id: String)
+GET     /cra/:username/:year/:month                                 controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
+POST    /cra/:id/validate                                           controllers.Cras.validate(id: String)
+POST    /cra/:id/invalidate                                         controllers.Cras.invalidate(id: String)
 # Mission
 # ~~~~
-GET    /missions/absences                       controllers.JMissions.absences()
-GET    /missions/claims/:username                       controllers.JMissions.claims(username: String)
-
+GET     /missions/absences                                          controllers.JMissions.absences()
+GET     /missions/claims/:username                                  controllers.JMissions.claims(username: String)
+GET     /missions/affectedMissions/:username/:startDate/:endDate    controllers.JMissions.affectedMissions(username: String, startDate :Long, endDate: Long)
 # User
 # ~~~~
-GET     /users/:username/affectedMissions/:startDate/:endDate   controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)
-GET     /users/employees                                        controllers.JUsers.employees()
-GET     /users                                                  controllers.JUsers.all()
+GET     /users/employees                                            controllers.JUsers.employees()
+GET     /users/managers                                             controllers.JUsers.managers()
+GET     /users                                                      controllers.JUsers.all()
 
+# Account
+# ~~~~
+POST    /account/vehicle                                            controllers.JVehicles.saveVehicle()
+GET     /account/:id                                                controllers.JAccounts.fetch(id: String)
+PUT     /account                                                    controllers.JAccounts.update()
+PUT     /account/password                                           controllers.JAccounts.password()
 # HtmlPage
 # ~~~~
-GET     /unsupportedBrowser             controllers.HtmlPages.unsupportedBrowser
+GET     /unsupportedBrowser                                         controllers.HtmlPages.unsupportedBrowser
 # Javascript routing
 # ~~~~
-GET     /assets/javascripts/routes      controllers.JsRouter.javascriptRoutes()
+GET     /assets/javascripts/routes                                  controllers.JsRouter.javascriptRoutes()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                   controllers.Assets.at(path="/public", file)
-GET     /public/*file                   controllers.Assets.at(path="/public", file)
+GET     /assets/*file                                               controllers.Assets.at(path="/public", file)
+GET     /public/*file                                               controllers.Assets.at(path="/public", file)

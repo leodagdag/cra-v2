@@ -77,7 +77,8 @@ object Auth {
 	}
 }
 
-case class Profile(username: String,
+case class Profile(id:String,
+                   username: String,
                    role: String) {
 }
 
@@ -87,6 +88,7 @@ object Profile {
 		def fromBSON(document: BSONDocument): Profile = {
 			val doc = document.toTraversable
 			Profile(
+				doc.getAs[BSONObjectID]("_id").get.stringify,
 				doc.getAs[BSONString]("username").get.value,
 				doc.getAs[BSONString]("role").get.value
 			)

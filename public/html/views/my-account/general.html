@@ -1,8 +1,8 @@
 <div class="row-fluid">
-	<div class="span6">
-		<form class="form-horizontal well well-small" data-ng-controller="MyAccountGeneralCtrl">
+	<div class="span5">
+		<form class="form-horizontal well well-small" data-ng-controller="MyAccountGeneralCtrl" data-ng-submit="save()">
 			<fieldset>
-				<legend>{{account.firstName}} {{account.lastName}}</legend>
+				<legend>{{account.firstName | capitalize}} {{account.lastName | capitalize}}</legend>
 				<div class="control-group">
 					<label class="control-label" for="firstName">Prénom <i class="icon-mandatory"></i></label>
 
@@ -32,45 +32,52 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="manager">Responsable</label>
+					<label class="control-label" for="managerId">Responsable</label>
 
 					<div class="controls">
-						<select class="span10" id="manager" data-ng-model="account.manager">
+						<select class="span10" id="managerId" data-ng-model="account.managerId" data-ng-options="manager.id as manager.firstName + ' ' + manager.lastName for manager in managers">
+							<option value=""></option>
 						</select>
 					</div>
 				</div>
 				<div class="form-actions">
 					<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
 				</div>
-
 			</fieldset>
 		</form>
+
 	</div>
 	<div class="row-fluid">
-		<div class="span4 offset1">
-			<form class="form-horizontal well">
+		<div class="span5 offset1">
+			<form class="form-horizontal well" data-ng-controller="MyAccountPasswordCtrl" data-ng-submit="save()">
 				<fieldset>
 					<legend>Changement de mot de passe</legend>
-					<div class="control-group">
-						<label class="control-label" for="curr-password">Mot de passe actuel <i class="icon-mandatory"></i></label>
+					<div class="control-group" data-ng-class="{'error': errors.oldPassword}">
+						<label class="control-label" for="oldPassword">Mot de passe actuel <i class="icon-mandatory"></i></label>
 
 						<div class="controls">
-							<input type="password" class="span10" id="curr-password" required="required">
+							<input type="password" class="span10" id="oldPassword" data-ng-model="form.oldPassword" required="required">
+							<span class="help-block"><em>{{errors.oldPassword}}</em></span>
 						</div>
 					</div>
-					<div class="control-group">
-						<label class="control-label" for="new-password">Nouveau mot de passe <i class="icon-mandatory"></i></label>
+					<div class="control-group" data-ng-class="{'error': errors.newPassword}">
+						<label class="control-label" for="newPassword">Nouveau mot de passe <i class="icon-mandatory"></i></label>
 
 						<div class="controls">
-							<input type="password" class="span10" id="new-password" required="required">
+							<input type="password" class="span10" id="newPassword" data-ng-model="form.newPassword" required="required">
+							<span class="help-block"><em>{{errors.newPassword}}</em></span>
 						</div>
 					</div>
-					<div class="control-group">
-						<label class="control-label" for="confirm-password">Confirmez le nouveau mot de passe <i class="icon-mandatory"></i></label>
+					<div class="control-group" data-ng-class="{'error': errors.confirmPassword}">
+						<label class="control-label" for="confirmPassword">Confirmez le nouveau mot de passe <i class="icon-mandatory"></i></label>
 
 						<div class="controls">
-							<input type="password" class="span10" id="confirm-password" required="required">
+							<input type="password" class="span10" id="confirmPassword" data-ng-model="form.confirmPassword" required="required">
+							<span class="help-block"><em>{{errors.confirmPassword}}</em></span>
 						</div>
+					</div>
+					<div data-ng-class="{'control-group error': errors.global}">
+						<span class="help-block"><em>{{errors.global}}</em></span>
 					</div>
 					<div class="form-actions">
 						<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>

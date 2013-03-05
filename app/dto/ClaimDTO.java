@@ -26,8 +26,10 @@ public class ClaimDTO {
 	public String claimType;
 	public BigDecimal amount;
 	public BigDecimal kilometer;
+	public BigDecimal kilometerAmount;
 	public String journey;
 	public String comment;
+	public BigDecimal totalClaim;
 
 	public ClaimDTO() {
 	}
@@ -42,7 +44,9 @@ public class ClaimDTO {
 		this.claimType = claim.claimType;
 		this.amount = claim.amount;
 		this.kilometer = claim.kilometer;
+		this.kilometerAmount = claim.kilometerAmount;
 		this.journey = claim.journey;
+		this.totalClaim = claim.totalClaim;
 		this.comment = claim.comment;
 	}
 

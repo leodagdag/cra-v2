@@ -1,6 +1,7 @@
 package controllers;
 
-import dto.MissionDTO;
+import com.google.common.collect.ImmutableList;
+import dto.ManagerDTO;
 import models.JUser;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -17,12 +18,11 @@ public class JUsers extends Controller {
 		return ok(toJson(JUser.byRole(SecurityRole.employee())));
 	}
 
-	public static Result affectedMissions(final String username, final Long startDate, final Long endDate){
-		return ok(toJson(MissionDTO.of(JUser.affectedMissions(username, startDate,endDate))));
+	public static Result managers(){
+		return ok(toJson(ManagerDTO.of(ImmutableList.copyOf(JUser.managers()))));
 	}
 
-	public static Result all(){
-
+	public static Result all() {
 		return ok(toJson(JUser.all()));
 	}
 }

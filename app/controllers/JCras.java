@@ -2,6 +2,7 @@ package controllers;
 
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import dto.CraDTO;
@@ -38,7 +39,7 @@ public class JCras extends Controller {
 		for (JDay jDay : jDays) {
 			missionsIds.addAll(jDay.missionIds());
 		}
-		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
+		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(ImmutableList.copyOf(missionsIds));
 		return ok(toJson(CraDTO.of(cra, jDays, jMissions)));
 	}
 

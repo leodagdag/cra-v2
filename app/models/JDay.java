@@ -43,6 +43,7 @@ import java.util.List;
 	         @Index("year, month")
 })
 public class JDay extends Model implements MongoModel {
+
 	public static final String COL_NAME = "Day";
 	@Id
 	public ObjectId id;
@@ -107,37 +108,78 @@ public class JDay extends Model implements MongoModel {
 		return days;
 	}
 
-	public static JDay find(final ObjectId craId, final DateTime dts) {
-		return MorphiaPlugin.ds().createQuery(JDay.class)
-			       .field("craId").equal(craId)
-			       .field("_date").equal(dts.toDate())
-			       .get();
-	}
-
 	public static void create(final ObjectId craId, final List<JDay> days) throws IllegalDayOperation {
-		final List<Date> dates = Lists.newArrayList(Collections2.transform(days, new Function<JDay, Date>() {
-			@Nullable
-			@Override
-			public Date apply(@Nullable final JDay d) {
-				return d.date.toDate();
-			}
-		}));
+		final List<Date> dates = Transformer.extractDates(days);
 		// Extract corresponding days in database
 		final List<JDay> oldDays = MorphiaPlugin.ds().createQuery(JDay.class)
 			                           .field("craId").equal(craId)
 			                           .field("_date").in(dates)
 			                           .asList();
 		if (CollectionUtils.isNotEmpty(oldDays)) {
-			// Check holidays and remove them
-			if(Transformer.extractHolidays(oldDays).size() > 0){
-				throw new IllegalDayOperation("Vous ne pouvez pas modifier ces journées. Des congés existent.");
-			}
-			// delete existing days
+			final List<JDay> holidays = Transformer.extractHolidays(oldDays);
+			// delete existing days (non Holidays)
 			final List<ObjectId> oldDaysIds = Transformer.extractObjectId(new ArrayList<MongoModel>(oldDays));
 			MorphiaPlugin.ds().delete(MorphiaPlugin.ds().createQuery(JDay.class).field(Mapper.ID_KEY).in(oldDaysIds), WriteConcern.ACKNOWLEDGED);
+
+			for (JDay h : holidays) {
+				for (JDay d : days) {
+					if (h.date.isEqual(d.date)) {
+						d.morning = (h.morning != null) ? h.morning : d.morning;
+						d.afternoon = (h.afternoon != null) ? h.afternoon : d.afternoon;
+					}
+				}
+			}
 		}
 		// create new days
 		MorphiaPlugin.ds().save(Transformer.setCraId(days, craId), WriteConcern.ACKNOWLEDGED);
+	}
+
+	public static void add(final JAbsence absence) {
+		List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
+		JCra cra = null;
+
+		for (DateTime dt : dts) {
+			if (cra == null || (cra.year != dt.getYear() || cra.month != dt.getMonthOfYear())) {
+				cra = JCra.getOrCreate(absence.userId, dt.getYear(), dt.getMonthOfYear());
+			}
+			// Search JDay...
+			JDay day = JDay.find(cra.id, dt);
+			// ..If not exist we create it.
+			if (day == null) {
+				day = new JDay(dt);
+				day.craId = cra.id;
+			}
+			day.comment = absence.comment;
+			if (dt.isEqual(absence.startDate)) {
+				// First Day
+				if (Boolean.TRUE.equals(absence.startMorning)) {
+					day.morning = new JHalfDay(absence.missionId);
+				}
+				if (Boolean.TRUE.equals(absence.startAfternoon)) {
+					day.afternoon = new JHalfDay(absence.missionId);
+				}
+
+			} else if (dt.isEqual(absence.endDate)) {
+				// Last Day
+				if (Boolean.TRUE.equals(absence.endMorning)) {
+					day.morning = new JHalfDay(absence.missionId);
+				}
+				if (Boolean.TRUE.equals(absence.endAfternoon)) {
+					day.afternoon = new JHalfDay(absence.missionId);
+				}
+			} else {
+				day.morning = new JHalfDay(absence.missionId);
+				day.afternoon = new JHalfDay(absence.missionId);
+			}
+			day.insert();
+		}
+	}
+
+	public static JDay find(final ObjectId craId, final DateTime dts) {
+		return MorphiaPlugin.ds().createQuery(JDay.class)
+			       .field("craId").equal(craId)
+			       .field("_date").equal(dts.toDate())
+			       .get();
 	}
 
 	public Boolean isSaturday() {
@@ -188,40 +230,6 @@ public class JDay extends Model implements MongoModel {
 	@Override
 	public ObjectId id() {
 		return id;
-	}
-
-	public static void add(final JAbsence absence) {
-		List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
-		JCra cra = null;
-
-		for (DateTime dt : dts) {
-			if (cra == null || (cra.year != dt.getYear() || cra.month != dt.getMonthOfYear())) {
-				cra = JCra.getOrCreate(absence.userId, dt.getYear(), dt.getMonthOfYear());
-			}
-			// Search JDay...
-			JDay day = JDay.find(cra.id, dt);
-			// ..If not exist we create it.
-			if (day == null) {
-				day = new JDay(dt);
-				day.craId = cra.id;
-			}
-			day.comment = absence.comment;
-			if (dt.isEqual(absence.startDate)) {
-				if (Boolean.TRUE.equals(absence.startMorning)) {
-					day.morning = new JHalfDay(absence.missionId);
-				}
-				day.afternoon = new JHalfDay(absence.missionId);
-			} else if (dt.isEqual(absence.endDate)) {
-				day.morning = new JHalfDay(absence.missionId);
-				if (Boolean.TRUE.equals(absence.startAfternoon)) {
-					day.afternoon = new JHalfDay(absence.missionId);
-				}
-			} else {
-				day.morning = new JHalfDay(absence.missionId);
-				day.afternoon = new JHalfDay(absence.missionId);
-			}
-			day.insert();
-		}
 	}
 
 }

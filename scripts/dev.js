@@ -1,6 +1,8 @@
 var MARCH_JS = 2;
 var MARCH = 3;
+db.Parameter.drop();
 db.User.drop();
+db.Vehicle.drop();
 db.Cra.drop();
 db.Day.drop();
 db.HalfDay.drop();
@@ -10,6 +12,23 @@ db.Claim.drop();
 db.Mission.drop();
 db.Customer.drop();
 
+/**
+ * Parameter
+ */
+db.Parameter.insert({
+	_startDate: new Date(2013, 0, 1),
+	active: true,
+	_car: {
+		0: '0.1',
+		5: '5.5',
+		8: '8.8',
+		11: '11'
+	},
+	_motorcycle: {
+		"0": "1.1",
+		"501": "5.01"
+	}
+});
 /**
  * Customer
  * */
@@ -53,10 +72,24 @@ db.User.insert({username: 'bart', password: 'bart', role: 'employee', firstName:
 		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
 		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
 	]});
-db.User.insert({username: 'homer', password: 'homer', role: 'employee', firstName: 'homer', lastName: 'Simpson', trigramme: 'HSN', email: 'homer@simpson.com'});
+db.User.insert({username: 'moe', password: 'moe', role: 'employee', firstName: 'Moe', lastName: 'Szyslak', trigramme: 'MSK', email: 'moe@szyslak.com'});
+db.User.insert({username: 'ned', password: 'ned', role: 'employee', firstName: 'Ned', lastName: 'Flanders', trigramme: 'NFS', email: 'ned@flanders.com', isManager: true});
+db.User.insert({username: 'seymour', password: 'seymour', role: 'employee', firstName: 'Seymour', lastName: 'Skinner', trigramme: 'SSR', email: 'seymour@skinner.com', isManager: true});
 db.User.insert({username: 'marge', password: 'marge', role: 'production', firstName: 'marge', lastName: 'Simpson', trigramme: 'MSN', email: 'marge@simpson.com'});
 var bart = db.User.findOne({username: 'bart'});
 
+/*
+ * Vehicle
+ */
+db.Vehicle.insert({
+	userId: bart._id,
+	vehicleType: "car",
+	power: NumberInt(5),
+	brand: "ALFA_RAMEO",
+	matriculation: "AA-123-AA",
+	_startDate: new Date(2013, 0, 1),
+	active: true
+});
 /*
  * Cra
  */
@@ -111,7 +144,7 @@ db.Day.insert({
 /* 2013/03/06 */
 db.Day.insert({
 	craId: cra._id,
-	_date: new Date(cra.year,MARCH_JS, NumberInt(6)),
+	_date: new Date(cra.year, MARCH_JS, NumberInt(6)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
 	morning: {
@@ -125,7 +158,7 @@ db.Day.insert({
 /* 2013/03/07 */
 db.Day.insert({
 	craId: cra._id,
-	_date: new Date(cra.year,MARCH_JS, NumberInt(7)),
+	_date: new Date(cra.year, MARCH_JS, NumberInt(7)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
 	morning: {
@@ -190,7 +223,28 @@ db.Day.insert({
 	},
 	comment: 'Comment absence...'
 });
-/* Qbsence from 11/02/2013 -> 15/02/2013 */
+
+/*
+ * Claim
+ */
+db.Claim.insert({
+	userId: bart._id,
+	year: 2013,
+	month: MARCH,
+	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
+	missionId: mission_customer1._id,
+	claimType: "TAXI",
+	journey: "Springfield",
+	comment: "Acheter des donuts",
+	_amount: "10.2",
+	_kilometer: "11.5",
+	_kilometerAmount: "63.25",
+	_totalClaim: "73.45"
+
+});
+
+
+/* Absence from 11/02/2013 -> 15/02/2013 */
 var a = {
 	"userId": "5129dc23104cb3b916eff64a",
 	"missionId": "5129dc23104cb3b916eff647",

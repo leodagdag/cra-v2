@@ -1,5 +1,6 @@
-app.controller('MyAccountCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
-	function MyAccountCtrl($scope, $http, $log, $location, $routeParams) {
+app.controller('MyAccountCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'profile',
+	function MyAccountCtrl($scope, $http, $log, $location, $routeParams, profile) {
+		$scope.profile = profile.data;
 		$scope.subSections = {
 			'general': 'public/html/views/my-account/general.html',
 			'vehicle': 'public/html/views/my-account/vehicle.html',
@@ -21,16 +22,46 @@ app.controller('MyAccountCtrl', ['$scope', '$http', '$log', '$location', '$route
 app.controller('MyAccountGeneralCtrl', ['$scope', '$http', '$log', '$location', 'AccountRes', 'ManagerRes',
 	function MyAccountGeneralCtrl($scope, $http, $log, $location, AccountResource, ManagerResource) {
 		$scope.managers = ManagerResource.query();
-		$scope.account = AccountResource.get(function(account) {
-			$log.log('account', account);
-			$log.log('$scope.account', $scope.account);
-		});
+		$scope.account = AccountResource.get({id: $scope.profile.id});
 
+		$scope.save = function() {
+			$scope.account.$update();
+		}
 	}]);
 
+app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location', 'AccountRes',
+	function MyAccountPasswordCtrl($scope, $http, $log, $location, AccountResource) {
+		$scope.form = {
+			oldPassword: null,
+			newPassword: null,
+			confirmPassword: null
+		};
+		$scope.errors = {
+			global: null,
+			oldPassword: null,
+			newPassword: null,
+			confirmPassword: null
+		};
 
-app.controller('MyAccountVehicleCtrl', ['$scope', '$http', '$log', '$location',
-	function MyAccountVehicleCtrl($scope, $http, $log, $location) {
+		$scope.save = function() {
+			$scope.errors = {};
+			var route = jsRoutes.controllers.JAccounts.password();
+			$http({
+				method: route.method,
+				url: route.url,
+				data: $scope.form
+			})
+				.success(function(data, status, headers, config) {
+					$log.log('data', data);
+				})
+				.error(function(errors, status, headers, config) {
+					$log.log('errors', errors);
+					_(errors).forEach(function(err, key){
+						$scope.errors[key] = err.join('<br>');
+					})
+				})
+		}
+
 
 	}]);
 

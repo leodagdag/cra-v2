@@ -1,11 +1,10 @@
 package controllers;
 
-import com.google.common.collect.ImmutableList;
+import caches.ResponseCache;
 import constants.AbsenceType;
 import dto.AbsenceDTO;
 import exceptions.AbsenceAlreadyExistException;
 import models.JAbsence;
-import models.JMission;
 import models.JUser;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -42,16 +41,19 @@ public class JAbsences extends Controller {
 		}
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result history(final String username) {
 		return historyByYear(username, DateTime.now().getYear());
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result historyByYear(final String username, final Integer year) {
 		final ObjectId userId = JUser.id(username);
 		final List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER);
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result historyCP(final String username, final Integer year) {
 		final ObjectId userId = JUser.id(username);
 		final List<JAbsence> absences = JAbsence.fetch(userId, year, JUNE, year + 1, MAY, AbsenceType.CP);
@@ -59,6 +61,7 @@ public class JAbsences extends Controller {
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result historyRTT(final String username, final Integer year) {
 		final ObjectId userId = JUser.id(username);
 		final List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER, AbsenceType.RTT);

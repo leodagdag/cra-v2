@@ -1,14 +1,14 @@
 <div class="span12">
 	<nav>
 		<div class="btn-group">
-			<button class="btn btn-small"><</button>
-			<button class="btn btn-small">></button>
+			<button disabled="disabled" class="btn btn-small"><</button>
+			<button disabled="disabled" class="btn btn-small">></button>
 		</div>
 		<button class="btn btn-small btn-success" data-ng-show="!cra.isValidated && cra.id" data-ng-click="validate()">Valider</button>
 		<button class="btn btn-small btn-danger" data-ng-show="cra.isValidated" data-ng-click="invalidate()">Invalider</button>
-		<button class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}"><i class="icon-comment"></i> Commentaire</button>
+		<button disabled="disabled" class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}"><i class="icon-comment"></i> Commentaire</button>
 		<div class="btn-group">
-			<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+			<a class="btn btn-small dropdown-toggle disabled" data-toggle="dropdown" href="#">
 				<i class="icon-print"></i> Imprimer
 				<span class="caret"></span>
 			</a>

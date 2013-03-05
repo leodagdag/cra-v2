@@ -12,6 +12,6 @@ app.controller('PeriodAbsenceCtrl', ['$scope', '$http', '$log', '$location', '$r
 				comment: $scope.comment
 			};
 			$log.debug('period', period);
-			//$scope.save(period);
+			$scope.save(period);
 		};
 	}]);

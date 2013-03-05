@@ -6,9 +6,9 @@
                     <span>Motif <i class="icon-mandatory"></i></span>
                 </div>
                 <div class="span9">
-                    <select data-ng-model="missionId" data-ng-required="required">
-                        <option data-ng-repeat="mission in missions" value="{{mission.id}}">{{mission.description}}</option>
-                    </select>
+	                <select data-ng-model="missionId" required="required" data-ng-options="mission.id as mission.description for mission  in missions">
+		                <option value=""></option>
+	                </select>
                 </div>
             </div>
             <div class="row-fluid">

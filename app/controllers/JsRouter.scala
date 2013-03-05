@@ -19,20 +19,33 @@ object JsRouter extends Controller {
 					Cras.validate,
 
 					JCras.fetch,
+
 					JDays.fetch,
 					JDays.create,
+
 					JAbsences.create,
 					JAbsences.history,
 					JAbsences.historyByYear,
 					JAbsences.historyCP,
 					JAbsences.historyRTT,
-					JClaims.fetch,
+
+					JClaims.history,
 					JClaims.create,
+					JClaims.delete,
+
 					JMissions.absences,
 					JMissions.claims,
+					JMissions.affectedMissions,
+
 					JUsers.employees,
+					JUsers.managers,
 					JUsers.all,
-					JUsers.affectedMissions
+
+					JAccounts.fetch,
+					JAccounts.update,
+					JAccounts.password,
+
+					JVehicles.saveVehicle
 
 				)
 			).as("text/javascript")

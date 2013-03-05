@@ -59,6 +59,7 @@ object Authentication extends BaseController {
 	}
 
 	val fromProfile = (
+		(__ \ "id").write[String] and
 		(__ \ "username").write[String] and
 			(__ \ "role").write[String]
 		)(unlift(Profile.unapply))

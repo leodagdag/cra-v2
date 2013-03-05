@@ -101,4 +101,5 @@ object Account {
 			.projection(p)
 		User.db.find[JsObject](query).headOption
 	}
+
 }

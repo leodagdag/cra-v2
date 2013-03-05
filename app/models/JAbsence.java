@@ -34,12 +34,10 @@ public class JAbsence extends Model implements MongoModel{
 	public ObjectId userId;
 	public ObjectId missionId;
 	@Transient
-	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime startDate;
 	public Boolean startMorning;
 	public Boolean startAfternoon;
 	@Transient
-	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime endDate;
 	public Boolean endMorning;
 	public Boolean endAfternoon;

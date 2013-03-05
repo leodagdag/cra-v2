@@ -69,6 +69,15 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			return "";
 		};
 
+		$scope.isDayDeletable = function(day) {
+			return day &&
+				((day.morning && day.morning.missionType != 'holiday') ||
+				(day.afternoon && day.afternoon.missionType != 'holiday'));
+		};
+
+		$scope.isHalfDayDeletable = function(halfday) {
+			return halfday && halfday.missionType != 'holiday';
+		};
 
 		$scope.validate = function() {
 			var route = jsRoutes.controllers.Cras.validate($scope.cra.id);

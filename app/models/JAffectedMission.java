@@ -20,14 +20,10 @@ import java.util.Date;
 public class JAffectedMission {
 
 	@Transient
-	@JsonSerialize(using = DateTimeSerializer.class)
-	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime startDate;
 	private Date _startDate;
 
 	@Transient
-	@JsonSerialize(using = DateTimeSerializer.class)
-	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime endDate;
 	private Date _endDate;
 	public ObjectId missionId;

@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import dto.DayDTO;
@@ -38,7 +39,7 @@ public class JDays extends Controller {
 		} else {
 			missionsIds.addAll(day.missionIds());
 		}
-		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
+		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(ImmutableList.copyOf(missionsIds));
 		return ok(toJson(DayDTO.of(day, jMissions, dt.getYear(), dt.getMonthOfYear())));
 	}
 
@@ -49,14 +50,15 @@ public class JDays extends Controller {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateForm createForm = form.get();
+		final String craId = createForm.craId;
 		final String username = createForm.username;
 		final Integer year = createForm.year;
 		final Integer month = createForm.month;
 
-		final ObjectId craId = createForm.craId == null ? JCra.create(JUser.id(username), year, month).id : ObjectId.massageToObjectId(createForm.craId);
+		final JCra cra = JCra.getOrCreate(ObjectId.massageToObjectId(craId), JUser.id(username), year, month);
 
 		try {
-			JDay.create(craId, createForm.days());
+			JDay.create(cra.id, createForm.days());
 			return created("Journée(s) sauvegardée(s)");
 		} catch (IllegalDayOperation e) {
 			return badRequest(toJson(e));

@@ -9,6 +9,7 @@ app.factory('Profile', ['$http', '$log',
 
 app.config(['$routeProvider',
 	function($routeProvider) {
+
 		$routeProvider
 			.when("/cra/:username/:year/:month", {
 				templateUrl: "public/html/views/cra/cra.html",
@@ -59,10 +60,15 @@ app.config(['$routeProvider',
 			})
 			.when("/my-account", {
 				templateUrl: "public/html/views/my-account/my-account.html",
-				controller: 'MyAccountCtrl'
+				controller: 'MyAccountCtrl',
+				resolve: {'profile': 'Profile' }
 			})
 			.when("/my-account/:subSection", {
 				templateUrl: "public/html/views/my-account/my-account.html",
-				controller: 'MyAccountCtrl'
+				controller: 'MyAccountCtrl',
+				resolve: {'profile': 'Profile' }
 			});
-	}]);
+
+
+	}
+]);

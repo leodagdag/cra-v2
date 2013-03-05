@@ -1,3 +1,33 @@
-<div data-ng-controller="MyAccountVehicleCtrl">
-	<h1>Vehicle</h1>
+<div class="row-fluid" data-ng-controller="VehicleCtrl">
+	<div class="span4">
+		<div class="row-fluid">
+			<div class="offset1">
+				<ul class="nav nav-pills">
+					<li data-ng-class="{'active': vehicleType == 'car'}">
+						<a data-ng-click="toggleVehicleType('car')">Voiture</a>
+					</li>
+					<li data-ng-class="{'active': vehicleType == 'motorcycle'}">
+						<a data-ng-click="toggleVehicleType('motorcycle')">Moto</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<form class="well well-small" data-ng-submit="save()">
+			<label>Puissance fiscale / Cylindrée <i class="icon-mandatory"></i></label>
+			<select data-ng-model="form.power" required="required" data-ng-options="power.code as power.label for power in powers">
+				<option value=""></option>
+			</select>
+			<label>Marque <i class="icon-mandatory"></i></label>
+			<select data-ng-model="form.brand" required="required" data-ng-options="brand.code as brand.label for brand in brands">
+				<option value=""></option>
+			</select>
+			<label>Immatriculation <i class="icon-mandatory"></i></label>
+			<input type="text" data-ng-model="form.matriculation" required="required">
+			<label>Date <i class="icon-mandatory"></i></label>
+			<input type="text" data-ng-model="form.startDate" data-b-datepicker required="required">
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
+			</div>
+		</form>
+	</div>
 </div>

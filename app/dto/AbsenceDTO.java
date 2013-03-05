@@ -2,6 +2,7 @@ package dto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import models.JAbsence;
@@ -53,12 +54,12 @@ public class AbsenceDTO {
     }
 
     public static List<AbsenceDTO> of(final List<JAbsence> absences) {
-        final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(Lists.newArrayList(Collections2.transform(absences, new Function<JAbsence, ObjectId>() {
-            @Nullable
-            @Override
-            public ObjectId apply(@Nullable final JAbsence absence) {
-                return absence.missionId;
-            }
+        final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(ImmutableList.copyOf(Collections2.transform(absences, new Function<JAbsence, ObjectId>() {
+	        @Nullable
+	        @Override
+	        public ObjectId apply(@Nullable final JAbsence absence) {
+		        return absence.missionId;
+	        }
         })));
         return Lists.newArrayList(Collections2.transform(absences, new Function<JAbsence, AbsenceDTO>() {
             @Nullable

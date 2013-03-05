@@ -19,7 +19,7 @@
 			margin: 0px;
 		}
 	}
-	.month {
+	.month { // table
 		cursor: default;
 		.day { // table
 			&.pastOrFuture {
@@ -48,10 +48,9 @@
 					.backgroundColorMixin(fade(red, 50%), red);
 				}
 			}
-			.halfday {
+			.halfday { // tr
 				margin: 2px;
 				background-color: #f5f5f5;
-				text-align: right;
 				&.customer {
 					background-color: @customerBC;
 					color: #ffffff;
@@ -76,13 +75,28 @@
 					background-color: @specialBC;
 					color: #000000;
 				}
+				td {
+					text-align: center;
+
+				}
+				:first-child {
+					cursor: pointer;
+					width: 99%;
+				}
 			}
+
 		}
 		.icon-trash {
 			color: red;
 		}
 		.icon-comment {
 			color: #2f96b4;
+		}
+		tr {
+			td {
+				width: 14%;
+			}
+
 		}
 	}
 

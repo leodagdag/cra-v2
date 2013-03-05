@@ -30,9 +30,10 @@ app.controller('PartTimeNewCtrl', ['$scope', '$http', '$log', '$location',
 			if(!_.size($scope.newPartTime.weekDays)) {
 				$scope.emptyDayOfWeek = true;
 			} else {
+				var route = jsRoutes.controllers.Accounts.addPartTime();
 				$http({
-					method: jsRoutes.controllers.Accounts.addPartTime().method,
-					url: jsRoutes.controllers.Accounts.addPartTime().url,
+					method: route.method,
+					url: route.url,
 					data: $scope.newPartTime
 				})
 					.success(function(data, status, headers, config) {

@@ -1,10 +1,8 @@
 package utils.transformer
 
 import com.google.common.collect.ImmutableList
-import java.util.Date
-import models.{MongoModel, JMission, JHalfDay, JDay}
+import models.{MongoModel, JMission, JDay}
 import org.bson.types.ObjectId
-import org.joda.time.DateTime
 import scala.collection.JavaConverters._
 
 /**
@@ -12,14 +10,27 @@ import scala.collection.JavaConverters._
  */
 object Transformer {
 
-
-
-	def extractHolidays(day: java.util.List[JDay]): java.util.List[JHalfDay] = {
-		val holidays: ImmutableList[ObjectId] = JMission.getAbsencesMissionIds
-		day.asScala
-			.flatMap(d => List(d.morning, d.afternoon))
-			.filter(h => if (h == null) false else holidays.asScala.contains(h.missionId))
+	def extractDates(days: java.util.List[JDay]): java.util.List[java.util.Date] = {
+		days.asScala
+			.map(_.date.toDate)
 			.asJava
+	}
+
+	def extractHolidays(days: java.util.List[JDay]): java.util.List[JDay] = {
+		val holidays: ImmutableList[ObjectId] = JMission.getAbsencesMissionIds
+		days.asScala
+			.foreach{
+			d =>
+				val m = d.morning
+				if (m != null && !holidays.asScala.contains(m.missionId)) {
+					d.morning = null
+				}
+				val a = d.afternoon
+				if (a != null && !holidays.asScala.contains(a.missionId)) {
+					d.afternoon = null
+				}
+		}
+			days
 	}
 
 	def extractObjectId(models: java.util.List[MongoModel]): java.util.List[ObjectId] = {
@@ -30,11 +41,9 @@ object Transformer {
 
 	def setCraId(days: java.util.List[JDay], craId: ObjectId): java.util.List[JDay] = {
 		days.asScala
-			.map {
-			d =>
-				d.craId = craId
-				d
-		}
-			.asJava
+			.foreach(_.craId = craId)
+		days
 	}
+
+
 }

@@ -61,7 +61,7 @@ public class JMission {
 	private Date _startDate;
 	private Date _endDate;
 
-	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds) {
+	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final ImmutableList<ObjectId> missionsIds) {
 		if (CollectionUtils.isNotEmpty(missionsIds)) {
 			final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
 				                                .field(Mapper.ID_KEY).in(missionsIds)
@@ -88,7 +88,7 @@ public class JMission {
 			       .get();
 	}
 
-	public static ImmutableList<JMission> getClaimMissions(final ImmutableSet<ObjectId> ids) {
+	public static ImmutableList<JMission> getClaimMissions(final List<ObjectId> ids) {
 		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
 			                            .field(Mapper.ID_KEY).in(ids)
 			                            .field("isClaim").equal(true)
@@ -105,7 +105,7 @@ public class JMission {
 		final List<String> absenceTypes = AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
 		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
 			                            .field("absenceType").in(absenceTypes)
-			                            .retrievedFields(true, Mapper.ID_KEY, "code")
+			                            .retrievedFields(true, Mapper.ID_KEY, "code", "description")
 			                            .disableValidation()
 			                            .asList());
 	}

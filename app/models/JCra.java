@@ -2,15 +2,12 @@ package models;
 
 import com.github.jmkgreen.morphia.annotations.Entity;
 import com.github.jmkgreen.morphia.annotations.Id;
+import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-import utils.time.TimeUtils;
-
-import java.util.List;
 
 /**
  * @author f.patin
@@ -45,12 +42,15 @@ public class JCra extends Model {
 		return MorphiaPlugin.ds().createQuery(JCra.class).field("userId").equal(userId);
 	}
 
+	private static Query<JCra> queryToFindMe(final ObjectId id) {
+		return MorphiaPlugin.ds().createQuery(JCra.class).field(Mapper.ID_KEY).equal(id);
+	}
+
 	public static JCra invalidate(final ObjectId userId, final Integer year, final Integer month) {
 		UpdateOperations<JCra> op = MorphiaPlugin.ds().createUpdateOperations(JCra.class)
 			                            .set("isValidated", false);
 		return MorphiaPlugin.ds().findAndModify(queryByUserId(userId), op);
 	}
-
 
 	public static JCra getOrCreate(final ObjectId userId, final Integer year, final Integer month) {
 		final JCra cra = find(userId, year, month);
@@ -61,6 +61,11 @@ public class JCra extends Model {
 		}
 	}
 
+	public static JCra create(final ObjectId userId, final Integer year, final Integer month) {
+		JCra cra = new JCra(userId, year, month);
+		return cra.insert();
+	}
+
 	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
 		return queryByUserId(userId)
 			       .field("year").equal(year)
@@ -68,8 +73,12 @@ public class JCra extends Model {
 			       .get();
 	}
 
-	public static JCra create(final ObjectId userId, final Integer year, final Integer month) {
-		JCra cra = new JCra(userId, year, month);
-		return cra.insert();
+	public static JCra getOrCreate(final ObjectId id, final ObjectId userId, final Integer year, final Integer month) {
+		if (id == null) {
+			return create(userId, year, month);
+		} else {
+			return queryToFindMe(id).get();
+		}
 	}
+
 }
