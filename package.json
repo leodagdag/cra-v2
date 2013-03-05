@@ -1,0 +1,22 @@
+{
+	"name": "cra-v2",
+	"version": "1.0.0",
+	"src": "public/javascripts/app/**/*.js",
+	"build": {
+		"path": "buildjs/",
+		"file": "cra-v2.js"
+	},
+	"dist": {
+		"path": "public/javascripts/",
+		"file": "cra-v2.min.js"
+	},
+	"devDependencies": {
+		"grunt": "~0.4.0",
+		"grunt-contrib-jshint": "~0.1.1",
+		"grunt-contrib-clean": "~0.4.0",
+		"grunt-contrib-copy": "~0.4.0",
+		"grunt-contrib-htmlmin": "~0.1.1",
+		"grunt-contrib-concat": "~0.1.3",
+		"grunt-contrib-uglify": "~0.1.2"
+	}
+}
