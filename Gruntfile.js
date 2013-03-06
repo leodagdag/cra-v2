@@ -34,6 +34,6 @@ module.exports = function(grunt) {
 	// Default task(s).
 	grunt.registerTask('default', ['clean']);
 	grunt.registerTask('build', ['clean', 'concat']);
-	grunt.registerTask('dist', ['clean', 'concat', 'uglify']);
+	grunt.registerTask('dist', ['clean', 'concat']);
 
 };
