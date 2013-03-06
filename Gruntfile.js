@@ -25,15 +25,23 @@ module.exports = function(grunt) {
 					'<%= pkg.dist.path + pkg.dist.file %>': ['<%= concat.dist.dest %>']
 				}
 			}
+		},
+		copy:{
+			main:{
+				files:[
+					{src: ['<%= concat.dist.dest %>'], dest: '<%= pkg.dist.path + pkg.dist.file %>', filter: 'isFile'}
+				]
+			}
 		}
 	});
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	// Default task(s).
 	grunt.registerTask('default', ['clean']);
 	grunt.registerTask('build', ['clean', 'concat']);
-	grunt.registerTask('dist', ['clean', 'concat']);
+	grunt.registerTask('dist', ['clean', 'concat', 'copy']);
 
 };
