@@ -6,7 +6,7 @@
 @import security.SecurityRole
 
 @subjectPresent(handler) {
-	<nav>
+	<nav data-ng-controller="NavigationCtrl">
 		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
@@ -18,33 +18,33 @@
 					<a class="brand" data-ng-href="#/">Genesis</a>
 					<div class="nav-collapse collapse">
 						<ul class="nav">
-							<li class="">
+							<li  data-ng-class="{'active' : isNav('cra')}">
 								<a data-ng-href="#/cra">CRA</a>
 							</li>
-							<li class="">
+							<li  data-ng-class="{'active' : isNav('absence')}">
 								<a data-ng-href="#/absence/day">Absences</a>
 							</li>
-							<li class="">
+							<li  data-ng-class="{'active' : isNav('claim')}">
 								<a data-ng-href="#/claim">Note de frais</a>
 							</li>
 							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
-								<li class="">
+								<li  data-ng-class="{'active' : isNav('remuneration')}">
 									<a data-ng-href="#/remuneration">Rémunération</a>
 								</li>
 							}
 						</ul>
 						<ul class="nav pull-right">
 							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
-								<li class="">
+								<li  data-ng-class="{'active' : isNav('parameter')}">
 									<a data-ng-href="#/parameter">Paramétrage</a>
 								</li>
 							}
 							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.administrator))) {
-								<li class="">
+								<li  data-ng-class="{'active' : isNav('backoffice')}">
 									<a data-ng-href="#/backoffice">Backoffice</a>
 								</li>
 							}
-							<li class="active">
+							<li data-ng-class="{'active' : isNav('my-account')}">
 								<a data-ng-href="#/my-account" title="Mon compte">
 									<i class="icon-user"></i><span class="visible-phone">&nbsp;</span>
 								</a>
