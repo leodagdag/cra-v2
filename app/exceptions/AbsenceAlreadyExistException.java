@@ -5,6 +5,6 @@ package exceptions;
  */
 public class AbsenceAlreadyExistException extends Exception {
 	public AbsenceAlreadyExistException() {
-		super("Une demande d'absence existe déjà");
+		super("Une demande d'absence existe déjà.");
 	}
 }

@@ -37,7 +37,7 @@ public class JAbsences extends Controller {
 		try {
 			return created(toJson(AbsenceDTO.of(JAbsence.create(absence))));
 		} catch (AbsenceAlreadyExistException e) {
-			return badRequest(toJson(e.getMessage()));
+			return internalServerError(toJson(e.getMessage()));
 		}
 	}
 

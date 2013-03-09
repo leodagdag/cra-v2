@@ -14,7 +14,7 @@ angular.module('httpInterceptorServiceProvider', [])
 						$rootScope.$broadcast('event:auth-loginRequired');
 						break;
 					case 500:
-						$rootScope.$broadcast('event:alert', response);
+						$rootScope.$broadcast('event:error', response);
 						break;
 				}
 				return $q.reject(response);
@@ -45,28 +45,4 @@ app.directive('authenticator', ['$location', '$window',
 		};
 	}]);
 
-app.controller('AlertCtrl', ['$scope', '$rootScope', '$timeout', '$log',
-	function($scope, $rootScope, $timeout, $log) {
-		$rootScope.alerts = [];
 
-		var close = function(ts) {
-			$rootScope.alerts = _($rootScope.alerts)
-				.filter(function(alert) {
-					return alert.ts != ts
-				})
-				.valueOf();
-		};
-
-		$scope.close = close;
-
-		$scope.$on('event:alert', function(res, err) {
-			$log.error('Erreur', err);
-			var now = moment().valueOf();
-			$rootScope.alerts.push(
-				{msg: err.data, ts: now}
-			);
-			$timeout(function() {
-				close(now)
-			}, 5000, true);
-		});
-	}]);

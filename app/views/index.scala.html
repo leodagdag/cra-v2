@@ -7,16 +7,20 @@
 
 <html lang="en" data-ng-app="app" data-authenticator>
 	@header()
-	<body>
+	<body data-ng-controller="MainCtrl">
 		@navigation(handler)
 
 		<div class="container-fluid">
-			<div class="row-fluid hide" data-ng-controller="AlertCtrl" data-ng-class="{'show': alerts.length != 0}">
+			<div class="row-fluid hide" data-ng-controller="AlertCtrl" data-ng-class="{'show': show()}">
 				<div class="span10 offset1">
-				<div class="alert alert-error" data-ng-repeat="alert in alerts" >
-					<button type="button" class="close" data-ng-click="close(alert.ts)">&times;</button>
-						<strong>Erreur !</strong> {{alert.msg}} <span class="pull-right">(voir la console)</span>
-				</div>
+					<div class="alert alert-error" data-ng-repeat="error in errors" >
+						<button type="button" class="close" data-ng-click="closeError(error.ts)">&times;</button>
+							<strong>Erreur !</strong> {{error.msg}} <span class="pull-right">(voir la console)</span>
+					</div>
+					<div class="alert alert-success" data-ng-repeat="success in successes" >
+						<button type="button" class="close" data-ng-click="closeSuccess(success.ts)">&times;</button>
+						<strong>Succès !</strong> {{success.msg}}
+					</div>
 				</div>
 			</div>
 			<div data-ng-view=""></div>

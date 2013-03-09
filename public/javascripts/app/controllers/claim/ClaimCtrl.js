@@ -75,6 +75,7 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
 				'data': claim
 			})
 				.success(function(claim, status, headers, config) {
+					$rootScope.onSuccess("La note de frais a été créée.");
 					$scope.claims = _($scope.claims)
 						.push(claim)
 						.filter(function(c) {
@@ -85,7 +86,6 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
 						.valueOf()
 				})
 				.error(function(error, status, headers, config) {
-					$log.error('error', error);
 				});
 		};
 
