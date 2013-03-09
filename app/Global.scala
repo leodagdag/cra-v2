@@ -1,9 +1,10 @@
 
+import controllers.routes
 import java.io.File
 import play.api.http.{MimeTypes, MediaRange}
 import play.api.libs.json.JsString
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Result, Handler, RequestHeader}
+import play.api.mvc.{Results, Result, Handler, RequestHeader}
 import play.api.{Mode, Configuration, Logger, GlobalSettings, Application}
 
 
@@ -50,7 +51,7 @@ object Global extends GlobalSettings {
 
 	override def onHandlerNotFound(request: RequestHeader): Result = {
 		Logger warn s"HandlerNotFound from[${request.remoteAddress}}] - [${request.method} ${request.path}]"
-		super.onHandlerNotFound(request)
+		Results.Redirect(routes.Application.index())
 	}
 
 	override def onError(request: RequestHeader, ex: Throwable): Result = {
