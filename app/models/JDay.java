@@ -9,11 +9,14 @@ import com.github.jmkgreen.morphia.annotations.PostLoad;
 import com.github.jmkgreen.morphia.annotations.PrePersist;
 import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
+import com.github.jmkgreen.morphia.query.Query;
+import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mongodb.WriteConcern;
 import exceptions.IllegalDayOperation;
 import leodagdag.play2morphia.Model;
@@ -22,6 +25,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 import utils.deserializer.DateTimeDeserializer;
 import utils.time.TimeUtils;
 import utils.transformer.Transformer;
@@ -32,6 +36,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author f.patin
@@ -48,6 +55,7 @@ public class JDay extends Model implements MongoModel {
 	@Id
 	public ObjectId id;
 	public ObjectId craId;
+	public ObjectId userId;
 	@Transient
 	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime date;
@@ -135,7 +143,7 @@ public class JDay extends Model implements MongoModel {
 	}
 
 	public static void add(final JAbsence absence) {
-		List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
+		List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate, false);
 		JCra cra = null;
 
 		for (DateTime dt : dts) {
@@ -148,6 +156,7 @@ public class JDay extends Model implements MongoModel {
 			if (day == null) {
 				day = new JDay(dt);
 				day.craId = cra.id;
+				day.userId = absence.userId;
 			}
 			day.comment = absence.comment;
 			if (dt.isEqual(absence.startDate)) {
@@ -175,11 +184,72 @@ public class JDay extends Model implements MongoModel {
 		}
 	}
 
-	public static JDay find(final ObjectId craId, final DateTime dts) {
+	public static JDay find(final ObjectId userId, final DateTime dts) {
 		return MorphiaPlugin.ds().createQuery(JDay.class)
-			       .field("craId").equal(craId)
+			       .field("userId").equal(userId)
 			       .field("_date").equal(dts.toDate())
 			       .get();
+	}
+
+	public static void delete(final List<DateTime> dates, final String userId, final Boolean includeStartMorning, final Boolean includeEndAfternoon) {
+		final Map<DateTime, Set<DateTime>> m = Maps.newTreeMap(DateTimeComparator.getDateOnlyInstance());
+		for (DateTime dt : dates) {
+			final DateTime firstDayOfMonth = TimeUtils.getFirstDayOfMonth(dt);
+			if (!m.containsKey(firstDayOfMonth)) {
+				m.put(firstDayOfMonth, new TreeSet<DateTime>(DateTimeComparator.getDateOnlyInstance()));
+			}
+			m.get(firstDayOfMonth).add(dt);
+		}
+		// Retrieve all craIds;
+		List<ObjectId> craIds = Lists.newArrayList(Collections2.transform(m.keySet(), new Function<DateTime, ObjectId>() {
+			@Nullable
+			@Override
+			public ObjectId apply(@Nullable final DateTime dt) {
+				return JCra.find(ObjectId.massageToObjectId(userId), dt.getYear(), dt.getMonthOfYear()).id;
+			}
+		}));
+		// Remove all days
+		for (DateTime dt : m.keySet()) {
+			for (DateTime date : m.get(dt)) {
+				Query<JDay> q = MorphiaPlugin.ds().createQuery(JDay.class)
+					                .field("userId").equal(ObjectId.massageToObjectId(userId))
+					                .field("_date").equal(date.toDate());
+				if (date.isEqual(dates.get(0)) && Boolean.FALSE.equals(includeStartMorning)) {
+					UpdateOperations<JDay> uop = MorphiaPlugin.ds().createUpdateOperations(JDay.class).unset("afternoon");
+					JDay day = MorphiaPlugin.ds().findAndModify(q, uop);
+					if (day.morning == null) {
+						MorphiaPlugin.ds().delete(queryToFindMe(day.id));
+					}
+				} else if (date.isEqual(dates.get(dates.size() - 1)) && Boolean.FALSE.equals(includeEndAfternoon)) {
+					UpdateOperations<JDay> uop = MorphiaPlugin.ds().createUpdateOperations(JDay.class).unset("morning");
+					JDay day = MorphiaPlugin.ds().findAndModify(q, uop);
+					if (day.afternoon == null) {
+						MorphiaPlugin.ds().delete(queryToFindMe(day.id));
+					}
+				} else {
+					MorphiaPlugin.ds().delete(q, WriteConcern.ACKNOWLEDGED);
+				}
+			}
+		}
+
+		// Update cra if necessary
+		for (ObjectId craId : craIds) {
+			if (!existDays(craId)) {
+				JCra.delete(craId);
+			}
+		}
+
+	}
+
+	private static Boolean existDays(final ObjectId craId) {
+		return MorphiaPlugin.ds()
+			       .getCount(MorphiaPlugin.ds().createQuery(JDay.class)
+				                 .field("craId").equal(craId)) > 0;
+	}
+
+	private static Query<JDay> queryToFindMe(final ObjectId id) {
+		return MorphiaPlugin.ds().createQuery(JDay.class)
+			       .field(Mapper.ID_KEY).equal(id);
 	}
 
 	public Boolean isSaturday() {
@@ -231,5 +301,4 @@ public class JDay extends Model implements MongoModel {
 	public ObjectId id() {
 		return id;
 	}
-
 }

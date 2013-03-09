@@ -32,13 +32,15 @@ object TimeUtils {
 
 	def getEaster(year: Integer): DateTime = DaysOff.getEaster(year)
 
+	def getFirstDayOfMonth(dt: DateTime) = new DateTime(dt.getYear, dt.getMonthOfYear, 1,0,0)
+
 	def getLastDayOfMonth(year: Integer, month: Integer): Int = new DateTime(year, month, 1, 0, 0).dayOfMonth.withMaximumValue.getDayOfMonth
 
 	def getLastDateOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0).dayOfMonth.withMaximumValue
 
 	def getNbDaysOffInMonth(year: Integer, month: Integer): Int = (1 to getLastDayOfMonth(year, month)).filter(day => DaysOff.isDayOff(new DateTime(year, month, day, 0, 0))).size
 
-	def getDaysOfMonth(year: Integer, month: Integer, extended: Boolean = false)  = {
+	def getDaysOfMonth(year: Integer, month: Integer, extended: Boolean = false) = {
 		val firstDay = new DateTime(year, month, 1, 0, 0)
 		val current = (1 to getLastDayOfMonth(year, month)).map((day: Int) => new DateTime(year, month, day, 0, 0))
 		val result = extended match {
@@ -54,14 +56,14 @@ object TimeUtils {
 
 	}
 
-	def datesBetween(start: Long, end: Long, withoutDayOff: Boolean): java.util.List[DateTime] = {
-		datesBetween(new DateTime(start), new DateTime(end), withoutDayOff)
+	def datesBetween(start: Long, end: Long, withDayOff: Boolean): java.util.List[DateTime] = {
+		datesBetween(new DateTime(start), new DateTime(end), withDayOff)
 	}
 
-	def datesBetween(start: DateTime, end: DateTime, withoutDayOff: Boolean): java.util.List[DateTime] = {
+	def datesBetween(start: DateTime, end: DateTime, withDayOff: Boolean): java.util.List[DateTime] = {
 		val duration = new Duration(start, end)
 		(0 until duration.toStandardDays.getDays + 1)
-			.filter(i => (TimeUtils.isNotSaturdayOrSunday(start.plusDays(i))) && (if (withoutDayOff) TimeUtils.isNotDayOff(start.plusDays(i)) else true))
+			.filter(i => (TimeUtils.isNotSaturdayOrSunday(start.plusDays(i))) && (if (!withDayOff) TimeUtils.isNotDayOff(start.plusDays(i)) else true))
 			.map(i => start.plusDays(i))
 			.asJava
 	}

@@ -5,22 +5,17 @@ import com.github.jmkgreen.morphia.annotations.Id;
 import com.github.jmkgreen.morphia.annotations.PostLoad;
 import com.github.jmkgreen.morphia.annotations.PrePersist;
 import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.mongodb.WriteConcern;
 import constants.AbsenceType;
 import exceptions.AbsenceAlreadyExistException;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.joda.time.DateTime;
-import utils.deserializer.DateTimeDeserializer;
 import utils.time.TimeUtils;
 
-import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +23,8 @@ import java.util.List;
  * @author f.patin
  */
 @Entity("Absence")
-public class JAbsence extends Model implements MongoModel{
+public class JAbsence extends Model implements MongoModel {
+
 	@Id
 	public ObjectId id;
 	public ObjectId userId;
@@ -49,12 +45,16 @@ public class JAbsence extends Model implements MongoModel{
 	public JAbsence() {
 	}
 
-	public static void remove(final DateTime date, Boolean morning, final Boolean afternoon) {
-
+	public static JAbsence delete(final String userId, final String id) {
+		JAbsence absence= MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
+		List<DateTime> dates = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
+		JDay.delete(dates, userId, absence.startMorning, absence.endAfternoon);
+		return absence;
 	}
 
-	public static void remove(final ObjectId craId, final List<JHalfDay> holidays) {
-
+	private static Query<JAbsence> queryToFindMe(final ObjectId id) {
+		return MorphiaPlugin.ds().createQuery(JAbsence.class)
+			       .field(Mapper.ID_KEY).equal(id);
 	}
 
 	public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException {
@@ -94,7 +94,20 @@ public class JAbsence extends Model implements MongoModel{
 		}
 		absence.insert();
 		JDay.add(absence);
-        return absence;
+		return absence;
+	}
+
+	public static List<JAbsence> fetch(final ObjectId userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth) {
+		return fetch(userId, startYear, startMonth, endYear, endMonth, null);
+	}
+
+	public static List<JAbsence> fetch(final ObjectId userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth, final AbsenceType absenceType) {
+		return MorphiaPlugin.ds().createQuery(JAbsence.class)
+			       .field("userId").equal(userId)
+			       .field("_startDate").greaterThanOrEq(new DateTime(startYear, startMonth, 1, 0, 0).toDate())
+			       .field("_endDate").lessThanOrEq(TimeUtils.getLastDateOfMonth(endYear, endMonth).toDate())
+			       .field("missionId").in(JMission.getAbsencesMissionIds(absenceType))
+			       .asList();
 	}
 
 	@SuppressWarnings({"unused"})
@@ -117,19 +130,6 @@ public class JAbsence extends Model implements MongoModel{
 		if (_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
 		}
-	}
-
-	public static List<JAbsence> fetch(final ObjectId userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth, final AbsenceType absenceType) {
-		return MorphiaPlugin.ds().createQuery(JAbsence.class)
-			.field("userId").equal(userId)
-			.field("_startDate").greaterThanOrEq(new DateTime(startYear, startMonth,1,0,0).toDate())
-			.field("_endDate").lessThanOrEq(TimeUtils.getLastDateOfMonth(endYear, endMonth).toDate())
-			.field("missionId").in(JMission.getAbsencesMissionIds(absenceType))
-			.asList();
-	}
-
-	public static List<JAbsence> fetch(final ObjectId userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth) {
-		return fetch(userId, startYear, startMonth, endYear, endMonth, null);
 	}
 
 	@Override

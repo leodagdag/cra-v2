@@ -30,7 +30,7 @@ import static play.libs.Json.toJson;
  */
 public class JDays extends Controller {
 
-	public static Result fetch(String idCra, Long date) {
+	public static Result fetch(final String idCra,final  Long date) {
 		final DateTime dt = new DateTime(date);
 		JDay day = JDay.find(new ObjectId(idCra), dt);
 		final List<ObjectId> missionsIds = Lists.newArrayList();

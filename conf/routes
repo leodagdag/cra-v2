@@ -16,13 +16,14 @@ GET     /profile                                                    controllers.
 GET     /claims/:username/:year/:month                              controllers.JClaims.history(username: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /claims                                                     controllers.JClaims.create()
 DELETE  /claims/:id                                                 controllers.JClaims.delete(id: String)
-# Holiday
+# Absences
 # ~~~~
-GET    /absences/cp/:username/:year                                 controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)
-GET    /absences/rtt/:username/:year                                controllers.JAbsences.historyRTT(username: String, year: java.lang.Integer)
-GET    /absences/history/:username/:year                            controllers.JAbsences.historyByYear(username: String, year: Integer)
-GET    /absences/history/:username                                  controllers.JAbsences.history(username: String)
-POST   /absences                                                    controllers.JAbsences.create()
+GET     /absences/cp/:username/:year                                controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)
+GET     /absences/rtt/:username/:year                               controllers.JAbsences.historyRTT(username: String, year: java.lang.Integer)
+GET     /absences/history/:username/:year                           controllers.JAbsences.historyByYear(username: String, year: Integer)
+GET     /absences/history/:username                                 controllers.JAbsences.history(username: String)
+POST    /absences                                                   controllers.JAbsences.create()
+DELETE  /absences/:userId/:id                                        controllers.JAbsences.delete(userId: String, id: String)
 # Day
 # ~~~~
 DELETE  /cra/:id/day/:date                                          controllers.Days.delete(id: String, date: Long)

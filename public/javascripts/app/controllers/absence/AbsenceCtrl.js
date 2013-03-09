@@ -65,6 +65,22 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 				});
 		};
 
+		$scope.delete = function(id) {
+			var route = jsRoutes.controllers.JAbsences.delete($scope.profile.id, id);
+			$http({
+				method: route.method,
+				url: route.url
+			})
+				.success(function(absence, status, headers, config) {
+					$rootScope.onSuccess("L'absence a été supprimée.");
+					$scope.history = _($scope.history)
+						.filter(function(a) {
+							return a.id !== absence.id;
+						})
+						.sortBy('startDate')
+						.valueOf();
+				})
+		};
 		var loadMissions = function() {
 			var route = jsRoutes.controllers.JMissions.absences();
 			$http({

@@ -41,6 +41,9 @@ public class JAbsences extends Controller {
 		}
 	}
 
+	public static Result delete(final String userId, final String id){
+		return ok(toJson(AbsenceDTO.of(JAbsence.delete(userId, id))));
+	}
 	@ResponseCache.NoCacheResponse
 	public static Result history(final String username) {
 		return historyByYear(username, DateTime.now().getYear());

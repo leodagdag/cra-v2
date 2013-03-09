@@ -49,7 +49,7 @@ public class AbsenceDTO {
         this.endDate = absence.endDate.getMillis();
         this.endMorning = absence.endMorning;
         this.endAfternoon = absence.endAfternoon;
-        this.nbDays = TimeUtils.datesBetween(this.startDate, this.endDate, true).size();
+        this.nbDays = TimeUtils.datesBetween(this.startDate, this.endDate, false).size();
         this.comment = absence.comment;
     }
 

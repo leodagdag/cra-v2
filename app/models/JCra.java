@@ -5,6 +5,7 @@ import com.github.jmkgreen.morphia.annotations.Id;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
+import com.mongodb.WriteConcern;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
@@ -42,10 +43,6 @@ public class JCra extends Model {
 		return MorphiaPlugin.ds().createQuery(JCra.class).field("userId").equal(userId);
 	}
 
-	private static Query<JCra> queryToFindMe(final ObjectId id) {
-		return MorphiaPlugin.ds().createQuery(JCra.class).field(Mapper.ID_KEY).equal(id);
-	}
-
 	public static JCra invalidate(final ObjectId userId, final Integer year, final Integer month) {
 		UpdateOperations<JCra> op = MorphiaPlugin.ds().createUpdateOperations(JCra.class)
 			                            .set("isValidated", false);
@@ -61,16 +58,16 @@ public class JCra extends Model {
 		}
 	}
 
-	public static JCra create(final ObjectId userId, final Integer year, final Integer month) {
-		JCra cra = new JCra(userId, year, month);
-		return cra.insert();
-	}
-
 	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
 		return queryByUserId(userId)
 			       .field("year").equal(year)
 			       .field("month").equal(month)
 			       .get();
+	}
+
+	public static JCra create(final ObjectId userId, final Integer year, final Integer month) {
+		JCra cra = new JCra(userId, year, month);
+		return cra.insert();
 	}
 
 	public static JCra getOrCreate(final ObjectId id, final ObjectId userId, final Integer year, final Integer month) {
@@ -81,4 +78,11 @@ public class JCra extends Model {
 		}
 	}
 
+	public static void delete(final ObjectId id) {
+		MorphiaPlugin.ds().delete(queryToFindMe(id), WriteConcern.ACKNOWLEDGED);
+	}
+
+	private static Query<JCra> queryToFindMe(final ObjectId id) {
+		return MorphiaPlugin.ds().createQuery(JCra.class).field(Mapper.ID_KEY).equal(id);
+	}
 }

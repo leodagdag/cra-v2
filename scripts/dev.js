@@ -117,6 +117,7 @@ db.Absence.insert({
 /* 2013/03/01 */
 db.Day.insert({
 	craId: cra._id,
+	userId: bart._id,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(1)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
@@ -131,6 +132,7 @@ db.Day.insert({
 /* 2013/03/05 */
 db.Day.insert({
 	craId: cra._id,
+	userId: bart._id,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(5)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
@@ -144,6 +146,7 @@ db.Day.insert({
 /* 2013/03/06 */
 db.Day.insert({
 	craId: cra._id,
+	userId: bart._id,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(6)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
@@ -158,6 +161,7 @@ db.Day.insert({
 /* 2013/03/07 */
 db.Day.insert({
 	craId: cra._id,
+	userId: bart._id,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(7)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
@@ -184,6 +188,7 @@ db.Day.insert({
 /* 2013/03/12 */
 db.Day.insert({
 	craId: cra._id,
+	userId: bart._id,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(12)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
@@ -198,6 +203,7 @@ db.Day.insert({
 /* 2013/03/13 */
 db.Day.insert({
 	craId: cra._id,
+	userId: bart._id,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(13)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
@@ -212,6 +218,7 @@ db.Day.insert({
 /* 2013/03/14 */
 db.Day.insert({
 	craId: cra._id,
+	userId: bart._id,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(14)),
 	year: NumberInt(cra.year),
 	month: NumberInt(cra.month),
