@@ -8,6 +8,7 @@ import play.api.libs.json.{Json, JsString, __}
 import play.api.mvc.{Action, Security, Results}
 import scala.Some
 import security.{Profile, MyDeadboltHandler, Auth}
+import utils.MD5
 
 /**
  * @author f.patin
@@ -31,7 +32,7 @@ object Authentication extends BaseController {
 				withErrors => BadRequest("KO"),
 				form => {
 					Async {
-						Auth.checkAuthentication((form._1, form._2)).map {
+						Auth.checkAuthentication((form._1, MD5(form._2))).map {
 							check =>
 								check match {
 									case Some(auth) =>

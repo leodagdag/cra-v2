@@ -10,7 +10,6 @@ angular.module('httpInterceptorServiceProvider', [])
 			function error(response) {
 				switch(response.status) {
 					case 401:
-						$log.error("401!!!!");
 						$rootScope.$broadcast('event:auth-loginRequired');
 						break;
 					case 500:

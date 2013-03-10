@@ -53,6 +53,7 @@ app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
 			})
 				.success(function(data, status, headers, config) {
 					$log.log('data', data);
+					$location.url("/")
 				})
 				.error(function(errors, status, headers, config) {
 					$log.log('errors', errors);

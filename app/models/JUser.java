@@ -10,6 +10,7 @@ import com.github.jmkgreen.morphia.annotations.Index;
 import com.github.jmkgreen.morphia.annotations.Indexes;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
+import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -21,6 +22,7 @@ import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 import security.JSecurityRole;
+import utils.MD5;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -40,7 +42,6 @@ public class JUser implements Subject {
 	@Id
 	public ObjectId id;
 	public String username;
-	public String password;
 	public String trigramme;
 	public String firstName;
 	public String lastName;
@@ -50,22 +51,17 @@ public class JUser implements Subject {
 	public Boolean isManager = Boolean.FALSE;
 	@Embedded
 	public List<JAffectedMission> affectedMissions = Lists.newArrayList();
+	private String password;
 
 	private static Query<JUser> queryToFindMe(final ObjectId id) {
 		return MorphiaPlugin.ds().createQuery(JUser.class).field(Mapper.ID_KEY).equal(id);
 	}
 
-	private static Query<JUser> queryToFindMe(final String username) {
-		return MorphiaPlugin.ds().createQuery(JUser.class).field("username").equal(username);
-	}
-
-	public static JUser findAuthorisedUser(final String username, final String password) {
+	public static Boolean checkAuthentication(final String username, final String password) {
 		return MorphiaPlugin.ds().createQuery(JUser.class)
 			       .field("username").equal(username)
-			       .field("password").equal(password)
-			       .retrievedFields(true, "username", "password", "role")
-			       .disableValidation()
-			       .get();
+			       .field("password").equal(MD5.apply(password))
+			       .countAll() > 0;
 	}
 
 	public static Subject getSubject(final String username) {
@@ -149,6 +145,15 @@ public class JUser implements Subject {
 	public static JUser update(final JUser user) {
 		MorphiaPlugin.ds().merge(user, WriteConcern.ACKNOWLEDGED);
 		return user;
+	}
+
+	public static void password(final String username, final String newPassword) {
+		final UpdateOperations<JUser> uop = MorphiaPlugin.ds().createUpdateOperations(JUser.class).set("password", MD5.apply(newPassword));
+		MorphiaPlugin.ds().update(queryToFindMe(username), uop, false, WriteConcern.ACKNOWLEDGED);
+	}
+
+	private static Query<JUser> queryToFindMe(final String username) {
+		return MorphiaPlugin.ds().createQuery(JUser.class).field("username").equal(username);
 	}
 
 	@Override

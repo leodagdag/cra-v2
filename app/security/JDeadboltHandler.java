@@ -10,7 +10,6 @@ import models.JUser;
 import play.api.http.MediaRange;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Results;
 
 import javax.annotation.Nullable;
 
@@ -30,7 +29,7 @@ public class JDeadboltHandler extends AbstractDeadboltHandler {
 
 	@Override
 	public Result onAuthFailure(Http.Context context, String content) {
-		context.session().clear();
+		context.session().remove("username");
 		MediaRange mr = Iterables.find(context.request().acceptedTypes(), new Predicate<MediaRange>() {
 			@Override
 			public boolean apply(@Nullable MediaRange mediaRange) {
@@ -38,7 +37,7 @@ public class JDeadboltHandler extends AbstractDeadboltHandler {
 			}
 		},null);
 		if (mr != null) {
-			return Results.unauthorized();
+			return unauthorized();
 		} else {
 			return redirect(routes.Authentication.login());
 		}

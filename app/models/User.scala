@@ -18,7 +18,6 @@ import scala.concurrent.Future
 
 case class User(id: Option[BSONObjectID],
                 username: String,
-                password: String,
                 role: String,
                 firstName: String,
                 lastName: String,

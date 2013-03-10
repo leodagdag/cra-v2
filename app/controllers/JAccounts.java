@@ -1,7 +1,6 @@
 package controllers;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import dto.AccountDTO;
 import models.JUser;
 import play.data.Form;
@@ -11,11 +10,8 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static play.data.Form.form;
 import static play.libs.Json.toJson;
 
 /**
@@ -29,7 +25,7 @@ public class JAccounts extends Controller {
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result update() {
-		final Form<AccountDTO> form = form(AccountDTO.class).bind(request().body().asJson());
+		final Form<AccountDTO> form = Form.form(AccountDTO.class).bind(request().body().asJson());
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
@@ -40,11 +36,15 @@ public class JAccounts extends Controller {
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result password() {
-		Form<PasswordForm> form = form(PasswordForm.class).bind(request().body().asJson());
+		Form<PasswordForm> form = Form.form(PasswordForm.class).bind(request().body().asJson());
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok();
+		final PasswordForm passwordForm = form.get();
+		final String newPassword = passwordForm.newPassword;
+		JUser.password(session().get("username"), newPassword);
+		session().remove("username");
+		return unauthorized();
 	}
 
 	public static class PasswordForm {
@@ -58,10 +58,17 @@ public class JAccounts extends Controller {
 
 		public List<ValidationError> validate() {
 			List<ValidationError> errors = Lists.newArrayList();
-			if (!newPassword.equals(confirmPassword)) {
-				errors.add(new ValidationError("global", "Le nouveau mot de passe n'est pas confirmé."));
+			if (Boolean.FALSE.equals(JUser.checkAuthentication(session("username"), oldPassword))) {
+				errors.add(new ValidationError("oldPassword", "Le mot de passe actuel est faux."));
 			}
-			return errors;
+			if(oldPassword.equals(newPassword)){
+				errors.add(new ValidationError("newPassword", "Le nouveau mot de passe ne peut pas être identique à l'actuel."));
+
+			}
+			if (!newPassword.equals(confirmPassword)) {
+				errors.add(new ValidationError("confirmPassword", "Le nouveau mot de passe n'est pas confirmé."));
+			}
+			return errors.isEmpty() ? null : errors;
 		}
 
 	}

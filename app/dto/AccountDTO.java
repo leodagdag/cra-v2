@@ -10,7 +10,6 @@ public class AccountDTO {
 
 	public String id;
 	public String username;
-	public String password;
 	public String trigramme;
 	public String firstName;
 	public String lastName;
@@ -23,7 +22,6 @@ public class AccountDTO {
 	public AccountDTO(final JUser user) {
 		this.id = user.id.toString();
 		this.username = user.username;
-		this.password = user.password;
 		this.trigramme = user.trigramme;
 		this.firstName = user.firstName;
 		this.lastName = user.lastName;
@@ -41,7 +39,6 @@ public class AccountDTO {
 		final JUser user = new JUser();
 		user.id = ObjectId.massageToObjectId(this.id);
 		user.username = this.username;
-		user.password = this.password;
 		user.trigramme = this.trigramme;
 		user.firstName = this.firstName;
 		user.lastName = this.lastName;

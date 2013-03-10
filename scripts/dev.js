@@ -60,8 +60,8 @@ var part_time = db.Mission.findOne({customerId: genesis._id, missionType: 'not-p
 /*
  * User
  */
-db.User.insert({username: 'lisa', password: 'lisa', role: 'admin', firstName: 'lisa', lastName: 'Simpson', trigramme: 'LSN', email: 'lisa@simpson.com'});
-db.User.insert({username: 'bart', password: 'bart', role: 'employee', firstName: 'bart', lastName: 'Simpson', trigramme: 'BSN', email: 'bart@simpson.com',
+db.User.insert({username: 'lisa', password: '7RT0pNfs3bba6OVJADALHg==', role: 'admin', firstName: 'lisa', lastName: 'Simpson', trigramme: 'LSN', email: 'lisa@simpson.com'});
+db.User.insert({username: 'bart', password: '9UFGo/yCqxflJlaVsj9kaw==', role: 'employee', firstName: 'bart', lastName: 'Simpson', trigramme: 'BSN', email: 'bart@simpson.com',
 	affectedMissions: [
 		{_startDate: mission_customer1._startDate, _endDate: mission_customer1._endDate, missionId: mission_customer1._id},
 		{_startDate: mission_customer2._startDate, _endDate: mission_customer2._endDate, missionId: mission_customer2._id},
@@ -72,10 +72,10 @@ db.User.insert({username: 'bart', password: 'bart', role: 'employee', firstName:
 		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
 		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
 	]});
-db.User.insert({username: 'moe', password: 'moe', role: 'employee', firstName: 'Moe', lastName: 'Szyslak', trigramme: 'MSK', email: 'moe@szyslak.com'});
-db.User.insert({username: 'ned', password: 'ned', role: 'employee', firstName: 'Ned', lastName: 'Flanders', trigramme: 'NFS', email: 'ned@flanders.com', isManager: true});
-db.User.insert({username: 'seymour', password: 'seymour', role: 'employee', firstName: 'Seymour', lastName: 'Skinner', trigramme: 'SSR', email: 'seymour@skinner.com', isManager: true});
-db.User.insert({username: 'marge', password: 'marge', role: 'production', firstName: 'marge', lastName: 'Simpson', trigramme: 'MSN', email: 'marge@simpson.com'});
+db.User.insert({username: 'moe', password: 'fzMzTUwvbdb/xwGUTOwvHA==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak', trigramme: 'MSK', email: 'moe@szyslak.com'});
+db.User.insert({username: 'ned', password: '9o2q0Ymy//0LjKteNuydlg==', role: 'employee', firstName: 'Ned', lastName: 'Flanders', trigramme: 'NFS', email: 'ned@flanders.com', isManager: true});
+db.User.insert({username: 'seymour', password: '/mQGPJqqQBru0Shwi1/MeQ==', role: 'employee', firstName: 'Seymour', lastName: 'Skinner', trigramme: 'SSR', email: 'seymour@skinner.com', isManager: true});
+db.User.insert({username: 'marge', password: '9FC56hi/fYLa0SL3KcCTXw==', role: 'production', firstName: 'marge', lastName: 'Simpson', trigramme: 'MSN', email: 'marge@simpson.com'});
 var bart = db.User.findOne({username: 'bart'});
 
 /*

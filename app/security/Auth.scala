@@ -8,6 +8,7 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.{DefaultBSONDocumentWrite
 import reactivemongo.bson.handlers.{BSONWriter, BSONReader}
 import reactivemongo.bson.{BSONInteger, BSONString, BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
+import concurrent.Future
 
 
 /**
@@ -15,7 +16,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 case class Auth(id: Option[BSONObjectID],
                 username: String,
-                password: String,
                 role: String) extends Subject {
 	def getRoles: java.util.List[SecurityRole] = Scala.asJava(List(SecurityRole(role)))
 
@@ -34,7 +34,6 @@ object Auth {
 			Auth(
 				doc.getAs[BSONObjectID]("_id"),
 				doc.getAs[BSONString]("username").get.value,
-				doc.getAs[BSONString]("password").get.value,
 				doc.getAs[BSONString]("role").get.value
 			)
 		}
@@ -46,13 +45,12 @@ object Auth {
 			BSONDocument(
 				"_id" -> auth.id.getOrElse(BSONObjectID.generate),
 				"username" -> BSONString(auth.username),
-				"password" -> BSONString(auth.password),
-				"role" -> BSONString(auth.password)
+				"role" -> BSONString(auth.role)
 			)
 		}
 	}
 
-	def checkAuthentication(auth: (String, String)) = {
+	def checkAuthentication(auth: (String, String)): Future[Option[Auth]] = {
 		val s = BSONDocument(
 			"username" -> BSONString(auth._1),
 			"password" -> BSONString(auth._2)
@@ -60,7 +58,6 @@ object Auth {
 		val p = BSONDocument(
 			"_id" -> BSONInteger(1),
 			"username" -> BSONInteger(1),
-			"password" -> BSONInteger(1),
 			"role" -> BSONInteger(1)
 		)
 		val q = QueryBuilder()
@@ -98,6 +95,7 @@ object Profile {
 	def apply(username: String) = {
 		val s = BSONDocument("username" -> BSONString(username))
 		val p = BSONDocument(
+			"_id" -> BSONInteger(1),
 			"username" -> BSONInteger(1),
 			"role" -> BSONInteger(1)
 		)

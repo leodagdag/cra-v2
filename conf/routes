@@ -47,8 +47,8 @@ GET     /users                                                      controllers.
 # ~~~~
 POST    /account/vehicle                                            controllers.JVehicles.saveVehicle()
 GET     /account/:id                                                controllers.JAccounts.fetch(id: String)
-PUT     /account                                                    controllers.JAccounts.update()
 PUT     /account/password                                           controllers.JAccounts.password()
+PUT     /account                                                    controllers.JAccounts.update()
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser                                         controllers.HtmlPages.unsupportedBrowser
