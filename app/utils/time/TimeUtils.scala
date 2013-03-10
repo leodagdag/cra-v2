@@ -32,7 +32,9 @@ object TimeUtils {
 
 	def getEaster(year: Integer): DateTime = DaysOff.getEaster(year)
 
-	def getFirstDayOfMonth(dt: DateTime) = new DateTime(dt.getYear, dt.getMonthOfYear, 1,0,0)
+	def getFirstDayOfMonth(dt: DateTime): DateTime = new DateTime(dt.getYear, dt.getMonthOfYear, 1,0,0)
+
+	def getFirstDayOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1,0,0)
 
 	def getLastDayOfMonth(year: Integer, month: Integer): Int = new DateTime(year, month, 1, 0, 0).dayOfMonth.withMaximumValue.getDayOfMonth
 

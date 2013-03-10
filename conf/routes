@@ -18,12 +18,9 @@ POST    /claims                                                     controllers.
 DELETE  /claims/:id                                                 controllers.JClaims.delete(id: String)
 # Absences
 # ~~~~
-GET     /absences/cp/:username/:year                                controllers.JAbsences.historyCP(username: String, year: java.lang.Integer)
-GET     /absences/rtt/:username/:year                               controllers.JAbsences.historyRTT(username: String, year: java.lang.Integer)
-GET     /absences/history/:username/:year                           controllers.JAbsences.historyByYear(username: String, year: Integer)
-GET     /absences/history/:username                                 controllers.JAbsences.history(username: String)
+GET     /absences/:userId/history/:absenceType/:year/:month         controllers.JAbsences.history(userId: String, absenceType :String, year: Integer, month: Integer)
 POST    /absences                                                   controllers.JAbsences.create()
-DELETE  /absences/:userId/:id                                        controllers.JAbsences.delete(userId: String, id: String)
+DELETE  /absences/:userId/:id                                       controllers.JAbsences.delete(userId: String, id: String)
 # Day
 # ~~~~
 DELETE  /cra/:id/day/:date                                          controllers.Days.delete(id: String, date: Long)

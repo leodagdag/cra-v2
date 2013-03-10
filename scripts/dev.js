@@ -106,6 +106,7 @@ db.Absence.insert({
 	startAfternoon: true,
 	endMorning: true,
 	endAfternoon: true,
+	_nbDays:"3",
 	comment: "Comment absence...",
 	_startDate: new Date(cra.year, MARCH_JS, NumberInt(12)),
 	_endDate: new Date(cra.year, MARCH_JS, NumberInt(14))

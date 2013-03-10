@@ -1,5 +1,5 @@
-app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'profile',
-	function AbsenceCtrl($rootScope, $scope, $http, $log, $location, $routeParams, profile) {
+app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'profile', 'AbsenceTypeConst', 'MonthsConst',
+	function AbsenceCtrl($rootScope, $scope, $http, $log, $location, $routeParams, profile, AbsenceTypeConst, MonthsConst) {
 		$scope.profile = profile.data;
 
 		$scope.subSections = {
@@ -16,32 +16,12 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			$location.path('/absence/' + name);
 		};
 
-		var loadHistory = function() {
-			var route = jsRoutes.controllers.JAbsences.history($scope.profile.username);
-			$http({
-				method: route.method,
-				url: route.url
-			})
-				.success(function(history, status, headers, config) {
-					$log.debug('history', history);
-					$scope.history = _(history)
-						.sortBy('startDate')
-						.valueOf();
-				})
-				.error(function(error, status, headers, config) {
-					$log.debug('error', error);
-				});
-		};
-
-		$scope.history = [];
-		loadHistory();
-
+		/* Form */
 		$scope.init = function() {
 			if(!$routeParams.subSection) {
 				$location.path('/absence/day');
 			} else {
 				loadMissions();
-
 			}
 		};
 
@@ -55,32 +35,28 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			})
 				.success(function(absence, status, headers, config) {
 					$rootScope.onSuccess("L'absence a été créée.");
-					$scope.history = _($scope.history)
-						.push(absence)
-						.sortBy('startDate')
-						.valueOf();
+					$scope.loadHistory();
 				})
 				.error(function(error, status, headers, config) {
-					$log.debug('error', error);
 				});
 		};
 
 		$scope.delete = function(id) {
-			var route = jsRoutes.controllers.JAbsences.delete($scope.profile.id, id);
-			$http({
-				method: route.method,
-				url: route.url
-			})
-				.success(function(absence, status, headers, config) {
-					$rootScope.onSuccess("L'absence a été supprimée.");
-					$scope.history = _($scope.history)
-						.filter(function(a) {
-							return a.id !== absence.id;
-						})
-						.sortBy('startDate')
-						.valueOf();
+			if(confirm("Êtes vous sur de vouloir supprimer cette absence ?")) {
+				var route = jsRoutes.controllers.JAbsences.delete($scope.profile.id, id);
+				$http({
+					method: route.method,
+					url: route.url
 				})
+					.success(function(absence, status, headers, config) {
+						$rootScope.onSuccess("L'absence a été supprimée.");
+						$scope.loadHistory();
+					})
+					.error(function(error, status, headers, config) {
+					});
+			}
 		};
+
 		var loadMissions = function() {
 			var route = jsRoutes.controllers.JMissions.absences();
 			$http({
@@ -88,11 +64,61 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 				url: route.url
 			})
 				.success(function(missions, status, headers, config) {
-					$log.debug('missions', missions);
 					$scope.missions = missions;
 				})
 				.error(function(error, status, headers, config) {
-					$log.debug('error', error);
+				});
+		};
+
+		/* History */
+		$scope.months = _(MonthsConst).flatten().valueOf();
+		$scope.absenceTypes = AbsenceTypeConst;
+		$scope.sortBys = [
+			{'key': '+startDate', 'label': 'Date (asc)'},
+			{'key': '-startDate', 'label': 'Date (desc)'},
+			{'key': '+code', 'label': 'Code (asc)'},
+			{'key': '-code', 'label': 'Code (desc)'}
+		];
+		$scope.filter = {
+			'year': moment().year(),
+			'month': $scope.months[moment().month()].id,
+			'absenceType': $scope.absenceTypes[0].code,
+			'sortBy': $scope.sortBys[0].key
+		};
+
+		$scope.history = [];
+		$scope.filterChange = function() {
+			if(($scope.filter.year === "0")) {
+				$scope.filter.month = 0;
+			}
+			$scope.loadHistory();
+		};
+
+		$scope.sortByChange = function() {
+			$scope.history = sort($scope.history, $scope.filter);
+		};
+
+		var sort = function(list) {
+			var field = $scope.filter.sortBy.substr(1),
+				direction = $scope.filter.sortBy.substr(0, 1) === '+' ? 'asc' : 'desc',
+				result = _(list)
+					.sortBy(field);
+			if(direction === 'desc') {
+				result.reverse();
+			}
+			return result.valueOf();
+
+		};
+		$scope.loadHistory = function() {
+			var route = jsRoutes.controllers.JAbsences.history($scope.profile.id, $scope.filter.absenceType, $scope.filter.year, $scope.filter.month || 0);
+			$http({
+				method: route.method,
+				url: route.url
+			})
+				.success(function(history, status, headers, config) {
+					$scope.history = sort(history);
+				})
+				.error(function(error, status, headers, config) {
 				});
 		};
 

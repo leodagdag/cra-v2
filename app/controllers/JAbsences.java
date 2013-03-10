@@ -1,6 +1,7 @@
 package controllers;
 
 import caches.ResponseCache;
+import com.google.common.collect.Lists;
 import constants.AbsenceType;
 import dto.AbsenceDTO;
 import exceptions.AbsenceAlreadyExistException;
@@ -8,6 +9,8 @@ import models.JAbsence;
 import models.JUser;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import play.Logger;
 import play.data.Form;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
@@ -15,10 +18,6 @@ import play.mvc.Result;
 
 import java.util.List;
 
-import static org.joda.time.DateTimeConstants.DECEMBER;
-import static org.joda.time.DateTimeConstants.JANUARY;
-import static org.joda.time.DateTimeConstants.JUNE;
-import static org.joda.time.DateTimeConstants.MAY;
 import static play.libs.Json.toJson;
 
 /**
@@ -41,33 +40,34 @@ public class JAbsences extends Controller {
 		}
 	}
 
-	public static Result delete(final String userId, final String id){
+	public static Result delete(final String userId, final String id) {
 		return ok(toJson(AbsenceDTO.of(JAbsence.delete(userId, id))));
 	}
-	@ResponseCache.NoCacheResponse
-	public static Result history(final String username) {
-		return historyByYear(username, DateTime.now().getYear());
-	}
 
 	@ResponseCache.NoCacheResponse
-	public static Result historyByYear(final String username, final Integer year) {
-		final ObjectId userId = JUser.id(username);
-		final List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER);
-		return ok(toJson(AbsenceDTO.of(absences)));
-	}
-
-	@ResponseCache.NoCacheResponse
-	public static Result historyCP(final String username, final Integer year) {
-		final ObjectId userId = JUser.id(username);
-		final List<JAbsence> absences = JAbsence.fetch(userId, year, JUNE, year + 1, MAY, AbsenceType.CP);
-
-		return ok(toJson(AbsenceDTO.of(absences)));
-	}
-
-	@ResponseCache.NoCacheResponse
-	public static Result historyRTT(final String username, final Integer year) {
-		final ObjectId userId = JUser.id(username);
-		final List<JAbsence> absences = JAbsence.fetch(userId, year, JANUARY, year, DECEMBER, AbsenceType.RTT);
+	public static Result history(final String userId, final String absenceType, final Integer year, final Integer month) {
+		Logger.debug(String.format("userId: %s, absenceType: %s, year: %s, month: %s", userId, absenceType, year, month));
+		final List<JAbsence> absences = Lists.newArrayList();
+		final AbsenceType at = AbsenceType.of(absenceType);
+		if (year == 0) {
+			absences.addAll(JAbsence.fetch(userId, at));
+		} else {
+			if (month == 0) {
+				switch (at) {
+					case CP:
+						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
+						break;
+					case RTT:
+						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER));
+						break;
+					default:
+						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year + 1, DateTimeConstants.MAY));
+						break;
+				}
+			} else {
+				absences.addAll(JAbsence.fetch(userId, at, year, month, year, month));
+			}
+		}
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 

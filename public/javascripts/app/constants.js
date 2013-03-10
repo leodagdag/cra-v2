@@ -67,25 +67,30 @@ app.constant('YearsConst', [
 		{code: 'VOLVO', label: 'Volvo'}
 	])
 	.constant('VehicleCarPowerConst', [
-		{code: 1, label :'1'},
-		{code: 2, label :'2'},
-		{code: 3, label :'3'},
-		{code: 4, label :'4'},
-		{code: 5, label :'5'},
-		{code: 6, label :'6'},
-		{code: 7, label :'7'},
-		{code: 8, label :'8'},
-		{code: 9, label :'9'},
-		{code: 10, label :'10'},
-		{code: 11, label :'11'},
-		{code: 12, label :'12'},
-		{code: 13, label :'13'},
-		{code: 14, label :'14'},
-		{code: 15, label :'15'}
+		{code: 1, label: '1'},
+		{code: 2, label: '2'},
+		{code: 3, label: '3'},
+		{code: 4, label: '4'},
+		{code: 5, label: '5'},
+		{code: 6, label: '6'},
+		{code: 7, label: '7'},
+		{code: 8, label: '8'},
+		{code: 9, label: '9'},
+		{code: 10, label: '10'},
+		{code: 11, label: '11'},
+		{code: 12, label: '12'},
+		{code: 13, label: '13'},
+		{code: 14, label: '14'},
+		{code: 15, label: '15'}
 	])
 	.constant('VehicleMotorcyclePowerConst', [
-		{code: 0, label :'De 0 à 500'},
-		{code: 501, label :'Plus de 500'}
+		{code: 0, label: 'De 0 à 500'},
+		{code: 501, label: 'Plus de 500'}
+	])
+	.constant('AbsenceTypeConst', [
+		{code: 'all', label: 'Tout'},
+		{code: 'cp', label: 'CP'},
+		{code: 'rtt', label: 'RTT'}
 	]);
 
 

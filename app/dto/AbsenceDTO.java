@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import utils.time.TimeUtils;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class AbsenceDTO {
     public Long endDate;
     public Boolean endMorning;
     public Boolean endAfternoon;
-    public Integer nbDays = 0;
+    public BigDecimal nbDays;
     public String comment;
 
     public AbsenceDTO() {
@@ -49,7 +50,7 @@ public class AbsenceDTO {
         this.endDate = absence.endDate.getMillis();
         this.endMorning = absence.endMorning;
         this.endAfternoon = absence.endAfternoon;
-        this.nbDays = TimeUtils.datesBetween(this.startDate, this.endDate, false).size();
+        this.nbDays = absence.nbDays;
         this.comment = absence.comment;
     }
 

@@ -1,5 +1,5 @@
-app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeConst', 'MonthsConst', 'profile',
-	function ClaimCtrl($scope, $http, $log, $location, ClaimTypeConst, MonthsConst, profile) {
+app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', 'ClaimTypeConst', 'MonthsConst', 'profile',
+	function ClaimCtrl($scope, $rootScope, $http, $log, $location, ClaimTypeConst, MonthsConst, profile) {
 		var Claim = function(username, form) {
 			return {
 				username: username,
@@ -14,19 +14,9 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
 		};
 
 		$scope.profile = profile.data;
-		$scope.months = _(MonthsConst).flatten().valueOf();
-		$scope.claimsType = ClaimTypeConst;
-		$scope.sortBys = [
-			{'key': 'date', 'label': 'Date'},
-			{'key': 'claimType', 'label': 'Type'}
-		];
-		$scope.filter = {
-			'year': moment().year(),
-			'month': $scope.months[moment().month()].id,
-			'sortBy': $scope.sortBys[0].key
-		};
+
+		/* Form */
 		$scope.form = {};
-		$scope.claims = [];
 		$scope.missions = [];
 
 		$scope.loadRefs = function() {
@@ -43,25 +33,6 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
 						.valueOf();
 				})
 				.error(function(error, status, headers, config) {
-					$log.error('error', error);
-				});
-		};
-
-		$scope.loadHistory = function() {
-			var route = jsRoutes.controllers.JClaims.history($scope.profile.username, $scope.filter.year, $scope.filter.month);
-			$http({
-				'method': route.method,
-				'url': route.url,
-				'cache': false
-			})
-				.success(function(claims, status, headers, config) {
-					$scope.claims = _(claims)
-						.sortBy($scope.filter.sortBy)
-						.flatten()
-						.valueOf();
-				})
-				.error(function(error, status, headers, config) {
-					$log.error('error', error);
 				});
 		};
 
@@ -76,14 +47,7 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
 			})
 				.success(function(claim, status, headers, config) {
 					$rootScope.onSuccess("La note de frais a été créée.");
-					$scope.claims = _($scope.claims)
-						.push(claim)
-						.filter(function(c) {
-							return c.month === $scope.filter.month && c.year === $scope.filter.year;
-						})
-						.sortBy($scope.filter.sortBy)
-						.flatten()
-						.valueOf()
+					$scope.loadHistory();
 				})
 				.error(function(error, status, headers, config) {
 				});
@@ -97,15 +61,26 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
 				'cache': false
 			})
 				.success(function(claims, status, headers, config) {
-					$scope.claims = _($scope.claims)
-						.reject({'id': id})
-						.flatten()
-						.sortBy($scope.filter.sortBy)
-						.valueOf()
+					$scope.loadHistory();
 				})
 				.error(function(error, status, headers, config) {
-					$log.error('error', error);
 				});
+		};
+
+		/* History */
+		$scope.history = [];
+		$scope.months = _(MonthsConst).flatten().valueOf();
+		$scope.claimsType = ClaimTypeConst;
+		$scope.sortBys = [
+			{'key': '+date', 'label': 'Date (asc)'},
+			{'key': '-date', 'label': 'Date (desc)'},
+			{'key': '+claimType', 'label': 'Type (asc)'},
+			{'key': '-claimType', 'label': 'Type (desc)'}
+		];
+		$scope.filter = {
+			'year': moment().year(),
+			'month': $scope.months[moment().month()].id,
+			'sortBy': $scope.sortBys[0].key
 		};
 
 		$scope.filterChange = function() {
@@ -115,11 +90,34 @@ app.controller('ClaimCtrl', ['$scope', '$http', '$log', '$location', 'ClaimTypeC
 		};
 
 		$scope.sortByChange = function() {
-			$log.debug($scope.claims);
-			$scope.claims = _($scope.claims)
-				.sortBy($scope.filter.sortBy)
-				.valueOf();
-			$log.debug($scope.claims);
-		}
+			$scope.history = sort($scope.history);
+		};
+
+		var sort = function(list) {
+			var field = $scope.filter.sortBy.substr(1),
+				direction = $scope.filter.sortBy.substr(0, 1) === '+' ? 'asc' : 'desc',
+				result = _(list)
+					.sortBy(field);
+			if(direction === 'desc') {
+				result.reverse();
+			}
+			return result.valueOf();
+		};
+
+		$scope.loadHistory = function() {
+			var route = jsRoutes.controllers.JClaims.history($scope.profile.username, $scope.filter.year, $scope.filter.month);
+			$http({
+				'method': route.method,
+				'url': route.url,
+				'cache': false
+			})
+				.success(function(history, status, headers, config) {
+					$scope.history = sort(history);
+					$log.debug($scope.history);
+				})
+				.error(function(error, status, headers, config) {
+					$log.error('error', error);
+				});
+		};
 
 	}]);

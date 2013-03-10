@@ -7,7 +7,6 @@ import com.github.jmkgreen.morphia.annotations.PrePersist;
 import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
-import com.mongodb.WriteConcern;
 import constants.AbsenceType;
 import exceptions.AbsenceAlreadyExistException;
 import leodagdag.play2morphia.Model;
@@ -16,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import utils.time.TimeUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -37,16 +37,19 @@ public class JAbsence extends Model implements MongoModel {
 	public DateTime endDate;
 	public Boolean endMorning;
 	public Boolean endAfternoon;
+	@Transient
+	public BigDecimal nbDays;
 	public String comment;
 	private Date _startDate;
 	private Date _endDate;
+	private String _nbDays;
 
 	@SuppressWarnings({"unused"})
 	public JAbsence() {
 	}
 
 	public static JAbsence delete(final String userId, final String id) {
-		JAbsence absence= MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
+		JAbsence absence = MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
 		List<DateTime> dates = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
 		JDay.delete(dates, userId, absence.startMorning, absence.endAfternoon);
 		return absence;
@@ -97,17 +100,27 @@ public class JAbsence extends Model implements MongoModel {
 		return absence;
 	}
 
-	public static List<JAbsence> fetch(final ObjectId userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth) {
-		return fetch(userId, startYear, startMonth, endYear, endMonth, null);
+	public static List<JAbsence> fetch(final String userId, final AbsenceType absenceType) {
+		return fetch(userId, absenceType, null, null, null, null);
 	}
 
-	public static List<JAbsence> fetch(final ObjectId userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth, final AbsenceType absenceType) {
+	public static List<JAbsence> fetch(final String userId, final AbsenceType absenceType, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth) {
+		final Query<JAbsence> q = queryToFindMeByUser(ObjectId.massageToObjectId(userId));
+		if (startYear != null && startMonth != null) {
+			q.field("_startDate").greaterThanOrEq(TimeUtils.getFirstDayOfMonth(startYear, startMonth).toDate());
+		}
+		if (endYear != null && endMonth != null) {
+			q.field("_endDate").lessThanOrEq(TimeUtils.getLastDateOfMonth(endYear, endMonth).toDate());
+		}
+		if (!AbsenceType.ALL.equals(absenceType)) {
+			q.field("missionId").in(JMission.getAbsencesMissionIds(absenceType));
+		}
+		return q.asList();
+	}
+
+	private static Query<JAbsence> queryToFindMeByUser(final ObjectId id) {
 		return MorphiaPlugin.ds().createQuery(JAbsence.class)
-			       .field("userId").equal(userId)
-			       .field("_startDate").greaterThanOrEq(new DateTime(startYear, startMonth, 1, 0, 0).toDate())
-			       .field("_endDate").lessThanOrEq(TimeUtils.getLastDateOfMonth(endYear, endMonth).toDate())
-			       .field("missionId").in(JMission.getAbsencesMissionIds(absenceType))
-			       .asList();
+			       .field("userId").equal(id);
 	}
 
 	@SuppressWarnings({"unused"})
@@ -119,6 +132,18 @@ public class JAbsence extends Model implements MongoModel {
 		if (endDate != null) {
 			_endDate = endDate.toDate();
 		}
+		if (nbDays == null) {
+			_nbDays = computeNbDays();
+		} else {
+			_nbDays = nbDays.toPlainString();
+		}
+	}
+
+	private String computeNbDays() {
+		return new BigDecimal(TimeUtils.datesBetween(this.startDate, this.endDate, false).size())
+			       .subtract(Boolean.FALSE.equals(this.startMorning) ? new BigDecimal("0.5") : BigDecimal.ZERO)
+			       .subtract(Boolean.FALSE.equals(this.endAfternoon) ? new BigDecimal("0.5") : BigDecimal.ZERO)
+			       .toPlainString();
 	}
 
 	@SuppressWarnings({"unused"})
@@ -129,6 +154,9 @@ public class JAbsence extends Model implements MongoModel {
 		}
 		if (_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
+		}
+		if (_nbDays != null) {
+			nbDays = new BigDecimal(_nbDays);
 		}
 	}
 
