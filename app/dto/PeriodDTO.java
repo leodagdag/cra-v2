@@ -4,6 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import models.JPeriod;
+import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -12,7 +15,8 @@ import java.util.List;
  * @author f.patin
  */
 public class PeriodDTO {
-	public String missionId;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId missionId;
 	public Long startTime;
 	public Long endTime;
 	public String periodType = "special";
@@ -21,7 +25,7 @@ public class PeriodDTO {
 	}
 
 	public PeriodDTO(final JPeriod period) {
-		this.missionId = period.missionId.toString();
+		this.missionId = period.missionId;
 		this.startTime = period.startTime.toDateTimeToday().getMillis();
 		this.endTime = period.endTime.toDateTimeToday().getMillis();
 	}

@@ -87,13 +87,13 @@ public class JUser implements Subject {
 
 	}
 
-	public static List<JUser> byRole(final String role) {
-		return MorphiaPlugin.ds().createQuery(JUser.class)
+	public static ImmutableList<JUser> byRole(final String role) {
+		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JUser.class)
 			       .field("role").equal(role)
 			       .retrievedFields(true, "username", "firstName", "lastName", "role")
 			       .disableValidation()
 			       .order("lastName, firstName")
-			       .asList();
+			       .asList());
 	}
 
 	public static ImmutableList<ObjectId> affectedMissions(final String username, final Long start, final Long end) {
@@ -127,19 +127,19 @@ public class JUser implements Subject {
 		}));
 	}
 
-	public static List<JUser> all() {
-		return MorphiaPlugin.ds().createQuery(JUser.class)
+	public static ImmutableList<JUser> all() {
+		return ImmutableList.copyOf( MorphiaPlugin.ds().createQuery(JUser.class)
 			       .retrievedFields(false, "affectedMissions")
 			       .disableValidation()
-			       .asList();
+			       .asList());
 	}
 
-	public static List<JUser> managers() {
-		return MorphiaPlugin.ds().createQuery(JUser.class)
+	public static ImmutableList<JUser> managers() {
+		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JUser.class)
 			       .field("isManager").equal(Boolean.TRUE)
 			       .retrievedFields(true, Mapper.ID_KEY, "lastName", "firstName")
 			       .disableValidation()
-			       .asList();
+			       .asList());
 	}
 
 	public static JUser update(final JUser user) {

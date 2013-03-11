@@ -29,7 +29,7 @@ public class JMissions extends Controller {
 	}
 
 	public static Result affectedMissions(final String username, final Long startDate, final Long endDate) {
-		ImmutableCollection<JMission> missions = JMission.codeAndMissionType(JUser.affectedMissions(username, startDate, endDate)).values();
+		final ImmutableCollection<JMission> missions = JMission.codeAndMissionType(JUser.affectedMissions(username, startDate, endDate)).values();
 		return ok(toJson(MissionDTO.of(missions)));
 	}
 }

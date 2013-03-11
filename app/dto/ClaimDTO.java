@@ -7,6 +7,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import models.JClaim;
 import models.JMission;
+import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -17,8 +20,10 @@ import java.util.List;
  */
 public class ClaimDTO {
 
-	public String id;
-	public String userId;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId id;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId userId;
 	public Integer year;
 	public Integer month;
 	public Long date;
@@ -35,8 +40,8 @@ public class ClaimDTO {
 	}
 
 	public ClaimDTO(final JClaim claim, final MissionDTO mission) {
-		this.id = claim.id.toString();
-		this.userId = claim.userId.toString();
+		this.id = claim.id;
+		this.userId = claim.userId;
 		this.year = claim.year;
 		this.month = claim.month;
 		this.date = claim.date.getMillis();

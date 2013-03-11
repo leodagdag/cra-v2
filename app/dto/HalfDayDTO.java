@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import models.JHalfDay;
 import models.JMission;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 
 import java.util.List;
 
@@ -14,7 +16,8 @@ import java.util.List;
 public class HalfDayDTO {
 
 	public String label;
-	public String missionId;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId  missionId;
 	public String missionType;
 	public List<PeriodDTO> periods = Lists.newArrayList();
 	public Boolean isSpecial = Boolean.FALSE;
@@ -29,7 +32,7 @@ public class HalfDayDTO {
 			this.label = "special";
 		} else {
 			this.label = mission.code;
-			this.missionId = halfDay.missionId.toString();
+			this.missionId = halfDay.missionId;
 			this.missionType = mission.missionType;
 		}
 	}

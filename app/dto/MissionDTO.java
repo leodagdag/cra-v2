@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import models.JMission;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -17,7 +19,8 @@ import java.util.List;
  */
 public class MissionDTO {
 
-	public String id;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId id;
 	public String code;
 	public String description;
 
@@ -25,7 +28,7 @@ public class MissionDTO {
 	}
 
 	public MissionDTO(final JMission mission) {
-		this.id = mission.id.toString();
+		this.id = mission.id;
 		this.code = mission.code;
 		this.description = mission.description;
 	}

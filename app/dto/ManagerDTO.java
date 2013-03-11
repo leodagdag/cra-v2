@@ -4,6 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import models.JUser;
+import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
 
@@ -12,7 +15,8 @@ import javax.annotation.Nullable;
  */
 public class ManagerDTO {
 
-	public String id;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId id;
 	public String firstName;
 	public String lastName;
 
@@ -20,7 +24,7 @@ public class ManagerDTO {
 	}
 
 	public ManagerDTO(final JUser user) {
-		this.id = user.id.toString();
+		this.id = user.id;
 		this.firstName = user.firstName;
 		this.lastName = user.lastName;
 	}

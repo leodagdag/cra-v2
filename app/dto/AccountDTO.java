@@ -2,13 +2,16 @@ package dto;
 
 import models.JUser;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 
 /**
  * @author f.patin
  */
 public class AccountDTO {
 
-	public String id;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId id;
 	public String username;
 	public String trigramme;
 	public String firstName;
@@ -20,7 +23,7 @@ public class AccountDTO {
 	}
 
 	public AccountDTO(final JUser user) {
-		this.id = user.id.toString();
+		this.id = user.id;
 		this.username = user.username;
 		this.trigramme = user.trigramme;
 		this.firstName = user.firstName;

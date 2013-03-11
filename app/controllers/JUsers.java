@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.common.collect.ImmutableList;
+import dto.EmployeeDTO;
 import dto.ManagerDTO;
 import models.JUser;
 import play.mvc.Controller;
@@ -15,11 +16,11 @@ import static play.libs.Json.toJson;
 public class JUsers extends Controller {
 
 	public static Result employees() {
-		return ok(toJson(JUser.byRole(SecurityRole.employee())));
+		return ok(toJson(EmployeeDTO.of(JUser.byRole(SecurityRole.employee()))));
 	}
 
 	public static Result managers(){
-		return ok(toJson(ManagerDTO.of(ImmutableList.copyOf(JUser.managers()))));
+		return ok(toJson(ManagerDTO.of(JUser.managers())));
 	}
 
 	public static Result all() {

@@ -8,6 +8,8 @@ import com.google.common.collect.Lists;
 import models.JAbsence;
 import models.JMission;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 import utils.time.TimeUtils;
 
 import javax.annotation.Nullable;
@@ -19,9 +21,12 @@ import java.util.List;
  */
 public class AbsenceDTO {
 
-    public String id;
-    public String userId;
-    public String missionId;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId id;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId userId;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    public ObjectId missionId;
     public String code;
     public String description;
     public Long startDate;
@@ -37,9 +42,9 @@ public class AbsenceDTO {
     }
 
     public AbsenceDTO(final JAbsence absence, final JMission mission) {
-        this.id = absence.id.toString();
-        this.userId = absence.userId.toStringBabble();
-        this.missionId = absence.missionId.toString();
+        this.id = absence.id;
+        this.userId = absence.userId;
+        this.missionId = absence.missionId;
         if (mission != null) {
             this.code = mission.code;
             this.description = mission.description;
