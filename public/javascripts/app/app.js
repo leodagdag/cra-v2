@@ -24,8 +24,6 @@ angular.module('httpInterceptorServiceProvider', [])
 			};
 
 		});
-		//$httpProvider.defaults.headers.common['Cache-Control'] = 'no-store';
-		//$httpProvider.defaults.headers.common['Pragma'] = 'no-cache';
 	}]);
 
 

@@ -43,7 +43,7 @@ object JsRouter extends Controller {
 					JAccounts.update,
 					JAccounts.password,
 
-					JVehicles.saveVehicle
+					JVehicles.save
 
 				)
 			).as("text/javascript")

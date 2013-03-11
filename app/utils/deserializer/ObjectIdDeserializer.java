@@ -1,5 +1,6 @@
 package utils.deserializer;
 
+import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.DeserializationContext;
@@ -14,10 +15,10 @@ import java.io.IOException;
  * Date: 25/07/12
  * Time: 14:13
  */
-public final class BigDecimalDeserializer extends JsonDeserializer<DateTime> {
+public final class ObjectIdDeserializer extends JsonDeserializer<ObjectId> {
 
     @Override
-    public DateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-        return DateTimeFormat.forPattern("dd/MM/yyyy").parseDateTime(jsonParser.getText());
+    public ObjectId deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+        return ObjectId.massageToObjectId(jsonParser.getText());
     }
 }

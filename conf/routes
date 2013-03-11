@@ -45,7 +45,7 @@ GET     /users                                                      controllers.
 
 # Account
 # ~~~~
-POST    /account/vehicle                                            controllers.JVehicles.saveVehicle()
+POST    /account/vehicle                                            controllers.JVehicles.save()
 GET     /account/:id                                                controllers.JAccounts.fetch(id: String)
 PUT     /account/password                                           controllers.JAccounts.password()
 PUT     /account                                                    controllers.JAccounts.update()

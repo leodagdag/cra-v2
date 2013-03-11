@@ -4,11 +4,13 @@ import dto.VehicleDTO;
 import models.JUser;
 import models.JVehicle;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.joda.time.DateTime;
 import play.data.Form;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import utils.deserializer.ObjectIdDeserializer;
 
 import static play.libs.Json.toJson;
 
@@ -18,13 +20,13 @@ import static play.libs.Json.toJson;
 public class JVehicles extends Controller {
 
 	@BodyParser.Of(BodyParser.Json.class)
-	public static Result saveVehicle() {
+	public static Result save() {
 		final Form<CreateVehicleForm> form = Form.form(CreateVehicleForm.class).bind(request().body().asJson());
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateVehicleForm createVehicleForm = form.get();
-		return ok(toJson(VehicleDTO.of(JVehicle.save(createVehicleForm.to()))));
+		return created(toJson(VehicleDTO.of(JVehicle.save(createVehicleForm.to()))));
 
 	}
 
@@ -38,7 +40,8 @@ public class JVehicles extends Controller {
 
 	public static class CreateVehicleForm {
 
-		public String username;
+		//@JsonDeserialize(using = ObjectIdDeserializer.class)
+		public ObjectId userId;
 		public String vehicleType;
 		public String brand;
 		public Integer power;
@@ -47,7 +50,7 @@ public class JVehicles extends Controller {
 
 		public JVehicle to() {
 			JVehicle vehicle = new JVehicle();
-			vehicle.userId = JUser.id(this.username);
+			vehicle.userId = this.userId;
 			vehicle.vehicleType = this.vehicleType;
 			vehicle.brand = this.brand;
 			vehicle.power = this.power;
