@@ -1,5 +1,5 @@
-app.controller('MyAccountCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'profile',
-	function MyAccountCtrl($scope, $http, $log, $location, $routeParams, profile) {
+app.controller('MyAccountCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'profile',
+	function MyAccountCtrl($rootScope, $scope, $http, $log, $location, $routeParams, profile) {
 		$scope.profile = profile.data;
 		$scope.subSections = {
 			'general': 'public/html/views/my-account/general.html',
@@ -19,13 +19,15 @@ app.controller('MyAccountCtrl', ['$scope', '$http', '$log', '$location', '$route
 		}
 	}]);
 
-app.controller('MyAccountGeneralCtrl', ['$scope', '$http', '$log', '$location', 'AccountRes', 'ManagerRes',
-	function MyAccountGeneralCtrl($scope, $http, $log, $location, AccountResource, ManagerResource) {
+app.controller('MyAccountGeneralCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', 'AccountRes', 'ManagerRes',
+	function MyAccountGeneralCtrl($rootScope, $scope, $http, $log, $location, AccountResource, ManagerResource) {
 		$scope.managers = ManagerResource.query();
 		$scope.account = AccountResource.get({id: $scope.profile.id});
 
 		$scope.save = function() {
-			$scope.account.$update();
+			$scope.account.$update(function(result){
+                $rootScope.onSuccess("Votre profil a été sauvegardé.");
+            });
 		}
 	}]);
 
@@ -52,7 +54,6 @@ app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
 				data: $scope.form
 			})
 				.success(function(data, status, headers, config) {
-					$log.log('data', data);
 					$location.url("/")
 				})
 				.error(function(errors, status, headers, config) {
