@@ -3,6 +3,7 @@ package dto;
 import models.JUser;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import play.data.validation.Constraints;
 import utils.serializer.ObjectIdSerializer;
 
 /**
@@ -10,27 +11,31 @@ import utils.serializer.ObjectIdSerializer;
  */
 public class AccountDTO {
 
-    @JsonSerialize(using = ObjectIdSerializer.class)
-    public ObjectId id;
-	public String username;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId id;
+	@Constraints.Required(message = "Le trigramme est requis.")
 	public String trigramme;
+	@Constraints.Required(message = "Le prénom est requis.")
 	public String firstName;
+	@Constraints.Required(message = "Le nom est requis.")
 	public String lastName;
+	@Constraints.Required(message = "L'email est requis.")
+	@Constraints.Email(message = "Un email valide est requis")
 	public String email;
-	public String managerId;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId managerId;
 
 	public AccountDTO() {
 	}
 
 	public AccountDTO(final JUser user) {
 		this.id = user.id;
-		this.username = user.username;
 		this.trigramme = user.trigramme;
 		this.firstName = user.firstName;
 		this.lastName = user.lastName;
 		this.email = user.email;
 		if (user.managerId != null) {
-			this.managerId = user.managerId.toString();
+			this.managerId = user.managerId;
 		}
 	}
 
@@ -40,13 +45,12 @@ public class AccountDTO {
 
 	public JUser to() {
 		final JUser user = new JUser();
-		user.id = ObjectId.massageToObjectId(this.id);
-		user.username = this.username;
+		user.id = this.id;
 		user.trigramme = this.trigramme;
 		user.firstName = this.firstName;
 		user.lastName = this.lastName;
 		user.email = this.email;
-		user.managerId = ObjectId.massageToObjectId(this.managerId);
+		user.managerId = this.managerId;
 		return user;
 	}
 }

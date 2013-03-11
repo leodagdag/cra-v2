@@ -23,11 +23,28 @@ app.controller('MyAccountGeneralCtrl', ['$rootScope', '$scope', '$http', '$log',
 	function MyAccountGeneralCtrl($rootScope, $scope, $http, $log, $location, AccountResource, ManagerResource) {
 		$scope.managers = ManagerResource.query();
 		$scope.account = AccountResource.get({id: $scope.profile.id});
-
+		$scope.errors = {
+			global: null,
+			firstName: null,
+			lastName: null,
+			trigramme: null,
+			email: null
+		};
 		$scope.save = function() {
-			$scope.account.$update(function(result){
-                $rootScope.onSuccess("Votre profil a été sauvegardé.");
-            });
+			$scope.errors = {};
+			$scope.account.$update(
+				function(result) {
+					$rootScope.onSuccess("Votre profil a été sauvegardé.");
+				},
+				function(errors) {
+					$log.log('errors', errors);
+					_(errors).forEach(function(err, key) {
+						$log.log('err', err);
+						_(err).forEach(function(e, k) {
+							$scope.errors[k] = e.join('<br>');
+						})
+					})
+				});
 		}
 	}]);
 
@@ -58,7 +75,8 @@ app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
 				})
 				.error(function(errors, status, headers, config) {
 					$log.log('errors', errors);
-					_(errors).forEach(function(err, key){
+					_(errors).forEach(function(err, key) {
+						$log.log('err', err);
 						$scope.errors[key] = err.join('<br>');
 					})
 				})
