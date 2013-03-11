@@ -14,17 +14,18 @@
 		</div>
 		<form class="well well-small" data-ng-submit="save()">
 			<label>Puissance fiscale / Cylindrée <i class="icon-mandatory"></i></label>
-			<select data-ng-model="form.power" required="required" data-ng-options="power.code as power.label for power in powers">
+			<select class="span4" data-ng-model="form.power" required="required" data-ng-options="power.code as power.label for power in powers">
 				<option value=""></option>
 			</select>
 			<label>Marque <i class="icon-mandatory"></i></label>
-			<select data-ng-model="form.brand" required="required" data-ng-options="brand.code as brand.label for brand in brands">
+			<select class="span5" data-ng-model="form.brand" required="required" data-ng-options="brand.code as brand.label for brand in brands">
 				<option value=""></option>
 			</select>
 			<label>Immatriculation <i class="icon-mandatory"></i></label>
-			<input type="text" data-ng-model="form.matriculation" required="required">
+			<input type="text" class="span4" data-ng-model="form.matriculation" required="required">
 			<label>Date d'acquisition<i class="icon-mandatory"></i></label>
-			<input type="text" data-ng-model="form.startDate" data-b-datepicker required="required">
+			<input type="text" class="span4" data-ng-model="form.startDate" data-b-datepicker required="required">
+
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
 			</div>

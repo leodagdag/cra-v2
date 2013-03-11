@@ -24,6 +24,7 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		$scope.toggleVehicleType = function(vehicleType) {
 			$scope.vehicleType = vehicleType;
 			$scope.form = new Form($scope.vehicleType);
+			$scope.powers = (vehicleType === 'car') ? VehicleCarPowerConst : VehicleMotorcyclePowerConst;
 		};
 
 		$scope.save = function() {
