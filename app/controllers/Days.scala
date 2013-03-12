@@ -13,7 +13,7 @@ import reactivemongo.core.commands.LastError
  */
 object Days extends BaseController {
 
-	def delete(craId: String, date: Long) = Restrictions(everybody, new MyDeadboltHandler()) {
+	def remove(craId: String, date: Long) = Restrictions(everybody, new MyDeadboltHandler()) {
 		Action {
 			implicit request =>
 				Async {
@@ -33,7 +33,7 @@ object Days extends BaseController {
 		}
 	}
 
-	def deleteHalfDay(craId: String, date: Long, momentOfDay: String) = Restrictions(everybody, new MyDeadboltHandler()) {
+	def removeHalfDay(craId: String, date: Long, momentOfDay: String) = Restrictions(everybody, new MyDeadboltHandler()) {
 		Action {
 			implicit request =>
 				Async {

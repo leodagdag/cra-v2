@@ -40,7 +40,7 @@ public class JAbsences extends Controller {
 		}
 	}
 
-	public static Result delete(final String userId, final String id) {
+	public static Result remove(final String userId, final String id) {
 		return ok(toJson(AbsenceDTO.of(JAbsence.delete(userId, id))));
 	}
 

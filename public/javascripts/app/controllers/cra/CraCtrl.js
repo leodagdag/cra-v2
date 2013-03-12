@@ -58,7 +58,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 
-		$scope.class = function(halfday) {
+		$scope.getClass = function(halfday) {
 			if(!halfday) {
 				return "";
 			} else if(halfday.missionId) {
@@ -115,9 +115,9 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			$location.path(_.str.sprintf("/day/%s/%s/%s/%s/%s", $scope.criterias.selected.employee, ($scope.cra.id) ? $scope.cra.id : "", $scope.cra.year, $scope.cra.month, days))
 		};
 
-		$scope.deleteDay = function(wIndex, date, dIndex) {
+		$scope.removeDay = function(wIndex, date, dIndex) {
 			if(confirm("Êtes vous sur de vouloir supprimer cette journée ?")) {
-				var route = jsRoutes.controllers.Days.delete($scope.cra.id, date);
+				var route = jsRoutes.controllers.Days.remove($scope.cra.id, date);
 				$http({
 					method: route.method,
 					url: route.url
@@ -135,14 +135,14 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			day[mOfD] = null;
 		};
 
-		$scope.deleteHalfDay = function(wIndex, date, dIndex, momentOfDay) {
+		$scope.removeHalfDay = function(wIndex, date, dIndex, momentOfDay) {
 
 			var day = $scope.cra.weeks[wIndex].days[dIndex];
 			if(!day.morning || !day.afternoon) {
-				$scope.deleteDay(wIndex, date, dIndex);
+				$scope.removeDay(wIndex, date, dIndex);
 			} else {
 				if(confirm("Êtes vous sur de vouloir supprimer cette demi-journée ?")) {
-					var route = jsRoutes.controllers.Days.deleteHalfDay($scope.cra.id, date, momentOfDay);
+					var route = jsRoutes.controllers.Days.removeHalfDay($scope.cra.id, date, momentOfDay);
 					$http({
 						method: route.method,
 						url: route.url

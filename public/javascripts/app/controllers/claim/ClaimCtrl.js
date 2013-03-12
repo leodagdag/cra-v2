@@ -53,8 +53,8 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 				});
 		};
 
-		$scope.delete = function(id) {
-			var route = jsRoutes.controllers.JClaims.delete(id);
+		$scope.remove = function(id) {
+			var route = jsRoutes.controllers.JClaims.remove(id);
 			$http({
 				'method': route.method,
 				'url': route.url,

@@ -56,7 +56,7 @@ public class JClaims extends Controller {
 
 	}
 
-	public static Result delete(final String id){
+	public static Result remove(final String id){
 		return ok(toJson(JClaim.delete(id)));
 	}
 	public static class CreateClaimForm {

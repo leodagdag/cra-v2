@@ -15,16 +15,16 @@ GET     /profile                                                    controllers.
 # ~~~~
 GET     /claims/:username/:year/:month                              controllers.JClaims.history(username: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /claims                                                     controllers.JClaims.create()
-DELETE  /claims/:id                                                 controllers.JClaims.delete(id: String)
+DELETE  /claims/:id                                                 controllers.JClaims.remove(id: String)
 # Absences
 # ~~~~
 GET     /absences/:userId/history/:absenceType/:year/:month         controllers.JAbsences.history(userId: String, absenceType :String, year: Integer, month: Integer)
 POST    /absences                                                   controllers.JAbsences.create()
-DELETE  /absences/:userId/:id                                       controllers.JAbsences.delete(userId: String, id: String)
+DELETE  /absences/:userId/:id                                       controllers.JAbsences.remove(userId: String, id: String)
 # Day
 # ~~~~
-DELETE  /cra/:id/day/:date                                          controllers.Days.delete(id: String, date: Long)
-DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.Days.deleteHalfDay(id: String, date: Long, momentOfDay:String)
+DELETE  /cra/:id/day/:date                                          controllers.Days.remove(id: String, date: Long)
+DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.Days.removeHalfDay(id: String, date: Long, momentOfDay:String)
 GET     /cra/:id/day/:date                                          controllers.JDays.fetch(id: String, date: Long)
 POST    /days/                                                      controllers.JDays.create()
 # Cra

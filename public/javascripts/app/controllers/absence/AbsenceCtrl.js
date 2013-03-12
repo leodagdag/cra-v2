@@ -41,9 +41,9 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 				});
 		};
 
-		$scope.delete = function(id) {
+		$scope.remove = function(id) {
 			if(confirm("Êtes vous sur de vouloir supprimer cette absence ?")) {
-				var route = jsRoutes.controllers.JAbsences.delete($scope.profile.id, id);
+				var route = jsRoutes.controllers.JAbsences.remove($scope.profile.id, id);
 				$http({
 					method: route.method,
 					url: route.url
