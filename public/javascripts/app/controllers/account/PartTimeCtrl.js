@@ -1,43 +1,63 @@
-app.controller('PartTimeNewCtrl', ['$scope', '$http', '$log', '$location',
-	function PartTimeNewCtrl($scope, $http, $log, $location) {
-		$scope.emptyDayOfWeek = false;
+app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
+	function PartTimeNewCtrl($rootScope, $scope, $http, $log, $location) {
+		var Form = function () {
+			this.startDate = null;
+			this.endDate = null;
+			this.weekDays = [];
+			this.frequency = null;
+
+			this.to = function () {
+				return {
+					userId: $scope.profile.id,
+					startDate: moment(this.startDate, 'DD/MM/YYYY').valueOf(),
+					endDate: (this.endDate) ? moment(this.endDate, 'DD/MM/YYYY').valueOf() : null,
+					weekDays: this.weekDays,
+					frequency: this.frequency
+				}
+			}
+		};
+
+		$scope.errors = {
+			global: null,
+			startDate: null,
+			endDate: null,
+			weekDays: null,
+			frequency: null
+		};
+
 		$scope.dayMoments = [
 			{moment: "day", label: "Journée"},
 			{moment: "morning", label: "Matin"},
 			{moment: "afternoon", label: "Après-midi"}
 		];
 
-		$scope.newPartTime = {
-			startDate: null,
-			endDate: null,
-			weekDays: [],
-			frequency: null
-		};
+		$scope.form = new Form();
 
-		$scope.toggleDay = function(dayId, dayMoment) {
-			if(dayMoment) {
+		$scope.toggleDay = function (dayId, dayMoment) {
+			if (dayMoment) {
 				var weekDay = {"day": dayId, "moment": dayMoment.moment};
-				$scope.newPartTime.weekDays.push(weekDay);
-				$scope.emptyDayOfWeek = false;
+				$scope.form.weekDays.push(weekDay);
 			} else {
-				$scope.newPartTime.weekDays = _.reject($scope.newPartTime.weekDays, function(item) {
-					return item.day === this.valueOf();
-				}, dayId);
+				$scope.form.weekDays = _($scope.partTime.weekDays)
+					.reject(function (item) {
+						return item.day === this.valueOf();
+					}, dayId)
+					.valueOf();
 			}
 		};
 
-		$scope.save = function() {
-			if(!_.size($scope.newPartTime.weekDays)) {
-				$scope.emptyDayOfWeek = true;
+		$scope.save = function () {
+			$log.debug('$scope.form', $scope.form.to());
+			if (!_.size($scope.form.weekDays)) {
 			} else {
-				var route = jsRoutes.controllers.Accounts.addPartTime();
+				var route = jsRoutes.controllers.JPartTimes.setPartTime();
 				$http({
 					method: route.method,
 					url: route.url,
-					data: $scope.newPartTime
+					data: $scope.form
 				})
-					.success(function(data, status, headers, config) {
-						$log.log(data);
+					.success(function (data, status, headers, config) {
+						$rootScope.onSuccess("Votre temps partiel a été sauvegardé.");
 					});
 
 			}
@@ -46,13 +66,13 @@ app.controller('PartTimeNewCtrl', ['$scope', '$http', '$log', '$location',
 
 app.controller('ActivePartTimeCtrl', ['$scope', '$http', '$log', '$location',
 	function ActivePartTimeCtrl($scope, $http, $log, $location) {
-		$scope.fetchActivePartTimes = function() {
-			$http({
-				method: jsRoutes.controllers.PartTimes.myActivePartTime().method,
-				url: jsRoutes.controllers.PartTimes.myActivePartTime().url
-			})
-				.success(function(activePartTime, status, headers, config) {
-					$scope.activePartTime = activePartTime;
-				});
+		$scope.init = function () {
+			/*$http({
+			 method: jsRoutes.controllers.PartTimes.myActivePartTime().method,
+			 url: jsRoutes.controllers.PartTimes.myActivePartTime().url
+			 })
+			 .success(function (activePartTime, status, headers, config) {
+			 $scope.activePartTime = activePartTime;
+			 });*/
 		}
 	}]);

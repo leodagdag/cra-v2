@@ -1,14 +1,13 @@
 <div class="row-fluid">
 	<div class="span5">
 		<form class="well well-small" name="newPartTimeForm" data-ng-controller="PartTimeNewCtrl" data-ng-submit="save()">
-			partTime ={{partTime}}
 			<fieldset>
 				<div class="row-fluid">
 					<div class="span4">
 						<span>Date de début <i class="icon-mandatory"></i></span>
 					</div>
 					<div class="span8">
-						<input type="text" class="span5" id="startDate" data-b-datepicker required="required" data-ng-model="partTime.startDate">
+						<input type="text" class="span5" id="startDate" data-b-datepicker required="required" data-ng-model="form.startDate">
 					</div>
 				</div>
 				<div class="row-fluid">
@@ -16,7 +15,7 @@
 						<span>Date de fin</span>
 					</div>
 					<div class="span8">
-						<input type="text" class="span5" id="endDate" data-b-datepicker data-ng-model="partTime.endDate">
+						<input type="text" class="span5" id="endDate" data-b-datepicker data-ng-model="form.endDate">
 					</div>
 				</div>
 				<div class="well">
@@ -35,8 +34,7 @@
 							<span>Mardi</span>
 						</div>
 						<div class="span6">
-							<select class="span8" data-ng-model="tuesday" data-ng-change="toggleDay(2, tuesday)"
-							        data-ng-options="dm.label for dm in dayMoments">
+							<select class="span8" data-ng-model="tuesday" data-ng-change="toggleDay(2, tuesday)" data-ng-options="dm.label for dm in dayMoments">
 								<option value=""></option>
 							</select>
 						</div>
@@ -46,8 +44,7 @@
 							<span>Mercredi</span>
 						</div>
 						<div class="span6">
-							<select class="span8" data-ng-model="wednesday" data-ng-change="toggleDay(3, wednesday)"
-							        data-ng-options="dm.label for dm in dayMoments">
+							<select class="span8" data-ng-model="wednesday" data-ng-change="toggleDay(3, wednesday)" data-ng-options="dm.label for dm in dayMoments">
 								<option value=""></option>
 							</select>
 						</div>
@@ -57,8 +54,7 @@
 							<span>Jeudi</span>
 						</div>
 						<div class="span6">
-							<select class="span8" data-ng-model="thursday" data-ng-change="toggleDay(4, thursday)"
-							        data-ng-options="dm.label for dm in dayMoments">
+							<select class="span8" data-ng-model="thursday" data-ng-change="toggleDay(4, thursday)" data-ng-options="dm.label for dm in dayMoments">
 								<option value=""></option>
 							</select>
 						</div>
@@ -73,14 +69,15 @@
 							</select>
 						</div>
 					</div>
-					<span class="label label-important" data-ng-show="emptyDayOfWeek">Vous devez sélectionner un jour dans la semaine</span>
+
 				</div>
 				<div class="row-fluid">
 					<div class="span4">
-						<span>Toutes les <i class="icon-mandatory"> <em class="hidden-desktop">(en semaine)</em> </i></span>
+                        <span>Toutes les <i class="icon-mandatory"> <em class="hidden-desktop">(en semaine)</em>
+                        </i></span>
 					</div>
 					<div class="span6 input-append">
-						<select class="span4" id="frequency" required="required" data-ng-model="partTime.frequency">
+						<select class="span4" id="frequency" required="required" data-ng-model="form.frequency">
 							<option value=""></option>
 							<option value="1">1</option>
 							<option value="2">2</option>
@@ -89,7 +86,6 @@
 							<option value="5">5</option>
 						</select>
 						<span class="add-on hidden-phone hidden-tablet">semaine(s)</span>
-
 					</div>
 				</div>
 				<div class="form-actions">
@@ -98,7 +94,7 @@
 			</fieldset>
 		</form>
 	</div>
-	<div class="span5" data-ng-controller="ActivePartTimeCtrl" data-ng-init="fetchActivePartTimes()">
+	<div class="span5" data-ng-controller="ActivePartTimeCtrl" data-ng-init="init()">
 		<div class="alert alert-block alert-info" data-ng-show="activePartTime.length">
 			<div class="row-fluid">
 				<div class="span12">

@@ -45,6 +45,8 @@ object JsRouter extends Controller {
 					JAccounts.update,
 					JAccounts.password,
 
+          JPartTimes.setPartTime,
+
 					JVehicles.save
 
 				)
