@@ -30,7 +30,7 @@ app.constant('YearsConst', [
 		{code: 'LOCATION', label: 'Location de voiture'}
 	])
 	.constant('VehicleBrandConst', [
-		{code: 'ALFA_RAMEO', label: 'Alfa Romeo'},
+		{code: 'ALFA_ROMEO', label: 'Alfa Romeo'},
 		{code: 'AUDI', label: 'Audi'},
 		{code: 'BMW', label: 'BMW'},
 		{code: 'CHRYSLER', label: 'Chrysler'},

@@ -1,6 +1,6 @@
-<div class="row-fluid">
+<div class="row-fluid" data-ng-controller="PartTimeNewCtrl">
 	<div class="span5">
-		<form class="well well-small" name="newPartTimeForm" data-ng-controller="PartTimeNewCtrl" data-ng-submit="save()">
+		<form class="well well-small" name="newPartTimeForm" data-ng-submit="save()">
 			<fieldset>
 				<div class="row-fluid">
 					<div class="span4">
@@ -94,8 +94,8 @@
 			</fieldset>
 		</form>
 	</div>
-	<div class="span5" data-ng-controller="ActivePartTimeCtrl" data-ng-init="init()">
-		<div class="alert alert-block alert-info" data-ng-show="activePartTime.length">
+	<div class="span5" data-ng-init="loadActive()">
+		<div class="alert alert-block alert-info" data-ng-show="_.isEmpty(activePartTime) == false">
 			<div class="row-fluid">
 				<div class="span12">
 					<span>Votre Temps Partiel est actuellement :</span>
@@ -103,18 +103,18 @@
 					<div class="row-fluid" data-ng-repeat="pt in activePartTime">
 						<div class="span9">
 							<ul>
-								<li>
-									A partir du {{pt.startDate | date:'dd/MM/yyyy'}},<br>
+								<li>A partir du <strong>{{pt.startDate | date:'dd/MM/yyyy'}}</strong>,
 									<span data-ng-show="pt.endDate">jusqu'à {{pt.endDate | date:'dd/MM/yyyy'}}.</span>
 									<span data-ng-hide="pt.endDate">sans date de fin.</span>
-									<br>
-									Le {{pt.weekDay | dayOfWeek}} {{pt.moment | momentOfDay}},<br>
-									toutes les {{pt.frequency}} semaine(s).
+									<ul>
+										<li>le {{pt.dayOfWeek | dayOfWeek}} ({{pt.momentOfDay | momentOfDay}}),<br></li>
+										<li>toutes les {{pt.frequency}} semaine(s).</li>
+									</ul>
 								</li>
 							</ul>
 						</div>
 						<div class="span3">
-							<button class="btn btn-mini btn-danger icon-trash"></button>
+							<!--button class="btn btn-mini btn-danger icon-trash" data-ng-click="deactivate()"></button-->
 						</div>
 					</div>
 				</div>

@@ -1,12 +1,13 @@
 app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'VehicleBrandConst', 'VehicleCarPowerConst', 'VehicleMotorcyclePowerConst',
 	function VehicleCtrl($rootScope, $scope, $http, $log, $location, $routeParams, VehicleBrandConst, VehicleCarPowerConst, VehicleMotorcyclePowerConst) {
+		$scope._ = _;
 		var Vehicle = function(form) {
 			this.userId = $scope.profile.id;
 			this.vehicleType = form.vehicleType;
 			this.power = form.power;
 			this.brand = form.brand;
 			this.matriculation = form.matriculation;
-			this.startDate = moment(form.startDate, 'DD/MM/YYYY').valueOf;
+			this.startDate = moment(form.startDate, 'DD/MM/YYYY').valueOf();
 		};
 		var Form = function(vehicleType) {
 			this.vehicleType = vehicleType || 'car';
@@ -37,9 +38,27 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			})
 				.success(function(vehicle, status, headers, config) {
 					$rootScope.onSuccess("Votre véhicule a été sauvegardé.");
+					$scope.loadActive();
 				})
 				.error(function(error, status, headers, config) {
 				});
 		};
+
+		/* Active Vehicle */
+		$scope.activeVehicle = {};
+
+		$scope.loadActive = function(){
+			var route = jsRoutes.controllers.JVehicles.active($scope.profile.id);
+			$http({
+				'method': route.method,
+				'url': route.url
+			})
+				.success(function(vehicle, status, headers, config) {
+					$log.debug(vehicle);
+					$scope.activeVehicle = vehicle;
+				})
+				.error(function(error, status, headers, config) {
+				});
+		}
 	}]);
 

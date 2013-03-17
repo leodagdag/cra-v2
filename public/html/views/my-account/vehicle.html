@@ -1,5 +1,5 @@
 <div class="row-fluid" data-ng-controller="VehicleCtrl">
-	<div class="span4">
+	<div class="span5">
 		<div class="row-fluid">
 			<div class="offset1">
 				<ul class="nav nav-pills">
@@ -30,5 +30,23 @@
 				<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
 			</div>
 		</form>
+	</div>
+	<div class="span5">
+		<div class="alert alert-block alert-info" data-ng-init="loadActive()">
+			<div class="row-fluid" data-ng-show="!_.isEmpty(activeVehicle)">
+				<div class="span12">
+					<p>
+						Votre véhicule est actuellement
+						une <strong>{{activeVehicle.vehicleType | vehicleType}}</strong> depuis le {{activeVehicle.startDate | date}}
+					</p>
+					<ul>
+						<li>Puissance fiscale/cylindrée : {{activeVehicle.power | vehiclePower:activeVehicle.vehicleType}}</li>
+						<li>Immatriculation : {{activeVehicle.matriculation}}</li>
+						<li>Marque : {{activeVehicle.brand | vehicleBrand | capitalize}}</li>
+					</ul>
+					<!--button class="btn btn-mini btn-danger icon-trash" data-ng-click="deactivate()"></button-->
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

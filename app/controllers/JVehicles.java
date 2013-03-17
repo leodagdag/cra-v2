@@ -1,16 +1,13 @@
 package controllers;
 
 import dto.VehicleDTO;
-import models.JUser;
 import models.JVehicle;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.joda.time.DateTime;
 import play.data.Form;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import utils.deserializer.ObjectIdDeserializer;
 
 import static play.libs.Json.toJson;
 
@@ -30,7 +27,7 @@ public class JVehicles extends Controller {
 
 	}
 
-	public static Result active (final String userId){
+	public static Result active(final String userId) {
 		return ok(toJson(VehicleDTO.of(JVehicle.active(userId))));
 	}
 
@@ -40,7 +37,6 @@ public class JVehicles extends Controller {
 
 	public static class CreateVehicleForm {
 
-		//@JsonDeserialize(using = ObjectIdDeserializer.class)
 		public ObjectId userId;
 		public String vehicleType;
 		public String brand;
@@ -58,7 +54,5 @@ public class JVehicles extends Controller {
 			vehicle.startDate = new DateTime(this.startDate);
 			return vehicle;
 		}
-
 	}
-
 }
