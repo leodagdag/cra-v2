@@ -4,16 +4,8 @@ package constants;
  * @author f.patin
  */
 public enum MissionType {
-	AV,
-	CP,
-	RTTS,
-	RTTE,
-	TP,
-	CSS,
-	TI,
-	F,
-	IC,
-	MM,
-	AE
-
+	customer,
+	pre_sale,
+	holiday,
+	not_paid
 }

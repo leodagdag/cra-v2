@@ -29,19 +29,19 @@ public class CraDTO {
 	public CraDTO() {
 	}
 
-	public CraDTO(final JCra jCra, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> missions) {
-		this.id = jCra.id;
-		this.userId = jCra.userId;
-		this.year = jCra.year;
-		this.month = jCra.month;
-		this.comment = jCra.comment;
-		this.isValidated = jCra.isValidated;
-		this.weeks.addAll(WeekDTO.of(jDays,missions, jCra.year, jCra.month));
+	public CraDTO(final JCra cra, final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions) {
+		this.id = cra.id;
+		this.userId = cra.userId;
+		this.year = cra.year;
+		this.month = cra.month;
+		this.comment = cra.comment;
+		this.isValidated = cra.isValidated;
+		this.weeks.addAll(WeekDTO.of(days,missions, cra.year, cra.month));
 	}
 
 
-	public static CraDTO of(final JCra jCra, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions) {
-		return new CraDTO(jCra, jDays, jMissions);
+	public static CraDTO of(final JCra cra, final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions) {
+		return new CraDTO(cra, days, missions);
 	}
 
 }

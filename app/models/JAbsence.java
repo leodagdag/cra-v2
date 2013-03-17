@@ -63,7 +63,7 @@ public class JAbsence extends Model implements MongoModel {
 	public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException {
 
 		// newAbsenceStartDate < dbAbsenceStartDate || dbAbsenceEndDate < newAbsenceEndDate
-		Query<JAbsence> dateQuery = MorphiaPlugin.ds().createQuery(JAbsence.class);
+		final Query<JAbsence> dateQuery = MorphiaPlugin.ds().createQuery(JAbsence.class);
 		dateQuery.or(
 			            dateQuery.and(
 				                         dateQuery.criteria("_startDate").greaterThanOrEq(absence.startDate.toDate()),

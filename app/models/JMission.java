@@ -16,6 +16,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import constants.AbsenceType;
+import constants.GenesisMissionCode;
+import constants.MissionType;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -154,4 +156,13 @@ public class JMission {
 		}
 	}
 
+	public static ObjectId getPartTimeId(){
+		return MorphiaPlugin.ds().createQuery(JMission.class)
+			.field("customerId").equal(JCustomer.genesis().id)
+			.field("code").equal(GenesisMissionCode.TP)
+			.retrievedFields(true, Mapper.ID_KEY)
+			.disableValidation()
+			.get()
+			.id;
+	}
 }

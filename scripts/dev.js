@@ -42,20 +42,20 @@ var customer1 = db.Customer.findOne({code: 'CODE_C_1'});
  */
 db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(2013, 0, 1), _endDate: new Date(2013, 4, 31)});
 db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(2013, 1, 1), _endDate: new Date(2013, 4, 31)});
-db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre-sale', isClaim: true, _startDate: new Date(2013, 0, 1)});
+db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre_sale', isClaim: true, _startDate: new Date(2013, 0, 1)});
 db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(2013, 0, 1) });
 db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });
 db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });
 db.Mission.insert({customerId: genesis._id, code: 'AE', description: 'Absence exceptionnelle', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(2013, 0, 1) });
-db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not-paid', _startDate: new Date(2013, 0, 1)});
+db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not_paid', _startDate: new Date(2013, 0, 1)});
 var mission_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1'});
 var mission_customer2 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2'});
-var pre_sale = db.Mission.findOne({customerId: genesis._id, missionType: 'pre-sale' });
+var pre_sale = db.Mission.findOne({customerId: genesis._id, missionType: 'pre_sale' });
 var holiday = db.Mission.findOne({customerId: genesis._id, code: 'CP', missionType: 'holiday'});
 var rtte = db.Mission.findOne({customerId: genesis._id, code: 'RTTE', missionType: 'holiday'});
 var rtts = db.Mission.findOne({customerId: genesis._id, code: 'RTTS', missionType: 'holiday'});
 var ae = db.Mission.findOne({customerId: genesis._id, code: 'AE', missionType: 'holiday'});
-var part_time = db.Mission.findOne({customerId: genesis._id, missionType: 'not-paid' });
+var part_time = db.Mission.findOne({customerId: genesis._id, code: 'TP',missionType: 'not_paid' });
 
 /*
  * User

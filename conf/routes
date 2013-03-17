@@ -49,7 +49,11 @@ POST    /account/vehicle                                            controllers.
 GET     /account/:id                                                controllers.JAccounts.fetch(id: String)
 PUT     /account/password                                           controllers.JAccounts.password()
 PUT     /account                                                    controllers.JAccounts.update()
-POST    /partTimes                                                  controllers.JPartTimes.setPartTime()
+# PartTime
+# ~~~~
+GET		/partTimes/:userId/active									controllers.JPartTimes.active(userId: String)
+GET		/partTimes/:userId											controllers.JPartTimes.history(userId: String)
+POST    /partTimes                                                  controllers.JPartTimes.addPartTimes()
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser                                         controllers.HtmlPages.unsupportedBrowser

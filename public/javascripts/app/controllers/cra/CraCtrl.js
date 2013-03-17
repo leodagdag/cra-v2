@@ -53,7 +53,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		$scope.cra = {};
 
 		$scope.search = function() {
-			$log.log("search()", $scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
+			$log.debug("search()", $scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 			loadCra($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 		};
 

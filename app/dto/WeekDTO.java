@@ -22,15 +22,15 @@ public class WeekDTO {
 	public WeekDTO() {
 	}
 
-	public WeekDTO(final Integer number, final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
+	public WeekDTO(final Integer number, final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
 		this.number = number;
-		this.days.addAll(DayDTO.of(jDays, jMissions, year, month));
+		this.days.addAll(DayDTO.of(days, missions, year, month));
 	}
 
-	public static List<WeekDTO> of(final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
-		if (!CollectionUtils.isEmpty(jDays)) {
-			Map<Integer, List<JDay>> weeks = Maps.newHashMap();
-			for (JDay jDay : jDays) {
+	public static List<WeekDTO> of(final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
+		if (!CollectionUtils.isEmpty(days)) {
+			Map<Integer, List<JDay>> weeks = Maps.newTreeMap();
+			for (JDay jDay : days) {
 				final int weekOfYear = jDay.date.getWeekOfWeekyear();
 				if (!weeks.containsKey(weekOfYear)) {
 					weeks.put(weekOfYear, new ArrayList<JDay>());
@@ -39,7 +39,7 @@ public class WeekDTO {
 			}
 			final List<WeekDTO> result = Lists.newArrayListWithCapacity(weeks.keySet().size());
 			for (Integer weekNumber : weeks.keySet()) {
-				result.add(new WeekDTO(weekNumber, weeks.get(weekNumber), jMissions, year, month));
+				result.add(new WeekDTO(weekNumber, weeks.get(weekNumber), missions, year, month));
 			}
 			return result;
 		} else {

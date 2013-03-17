@@ -28,15 +28,12 @@ public class JCras extends Controller {
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	public static Result fetch(final String username, final Integer year, final Integer month) {
 		final ObjectId userId = JUser.id(username);
-		JCra cra = JCra.find(userId, year, month);
+		final JCra cra = JCra.getOrCreate(userId, year, month);
 		final List<JDay> jDays = Lists.newArrayList();
 		final List<ObjectId> missionsIds = Lists.newArrayList();
 
-		if (cra == null) {
-			cra = new JCra(userId, year, month);
-		}
-		jDays.addAll(JDay.find(cra.id, year, month, true));
-		for (JDay jDay : jDays) {
+		jDays.addAll(JDay.find(userId, cra.id, year, month, true));
+		for(JDay jDay : jDays) {
 			missionsIds.addAll(jDay.missionIds());
 		}
 		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(ImmutableList.copyOf(missionsIds));

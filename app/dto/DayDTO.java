@@ -33,32 +33,32 @@ public class DayDTO {
 	public DayDTO() {
 	}
 
-	public DayDTO(final JDay jDay, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
-		this.id = jDay.id;
-		this.date = jDay.date;
-		this.morning = HalfDayDTO.of(jDay.morning, jMissions);
-		this.afternoon = HalfDayDTO.of(jDay.afternoon, jMissions);
-		this.comment = jDay.comment;
-		this.isSaturday = jDay.isSaturday();
-		this.isSunday = jDay.isSunday();
-		this.isDayOff = jDay.isDayOff();
-		this.inPastOrFuture = jDay.inPastOrFuture(year, month);
-		this.isSpecial = isSpecial(jDay);
+	public DayDTO(final JDay day, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
+		this.id = day.id;
+		this.date = day.date;
+		this.morning = HalfDayDTO.of(day.morning, missions);
+		this.afternoon = HalfDayDTO.of(day.afternoon, missions);
+		this.comment = day.comment;
+		this.isSaturday = day.isSaturday();
+		this.isSunday = day.isSunday();
+		this.isDayOff = day.isDayOff();
+		this.inPastOrFuture = day.inPastOrFuture(year, month);
+		this.isSpecial = isSpecial(day);
 	}
 
 
-	public static List<DayDTO> of(final List<JDay> jDays, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
-		return Lists.newArrayList(Collections2.transform(jDays, new Function<JDay, DayDTO>() {
+	public static List<DayDTO> of(final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
+		return Lists.newArrayList(Collections2.transform(days, new Function<JDay, DayDTO>() {
 			@Nullable
 			@Override
 			public DayDTO apply(@Nullable final JDay jDay) {
-				return new DayDTO(jDay, jMissions, year, month);
+				return new DayDTO(jDay, missions, year, month);
 			}
 		}));
 	}
 
-	public static DayDTO of(final JDay day, final ImmutableMap<ObjectId, JMission> jMissions, final Integer year, final Integer month) {
-		return new DayDTO(day, jMissions, year, month);
+	public static DayDTO of(final JDay day, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
+		return new DayDTO(day, missions, year, month);
 	}
 
 	private Boolean isSpecial(final JDay day){

@@ -2,10 +2,8 @@ package utils.time;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.Duration;
-import org.joda.time.LocalTime;
+import constants.MomentOfDay;
+import org.joda.time.*;
 import play.libs.F;
 
 import java.math.BigDecimal;
@@ -26,28 +24,10 @@ public class JTimeUtils {
 	public static final LocalTime START_AURORA = new LocalTime(0, 0, 0);
 	public static final LocalTime START_DAY = new LocalTime(6, 0, 0);
 	public static final LocalTime START_DUSK = new LocalTime(21, 0, 0);
-
 	public static final Duration HALF_DAY_DURATION = new Duration(3 * 60 * 60 * 1000 + 42 * 60 * 1000);
 	public static final Duration DAY_DURATION = HALF_DAY_DURATION.plus(HALF_DAY_DURATION);
 	public static final Duration WEEK_DURATION = new Duration(37 * 60 * 60 * 1000);
-
 	public static final BigDecimal GENESIS_HALF_DAY = new BigDecimal(0.5D);
-
-
-	public static enum ExtraTimeType {
-		AT_125(new Duration(37 * 60 * 60 * 1000), new Duration(45 * 60 * 60 * 1000)),
-		AT_150(new Duration(45 * 60 * 60 * 1000), null);
-
-		public final Duration min;
-		public final Duration max;
-
-		ExtraTimeType(final Duration min, final Duration max) {
-			this.min = min;
-			this.max = max;
-		}
-	}
-
-
 	private Integer year;
 	private Integer month;
 
@@ -55,6 +35,37 @@ public class JTimeUtils {
 	public JTimeUtils(Integer year, Integer month) {
 		this.year = year;
 		this.month = month;
+	}
+
+	private static List<Integer> getWeeksNumber(final Integer year, final Integer month) {
+		List<Integer> weeksNumber = Lists.newArrayList();
+		boolean finished = false;
+		int i = 0;
+		DateTime firstDay = JTimeUtils.getMondayOfDate(new DateTime(year, month, 1, 0, 0));
+		while(!finished) {
+			DateTime monday = firstDay.plusWeeks(i);
+			DateTime previousSunday = monday.minusDays(1);
+			DateTime nextSunday = monday.plusDays(6);
+			if(previousSunday.getMonthOfYear() <= month && nextSunday.getMonthOfYear() == month) {
+				weeksNumber.add(monday.getWeekOfWeekyear());
+				i++;
+			} else {
+				finished = true;
+			}
+		}
+		return weeksNumber;
+	}
+
+	private static List<Integer> getExtendedWeeksNumber(final Integer year, final Integer month) {
+		List<Integer> weeksNumber = Lists.newArrayList();
+		final DateTime firstDay = JTimeUtils.getMondayOfDate(new DateTime(year, month, 1, 0, 0));
+		weeksNumber.add(firstDay.getWeekOfWeekyear());
+		DateTime monday = firstDay.plusDays(7);
+		while(monday.getMonthOfYear() == month) {
+			weeksNumber.add(monday.getWeekOfWeekyear());
+			monday = monday.plusDays(7);
+		}
+		return weeksNumber;
 	}
 
    /* public static boolean follow(Holiday start, Holiday end) {
@@ -83,30 +94,61 @@ public class JTimeUtils {
         return false;
     }*/
 
-	public boolean isInMonth(DateTime date) {
-		return this.month.equals(date.getMonthOfYear()) && this.year.equals(date.getYear());
-	}
-
-	public Integer getNbTheoreticalWorkingDays() {
-		DateTime firstDay = new DateTime(this.year, this.month, 1, 0, 0);
-		Integer lastDayOfTheMonth = firstDay.dayOfMonth().withMaximumValue().getDayOfMonth();
-		Integer nbWorkingDays = 0;
-		for (int i = 0; i < lastDayOfTheMonth; i++) {
-			DateTime dt = firstDay.plusDays(i);
-			nbWorkingDays = (DaysOff.isSaturdayOrSunday(dt) || DaysOff.isDayOff(dt)) ? nbWorkingDays : nbWorkingDays + 1;
+	public static List<F.Tuple3<DateTime, Boolean, Boolean>> extractDateInYearMonth(final Integer year, final Integer month, final DateTime startDate, final Integer dayOfWeek, final String momentOfDay, final Integer frequency) {
+		final List<F.Tuple3<DateTime, Boolean, Boolean>> result = Lists.newArrayList();
+		final F.Tuple<Boolean, Boolean> mod = MomentOfDay.to(momentOfDay);
+		final MutableDateTime curr = startDate.toMutableDateTime();
+		final DateTime firstDayOfMonth = TimeUtils.getFirstDayOfMonth(year, month);
+		while(curr.isBefore(firstDayOfMonth)) {
+			curr.addWeeks(frequency);
 		}
-		return nbWorkingDays;
+		final DateTime lastDayOfMonth = TimeUtils.getLastDateOfMonth(firstDayOfMonth);
+		while(curr.isBefore(lastDayOfMonth)) {
+			if(curr.getDayOfWeek() == dayOfWeek && TimeUtils.isNotDayOff(curr.toDateTime())) {
+				result.add(F.Tuple3(curr.toDateTime(), mod._1, mod._2));
+			}
+			curr.addWeeks(frequency);
+		}
+		return result;
 	}
 
 	public static Integer getNbTheoreticalWorkingDays(final Integer year, final Integer month) {
 		DateTime firstDay = new DateTime(year, month, 1, 0, 0);
 		Integer lastDayOfTheMonth = firstDay.dayOfMonth().withMaximumValue().getDayOfMonth();
 		Integer nbWorkingDays = 0;
-		for (int i = 0; i < lastDayOfTheMonth; i++) {
+		for(int i = 0; i < lastDayOfTheMonth; i++) {
 			DateTime dt = firstDay.plusDays(i);
 			nbWorkingDays = (DaysOff.isSaturdayOrSunday(dt) || DaysOff.isDayOff(dt)) ? nbWorkingDays : nbWorkingDays + 1;
 		}
 		return nbWorkingDays;
+	}
+
+	/**
+	 * get all working days (excluding Saturday, sunday and DayOff) between 2 dates
+	 *
+	 * @param startPeriod
+	 * @param endPeriod
+	 * @return a Map which contains for each 1st day of month/year, the list of working day in month/year
+	 */
+	public static Map<DateTime, List<DateTime>> getWorkingDaysInPeriod(DateTime startPeriod, DateTime endPeriod) {
+		Map<DateTime, List<DateTime>> workingDays = Maps.newHashMap();
+		Integer year = startPeriod.getYear();
+		Integer month = startPeriod.getMonthOfYear();
+		workingDays.put(startPeriod.withDayOfMonth(1), new ArrayList<DateTime>());
+		while(!startPeriod.isAfter(endPeriod)) {
+			//Si ce n'est pas un Samedi, ni un Dimanche, ni un jour férié
+			if(!(DaysOff.isDayOff(startPeriod)) && !(DaysOff.isSaturdayOrSunday(startPeriod))) {
+				DateTime firstDayOfMonthAndYear = startPeriod.withDayOfMonth(1);
+				if(!year.equals(startPeriod.getYear()) || !month.equals(startPeriod.getMonthOfYear())) {
+					year = startPeriod.getYear();
+					month = startPeriod.getMonthOfYear();
+					workingDays.put(firstDayOfMonthAndYear, new ArrayList<DateTime>());
+				}
+				workingDays.get(firstDayOfMonthAndYear).add(startPeriod);
+			}
+			startPeriod = startPeriod.plusDays(1);
+		}
+		return workingDays;
 	}
 
     /*public RecurrentDayDTO getNbOfWorkingDaysInPeriod(DateTime startPeriod, DateTime endPeriod, *//**//*
@@ -215,70 +257,17 @@ public class JTimeUtils {
         return dto;
     }*/
 
-	/**
-	 * get all working days (excluding Saturday, sunday and DayOff) between 2 dates
-	 *
-	 * @param startPeriod
-	 * @param endPeriod
-	 * @return a Map which contains for each 1st day of month/year, the list of working day in month/year
-	 */
-	public static Map<DateTime, List<DateTime>> getWorkingDaysInPeriod(DateTime startPeriod, DateTime endPeriod) {
-		Map<DateTime, List<DateTime>> workingDays = Maps.newHashMap();
-		Integer year = startPeriod.getYear();
-		Integer month = startPeriod.getMonthOfYear();
-		workingDays.put(startPeriod.withDayOfMonth(1), new ArrayList<DateTime>());
-		while (!startPeriod.isAfter(endPeriod)) {
-			//Si ce n'est pas un Samedi, ni un Dimanche, ni un jour férié
-			if (!(DaysOff.isDayOff(startPeriod)) && !(DaysOff.isSaturdayOrSunday(startPeriod))) {
-				DateTime firstDayOfMonthAndYear = startPeriod.withDayOfMonth(1);
-				if (!year.equals(startPeriod.getYear()) || !month.equals(startPeriod.getMonthOfYear())) {
-					year = startPeriod.getYear();
-					month = startPeriod.getMonthOfYear();
-					workingDays.put(firstDayOfMonthAndYear, new ArrayList<DateTime>());
-				}
-				workingDays.get(firstDayOfMonthAndYear).add(startPeriod);
-			}
-			startPeriod = startPeriod.plusDays(1);
-		}
-		return workingDays;
-	}
-
 	public static Boolean containsOnlyDayOffInPeriod(DateTime start, DateTime end) {
-		if (start.isEqual(end) && !(DaysOff.isDayOff(start)) && !(DaysOff.isSaturdayOrSunday(start))) {
+		if(start.isEqual(end) && !(DaysOff.isDayOff(start)) && !(DaysOff.isSaturdayOrSunday(start))) {
 			return Boolean.FALSE;
 		}
-		while (!start.isAfter(end)) {
-			if (!(DaysOff.isDayOff(start)) && !(DaysOff.isSaturdayOrSunday(start))) {
+		while(!start.isAfter(end)) {
+			if(!(DaysOff.isDayOff(start)) && !(DaysOff.isSaturdayOrSunday(start))) {
 				return Boolean.FALSE;
 			}
 			start = start.plusDays(1);
 		}
 		return Boolean.TRUE;
-	}
-
-	public F.Tuple<DateTime, DateTime> getStartEndWeek(Integer week) {
-		DateTime dt = new DateTime().withYear(this.year).withWeekOfWeekyear(week).withTime(0, 0, 0, 0);
-		return F.Tuple(dt.withDayOfWeek(DateTimeConstants.MONDAY), dt.withDayOfWeek(DateTimeConstants.SUNDAY));
-	}
-
-	/**
-	 * Return a List of <code>DateTime</code> corresponding to a <code>month</code>
-	 * TODO changer en ImmutableSortedSet
-	 *
-	 * @return
-	 */
-	public List<DateTime> getMonthDays() {
-		DateTime dt = new DateTime(this.year, this.month, 1, 0, 0);
-		Integer lastDayOfTheMonth = dt.dayOfMonth().withMaximumValue().getDayOfMonth();
-		List<DateTime> monthDays = Lists.newArrayListWithCapacity(lastDayOfTheMonth);
-		for (int i = 1; i <= lastDayOfTheMonth; i++) {
-			monthDays.add(new DateTime(this.year, this.month, i, 0, 0));
-		}
-		return monthDays;
-	}
-
-	public DateTime getFirstDayOfMonth() {
-		return new DateTime(this.year, this.month, 1, 0, 0);
 	}
 
 	public static DateTime getFirstDayOfMonth(final Integer year, final Integer month) {
@@ -298,10 +287,10 @@ public class JTimeUtils {
 		final DateTime endDayOfWeek = getLastDayOfMonth(year, month);
 		DateTime currentDay = firstDayOfMonth;
 		final List<DateTime> result = Lists.newArrayList();
-		while (!currentDay.isAfter(endDayOfWeek)) {
-			if (daysOfWeek.contains(currentDay.dayOfWeek().get())) {
-				if (Boolean.TRUE.equals(withoutDayOff)) {
-					if (!TimeUtils.isDayOff(currentDay)) {
+		while(!currentDay.isAfter(endDayOfWeek)) {
+			if(daysOfWeek.contains(currentDay.dayOfWeek().get())) {
+				if(Boolean.TRUE.equals(withoutDayOff)) {
+					if(!TimeUtils.isDayOff(currentDay)) {
 						result.add(currentDay);
 					}
 				} else {
@@ -313,53 +302,9 @@ public class JTimeUtils {
 		return result;
 	}
 
-	public List<DateTime> completeToCalendar(List<DateTime> calendar) {
-		List<DateTime> result = Lists.newArrayList(calendar);
-		DateTime firstDayOfMonth = new DateTime(this.year, this.month, 1, 0, 0);
-		DateTime firstDayOfCalendar = getMondayOfDate(firstDayOfMonth);
-		long nbDays = new Duration(firstDayOfCalendar, firstDayOfMonth).getStandardDays();
-		for (int i = 0; i < nbDays; i++) {
-			result.add(firstDayOfCalendar.plusDays(i));
-		}
-		Collections.sort(result);
-		DateTime lastDayOfMonth = result.get(result.size() - 1);
-		DateTime lastDayOfCalendar = getSundayOfWeek(lastDayOfMonth);
-		nbDays = new Duration(lastDayOfMonth, lastDayOfCalendar).getStandardDays();
-		for (int i = 1; i <= nbDays; i++) {
-			result.add(lastDayOfMonth.plusDays(i));
-		}
-		return result;
-	}
-
-	public List<DateTime> getWeekDays(DateTime monday) {
-		List<DateTime> weekDays = Lists.newArrayListWithCapacity(DateTimeConstants.DAYS_PER_WEEK);
-		for (int day = DateTimeConstants.MONDAY; day <= DateTimeConstants.SUNDAY; day++) {
-			weekDays.add(monday.plusDays(day - 1));
-		}
-		return weekDays;
-	}
-
 	public static DateTime getMondayOfDate(DateTime firstDay) {
 		return firstDay.minusDays(firstDay.getDayOfWeek() - DateTimeConstants.MONDAY);
 	}
-
-	public DateTime getSundayOfWeek(DateTime lastDay) {
-		return lastDay.plusDays(DateTimeConstants.SUNDAY - lastDay.getDayOfWeek());
-	}
-
-
-
-
-
-
-
-
-
-	public Boolean isInPastOrFuture(DateTime date) {
-		return (this.month != date.getMonthOfYear()) || (this.year != date.getYear());
-	}
-
-
 
 	public static BigDecimal toGenesisDay(final LocalTime start, LocalTime end) {
 		return toGenesisDay(new Duration(start.toDateTimeToday(), end.toDateTimeToday()));
@@ -367,10 +312,10 @@ public class JTimeUtils {
 
 	public static BigDecimal toGenesisDay(final Duration duration) {
 		return new BigDecimal(duration.getMillis()) /**/
-			.divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP) /**/
-			.divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
-			.divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
-			.divide(new BigDecimal(7.4), 2, RoundingMode.HALF_UP);
+			       .divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP) /**/
+			       .divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
+			       .divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
+			       .divide(new BigDecimal(7.4), 2, RoundingMode.HALF_UP);
 	}
 
 	public static BigDecimal toRealDay(final LocalTime start, LocalTime end) {
@@ -379,45 +324,100 @@ public class JTimeUtils {
 
 	public static BigDecimal toRealDay(final Duration duration) {
 		return new BigDecimal(duration.getMillis()) /**/
-			.divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP) /**/
-			.divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
-			.divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
-			.divide(new BigDecimal(24), 2, RoundingMode.HALF_UP);
+			       .divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP) /**/
+			       .divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
+			       .divide(new BigDecimal(60), 2, RoundingMode.HALF_UP) /**/
+			       .divide(new BigDecimal(24), 2, RoundingMode.HALF_UP);
 	}
 
 	public static List<Integer> getWeeksNumber(final Integer year, final Integer month, final Boolean extended) {
 		return Boolean.TRUE.equals(extended) ? getExtendedWeeksNumber(year, month) : getWeeksNumber(year, month);
 	}
 
-	private static List<Integer> getWeeksNumber(final Integer year, final Integer month) {
-		List<Integer> weeksNumber = Lists.newArrayList();
-		boolean finished = false;
-		int i = 0;
-		DateTime firstDay = JTimeUtils.getMondayOfDate(new DateTime(year, month, 1, 0, 0));
-		while (!finished) {
-			DateTime monday = firstDay.plusWeeks(i);
-			DateTime previousSunday = monday.minusDays(1);
-			DateTime nextSunday = monday.plusDays(6);
-			if (previousSunday.getMonthOfYear() <= month && nextSunday.getMonthOfYear() == month) {
-				weeksNumber.add(monday.getWeekOfWeekyear());
-				i++;
-			} else {
-				finished = true;
-			}
-		}
-		return weeksNumber;
+	public boolean isInMonth(DateTime date) {
+		return this.month.equals(date.getMonthOfYear()) && this.year.equals(date.getYear());
 	}
 
-	private static List<Integer> getExtendedWeeksNumber(final Integer year, final Integer month) {
-		List<Integer> weeksNumber = Lists.newArrayList();
-		final DateTime firstDay = JTimeUtils.getMondayOfDate(new DateTime(year, month, 1, 0, 0));
-		weeksNumber.add(firstDay.getWeekOfWeekyear());
-		DateTime monday = firstDay.plusDays(7);
-		while (monday.getMonthOfYear() == month) {
-			weeksNumber.add(monday.getWeekOfWeekyear());
-			monday = monday.plusDays(7);
+	public Integer getNbTheoreticalWorkingDays() {
+		DateTime firstDay = new DateTime(this.year, this.month, 1, 0, 0);
+		Integer lastDayOfTheMonth = firstDay.dayOfMonth().withMaximumValue().getDayOfMonth();
+		Integer nbWorkingDays = 0;
+		for(int i = 0; i < lastDayOfTheMonth; i++) {
+			DateTime dt = firstDay.plusDays(i);
+			nbWorkingDays = (DaysOff.isSaturdayOrSunday(dt) || DaysOff.isDayOff(dt)) ? nbWorkingDays : nbWorkingDays + 1;
 		}
-		return weeksNumber;
+		return nbWorkingDays;
+	}
+
+	public F.Tuple<DateTime, DateTime> getStartEndWeek(Integer week) {
+		DateTime dt = new DateTime().withYear(this.year).withWeekOfWeekyear(week).withTime(0, 0, 0, 0);
+		return F.Tuple(dt.withDayOfWeek(DateTimeConstants.MONDAY), dt.withDayOfWeek(DateTimeConstants.SUNDAY));
+	}
+
+	/**
+	 * Return a List of <code>DateTime</code> corresponding to a <code>month</code>
+	 * TODO changer en ImmutableSortedSet
+	 *
+	 * @return
+	 */
+	public List<DateTime> getMonthDays() {
+		DateTime dt = new DateTime(this.year, this.month, 1, 0, 0);
+		Integer lastDayOfTheMonth = dt.dayOfMonth().withMaximumValue().getDayOfMonth();
+		List<DateTime> monthDays = Lists.newArrayListWithCapacity(lastDayOfTheMonth);
+		for(int i = 1; i <= lastDayOfTheMonth; i++) {
+			monthDays.add(new DateTime(this.year, this.month, i, 0, 0));
+		}
+		return monthDays;
+	}
+
+	public DateTime getFirstDayOfMonth() {
+		return new DateTime(this.year, this.month, 1, 0, 0);
+	}
+
+	public List<DateTime> completeToCalendar(List<DateTime> calendar) {
+		List<DateTime> result = Lists.newArrayList(calendar);
+		DateTime firstDayOfMonth = new DateTime(this.year, this.month, 1, 0, 0);
+		DateTime firstDayOfCalendar = getMondayOfDate(firstDayOfMonth);
+		long nbDays = new Duration(firstDayOfCalendar, firstDayOfMonth).getStandardDays();
+		for(int i = 0; i < nbDays; i++) {
+			result.add(firstDayOfCalendar.plusDays(i));
+		}
+		Collections.sort(result);
+		DateTime lastDayOfMonth = result.get(result.size() - 1);
+		DateTime lastDayOfCalendar = getSundayOfWeek(lastDayOfMonth);
+		nbDays = new Duration(lastDayOfMonth, lastDayOfCalendar).getStandardDays();
+		for(int i = 1; i <= nbDays; i++) {
+			result.add(lastDayOfMonth.plusDays(i));
+		}
+		return result;
+	}
+
+	public List<DateTime> getWeekDays(DateTime monday) {
+		List<DateTime> weekDays = Lists.newArrayListWithCapacity(DateTimeConstants.DAYS_PER_WEEK);
+		for(int day = DateTimeConstants.MONDAY; day <= DateTimeConstants.SUNDAY; day++) {
+			weekDays.add(monday.plusDays(day - 1));
+		}
+		return weekDays;
+	}
+
+	public DateTime getSundayOfWeek(DateTime lastDay) {
+		return lastDay.plusDays(DateTimeConstants.SUNDAY - lastDay.getDayOfWeek());
+	}
+
+	public Boolean isInPastOrFuture(DateTime date) {
+		return (this.month != date.getMonthOfYear()) || (this.year != date.getYear());
+	}
+
+	public static enum ExtraTimeType {
+		AT_125(new Duration(37 * 60 * 60 * 1000), new Duration(45 * 60 * 60 * 1000)),
+		AT_150(new Duration(45 * 60 * 60 * 1000), null);
+		public final Duration min;
+		public final Duration max;
+
+		ExtraTimeType(final Duration min, final Duration max) {
+			this.min = min;
+			this.max = max;
+		}
 	}
 
 }
