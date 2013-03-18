@@ -95,8 +95,8 @@
 		</form>
 	</div>
 	<div class="span5" data-ng-init="loadActive()">
-		<div class="alert alert-block alert-info" data-ng-show="_.isEmpty(activePartTime) == false">
-			<div class="row-fluid">
+		<div class="alert alert-block alert-info" data-ng-switch on="_.isEmpty(activePartTime)">
+			<div class="row-fluid" data-ng-switch-when="false">
 				<div class="span12">
 					<span>Votre Temps Partiel est actuellement :</span>
 
@@ -117,6 +117,11 @@
 							<button class="btn btn-mini btn-danger icon-trash" data-ng-click="deactivate(pt.id)"></button>
 						</div>
 					</div>
+				</div>
+			</div>
+			<div class="row-fluid" data-ng-switch-default="">
+				<div class="span12">
+					<span>Vous n'avez pas de temps partiel de défini.</span>
 				</div>
 			</div>
 		</div>

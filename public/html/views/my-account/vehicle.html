@@ -33,8 +33,8 @@
 	</div>
 	<div class="span5">
 		<div class="alert alert-block alert-info" data-ng-init="loadActive()">
-			<div class="row-fluid" data-ng-show="!_.isEmpty(activeVehicle)">
-				<div class="span12">
+			<div class="row-fluid" data-ng-switch on="_.isEmpty(activeVehicle)">
+				<div class="span12" data-ng-switch-when="false">
 					<p>
 						Votre véhicule est actuellement
 						une <strong>{{activeVehicle.vehicleType | vehicleType}}</strong> depuis le {{activeVehicle.startDate | date}}
@@ -45,6 +45,9 @@
 						<li>Marque : {{activeVehicle.brand | vehicleBrand | capitalize}}</li>
 					</ul>
 					<!--button class="btn btn-mini btn-danger icon-trash" data-ng-click="deactivate()"></button-->
+				</div>
+				<div class="span12" data-ng-switch-default="">
+					<span>Vous n'avez pas de Vehicule de défini.</span>
 				</div>
 			</div>
 		</div>
