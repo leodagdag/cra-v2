@@ -94,8 +94,8 @@ public class JPartTime {
     }
 
     public static void deactivate(final String id) {
-        Query<JPartTime> q = queryToFindMe(ObjectId.massageToObjectId(id));
-        UpdateOperations<JPartTime> upo = MorphiaPlugin.ds().createUpdateOperations(JPartTime.class)
+        final Query<JPartTime> q = queryToFindMe(ObjectId.massageToObjectId(id));
+        final UpdateOperations<JPartTime> upo = MorphiaPlugin.ds().createUpdateOperations(JPartTime.class)
             .set("active", false);
         MorphiaPlugin.ds().update(q, upo, false, WriteConcern.ACKNOWLEDGED);
     }

@@ -52,6 +52,7 @@ object JsRouter extends Controller {
 
 					JVehicles.active,
 					JVehicles.history,
+					JVehicles.deactivate,
 					JVehicles.save
 
 				)

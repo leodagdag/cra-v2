@@ -57,9 +57,10 @@ POST    /partTimes                                                  controllers.
 PUT		/partTimes/deactivate										controllers.JPartTimes.deactivate()
 # Vehicle
 # ~~~~
-GET		/vehicle/:userId/active									    controllers.JVehicles.active(userId: String)
-GET		/vehicle/:userId											controllers.JVehicles.history(userId: String)
-POST    /vehicle/                                                   controllers.JVehicles.save()
+GET		/vehicles/:userId/active									controllers.JVehicles.active(userId: String)
+GET		/vehicles/:userId											controllers.JVehicles.history(userId: String)
+POST    /vehicles/                                                  controllers.JVehicles.save()
+PUT		/vehicles/deactivate										controllers.JVehicles.deactivate()
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser                                         controllers.HtmlPages.unsupportedBrowser

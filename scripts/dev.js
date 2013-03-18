@@ -85,7 +85,7 @@ db.Vehicle.insert({
 	userId: bart._id,
 	vehicleType: "car",
 	power: NumberInt(5),
-	brand: "ALFA_RAMEO",
+	brand: "ALFA_ROMEO",
 	matriculation: "AA-123-AA",
 	_startDate: new Date(2013, 0, 1),
 	active: true

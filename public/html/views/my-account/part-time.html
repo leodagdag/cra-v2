@@ -101,7 +101,7 @@
 					<span>Votre Temps Partiel est actuellement :</span>
 
 					<div class="row-fluid" data-ng-repeat="pt in activePartTime">
-						<div class="span9">
+						<div class="span10">
 							<ul>
 								<li>A partir du <strong>{{pt.startDate | date:'dd/MM/yyyy'}}</strong>,
 									<span data-ng-show="pt.endDate">jusqu'à {{pt.endDate | date:'dd/MM/yyyy'}}.</span>
@@ -113,15 +113,15 @@
 								</li>
 							</ul>
 						</div>
-						<div class="span3">
-							<button class="btn btn-mini btn-danger icon-trash" data-ng-click="deactivate(pt.id)"></button>
+						<div class="span2">
+							<button class="btn btn-small btn-danger icon-trash" data-ng-click="deactivate(pt.id)"></button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="row-fluid" data-ng-switch-default="">
 				<div class="span12">
-					<span>Vous n'avez pas de temps partiel de défini.</span>
+					<span>Vous n'avez pas défini de temps partiel.</span>
 				</div>
 			</div>
 		</div>
