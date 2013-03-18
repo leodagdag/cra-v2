@@ -54,6 +54,7 @@ PUT     /account                                                    controllers.
 GET		/partTimes/:userId/active									controllers.JPartTimes.active(userId: String)
 GET		/partTimes/:userId											controllers.JPartTimes.history(userId: String)
 POST    /partTimes                                                  controllers.JPartTimes.addPartTimes()
+PUT		/partTimes/deactivate										controllers.JPartTimes.deactivate()
 # Vehicle
 # ~~~~
 GET		/vehicle/:userId/active									    controllers.JVehicles.active(userId: String)

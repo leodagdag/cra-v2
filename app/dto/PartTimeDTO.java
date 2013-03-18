@@ -5,6 +5,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import models.JPartTime;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
 
@@ -13,6 +15,7 @@ import javax.annotation.Nullable;
  */
 public class PartTimeDTO {
 
+    @JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId id;
 	public ObjectId userId;
 	public Long startDate;

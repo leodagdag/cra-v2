@@ -48,6 +48,7 @@ object JsRouter extends Controller {
 					JPartTimes.active,
 					JPartTimes.history,
 					JPartTimes.addPartTimes,
+					JPartTimes.deactivate,
 
 					JVehicles.active,
 					JVehicles.history,

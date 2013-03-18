@@ -74,8 +74,17 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 				});
 		};
 
-		$scope.deactivate = function(){
-
+		$scope.deactivate = function(id){
+			var route = jsRoutes.controllers.JPartTimes.deactivate();
+			$http({
+				method: route.method,
+				url: route.url,
+				data:{'id':id}
+			})
+				.success(function(result, status, headers, config) {
+					$scope.activePartTime = {};
+					$rootScope.onSuccess("Le temps partiel a été désactivé.");
+				});
 		}
 	}]);
 

@@ -42,14 +42,22 @@ public class JPartTimes extends Controller {
 		return ok(toJson(PartTimeDTO.of(JPartTime.byUser(userId))));
 	}
 
-	public static class PartTimeWeekDay {
+    public static Result deactivate() {
+        final Form<String> form = Form.form(String.class).bind(request().body().asJson());
+        if(form.hasErrors()){
+            return badRequest(form.errorsAsJson());
+        }
+        final String id = form.data().get("id");
+        JPartTime.deactivate(id);
+        return ok();
+    }
 
+	public static class PartTimeWeekDay {
 		public Integer dayOfWeek;
 		public String momentOfDay;
 	}
 
 	public static class CreateForm {
-
 		public ObjectId userId;
 		public Long startDate;
 		public Long endDate;
