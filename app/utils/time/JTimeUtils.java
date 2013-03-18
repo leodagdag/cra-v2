@@ -94,7 +94,7 @@ public class JTimeUtils {
         return false;
     }*/
 
-	public static List<F.Tuple3<DateTime, Boolean, Boolean>> extractDateInYearMonth(final Integer year, final Integer month, final DateTime startDate, final Integer dayOfWeek, final String momentOfDay, final Integer frequency) {
+	public static List<F.Tuple3<DateTime, Boolean, Boolean>> extractDatesInYearMonth(final Integer year, final Integer month, final DateTime startDate, final Integer dayOfWeek, final String momentOfDay, final Integer frequency) {
 		final List<F.Tuple3<DateTime, Boolean, Boolean>> result = Lists.newArrayList();
 		final F.Tuple<Boolean, Boolean> mod = MomentOfDay.to(momentOfDay);
 		final MutableDateTime curr = startDate.toMutableDateTime();

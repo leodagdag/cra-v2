@@ -50,7 +50,7 @@ public class JCra extends Model {
 	private static JCra applyPartTime(final JCra cra) {
 		final ImmutableList<JPartTime> partTimes = JPartTime.activeByUser(cra.userId);
 		for(JPartTime partTime : partTimes) {
-			final List<F.Tuple3<DateTime,Boolean,Boolean>> dates = JTimeUtils.extractDateInYearMonth(cra.year, cra.month, partTime.startDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
+			final List<F.Tuple3<DateTime,Boolean,Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
 			for(F.Tuple3<DateTime, Boolean, Boolean> d: dates){
 				JDay.addPartTime(cra.id, cra.userId, d._1, d._2, d._3);
 			}
