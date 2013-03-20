@@ -54,17 +54,19 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		};
 
 		$scope.remove = function(id) {
-			var route = jsRoutes.controllers.JClaims.remove(id);
-			$http({
-				'method': route.method,
-				'url': route.url,
-				'cache': false
-			})
-				.success(function(claims, status, headers, config) {
-					$scope.loadHistory();
+			if(confirm("Êtes vous sur de vouloir supprimer cette note de frais ?")) {
+				var route = jsRoutes.controllers.JClaims.remove(id);
+				$http({
+					'method': route.method,
+					'url': route.url,
+					'cache': false
 				})
-				.error(function(error, status, headers, config) {
-				});
+					.success(function(claims, status, headers, config) {
+						$scope.loadHistory();
+					})
+					.error(function(error, status, headers, config) {
+					});
+			}
 		};
 
 		/* History */
