@@ -16,6 +16,7 @@ import models.JUser;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -75,6 +76,9 @@ public class JDays extends Controller {
 		public List<Long> dates;
 		public CreateDayForm day;
 
+		public List<ValidationError> validate() {
+			return null;
+		}
 		public List<JDay> days() {
 			return Lists.newArrayList(Collections2.transform(dates, new Function<Long, JDay>() {
 				@Nullable

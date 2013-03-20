@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import play.Logger;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -82,6 +83,10 @@ public class JAbsences extends Controller {
 		public Boolean endMorning;
 		public Boolean endAfternoon;
 		public String comment;
+
+		public List<ValidationError> validate() {
+			return null;
+		}
 
 		public JAbsence to() {
 			final JAbsence holiday = new JAbsence();

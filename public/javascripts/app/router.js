@@ -46,6 +46,11 @@ app.config(['$routeProvider',
 				controller: 'ClaimCtrl',
                 resolve: {'profile': 'Profile' }
 			})
+			.when('/claim/synthesis/:year/:month', {
+				templateUrl: 'public/html/views/claim/synthesis.html',
+				controller: 'ClaimSynthesisCtrl',
+				resolve: {'profile': 'Profile' }
+			})
 			.when('/remuneration', {
 				templateUrl: 'public/html/views/remuneration/remuneration.html',
 				controller: 'RemunerationCtrl'

@@ -29,6 +29,7 @@ object JsRouter extends Controller {
 					JAbsences.remove,
 					JAbsences.history,
 
+					JClaims.synthesis,
 					JClaims.history,
 					JClaims.create,
 					JClaims.remove,

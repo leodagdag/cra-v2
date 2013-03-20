@@ -260,15 +260,39 @@ db.Claim.insert({
 	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
 	missionId: mission1_customer1._id,
 	claimType: "TAXI",
+	comment: "Acheter des donuts",
+	_amount: "10.2"
+});
+db.Claim.insert({
+	userId: bart._id,
+	year: 2013,
+	month: MARCH,
+	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
+	missionId: mission1_customer1._id,
+	claimType: "JOURNEY",
 	journey: "Springfield",
 	comment: "Acheter des donuts",
-	_amount: "10.2",
 	_kilometer: "11.5",
-	_kilometerAmount: "63.25",
-	_totalClaim: "73.45"
-
+	_kilometerAmount: "63.25"
 });
-
+db.Claim.insert({
+	userId: bart._id,
+	year: 2013,
+	month: MARCH,
+	_date: new Date(cra.year, MARCH_JS, NumberInt(12)),
+	missionId: mission1_customer1._id,
+	claimType: "PEAGE",
+	_amount: "11.5"
+});
+db.Claim.insert({
+	userId: bart._id,
+	year: 2013,
+	month: MARCH,
+	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
+	missionId: mission1_customer1._id,
+	claimType: "PEAGE",
+	_amount: "17"
+});
 
 /* Absence from 11/02/2013 -> 15/02/2013 */
 var a = {

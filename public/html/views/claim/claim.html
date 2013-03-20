@@ -99,12 +99,11 @@
 			</div>
 			<div class="row-fluid">
 				<div class="span12 scrollable">
-					<div class="row-fluid" data-ng-repeat="claim in history">
+					<div class="row-fluid table-line" data-ng-repeat="claim in history">
 						<div class="span10">
 							<span>Mission : {{claim.mission.code}} le {{claim.date | date}}</span><br>
-							<span data-ng-show="claim.amount">Frais : {{claim.claimType | capitalize}} <strong>{{claim.amount | currency}}</strong><br></span>
-							<span data-ng-show="claim.kilometerAmount">Trajet : {{claim.kilometer | kilometer}} - {{claim.journey}} | <strong>{{claim.kilometerAmount | currency}}</strong></span><br>
-							<strong class="pull-right">Total : {{claim.totalClaim | currency}}</strong><br>
+							<span data-ng-show="claim.amount">Frais : {{claim.label | capitalize}} <strong>{{claim.amount | currency}}</strong></span>
+							<span data-ng-show="claim.kilometerAmount">Déplacement : {{claim.kilometer | kilometer}} ({{claim.journey}}) <strong>{{claim.kilometerAmount | currency}}</strong></span>
 						</div>
 						<div class="span1">
 							<i data-ng-class="{'icon-comment': true, 'icon-comment-alt': false}"></i>

@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import constants.ClaimType;
 import models.JClaim;
 import models.JMission;
 import org.bson.types.ObjectId;
@@ -29,12 +30,12 @@ public class ClaimDTO {
 	public Long date;
 	public MissionDTO mission;
 	public String claimType;
+	public String label;
 	public BigDecimal amount;
 	public BigDecimal kilometer;
 	public BigDecimal kilometerAmount;
 	public String journey;
 	public String comment;
-	public BigDecimal totalClaim;
 
 	public ClaimDTO() {
 	}
@@ -47,11 +48,11 @@ public class ClaimDTO {
 		this.date = claim.date.getMillis();
 		this.mission = mission;
 		this.claimType = claim.claimType;
+		this.label = ClaimType.label(claim.claimType);
 		this.amount = claim.amount;
 		this.kilometer = claim.kilometer;
 		this.kilometerAmount = claim.kilometerAmount;
 		this.journey = claim.journey;
-		this.totalClaim = claim.totalClaim;
 		this.comment = claim.comment;
 	}
 
@@ -74,4 +75,5 @@ public class ClaimDTO {
 	public static ClaimDTO of(final JClaim claim) {
 		return new ClaimDTO(claim, MissionDTO.of(claim.missionId));
 	}
+
 }

@@ -13,8 +13,9 @@ GET     /logout                                                     controllers.
 GET     /profile                                                    controllers.Authentication.profile()
 # Claims
 # ~~~~
-GET     /claims/:username/:year/:month                              controllers.JClaims.history(username: String, year: java.lang.Integer, month: java.lang.Integer)
-POST    /claims                                                     controllers.JClaims.create()
+GET     /claims/synthesis/:userId/:year/:month                      controllers.JClaims.synthesis(userId: String, year: java.lang.Integer, month: java.lang.Integer)
+GET     /claims/:userId/:year/:month                              	controllers.JClaims.history(userId: String, year: java.lang.Integer, month: java.lang.Integer)
+POST    /claims						                                controllers.JClaims.create()
 DELETE  /claims/:id                                                 controllers.JClaims.remove(id: String)
 # Absences
 # ~~~~

@@ -1,8 +1,8 @@
 app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', 'ClaimTypeConst', 'MonthsConst', 'profile',
 	function ClaimCtrl($scope, $rootScope, $http, $log, $location, ClaimTypeConst, MonthsConst, profile) {
-		var Claim = function(username, form) {
+		var Claim = function(userId, form) {
 			return {
-				username: username,
+				userId: userId,
 				missionId: form.missionId,
 				date: moment(form.date, 'DD/MM/YYYY').valueOf(),
 				claimType: form.claimType,
@@ -37,7 +37,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		};
 
 		$scope.save = function() {
-			var claim = new Claim($scope.profile.username, $scope.form);
+			var claim = new Claim($scope.profile.id, $scope.form);
 			var route = jsRoutes.controllers.JClaims.create();
 			$http({
 				'method': route.method,
@@ -76,8 +76,8 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		$scope.sortBys = [
 			{'key': '+date', 'label': 'Date (asc)'},
 			{'key': '-date', 'label': 'Date (desc)'},
-			{'key': '+claimType', 'label': 'Type (asc)'},
-			{'key': '-claimType', 'label': 'Type (desc)'}
+			{'key': '+label', 'label': 'Type (asc)'},
+			{'key': '-label', 'label': 'Type (desc)'}
 		];
 		$scope.filter = {
 			'year': moment().year(),

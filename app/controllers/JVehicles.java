@@ -5,9 +5,12 @@ import models.JVehicle;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+
+import java.util.List;
 
 import static play.libs.Json.toJson;
 
@@ -58,6 +61,9 @@ public class JVehicles extends Controller {
         public String matriculation;
         public Long startDate;
 
+	    public List<ValidationError> validate() {
+		    return null;
+	    }
         public JVehicle to() {
             JVehicle vehicle = new JVehicle();
             vehicle.userId = this.userId;
