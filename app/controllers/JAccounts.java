@@ -57,7 +57,7 @@ public class JAccounts extends Controller {
 		public String confirmPassword;
 
 		public List<ValidationError> validate() {
-			List<ValidationError> errors = Lists.newArrayList();
+			final List<ValidationError> errors = Lists.newArrayList();
 			if (Boolean.FALSE.equals(JUser.checkAuthentication(session("username"), oldPassword))) {
 				errors.add(new ValidationError("oldPassword", "Le mot de passe actuel est faux."));
 			}

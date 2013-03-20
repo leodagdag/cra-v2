@@ -7,7 +7,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 			this.startDate = moment(form.startDate, 'DD/MM/YYYY').valueOf();
 			this.endDate = (form.endDate) ? moment(form.endDate, 'DD/MM/YYYY').valueOf() : null;
 			this.daysOfWeek = form.daysOfWeek;
-			this.frequency = form.frequence;
+			this.frequency = form.frequency;
 		};
 
 		var Form = function () {
@@ -57,6 +57,12 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 				.success(function (data, status, headers, config) {
 					$rootScope.onSuccess("Votre temps partiel a été sauvegardé.");
 					$scope.loadActive();
+				})
+				.error(function (errors, status, headers, config) {
+					_(errors).forEach(function (err, key) {
+						$log.log('err', err);
+						$scope.errors[key] = err.join('<br>');
+					});
 				});
 		};
 
@@ -75,7 +81,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 		};
 
 		$scope.deactivate = function (id) {
-			if (confirm('Êtes vous sur de vouloir désactivé votre véhicule ?')) {
+			if (confirm('Êtes vous sur de vouloir désactivé votre temps partiel ?')) {
 				var route = jsRoutes.controllers.JPartTimes.deactivate();
 				$http({
 					method: route.method,

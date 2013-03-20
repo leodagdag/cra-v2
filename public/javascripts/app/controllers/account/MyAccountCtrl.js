@@ -40,7 +40,7 @@ app.controller('MyAccountGeneralCtrl', ['$rootScope', '$scope', '$http', '$log',
                     $log.log('errors', errors);
                     _(errors.data).forEach(function (err, key) {
                         $scope.errors[key] = err.join('<br>');
-                    })
+                    });
                 });
         }
     }]);
@@ -75,7 +75,7 @@ app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
                     _(errors).forEach(function (err, key) {
                         $log.log('err', err);
                         $scope.errors[key] = err.join('<br>');
-                    })
+                    });
                 })
         }
 
