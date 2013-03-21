@@ -21,7 +21,9 @@ object ApplicationBuild extends Build {
 		// security
 		"be.objectify" %% "deadbolt-scala" % "2.1-RC1",
 		// MongoDB
-		"org.reactivemongo" %% "play2-reactivemongo" % "0.8"
+		"org.reactivemongo" %% "play2-reactivemongo" % "0.8",
+		// Common collections
+		"commons-collections" % "commons-collections" % "3.2.1"
 	)
 
 	val main = play.Project(appName, appVersion, appDependencies)
