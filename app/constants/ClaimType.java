@@ -6,7 +6,7 @@ package constants;
 public enum ClaimType {
 	JOURNEY("déplacement"),
 	TAXI("taxi"),
-	PEAGE("péage"),
+	TOLL("péage"),
 	PARKING("parking"),
 	RENT_CAR("location de voiture");
 

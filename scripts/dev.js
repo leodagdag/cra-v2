@@ -281,7 +281,7 @@ db.Claim.insert({
 	month: MARCH,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(12)),
 	missionId: mission1_customer1._id,
-	claimType: "PEAGE",
+	claimType: "TOLL",
 	_amount: "11.5"
 });
 db.Claim.insert({
@@ -290,7 +290,7 @@ db.Claim.insert({
 	month: MARCH,
 	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
 	missionId: mission1_customer1._id,
-	claimType: "PEAGE",
+	claimType: "TOLL",
 	_amount: "17"
 });
 

@@ -13,7 +13,7 @@ import play.api.mvc.Action
  */
 object Cras extends BaseController {
 
-	def validate(id: String) = Restrictions(everybody, new MyDeadboltHandler()) {
+	def validate(id: String) = Restrict(everybody, new MyDeadboltHandler()) {
 		Action {
 			implicit request =>
 				Async {
@@ -33,7 +33,7 @@ object Cras extends BaseController {
 		}
 	}
 
-	def invalidate(id: String) = Restrictions(everybody, new MyDeadboltHandler()) {
+	def invalidate(id: String) = Restrict(everybody, new MyDeadboltHandler()) {
 		Action {
 			implicit request =>
 				Async {

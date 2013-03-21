@@ -65,7 +65,7 @@ object Authentication extends BaseController {
 			(__ \ "role").write[String]
 		)(unlift(Profile.unapply))
 
-	def profile = Restrictions(everybody, new MyDeadboltHandler()) {
+	def profile = Restrict(everybody, new MyDeadboltHandler()) {
 		Action {
 			request =>
 				Async {
