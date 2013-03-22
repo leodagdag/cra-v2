@@ -22,10 +22,13 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import security.JDeadboltHandler;
 import security.JSecurityRoles;
+import utils.transformer.JClaimUtils;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static play.libs.Json.toJson;
 
@@ -52,16 +55,9 @@ public class JClaims extends Controller {
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	@ResponseCache.NoCacheResponse
 	public static Result synthesis(final String userId, final Integer year, final Integer month) {
-		final ImmutableList<JClaim> claims = JClaim.synthesis(JUser.id(userId), year, month);
-		final ImmutableList<ObjectId> missionIds = ImmutableList.copyOf(Collections2.transform(claims, new Function<JClaim, ObjectId>() {
-			@Nullable
-			@Override
-			public ObjectId apply(@Nullable final JClaim claim) {
-				return claim.missionId;
-			}
-		}));
-		final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(missionIds);
-		return ok(toJson(ClaimDTO.of(claims, missions.values().asList())));
+		final ImmutableList<JClaim> claims = JClaim.synthesis(userId, year, month);
+		final Map<String, Map<ClaimType, String>> synthesis = JClaimUtils.compute(JClaimUtils.transform(year, month, claims));
+		return ok(toJson(synthesis));
 	}
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)

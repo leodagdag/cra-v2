@@ -1,5 +1,6 @@
-var MARCH_JS = 2;
-var MARCH = 3;
+var YEAR = NumberInt(2013);
+var MARCH_JS = NumberInt(2);
+var MARCH = NumberInt(3);
 db.Parameter.drop();
 db.User.drop();
 db.Vehicle.drop();
@@ -16,7 +17,7 @@ db.Customer.drop();
  * Parameter
  */
 db.Parameter.insert({
-	_startDate: new Date(2013, 0, 1),
+	_startDate: new Date(YEAR, 0, 1),
 	active: true,
 	_car: {
 		0: '0.1',
@@ -44,16 +45,16 @@ var customer3 = db.Customer.findOne({code: 'CODE_C_3'});
 /*
  * Mission
  */
-db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(2013, 0, 1), _endDate: new Date(2013, 4, 31)});
-db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(2013, 1, 1), _endDate: new Date(2013, 4, 31)});
-db.Mission.insert({customerId: customer2._id, code: 'C2_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(2013, 1, 1), _endDate: new Date(2013, 4, 31)});
-db.Mission.insert({customerId: customer3._id, code: 'C3_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(2013, 2, 1), _endDate: new Date(2013, 11, 31)});
-db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre_sale', isClaim: true, _startDate: new Date(2013, 0, 1)});
-db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(2013, 0, 1) });
-db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });
-db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(2013, 0, 1) });
-db.Mission.insert({customerId: genesis._id, code: 'AE', description: 'Absence exceptionnelle', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(2013, 0, 1) });
-db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not_paid', _startDate: new Date(2013, 0, 1)});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(YEAR, 0, 1), _endDate: new Date(YEAR, 4, 31)});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(YEAR, 1, 1), _endDate: new Date(YEAR, 4, 31)});
+db.Mission.insert({customerId: customer2._id, code: 'C2_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(YEAR, 1, 1), _endDate: new Date(YEAR, 4, 31)});
+db.Mission.insert({customerId: customer3._id, code: 'C3_M1', description: 'Description de la mission...', missionType: 'customer', isClaim: true, _startDate: new Date(YEAR, 2, 1), _endDate: new Date(YEAR, 11, 31)});
+db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre_sale', isClaim: true, _startDate: new Date(YEAR, 0, 1)});
+db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'AE', description: 'Absence exceptionnelle', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, 0, 1) });
+db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not_paid', _startDate: new Date(YEAR, 0, 1)});
 var mission1_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1'});
 var mission2_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2'});
 var mission1_customer2 = db.Mission.findOne({customerId: customer2._id, code: 'C2_M1'});
@@ -63,7 +64,7 @@ var holiday = db.Mission.findOne({customerId: genesis._id, code: 'CP', missionTy
 var rtte = db.Mission.findOne({customerId: genesis._id, code: 'RTTE', missionType: 'holiday'});
 var rtts = db.Mission.findOne({customerId: genesis._id, code: 'RTTS', missionType: 'holiday'});
 var ae = db.Mission.findOne({customerId: genesis._id, code: 'AE', missionType: 'holiday'});
-var part_time = db.Mission.findOne({customerId: genesis._id, code: 'TP',missionType: 'not_paid' });
+var part_time = db.Mission.findOne({customerId: genesis._id, code: 'TP', missionType: 'not_paid' });
 
 /*
  * User
@@ -105,14 +106,14 @@ db.Vehicle.insert({
 	power: NumberInt(5),
 	brand: "ALFA_ROMEO",
 	matriculation: "AA-123-AA",
-	_startDate: new Date(2013, 0, 1),
+	_startDate: new Date(YEAR, 0, 1),
 	active: true
 });
 /*
  * Cra
  */
-db.Cra.insert({year: NumberInt(2013), month: NumberInt(MARCH), userId: bart._id, comment: 'Commentaire cra...', isValidated: false});
-var cra = db.Cra.findOne({year: 2013, month: MARCH});
+db.Cra.insert({year: YEAR, month: MARCH, userId: bart._id, comment: 'Commentaire cra...', isValidated: false});
+var cra = db.Cra.findOne({year: YEAR, month: MARCH});
 
 /*
  * Absence
@@ -124,7 +125,7 @@ db.Absence.insert({
 	startAfternoon: true,
 	endMorning: true,
 	endAfternoon: true,
-	_nbDays:"3",
+	_nbDays: "3",
 	comment: "Comment absence...",
 	_startDate: new Date(cra.year, MARCH_JS, NumberInt(12)),
 	_endDate: new Date(cra.year, MARCH_JS, NumberInt(14))
@@ -137,9 +138,9 @@ db.Absence.insert({
 db.Day.insert({
 	craId: cra._id,
 	userId: bart._id,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(1)),
-	year: NumberInt(cra.year),
-	month: NumberInt(cra.month),
+	year: YEAR,
+	month: MARCH,
+	_date: new Date(YEAR, MARCH_JS, NumberInt(1)),
 	morning: {
 		missionId: mission1_customer1._id
 	},
@@ -152,9 +153,9 @@ db.Day.insert({
 db.Day.insert({
 	craId: cra._id,
 	userId: bart._id,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(5)),
-	year: NumberInt(cra.year),
-	month: NumberInt(cra.month),
+	year: YEAR,
+	month: MARCH,
+	_date: new Date(YEAR, MARCH_JS, NumberInt(5)),
 	morning: {
 		missionId: mission1_customer1._id
 	},
@@ -166,9 +167,9 @@ db.Day.insert({
 db.Day.insert({
 	craId: cra._id,
 	userId: bart._id,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(6)),
-	year: NumberInt(cra.year),
-	month: NumberInt(cra.month),
+	year: YEAR,
+	month: MARCH,
+	_date: new Date(YEAR, MARCH_JS, NumberInt(6)),
 	morning: {
 		missionId: pre_sale._id
 	},
@@ -181,9 +182,9 @@ db.Day.insert({
 db.Day.insert({
 	craId: cra._id,
 	userId: bart._id,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(7)),
-	year: NumberInt(cra.year),
-	month: NumberInt(cra.month),
+	year: YEAR,
+	month: MARCH,
+	_date: new Date(YEAR, MARCH_JS, NumberInt(7)),
 	morning: {
 		periods: [
 			{
@@ -208,9 +209,9 @@ db.Day.insert({
 db.Day.insert({
 	craId: cra._id,
 	userId: bart._id,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(12)),
-	year: NumberInt(cra.year),
-	month: NumberInt(cra.month),
+	year: YEAR,
+	month: MARCH,
+	_date: new Date(YEAR, MARCH_JS, NumberInt(12)),
 	morning: {
 		missionId: holiday._id
 	},
@@ -223,9 +224,9 @@ db.Day.insert({
 db.Day.insert({
 	craId: cra._id,
 	userId: bart._id,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(13)),
-	year: NumberInt(cra.year),
-	month: NumberInt(cra.month),
+	year: YEAR,
+	month: MARCH,
+	_date: new Date(YEAR, MARCH_JS, NumberInt(13)),
 	morning: {
 		missionId: holiday._id
 	},
@@ -238,9 +239,9 @@ db.Day.insert({
 db.Day.insert({
 	craId: cra._id,
 	userId: bart._id,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(14)),
-	year: NumberInt(cra.year),
-	month: NumberInt(cra.month),
+	year: YEAR,
+	month: MARCH,
+	_date: new Date(YEAR, MARCH_JS, NumberInt(14)),
 	morning: {
 		missionId: holiday._id
 	},
@@ -255,9 +256,9 @@ db.Day.insert({
  */
 db.Claim.insert({
 	userId: bart._id,
-	year: 2013,
+	year: YEAR,
 	month: MARCH,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
+	_date: new Date(YEAR, MARCH_JS, NumberInt(4)),
 	missionId: mission1_customer1._id,
 	claimType: "TAXI",
 	comment: "Acheter des donuts",
@@ -265,9 +266,9 @@ db.Claim.insert({
 });
 db.Claim.insert({
 	userId: bart._id,
-	year: 2013,
+	year: YEAR,
 	month: MARCH,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
+	_date: new Date(YEAR, MARCH_JS, NumberInt(4)),
 	missionId: mission1_customer1._id,
 	claimType: "JOURNEY",
 	journey: "Springfield",
@@ -277,18 +278,18 @@ db.Claim.insert({
 });
 db.Claim.insert({
 	userId: bart._id,
-	year: 2013,
+	year: YEAR,
 	month: MARCH,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(12)),
+	_date: new Date(YEAR, MARCH_JS, NumberInt(12)),
 	missionId: mission1_customer1._id,
 	claimType: "TOLL",
 	_amount: "11.5"
 });
 db.Claim.insert({
 	userId: bart._id,
-	year: 2013,
+	year: YEAR,
 	month: MARCH,
-	_date: new Date(cra.year, MARCH_JS, NumberInt(4)),
+	_date: new Date(YEAR, MARCH_JS, NumberInt(4)),
 	missionId: mission1_customer1._id,
 	claimType: "TOLL",
 	_amount: "17"
@@ -305,3 +306,5 @@ var a = {
 	"startDate": 1360537200000,
 	"endDate": 1360882800000
 }
+
+printjson(bart);

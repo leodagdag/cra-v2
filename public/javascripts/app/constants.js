@@ -26,8 +26,9 @@ app.constant('YearsConst', [
 	.constant('ClaimTypeConst', [
 		{code: 'TAXI', label: 'Taxi'},
 		{code: 'PARKING', label: 'Parking'},
-		{code: 'PEAGE', label: 'Péage'},
-		{code: 'LOCATION', label: 'Location de voiture'}
+		{code: 'TOLL', label: 'Péage'},
+		{code: 'RENT_CAR', label: 'Location de voiture'},
+		{code: 'TOTAL', label: 'Total'}
 	])
 	.constant('VehicleBrandConst', [
 		{code: 'ALFA_ROMEO', label: 'Alfa Romeo'},
