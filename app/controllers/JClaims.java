@@ -53,14 +53,6 @@ public class JClaims extends Controller {
 	}
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
-	@ResponseCache.NoCacheResponse
-	public static Result synthesis(final String userId, final Integer year, final Integer month) {
-		final ImmutableList<JClaim> claims = JClaim.synthesis(userId, year, month);
-		final Map<String, Map<ClaimType, String>> synthesis = JClaimUtils.compute(JClaimUtils.transform(year, month, claims));
-		return ok(toJson(synthesis));
-	}
-
-	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
 		final Form<CreateClaimForm> form = Form.form(CreateClaimForm.class).bind(request().body().asJson());

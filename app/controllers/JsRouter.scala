@@ -21,6 +21,7 @@ object JsRouter extends Controller {
 					Cras.validate,
 
 					JCras.fetch,
+					JCras.claimSynthesis,
 
 					JDays.fetch,
 					JDays.create,
@@ -29,7 +30,7 @@ object JsRouter extends Controller {
 					JAbsences.remove,
 					JAbsences.history,
 
-					JClaims.synthesis,
+
 					JClaims.history,
 					JClaims.create,
 					JClaims.remove,

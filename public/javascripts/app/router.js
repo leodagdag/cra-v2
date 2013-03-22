@@ -26,6 +26,11 @@ app.config(['$routeProvider',
 				controller: 'CraCtrl',
 				resolve: {'profile': 'Profile' }
 			})
+			.when('/cra/claim/synthesis/:year/:month', {
+				templateUrl: 'public/html/views/cra/claimSynthesis.html',
+				controller: 'ClaimSynthesisCtrl',
+				resolve: {'profile': 'Profile' }
+			})
 			.when('/day/:username/:craId/:year/:month/:days', {
 				templateUrl: 'public/html/views/cra/day.html',
 				controller: 'DayCtrl',
@@ -46,11 +51,7 @@ app.config(['$routeProvider',
 				controller: 'ClaimCtrl',
                 resolve: {'profile': 'Profile' }
 			})
-			.when('/claim/synthesis/:year/:month', {
-				templateUrl: 'public/html/views/claim/synthesis.html',
-				controller: 'ClaimSynthesisCtrl',
-				resolve: {'profile': 'Profile' }
-			})
+
 			.when('/remuneration', {
 				templateUrl: 'public/html/views/remuneration/remuneration.html',
 				controller: 'RemunerationCtrl'

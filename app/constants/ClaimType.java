@@ -4,11 +4,11 @@ package constants;
  * @author f.patin
  */
 public enum ClaimType {
-	JOURNEY("déplacement"),
 	TAXI("taxi"),
 	TOLL("péage"),
 	PARKING("parking"),
 	RENT_CAR("location de voiture"),
+	JOURNEY("déplacement"),
 	TOTAL("total");
 	public String label;
 

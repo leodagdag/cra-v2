@@ -1,8 +1,8 @@
 app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'YearsConst', 'MonthsConst', 'RolesConst', 'profile',
 	function CraCtrl($rootScope, $scope, $http, $log, $location, $routeParams, YearsConst, MonthsConst, RolesConst, profile) {
-
+		$scope.profile = profile.data;
 		/* Toolbar */
-		var initialUsername = $routeParams.username || (profile.data.role === RolesConst.EMPLOYEE ? profile.data.username : $scope.employee);
+		var initialUsername = $routeParams.username || ($scope.profile.role === RolesConst.EMPLOYEE ? $scope.profile.username : $scope.employee);
 		var initialYear = {
 			'id': _.find(YearsConst,function(y) {
 				return y.label === ($routeParams.year || moment().year()).toString()
@@ -13,6 +13,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			'id': ($routeParams.month || (moment().month() + 1 )).toString(),
 			'label': _.str.capitalize(moment(($routeParams.month || (moment().month())).toString(), 'MMMM').format('MMMM'))
 		};
+
 
 
 		$scope.criterias = {
@@ -33,6 +34,11 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			}
 		};
 
+		$scope.claimSynthesis = function(){
+			// /claim/synthesis/:year/:month
+			$location.path(_.str.sprintf('/cra/claim/synthesis/%s/%s',$scope.cra.year, $scope.cra.month));
+		};
+
 		$scope.initToolbar = function() {
 			if(profile.data.role !== RolesConst.EMPLOYEE) {
 				$scope.criterias.showEmployees = true;
@@ -42,7 +48,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 					url: route.url
 				})
 					.success(function(employees, status, headers, config) {
-						$log.log('employees', employees);
 						$scope.criterias.employees = employees;
 					});
 			}
@@ -53,7 +58,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		$scope.cra = {};
 
 		$scope.search = function() {
-			$log.debug("search()", $scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 			loadCra($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
 		};
 
@@ -136,7 +140,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.removeHalfDay = function(wIndex, date, dIndex, momentOfDay) {
-
 			var day = $scope.cra.weeks[wIndex].days[dIndex];
 			if(!day.morning || !day.afternoon) {
 				$scope.removeDay(wIndex, date, dIndex);

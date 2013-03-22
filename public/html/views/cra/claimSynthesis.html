@@ -1,0 +1,22 @@
+<div class="claim_synthesis" data-ng-init="init()">
+    <div class="row-fluid">
+        <div class="span8 offset2">
+            <h5>Frais du mois de {{month | monthOfYear | capitalize}} {{year}}</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Semaine</th>
+                        <th data-ng-repeat="week in header">{{week}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr data-ng-repeat="claimType in _.keys(body)">
+                        <th >{{claimType | typeOfClaim | capitalize}}</th>
+                        <td data-ng-repeat="mnt in _.flatten(_.values(body[claimType]))"><span data-ng-show="mnt !=0">{{mnt | currency}}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -115,7 +115,6 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 			})
 				.success(function(history, status, headers, config) {
 					$scope.history = sort(history);
-					$log.debug($scope.history);
 				})
 				.error(function(error, status, headers, config) {
 					$log.error('error', error);
