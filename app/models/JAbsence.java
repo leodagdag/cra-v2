@@ -51,7 +51,7 @@ public class JAbsence extends Model implements MongoModel {
 	public static JAbsence delete(final String userId, final String id) {
 		JAbsence absence = MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
 		List<DateTime> dates = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
-		JDay.delete(dates, userId, absence.startMorning, absence.endAfternoon);
+		JDay.deleteAbsenceDays(dates, userId, absence.startMorning, absence.endAfternoon);
 		return absence;
 	}
 
@@ -96,7 +96,7 @@ public class JAbsence extends Model implements MongoModel {
 			throw new AbsenceAlreadyExistException();
 		}
 		absence.insert();
-		JDay.add(absence);
+		JDay.addAbsenceDay(absence);
 		return absence;
 	}
 

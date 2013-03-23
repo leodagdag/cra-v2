@@ -140,7 +140,7 @@ public class JDay extends Model implements MongoModel {
 		return days;
 	}
 
-	public static void create(final ObjectId craId, final List<JDay> days) throws IllegalDayOperation {
+	public static void createDays(final ObjectId craId, final List<JDay> days) throws IllegalDayOperation {
 		final List<Date> dates = Transformer.extractDates(days);
 		// Extract corresponding days in database
 		final List<JDay> oldDays = q()
@@ -149,10 +149,7 @@ public class JDay extends Model implements MongoModel {
 			                           .asList();
 		if(CollectionUtils.isNotEmpty(oldDays)) {
 			final List<JDay> holidays = Transformer.extractHolidays(oldDays);
-			// delete existing days (non Holidays)
-			final List<ObjectId> oldDaysIds = Transformer.extractObjectId(new ArrayList<MongoModel>(oldDays));
-			MorphiaPlugin.ds().delete(q().field(Mapper.ID_KEY).in(oldDaysIds), WriteConcern.ACKNOWLEDGED);
-
+			// Report holidays in new days
 			for(JDay h : holidays) {
 				for(JDay d : days) {
 					if(h.date.isEqual(d.date)) {
@@ -161,12 +158,18 @@ public class JDay extends Model implements MongoModel {
 					}
 				}
 			}
+			// delete existing days (non Holidays)
+			final List<ObjectId> oldDaysIds = Transformer.extractObjectId(new ArrayList<MongoModel>(oldDays));
+			MorphiaPlugin.ds().delete(q().field(Mapper.ID_KEY).in(oldDaysIds), WriteConcern.ACKNOWLEDGED);
+			// delete Mission allowance of old deleted days
+			JClaim.deleteMissionAllowance(oldDays);
 		}
 		// create new days
 		MorphiaPlugin.ds().save(Transformer.setCraId(days, craId), WriteConcern.ACKNOWLEDGED);
+		JClaim.addMissionAllowance(days);
 	}
 
-	public static void add(final JAbsence absence) {
+	public static void addAbsenceDay(final JAbsence absence) {
 		final List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate, false);
 		JCra cra = null;
 
@@ -215,7 +218,7 @@ public class JDay extends Model implements MongoModel {
 			       .get();
 	}
 
-	public static void delete(final List<DateTime> dates, final String userId, final Boolean includeStartMorning, final Boolean includeEndAfternoon) {
+	public static void deleteAbsenceDays(final List<DateTime> dates, final String userId, final Boolean includeStartMorning, final Boolean includeEndAfternoon) {
 		final Map<DateTime, Set<DateTime>> m = Maps.newTreeMap(DateTimeComparator.getDateOnlyInstance());
 		for(DateTime dt : dates) {
 			final DateTime firstDayOfMonth = TimeUtils.getFirstDayOfMonth(dt);
@@ -310,8 +313,8 @@ public class JDay extends Model implements MongoModel {
 		return year != date.getYear() || month != date.getMonthOfYear();
 	}
 
-	public List<ObjectId> missionIds() {
-		final List<ObjectId> result = Lists.newArrayList();
+	public Set<ObjectId> missionIds() {
+		final Set<ObjectId> result = Sets.newHashSet();
 		if(morning != null) {
 			result.addAll(morning.missionIds());
 		}

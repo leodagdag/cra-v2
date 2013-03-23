@@ -36,5 +36,10 @@ app.controller('ClaimSynthesisCtrl', ['$scope', '$rootScope', '$http', '$log', '
 				.error(function(error, status, headers, config) {
 					$log.error(error);
 				});
-		}
+		};
+
+		$scope.goCra = function(){
+			///cra/:username/:year/:month
+			$location.path(_.str.sprintf('/cra/%s/%s/%s', $scope.profile.username, $scope.year, $scope.month));
+		};
 	}]);

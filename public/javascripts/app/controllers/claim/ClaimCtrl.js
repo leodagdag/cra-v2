@@ -20,7 +20,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		$scope.missions = [];
 
 		$scope.loadRefs = function() {
-			var route = jsRoutes.controllers.JMissions.claims($scope.profile.username);
+			var route = jsRoutes.controllers.JMissions.claimable($scope.profile.username);
 			$http({
 				'method': route.method,
 				'url': route.url,

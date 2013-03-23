@@ -23,8 +23,8 @@ public class JMissions extends Controller {
 		return ok(toJson(MissionDTO.of(missions)));
 	}
 
-	public static Result claims(final String username) {
-		final ImmutableList<JMission> missions = JMission.getClaimMissions(JUser.affectedMissions(username, null, null));
+	public static Result claimable(final String username) {
+		final ImmutableList<JMission> missions = JMission.getClaimableMissions(JUser.affectedMissions(username, null, null));
 		return ok(toJson(MissionDTO.of(missions)));
 	}
 

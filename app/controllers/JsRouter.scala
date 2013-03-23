@@ -36,7 +36,7 @@ object JsRouter extends Controller {
 					JClaims.remove,
 
 					JMissions.absences,
-					JMissions.claims,
+					JMissions.claimable,
 					JMissions.affectedMissions,
 
 					JUsers.employees,

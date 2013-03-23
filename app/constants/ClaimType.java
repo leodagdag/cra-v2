@@ -9,6 +9,7 @@ public enum ClaimType {
 	PARKING("parking"),
 	RENT_CAR("location de voiture"),
 	JOURNEY("déplacement"),
+	MISSION_ALLOWANCE("indemnité de mission"),
 	TOTAL("total");
 	public String label;
 

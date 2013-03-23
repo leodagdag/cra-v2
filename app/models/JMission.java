@@ -8,26 +8,22 @@ import com.github.jmkgreen.morphia.annotations.PostLoad;
 import com.github.jmkgreen.morphia.annotations.PrePersist;
 import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
+import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import constants.AbsenceType;
 import constants.GenesisMissionCode;
-import constants.MissionType;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
-import utils.deserializer.DateTimeDeserializer;
-import utils.serializer.DateTimeSerializer;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,15 +47,14 @@ public class JMission {
 	public String missionType;
 	public String absenceType;
 	public String allowanceType;
-	public Boolean isClaim = Boolean.TRUE;
+	public Boolean isClaimable = Boolean.TRUE;
 	@Transient
-	@JsonSerialize(using = DateTimeSerializer.class)
-	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime startDate;
 	@Transient
-	@JsonSerialize(using = DateTimeSerializer.class)
-	@JsonDeserialize(using = DateTimeDeserializer.class)
 	public DateTime endDate;
+	@Transient
+	public BigDecimal distance;
+	public String _distance;
 	private Date _startDate;
 	private Date _endDate;
 
@@ -90,10 +85,10 @@ public class JMission {
 			       .get();
 	}
 
-	public static ImmutableList<JMission> getClaimMissions(final List<ObjectId> ids) {
+	public static ImmutableList<JMission> getClaimableMissions(final List<ObjectId> ids) {
 		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
 			                            .field(Mapper.ID_KEY).in(ids)
-			                            .field("isClaim").equal(true)
+			                            .field("isClaimable").equal(true)
 			                            .retrievedFields(true, Mapper.ID_KEY, "code")
 			                            .disableValidation()
 			                            .asList());
@@ -134,6 +129,28 @@ public class JMission {
 		return ImmutableList.copyOf(missionIds);
 	}
 
+	public static ObjectId getPartTimeId() {
+		return MorphiaPlugin.ds().createQuery(JMission.class)
+			       .field("customerId").equal(JCustomer.genesis().id)
+			       .field("code").equal(GenesisMissionCode.TP)
+			       .retrievedFields(true, Mapper.ID_KEY)
+			       .disableValidation()
+			       .get()
+			       .id;
+	}
+
+	private static Query<JMission> q() {
+		return MorphiaPlugin.ds().createQuery(JMission.class);
+	}
+
+	private static Query<JMission> queryToFindMe(final ObjectId id) {
+		return q().field(Mapper.ID_KEY).equal(id);
+	}
+
+	public static JMission fetch(final ObjectId id) {
+		return queryToFindMe(id).get();
+	}
+
 	@SuppressWarnings({"unused"})
 	@PrePersist
 	private void prePersist() {
@@ -142,6 +159,9 @@ public class JMission {
 		}
 		if (endDate != null) {
 			_endDate = endDate.toDate();
+		}
+		if (distance != null) {
+			_distance = distance.toPlainString();
 		}
 	}
 
@@ -154,15 +174,8 @@ public class JMission {
 		if (_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
 		}
-	}
-
-	public static ObjectId getPartTimeId(){
-		return MorphiaPlugin.ds().createQuery(JMission.class)
-			.field("customerId").equal(JCustomer.genesis().id)
-			.field("code").equal(GenesisMissionCode.TP)
-			.retrievedFields(true, Mapper.ID_KEY)
-			.disableValidation()
-			.get()
-			.id;
+		if (_distance != null) {
+			distance = new BigDecimal(_distance);
+		}
 	}
 }

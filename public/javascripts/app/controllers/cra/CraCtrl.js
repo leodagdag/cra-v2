@@ -39,6 +39,17 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			$location.path(_.str.sprintf('/cra/claim/synthesis/%s/%s',$scope.cra.year, $scope.cra.month));
 		};
 
+		$scope.previous = function(){
+			var previous = moment(_.str.sprintf('%s/%s', $scope.cra.month, $scope.cra.year), 'MM/YYYY').subtract(1,'months')
+			// /cra/:username/:year/:month
+			$location.path(_.str.sprintf("/cra/%s/%s/%s", $scope.criterias.selected.employee, previous.year(), previous.month() +1));
+		};
+
+		$scope.next = function(){
+			var next = moment(_.str.sprintf('%s/%s', $scope.cra.month, $scope.cra.year), 'MM/YYYY').add(1,'months')
+			// /cra/:username/:year/:month
+			$location.path(_.str.sprintf("/cra/%s/%s/%s", $scope.criterias.selected.employee, next.year(), next.month()+1));
+		};
 		$scope.initToolbar = function() {
 			if(profile.data.role !== RolesConst.EMPLOYEE) {
 				$scope.criterias.showEmployees = true;

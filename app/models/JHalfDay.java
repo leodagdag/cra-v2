@@ -5,11 +5,13 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author f.patin
@@ -33,9 +35,9 @@ public class JHalfDay {
 		this.missionId = missionId;
 	}
 
-	public List<ObjectId> missionIds() {
+	public Set<ObjectId> missionIds() {
 		if (isSpecial()) {
-			return Lists.newArrayList(Collections2.transform(periods, new Function<JPeriod, ObjectId>() {
+			return Sets.newHashSet(Collections2.transform(periods, new Function<JPeriod, ObjectId>() {
 				@Nullable
 				@Override
 				public ObjectId apply(@Nullable final JPeriod p) {
@@ -43,7 +45,7 @@ public class JHalfDay {
 				}
 			}));
 		} else {
-			return Lists.newArrayList(missionId);
+			return Sets.newHashSet(missionId);
 		}
 	}
 

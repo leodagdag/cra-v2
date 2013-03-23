@@ -89,14 +89,12 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 
 			})
 				.success(function(data, status, headers, config) {
-					$log.log(data);
-					// /cra/:username/:year/:month
-					$location.path(_.str.sprintf("/cra/%s/%s/%s", $scope.username, $scope.year, $scope.month));
+					$scope.back();
 				})
 				.error(function(data, status, headers, config) {
 					$log.error(data);
 				});
-		}
+		};
 
 		$scope.back = function() {
 			///cra/:username/:year/:month

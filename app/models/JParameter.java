@@ -41,6 +41,9 @@ public class JParameter extends Model {
 	public Map<Integer, BigDecimal> car = Maps.newHashMap();
 	@Transient
 	public Map<Integer, BigDecimal> motorcycle = Maps.newHashMap();
+	@Transient
+	public BigDecimal zoneAmount;
+	public String _zoneAmount;
 	private Date _startDate;
 	private Date _endDate;
 	private Boolean active = Boolean.TRUE;
@@ -49,6 +52,28 @@ public class JParameter extends Model {
 
 	private static Query<JParameter> q() {
 		return MorphiaPlugin.ds().createQuery(JParameter.class);
+	}
+
+	public static BigDecimal coefficient(final JVehicle vehicle, final DateTime date) {
+		if (VehicleType.car.equals(VehicleType.valueOf(vehicle.vehicleType))) {
+			final ImmutableMap<Integer, BigDecimal> refs = JParameter.cars(date);
+			if (vehicle.power >= 11) {
+				return refs.get(11);
+			} else if (vehicle.power >= 8) {
+				return refs.get(8);
+			} else if (vehicle.power >= 5) {
+				return refs.get(5);
+			} else {
+				return refs.get(0);
+			}
+		} else {
+			final ImmutableMap<Integer, BigDecimal> refs = JParameter.motorcyles(date);
+			if (vehicle.power < 501) {
+				return refs.get(0);
+			} else {
+				return refs.get(501);
+			}
+		}
 	}
 
 	public static ImmutableMap<Integer, BigDecimal> cars(final DateTime date) {
@@ -65,14 +90,25 @@ public class JParameter extends Model {
 	}
 
 	private static Query<JParameter> vehicles(final VehicleType vehicleType, final DateTime date) {
-		Query<JParameter> q = q().field("_startDate").lessThanOrEq(date.toDate());
+		return queryToFindMe(date)
+			       .retrievedFields(true, "_" + vehicleType.name())
+			       .disableValidation();
+	}
+
+	private static Query<JParameter> queryToFindMe(final DateTime date) {
+		final Query<JParameter> q = q().field("_startDate").lessThanOrEq(date.toDate());
 		q.or(
 			    q.criteria("_endDate").equal(null),
 			    q.criteria("_endDate").greaterThanOrEq(date.toDate())
 		);
-		return q
-			       .retrievedFields(true, "_" + vehicleType.name())
-			       .disableValidation();
+		return q;
+	}
+
+	public static BigDecimal zoneAmount(final DateTime date) {
+		return queryToFindMe(date)
+			       .retrievedFields(true, "_zoneAmount")
+			       .disableValidation()
+			       .get().zoneAmount;
 	}
 
 	@SuppressWarnings({"unused"})
@@ -101,6 +137,9 @@ public class JParameter extends Model {
 					return bigDecimal.toPlainString();
 				}
 			});
+		}
+		if (zoneAmount != null) {
+			_zoneAmount = zoneAmount.toPlainString();
 		}
 	}
 
@@ -131,5 +170,9 @@ public class JParameter extends Model {
 				}
 			});
 		}
+		if (_zoneAmount != null) {
+			zoneAmount = new BigDecimal(_zoneAmount);
+		}
 	}
+
 }

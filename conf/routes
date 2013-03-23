@@ -36,7 +36,7 @@ POST    /cra/:id/invalidate                                         controllers.
 # Mission
 # ~~~~
 GET     /missions/absences                                          controllers.JMissions.absences()
-GET     /missions/claims/:username                                  controllers.JMissions.claims(username: String)
+GET     /missions/claims/:username                                  controllers.JMissions.claimable(username: String)
 GET     /missions/affectedMissions/:username/:startDate/:endDate    controllers.JMissions.affectedMissions(username: String, startDate :Long, endDate: Long)
 # User
 # ~~~~

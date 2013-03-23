@@ -59,7 +59,7 @@ public class JDays extends Controller {
 		final JCra cra = JCra.getOrCreate(ObjectId.massageToObjectId(craId), JUser.id(username), year, month);
 
 		try {
-			JDay.create(cra.id, createForm.days());
+			JDay.createDays(cra.id, createForm.days());
 			return created("Journée(s) sauvegardée(s)");
 		} catch (IllegalDayOperation e) {
 			return badRequest(toJson(e));
@@ -79,6 +79,7 @@ public class JDays extends Controller {
 		public List<ValidationError> validate() {
 			return null;
 		}
+
 		public List<JDay> days() {
 			return Lists.newArrayList(Collections2.transform(dates, new Function<Long, JDay>() {
 				@Nullable
@@ -86,6 +87,7 @@ public class JDays extends Controller {
 				public JDay apply(@Nullable final Long date) {
 					JDay d = new JDay(date);
 					d.craId = ObjectId.massageToObjectId(craId);
+					d.userId = JUser.id(username);
 					d.morning = day.morning();
 					d.afternoon = day.afternoon();
 					d.comment = day.comment;
