@@ -131,7 +131,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.removeDay = function(wIndex, date, dIndex) {
-			if(confirm("Êtes vous sur de vouloir supprimer cette journée ?")) {
+			if(confirm("Êtes-vous sûr de vouloir supprimer cette journée ?")) {
 				var route = jsRoutes.controllers.Days.remove($scope.cra.id, date);
 				$http({
 					method: route.method,
@@ -155,7 +155,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			if(!day.morning || !day.afternoon) {
 				$scope.removeDay(wIndex, date, dIndex);
 			} else {
-				if(confirm("Êtes vous sur de vouloir supprimer cette demi-journée ?")) {
+				if(confirm("Êtes-vous sûr de vouloir supprimer cette demi-journée ?")) {
 					var route = jsRoutes.controllers.Days.removeHalfDay($scope.cra.id, date, momentOfDay);
 					$http({
 						method: route.method,
