@@ -126,7 +126,7 @@ var bart = db.User.findOne({username: 'bart'});
 /*
  * Vehicle
  */
-db.Vehicle.insert({
+/*db.Vehicle.insert({
 	userId: bart._id,
 	vehicleType: "car",
 	power: NumberInt(5),
@@ -134,7 +134,7 @@ db.Vehicle.insert({
 	matriculation: "AA-123-AA",
 	_startDate: new Date(YEAR, JANUARY_JS, ONE),
 	active: true
-});
+});*/
 /*
  * Cra
  */

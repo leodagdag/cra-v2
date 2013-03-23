@@ -6,7 +6,7 @@ angular.module('vehiclePowerFilter', [])
 				case 'car':
 					return power + ' cv';
 					break;
-				case 'motocycle':
+				case 'motorcycle':
 					switch(power) {
 						case 0:
 							return 'De 0 à 500 cm²'

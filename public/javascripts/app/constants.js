@@ -30,7 +30,7 @@ app.constant('YearsConst', [
 		{code: 'RENT_CAR', label: 'Location de voiture'},
 		{code: 'TOTAL', label: 'Total'}
 	])
-	.constant('VehicleBrandConst', [
+	.constant('CarBrandConst', [
 		{code: 'ALFA_ROMEO', label: 'Alfa Romeo'},
 		{code: 'AUDI', label: 'Audi'},
 		{code: 'BMW', label: 'BMW'},
@@ -66,6 +66,20 @@ app.constant('YearsConst', [
 		{code: 'VAUXHALL', label: 'Vauxhall'},
 		{code: 'VOLKSWAGEN', label: 'Volkswagen'},
 		{code: 'VOLVO', label: 'Volvo'}
+	])
+	.constant('MotorcycleBrandConst', [
+		{code: 'BMW', label: 'BMW'},
+		{code: 'DUCATI', label: 'Ducati'},
+		{code: 'HONDA', label: 'Honda'},
+		{code: 'KAWASAKI', label: 'Kawasaki'},
+		{code: 'KTM', label: 'KTM'},
+		{code: 'SUZUKI', label: 'Suzuki'},
+		{code: 'YAMAHA', label: 'Yamaha'},
+		{code: 'GUZZI', label: 'Guzzi'},
+		{code: 'PIAGGIO', label: 'PIAGGIO'},
+		{code: 'MARTIN', label: 'MARTIN'},
+		{code: 'MBK', label: 'MBK'},
+		{code: 'VESPA', label: 'VESPA'}
 	])
 	.constant('VehicleCarPowerConst', [
 		{code: 1, label: '1'},

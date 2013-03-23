@@ -1,5 +1,6 @@
 package controllers;
 
+import caches.ResponseCache;
 import dto.VehicleDTO;
 import models.JVehicle;
 import org.bson.types.ObjectId;
@@ -30,6 +31,7 @@ public class JVehicles extends Controller {
 
     }
 
+	@ResponseCache.NoCacheResponse
     public static Result active(final String userId) {
         final JVehicle vehicle = JVehicle.active(userId);
         if (vehicle == null) {
