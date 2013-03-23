@@ -1,5 +1,5 @@
-app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CarBrandConst', 'MotorcycleBrandConst', 'VehicleCarPowerConst', 'VehicleMotorcyclePowerConst',
-	function VehicleCtrl($rootScope, $scope, $http, $log, $location, $routeParams, CarBrandConst, MotorcycleBrandConst, VehicleCarPowerConst, VehicleMotorcyclePowerConst) {
+app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CarBrandConst', 'MotorcycleBrandConst', 'VehicleCarPowerConst', 'VehicleMotorcyclePowerConst', 'YearsConst', 'MonthsConst',
+	function VehicleCtrl($rootScope, $scope, $http, $log, $location, $routeParams, CarBrandConst, MotorcycleBrandConst, VehicleCarPowerConst, VehicleMotorcyclePowerConst, YearsConst, MonthsConst) {
 		$scope._ = _;
 		var Vehicle = function(form) {
 			this.userId = $scope.profile.id;
@@ -7,16 +7,20 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			this.power = form.power;
 			this.brand = form.brand;
 			this.matriculation = form.matriculation;
-			this.startDate = form.startDate ? moment(form.startDate, 'DD/MM/YYYY').valueOf() : null;
+			this.year = form.year;
+			this.month = form.month;
 		};
+
 		var Form = function(vehicleType) {
-			this.vehicleType = vehicleType || 'car';
+			this.vehicleType = vehicleType || $scope.vehicleType;
 			this.power = null;
 			this.brand = null;
 			this.matriculation = null;
-			this.startDate = null;
+			this.year = null;
+			this.month = null;
 		};
-
+		$scope.years = YearsConst;
+		$scope.months = MonthsConst;
 		$scope.vehicleType = 'car';
 		$scope.brands = CarBrandConst;
 		$scope.powers = VehicleCarPowerConst;
@@ -27,7 +31,9 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			power: null,
 			brand: null,
 			matriculation: null,
-			startDate: null
+			month: null,
+			year: null,
+			validityDate: null
 		};
 
 		$scope.toggleVehicleType = function(vehicleType) {
@@ -48,6 +54,7 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			})
 				.success(function(vehicle, status, headers, config) {
 					$rootScope.onSuccess("Votre véhicule a été sauvegardé.");
+					$scope.form = new Form()
 					$scope.loadActive();
 				})
 				.error(function(errors, status, headers, config) {

@@ -1,16 +1,16 @@
-app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'YearsConst', 'MonthsConst', 'RolesConst', 'profile',
-	function CraCtrl($rootScope, $scope, $http, $log, $location, $routeParams, YearsConst, MonthsConst, RolesConst, profile) {
+app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CraYearsConst', 'MonthsConst', 'RolesConst', 'profile',
+	function CraCtrl($rootScope, $scope, $http, $log, $location, $routeParams, CraYearsConst, MonthsConst, RolesConst, profile) {
 		$scope.profile = profile.data;
 		/* Toolbar */
 		var initialUsername = $routeParams.username || ($scope.profile.role === RolesConst.EMPLOYEE ? $scope.profile.username : $scope.employee);
 		var initialYear = {
-			'id': _.find(YearsConst,function(y) {
-				return y.label === ($routeParams.year || moment().year()).toString()
-			}).id,
-			'label': ($routeParams.year || moment().year()).toString()
+			'code': _.find(CraYearsConst,function(y) {
+				return y.label === ($routeParams.year || moment().year())
+			}).code,
+			'label': ($routeParams.year || moment().year())
 		};
 		var initialMonth = {
-			'id': ($routeParams.month || (moment().month() + 1 )).toString(),
+			'code': ($routeParams.month || (moment().month() + 1 )),
 			'label': _.str.capitalize(moment(($routeParams.month || (moment().month())).toString(), 'MMMM').format('MMMM'))
 		};
 
@@ -18,7 +18,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 
 		$scope.criterias = {
 			'employees': [],
-			'years': YearsConst,
+			'years': CraYearsConst,
 			'months': MonthsConst,
 			'showEmployees': false,
 			'selected': {
@@ -30,7 +30,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 
 		$scope.init = function() {
 			if(profile.data.role === RolesConst.EMPLOYEE) {
-				loadCra(initialUsername, initialYear.label, initialMonth.id);
+				loadCra(initialUsername, initialYear.label, initialMonth.code);
 			}
 		};
 
@@ -69,7 +69,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		$scope.cra = {};
 
 		$scope.search = function() {
-			loadCra($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.id);
+			loadCra($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.code);
 		};
 
 

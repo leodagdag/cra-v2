@@ -12,6 +12,7 @@ import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import utils.time.TimeUtils;
 
 import java.util.List;
 
@@ -68,11 +69,16 @@ public class JVehicles extends Controller {
         public Integer power;
 	    @Constraints.Required(message = "L'immatriculation est requise.")
         public String matriculation;
-	    @Constraints.Required(message = "La date de validité est requise.")
-        public Long startDate;
+	    @Constraints.Required(message = "Le mois de validité est requis.")
+        public Integer month;
+	    @Constraints.Required(message = "L'année de validité est requise.")
+        public Integer year;
 
 	    public List<ValidationError> validate() {
 		    final List<ValidationError> errors = Lists.newArrayList();
+		    if(TimeUtils.getFirstDayOfMonth(year, month).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))){
+			    errors.add(new ValidationError("validityDate", "La date de validté doit être supérieure ou égale au mois en cours."));
+		    }
 		    return errors.isEmpty() ? null : errors;
 	    }
         public JVehicle to() {
@@ -82,7 +88,7 @@ public class JVehicles extends Controller {
             vehicle.brand = this.brand;
             vehicle.power = this.power;
             vehicle.matriculation = this.matriculation;
-            vehicle.startDate = new DateTime(this.startDate);
+            vehicle.startDate = TimeUtils.getFirstDayOfMonth(year, month);
             return vehicle;
         }
     }

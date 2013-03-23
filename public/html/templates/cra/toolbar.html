@@ -19,8 +19,8 @@
 			</ul>
 		</div>
 		<div class="pull-right well well-small form-inline">
-			<select data-ng-init="criterias.selected.year=criterias.years[criterias.selected.year.id-1]" data-ng-model="criterias.selected.year" data-ng-options="y.label for y in criterias.years" required="required"></select>
-			<select data-ng-init="criterias.selected.month=criterias.months[criterias.selected.month.id-1]" data-ng-model="criterias.selected.month" data-ng-options="m.label for m in criterias.months" required="required"></select>
+			<select data-ng-init="criterias.selected.year=criterias.years[criterias.selected.year.code - 1]" data-ng-model="criterias.selected.year" data-ng-options="y.label for y in criterias.years" required="required"></select>
+			<select data-ng-init="criterias.selected.month=criterias.months[criterias.selected.month.code - 1]" data-ng-model="criterias.selected.month" data-ng-options="m.label for m in criterias.months" required="required"></select>
 			<select data-ng-show="criterias.showEmployees">
 				<option selected="selected">employee</option>
 			</select>

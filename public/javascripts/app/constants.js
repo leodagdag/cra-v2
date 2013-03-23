@@ -1,22 +1,28 @@
 app.constant('YearsConst', [
-		{'id': '1', 'label': '2012'},
-		{'id': '2', 'label': '2013'},
-		{'id': '3', 'label': '2014'},
-		{'id': '4', 'label': '2015'}
+		{code: 2012, label: 2012},
+		{code: 2013, label: 2013},
+		{code: 2014, label: 2014},
+		{code: 2015, label: 2015}
+	])
+	.constant('CraYearsConst', [
+		{code: 1, label: 2012},
+		{code: 2, label: 2013},
+		{code: 3, label: 2014},
+		{code: 4, label: 2015}
 	])
 	.constant('MonthsConst', [
-		{'id': 1, 'label': _.str.capitalize(moment('1', 'MM').format('MMMM'))},
-		{'id': 2, 'label': _.str.capitalize(moment('2', 'MM').format('MMMM'))},
-		{'id': 3, 'label': _.str.capitalize(moment('3', 'MM').format('MMMM'))},
-		{'id': 4, 'label': _.str.capitalize(moment('4', 'MM').format('MMMM'))},
-		{'id': 5, 'label': _.str.capitalize(moment('5', 'MM').format('MMMM'))},
-		{'id': 6, 'label': _.str.capitalize(moment('6', 'MM').format('MMMM'))},
-		{'id': 7, 'label': _.str.capitalize(moment('7', 'MM').format('MMMM'))},
-		{'id': 8, 'label': _.str.capitalize(moment('8', 'MM').format('MMMM'))},
-		{'id': 9, 'label': _.str.capitalize(moment('9', 'MM').format('MMMM'))},
-		{'id': 10, 'label': _.str.capitalize(moment('10', 'MM').format('MMMM'))},
-		{'id': 11, 'label': _.str.capitalize(moment('11', 'MM').format('MMMM'))},
-		{'id': 12, 'label': _.str.capitalize(moment('12', 'MM').format('MMMM'))}
+		{'code': 1, 'label': _.str.capitalize(moment('1', 'MM').format('MMMM'))},
+		{'code': 2, 'label': _.str.capitalize(moment('2', 'MM').format('MMMM'))},
+		{'code': 3, 'label': _.str.capitalize(moment('3', 'MM').format('MMMM'))},
+		{'code': 4, 'label': _.str.capitalize(moment('4', 'MM').format('MMMM'))},
+		{'code': 5, 'label': _.str.capitalize(moment('5', 'MM').format('MMMM'))},
+		{'code': 6, 'label': _.str.capitalize(moment('6', 'MM').format('MMMM'))},
+		{'code': 7, 'label': _.str.capitalize(moment('7', 'MM').format('MMMM'))},
+		{'code': 8, 'label': _.str.capitalize(moment('8', 'MM').format('MMMM'))},
+		{'code': 9, 'label': _.str.capitalize(moment('9', 'MM').format('MMMM'))},
+		{'code': 10, 'label': _.str.capitalize(moment('10', 'MM').format('MMMM'))},
+		{'code': 11, 'label': _.str.capitalize(moment('11', 'MM').format('MMMM'))},
+		{'code': 12, 'label': _.str.capitalize(moment('12', 'MM').format('MMMM'))}
 	])
 	.constant('RolesConst', {
 		'EMPLOYEE': 'employee',

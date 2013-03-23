@@ -17,7 +17,7 @@
 				<label class="control-label" for="power">Puissance fiscale / Cylindrée <i class="icon-mandatory"></i></label>
 
 				<div class="controls">
-					<select class="span4" id="power"  data-ng-model="form.power" required="required" data-ng-options="power.code as power.label for power in powers">
+					<select class="span4" id="power" data-ng-model="form.power" required="required" data-ng-options="power.code as power.label for power in powers">
 						<option value=""></option>
 					</select>
 					<span class="help-block"><em>{{errors.power}}</em></span>
@@ -27,7 +27,7 @@
 				<label class="control-label" for="brand">Marque <i class="icon-mandatory"></i></label>
 
 				<div class="controls">
-					<select class="span5" id="brand"  data-ng-model="form.brand" required="required" data-ng-options="brand.code as brand.label for brand in brands">
+					<select class="span5" id="brand" data-ng-model="form.brand" required="required" data-ng-options="brand.code as brand.label for brand in brands">
 						<option value=""></option>
 					</select>
 					<span class="help-block"><em>{{errors.brand}}</em></span>
@@ -37,16 +37,30 @@
 				<label class="control-label" for="matriculation">Immatriculation <i class="icon-mandatory"></i></label>
 
 				<div class="controls">
-					<input type="text" class="span4" id="matriculation"  data-ng-model="form.matriculation" required="required">
+					<input type="text" class="span4" id="matriculation" data-ng-model="form.matriculation" required="required">
 					<span class="help-block"><em>{{errors.matriculation}}</em></span>
 				</div>
 			</div>
-			<div class="control-group" data-ng-class="{'error': errors.startDate}">
-				<label class="control-label" for="startDate">Date d'acquisition<i class="icon-mandatory"></i></label>
+			<div class="control-group" data-ng-class="{'error': errors.month, 'error': errors.year, 'error': errors.validityDate}">
+				<label class="control-label" >Date de validité<i class="icon-mandatory"></i></label>
 
 				<div class="controls">
-					<input type="text" class="span4"  id="startDate" data-ng-model="form.startDate" data-b-datepicker required="required">
-					<span class="help-block"><em>{{errors.startDate}}</em></span>
+					<select class="span5" data-ng-model="form.month" required="required" data-ng-options="month.code as month.label for month in months">
+						<option value=""></option>
+					</select>
+					<select class="span3" data-ng-model="form.year" required="required" data-ng-options="year.code as year.label for year in years">
+						<option value=""></option>
+					</select>
+
+					<div data-ng-class="{'control-group error': errors.month}">
+						<span class="help-block"><em>{{errors.month}}</em></span>
+					</div>
+					<div data-ng-class="{'control-group error': errors.year}">
+						<span class="help-block"><em>{{errors.year}}</em></span>
+					</div>
+					<div data-ng-class="{'control-group error': errors.validityDate}">
+						<span class="help-block"><em>{{errors.validityDate}}</em></span>
+					</div>
 				</div>
 			</div>
 			<div data-ng-class="{'control-group error': errors.global}">
@@ -63,7 +77,7 @@
 				<div class="span11">
 					<p>
 						Votre véhicule est actuellement
-						une <strong>{{activeVehicle.vehicleType | vehicleType}}</strong> depuis le {{activeVehicle.startDate | date}}
+						une <strong>{{activeVehicle.vehicleType | vehicleType}}</strong> depuis <strong>{{activeVehicle.month | monthOfYear | capitalize}} {{activeVehicle.year}}</strong>
 					</p>
 					<ul>
 						<li>Puissance fiscale/cylindrée : {{activeVehicle.power | vehiclePower:activeVehicle.vehicleType}}</li>

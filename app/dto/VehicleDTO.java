@@ -24,7 +24,8 @@ public class VehicleDTO {
     public String brand;
     public Integer power;
     public String matriculation;
-    public Long startDate;
+    public Integer month;
+    public Integer year;
     public Long endDate;
 
     public VehicleDTO() {
@@ -37,7 +38,8 @@ public class VehicleDTO {
         this.brand = vehicle.brand;
         this.power = vehicle.power;
         this.matriculation = vehicle.matriculation;
-        this.startDate = vehicle.startDate.getMillis();
+        this.month = vehicle.startDate.getMonthOfYear();
+        this.year = vehicle.startDate.getYear();
         if (vehicle.endDate != null) {
             this.endDate = vehicle.endDate.getMillis();
         }

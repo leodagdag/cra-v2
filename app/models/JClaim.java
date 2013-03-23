@@ -132,14 +132,14 @@ public class JClaim extends Model implements MongoModel {
 				@Nullable
 				@Override
 				public JClaim apply(@Nullable final ObjectId missionId) {
-					return new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeAllowance();
+					return new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance();
 				}
 			}));
 		}
 		MorphiaPlugin.ds().save(claims, WriteConcern.ACKNOWLEDGED);
 	}
 
-	private JClaim computeAllowance() {
+	private JClaim computeMissionAllowance() {
 		final JVehicle vehicle = JVehicle.active(this.userId);
 		final JMission mission = JMission.fetch(this.missionId);
 		switch (MissionAllowanceType.valueOf(mission.allowanceType)) {
