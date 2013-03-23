@@ -1,11 +1,13 @@
 package controllers;
 
 import caches.ResponseCache;
+import com.google.common.collect.Lists;
 import dto.VehicleDTO;
 import models.JVehicle;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
+import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
@@ -21,6 +23,7 @@ import static play.libs.Json.toJson;
 public class JVehicles extends Controller {
 
     @BodyParser.Of(BodyParser.Json.class)
+    @ResponseCache.NoCacheResponse
     public static Result save() {
         final Form<CreateVehicleForm> form = Form.form(CreateVehicleForm.class).bind(request().body().asJson());
         if (form.hasErrors()) {
@@ -57,14 +60,20 @@ public class JVehicles extends Controller {
     public static class CreateVehicleForm {
 
         public ObjectId userId;
+	    @Constraints.Required(message = "Le type de véhicule est requis.")
         public String vehicleType;
+	    @Constraints.Required(message = "La marque est requise.")
         public String brand;
+	    @Constraints.Required(message = "La puissance fisclae/cylindré est requise.")
         public Integer power;
+	    @Constraints.Required(message = "L'immatriculation est requise.")
         public String matriculation;
+	    @Constraints.Required(message = "La date de validité est requise.")
         public Long startDate;
 
 	    public List<ValidationError> validate() {
-		    return null;
+		    final List<ValidationError> errors = Lists.newArrayList();
+		    return errors.isEmpty() ? null : errors;
 	    }
         public JVehicle to() {
             JVehicle vehicle = new JVehicle();

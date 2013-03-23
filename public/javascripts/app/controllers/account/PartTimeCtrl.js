@@ -60,7 +60,6 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 				})
 				.error(function(errors, status, headers, config) {
 					_(errors).forEach(function(err, key) {
-						$log.log('err', err);
 						$scope.errors[key] = err.join('<br>');
 					});
 				});

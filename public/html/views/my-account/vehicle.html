@@ -12,20 +12,46 @@
 				</ul>
 			</div>
 		</div>
-		<form class="well well-small" data-ng-submit="save()">
-			<label>Puissance fiscale / Cylindrée <i class="icon-mandatory"></i></label>
-			<select class="span4" data-ng-model="form.power" required="required" data-ng-options="power.code as power.label for power in powers">
-				<option value=""></option>
-			</select>
-			<label>Marque <i class="icon-mandatory"></i></label>
-			<select class="span5" data-ng-model="form.brand" required="required" data-ng-options="brand.code as brand.label for brand in brands">
-				<option value=""></option>
-			</select>
-			<label>Immatriculation <i class="icon-mandatory"></i></label>
-			<input type="text" class="span4" data-ng-model="form.matriculation" required="required">
-			<label>Date d'acquisition<i class="icon-mandatory"></i></label>
-			<input type="text" class="span4" data-ng-model="form.startDate" data-b-datepicker required="required">
+		<form class="form-horizontal well well-small" data-ng-submit="save()">
+			<div class="control-group" data-ng-class="{'error': errors.power}">
+				<label class="control-label" for="power">Puissance fiscale / Cylindrée <i class="icon-mandatory"></i></label>
 
+				<div class="controls">
+					<select class="span4" id="power"  data-ng-model="form.power" required="required" data-ng-options="power.code as power.label for power in powers">
+						<option value=""></option>
+					</select>
+					<span class="help-block"><em>{{errors.power}}</em></span>
+				</div>
+			</div>
+			<div class="control-group" data-ng-class="{'error': errors.brand}">
+				<label class="control-label" for="brand">Marque <i class="icon-mandatory"></i></label>
+
+				<div class="controls">
+					<select class="span5" id="brand"  data-ng-model="form.brand" required="required" data-ng-options="brand.code as brand.label for brand in brands">
+						<option value=""></option>
+					</select>
+					<span class="help-block"><em>{{errors.brand}}</em></span>
+				</div>
+			</div>
+			<div class="control-group" data-ng-class="{'error': errors.matriculation}">
+				<label class="control-label" for="matriculation">Immatriculation <i class="icon-mandatory"></i></label>
+
+				<div class="controls">
+					<input type="text" class="span4" id="matriculation"  data-ng-model="form.matriculation" required="required">
+					<span class="help-block"><em>{{errors.matriculation}}</em></span>
+				</div>
+			</div>
+			<div class="control-group" data-ng-class="{'error': errors.startDate}">
+				<label class="control-label" for="startDate">Date d'acquisition<i class="icon-mandatory"></i></label>
+
+				<div class="controls">
+					<input type="text" class="span4"  id="startDate" data-ng-model="form.startDate" data-b-datepicker required="required">
+					<span class="help-block"><em>{{errors.startDate}}</em></span>
+				</div>
+			</div>
+			<div data-ng-class="{'control-group error': errors.global}">
+				<span class="help-block"><em>{{errors.global}}</em></span>
+			</div>
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
 			</div>
