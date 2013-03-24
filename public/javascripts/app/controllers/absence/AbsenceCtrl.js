@@ -81,7 +81,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		];
 		$scope.filter = {
 			'year': moment().year(),
-			'month': $scope.months[moment().month()].id,
+			'month': $scope.months[moment().month()].code,
 			'absenceType': $scope.absenceTypes[0].code,
 			'sortBy': $scope.sortBys[0].key
 		};

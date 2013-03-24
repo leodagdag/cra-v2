@@ -81,7 +81,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		];
 		$scope.filter = {
 			'year': moment().year(),
-			'month': $scope.months[moment().month()].id,
+			'month': $scope.months[moment().month()].code,
 			'sortBy': $scope.sortBys[0].key
 		};
 

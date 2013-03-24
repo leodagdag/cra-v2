@@ -3,7 +3,8 @@ import controllers.routes
 import java.io.File
 import play.api.http.{MimeTypes, MediaRange}
 import play.api.libs.json.JsString
-import play.api.mvc.Results.InternalServerError
+import play.api.libs.json.JsString
+import play.api.mvc.Results._
 import play.api.mvc.{Results, Result, Handler, RequestHeader}
 import play.api.{Mode, Configuration, Logger, GlobalSettings, Application}
 
@@ -46,7 +47,11 @@ object Global extends GlobalSettings {
 
 	override def onBadRequest(request: RequestHeader, error: String): Result = {
 		Logger warn s"BadRequest from[${request.remoteAddress}}] - [${request.method} ${request.path}] - error[$error]"
-		super.onBadRequest(request, error)
+		request.acceptedTypes
+			.find(mr => mr == MediaRange(MimeTypes.JAVASCRIPT) || mr == MediaRange(MimeTypes.JSON))
+			.map(m => BadRequest(JsString(s"exception $error")))
+			.getOrElse(super.onBadRequest(request, error))
+
 	}
 
 	override def onHandlerNotFound(request: RequestHeader): Result = {

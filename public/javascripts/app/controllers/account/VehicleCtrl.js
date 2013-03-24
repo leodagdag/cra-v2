@@ -54,7 +54,7 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			})
 				.success(function(vehicle, status, headers, config) {
 					$rootScope.onSuccess("Votre véhicule a été sauvegardé.");
-					$scope.form = new Form()
+					$scope.form = new Form();
 					$scope.loadActive();
 				})
 				.error(function(errors, status, headers, config) {
