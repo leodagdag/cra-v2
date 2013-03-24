@@ -197,13 +197,6 @@ public class JDay extends Model implements MongoModel {
 		}
 	}
 
-	public static JDay find(final ObjectId craId, final DateTime dts) {
-		return q()
-			       .field("craId").equal(craId)
-			       .field("_date").equal(dts.toDate())
-			       .get();
-	}
-
 	public static void deleteAbsenceDays(final List<DateTime> dates, final String userId, final Boolean includeStartMorning, final Boolean includeEndAfternoon) {
 		final Map<DateTime, Set<DateTime>> m = Maps.newTreeMap(DateTimeComparator.getDateOnlyInstance());
 		for (DateTime dt : dates) {
@@ -253,6 +246,15 @@ public class JDay extends Model implements MongoModel {
 		}
 
 	}
+
+	public static JDay find(final ObjectId craId, final DateTime dts) {
+		return q()
+			       .field("craId").equal(craId)
+			       .field("_date").equal(dts.toDate())
+			       .get();
+	}
+
+
 
 	private static Query<JDay> queryToFindMe(final ObjectId id) {
 		return q()

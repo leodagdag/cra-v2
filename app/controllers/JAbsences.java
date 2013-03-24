@@ -47,7 +47,6 @@ public class JAbsences extends Controller {
 
 	@ResponseCache.NoCacheResponse
 	public static Result history(final String userId, final String absenceType, final Integer year, final Integer month) {
-		Logger.debug(String.format("userId: %s, absenceType: %s, year: %s, month: %s", userId, absenceType, year, month));
 		final List<JAbsence> absences = Lists.newArrayList();
 		final AbsenceType at = AbsenceType.of(absenceType);
 		if (year == 0) {

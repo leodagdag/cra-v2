@@ -29,6 +29,7 @@ public class JAbsence extends Model implements MongoModel {
 	public ObjectId id;
 	public ObjectId userId;
 	public ObjectId missionId;
+
 	@Transient
 	public DateTime startDate;
 	public Boolean startMorning;
@@ -49,8 +50,8 @@ public class JAbsence extends Model implements MongoModel {
 	}
 
 	public static JAbsence delete(final String userId, final String id) {
-		JAbsence absence = MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
-		List<DateTime> dates = TimeUtils.datesBetween(absence.startDate, absence.endDate, true);
+		final JAbsence absence = MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
+		final List<DateTime> dates = TimeUtils.datesBetween(absence.startDate, absence.endDate, false);
 		JDay.deleteAbsenceDays(dates, userId, absence.startMorning, absence.endAfternoon);
 		return absence;
 	}

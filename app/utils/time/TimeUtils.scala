@@ -72,11 +72,15 @@ object TimeUtils {
 	def datesBetween(start: Long, end: Long, withDayOff: Boolean): java.util.List[DateTime] = datesBetween(new DateTime(start), new DateTime(end), withDayOff)
 
 	def datesBetween(start: DateTime, end: DateTime, withDayOff: Boolean): java.util.List[DateTime] = {
+		if (start.isEqual(end)){
+			List(start).asJava
+		}   else {
 		val duration = new Duration(start, end)
 		(0 until duration.toStandardDays.getDays + 1)
 			.filter(i => (TimeUtils.isNotSaturdayOrSunday(start.plusDays(i))) && (if (!withDayOff) TimeUtils.isNotDayOff(start.plusDays(i)) else true))
 			.map(i => start.plusDays(i))
 			.asJava
+		}
 	}
 
 	def toNextDayOfWeek(dt: DateTime, dayOfWeek: Integer): DateTime = {
