@@ -5,15 +5,14 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		var initialUsername = $routeParams.username || ($scope.profile.role === RolesConst.EMPLOYEE ? $scope.profile.username : $scope.employee);
 		var initialYear = {
 			'code': _.find(CraYearsConst,function(y) {
-				return y.label === ($routeParams.year || moment().year())
+				return y.label === ($routeParams.year || moment().year()).toString()
 			}).code,
-			'label': ($routeParams.year || moment().year())
+			'label': ($routeParams.year || moment().year()).toString()
 		};
 		var initialMonth = {
 			'code': ($routeParams.month || (moment().month() + 1 )),
 			'label': _.str.capitalize(moment(($routeParams.month || (moment().month())).toString(), 'MMMM').format('MMMM'))
 		};
-
 
 
 		$scope.criterias = {
@@ -34,21 +33,21 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			}
 		};
 
-		$scope.claimSynthesis = function(){
+		$scope.claimSynthesis = function() {
 			// /claim/synthesis/:year/:month
-			$location.path(_.str.sprintf('/cra/claim/synthesis/%s/%s',$scope.cra.year, $scope.cra.month));
+			$location.path(_.str.sprintf('/cra/claim/synthesis/%s/%s', $scope.cra.year, $scope.cra.month));
 		};
 
-		$scope.previous = function(){
-			var previous = moment(_.str.sprintf('%s/%s', $scope.cra.month, $scope.cra.year), 'MM/YYYY').subtract(1,'months')
+		$scope.previous = function() {
+			var previous = moment(_.str.sprintf('%s/%s', $scope.cra.month, $scope.cra.year), 'MM/YYYY').subtract(1, 'months')
 			// /cra/:username/:year/:month
-			$location.path(_.str.sprintf("/cra/%s/%s/%s", $scope.criterias.selected.employee, previous.year(), previous.month() +1));
+			$location.path(_.str.sprintf("/cra/%s/%s/%s", $scope.criterias.selected.employee, previous.year(), previous.month() + 1));
 		};
 
-		$scope.next = function(){
-			var next = moment(_.str.sprintf('%s/%s', $scope.cra.month, $scope.cra.year), 'MM/YYYY').add(1,'months')
+		$scope.next = function() {
+			var next = moment(_.str.sprintf('%s/%s', $scope.cra.month, $scope.cra.year), 'MM/YYYY').add(1, 'months')
 			// /cra/:username/:year/:month
-			$location.path(_.str.sprintf("/cra/%s/%s/%s", $scope.criterias.selected.employee, next.year(), next.month()+1));
+			$location.path(_.str.sprintf("/cra/%s/%s/%s", $scope.criterias.selected.employee, next.year(), next.month() + 1));
 		};
 		$scope.initToolbar = function() {
 			if(profile.data.role !== RolesConst.EMPLOYEE) {
@@ -87,7 +86,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		$scope.isDayDeletable = function(day) {
 			return day &&
 				((day.morning && day.morning.missionType != 'holiday') ||
-				(day.afternoon && day.afternoon.missionType != 'holiday'));
+					(day.afternoon && day.afternoon.missionType != 'holiday'));
 		};
 
 		$scope.isHalfDayDeletable = function(halfday) {
@@ -132,7 +131,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 
 		$scope.removeDay = function(wIndex, date, dIndex) {
 			if(confirm("Êtes-vous sûr de vouloir supprimer cette journée ?")) {
-				var route = jsRoutes.controllers.Days.remove($scope.cra.id, date);
+				var route = jsRoutes.controllers.JDays.remove($scope.cra.id, date);
 				$http({
 					method: route.method,
 					url: route.url
@@ -140,8 +139,9 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 					.success(function(day, status, headers, config) {
 						removeDay($scope.cra.weeks[wIndex].days[dIndex])
 					})
-					.error(function(data, status, headers, config) {
-						$log.error(data, status);
+					.error(function(error, status, headers, config) {
+						$log.error(error, status);
+						$rootScope.onSuccess(error);
 					});
 			}
 		};
@@ -156,7 +156,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				$scope.removeDay(wIndex, date, dIndex);
 			} else {
 				if(confirm("Êtes-vous sûr de vouloir supprimer cette demi-journée ?")) {
-					var route = jsRoutes.controllers.Days.removeHalfDay($scope.cra.id, date, momentOfDay);
+					var route = jsRoutes.controllers.JDays.removeHalfDay($scope.cra.id, date, momentOfDay);
 					$http({
 						method: route.method,
 						url: route.url
@@ -188,7 +188,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 				url: route.url
 			})
 				.success(function(cra, status, headers, config) {
-					$log.log('cra', cra);
+					$log.debug('cra', cra);
 					$scope.cra = cra;
 					$scope.selectedMonth = {name: month, checked: false};
 					$scope.$watch('selectedMonth.checked', function() {

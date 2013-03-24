@@ -31,6 +31,7 @@ import static play.libs.Json.toJson;
 public class JCras extends Controller {
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
+	@ResponseCache.NoCacheResponse
 	public static Result fetch(final String username, final Integer year, final Integer month) {
 		final ObjectId userId = JUser.id(username);
 		final JCra cra = JCra.getOrCreate(userId, year, month);

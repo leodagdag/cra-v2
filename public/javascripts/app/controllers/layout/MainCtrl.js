@@ -3,6 +3,9 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$http', '$log', '$location'
 		$rootScope.onSuccess = function(msg) {
 			$rootScope.$broadcast('event:success', msg);
 		}
+		$rootScope.onError = function(msg) {
+			$rootScope.$broadcast('event:error', msg);
+		}
 	}]);
 
 app.controller('AlertCtrl', ['$scope', '$rootScope', '$timeout', '$log',

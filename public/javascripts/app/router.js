@@ -49,7 +49,7 @@ app.config(['$routeProvider',
 			.when('/claim', {
 				templateUrl: 'public/html/views/claim/claim.html',
 				controller: 'ClaimCtrl',
-                resolve: {'profile': 'Profile' }
+				resolve: {'profile': 'Profile' }
 			})
 
 			.when('/remuneration', {
@@ -74,8 +74,8 @@ app.config(['$routeProvider',
 				controller: 'MyAccountCtrl',
 				resolve: {'profile': 'Profile' }
 			})
-			.when('/',{
-				templateUrl:'public/html/views/changeLog.html',
+			.when('/', {
+				templateUrl: 'public/html/views/changeLog.html',
 				controller: 'MainCtrl'
 			});
 

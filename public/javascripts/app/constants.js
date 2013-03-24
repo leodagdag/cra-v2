@@ -5,10 +5,10 @@ app.constant('YearsConst', [
 		{code: 2015, label: 2015}
 	])
 	.constant('CraYearsConst', [
-		{code: 1, label: 2012},
-		{code: 2, label: 2013},
-		{code: 3, label: 2014},
-		{code: 4, label: 2015}
+		{code: '1', label: '2012'},
+		{code: '2', label: '2013'},
+		{code: '3', label: '2014'},
+		{code: '4', label: '2015'}
 	])
 	.constant('MonthsConst', [
 		{'code': 1, 'label': _.str.capitalize(moment('1', 'MM').format('MMMM'))},

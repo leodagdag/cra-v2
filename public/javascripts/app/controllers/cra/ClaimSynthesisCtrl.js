@@ -38,7 +38,7 @@ app.controller('ClaimSynthesisCtrl', ['$scope', '$rootScope', '$http', '$log', '
 				});
 		};
 
-		$scope.goCra = function(){
+		$scope.goCra = function() {
 			///cra/:username/:year/:month
 			$location.path(_.str.sprintf('/cra/%s/%s/%s', $scope.profile.username, $scope.year, $scope.month));
 		};

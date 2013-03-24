@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import constants.AbsenceType;
 import constants.GenesisMissionCode;
+import constants.MissionType;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -47,7 +48,7 @@ public class JMission {
 	public String missionType;
 	public String absenceType;
 	public String allowanceType;
-	public Boolean isClaimable = Boolean.TRUE;
+	public Boolean isClaimable;
 	@Transient
 	public DateTime startDate;
 	@Transient
@@ -151,6 +152,11 @@ public class JMission {
 		return queryToFindMe(id).get();
 	}
 
+	public static Boolean isAbsenceMission(final ObjectId missionId) {
+		return MorphiaPlugin.ds().getCount(queryToFindMe(missionId)
+			                                   .field("missionType").equal(MissionType.holiday.name())) > 0;
+	}
+
 	@SuppressWarnings({"unused"})
 	@PrePersist
 	private void prePersist() {
@@ -177,5 +183,9 @@ public class JMission {
 		if (_distance != null) {
 			distance = new BigDecimal(_distance);
 		}
+	}
+
+	public static Boolean isClaimable(final ObjectId missionId) {
+		return Boolean.TRUE.equals(queryToFindMe(missionId).get().isClaimable);
 	}
 }

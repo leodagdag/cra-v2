@@ -3,7 +3,7 @@ angular.module('kilometerFilter', [])
 		'use strict';
 		return function(km) {
 			if(km) {
-				return _.str.numberFormat(km,2, ',') + ' km';
+				return _.str.numberFormat(km, 2, ',') + ' km';
 			}
 			return "";
 		}

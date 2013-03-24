@@ -24,9 +24,9 @@ DELETE  /absences/:userId/:id                                       controllers.
 # Day
 # ~~~~
 GET     /cra/claims/synthesis/:userId/:year/:month                  controllers.JCras.claimSynthesis(userId: String, year: java.lang.Integer, month: java.lang.Integer)
-DELETE  /cra/:id/day/:date                                          controllers.Days.remove(id: String, date: Long)
-DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.Days.removeHalfDay(id: String, date: Long, momentOfDay:String)
-GET     /cra/:id/day/:date                                          controllers.JDays.fetch(id: String, date: Long)
+DELETE  /cra/:id/day/:date                                          controllers.JDays.remove(id: String, date: Long)
+DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.JDays.removeHalfDay(id: String, date: Long, momentOfDay:String)
+GET     /cra/:craId/day/:date                                       controllers.JDays.fetch(craId: String, date: Long)
 POST    /days/                                                      controllers.JDays.create()
 # Cra
 # ~~~~

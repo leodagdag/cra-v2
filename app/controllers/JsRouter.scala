@@ -14,9 +14,6 @@ object JsRouter extends Controller {
 				Routes.javascriptRouter("jsRoutes")(
 					Authentication.profile,
 
-					Days.remove,
-					Days.removeHalfDay,
-
 					Cras.invalidate,
 					Cras.validate,
 
@@ -25,11 +22,12 @@ object JsRouter extends Controller {
 
 					JDays.fetch,
 					JDays.create,
+					JDays.remove,
+					JDays.removeHalfDay,
 
 					JAbsences.create,
 					JAbsences.remove,
 					JAbsences.history,
-
 
 					JClaims.history,
 					JClaims.create,

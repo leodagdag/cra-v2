@@ -18,6 +18,7 @@ import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 import constants.ClaimType;
 import constants.MissionAllowanceType;
+import constants.MomentOfDay;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ import org.joda.time.DateTime;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -97,21 +99,21 @@ public class JClaim extends Model implements MongoModel {
 		return claims;
 	}
 
-	public static String delete(final String id) {
+	public static ObjectId delete(final String id) {
 		delete(queryToFindMe(ObjectId.massageToObjectId(id)));
-		return id;
-	}
-
-	private static WriteResult delete(final Query<JClaim> q) {
-		return MorphiaPlugin.ds().delete(q, WriteConcern.ACKNOWLEDGED);
+		return ObjectId.massageToObjectId(id);
 	}
 
 	private static Query<JClaim> queryToFindMe(final ObjectId id) {
 		return q().field(Mapper.ID_KEY).equal(id);
 	}
 
-	public static void deleteMissionAllowance(final List<JDay> days) {
-		Collection<Date> dates = Collections2.transform(days, new Function<JDay, Date>() {
+	private static WriteResult delete(final Query<JClaim> q) {
+		return MorphiaPlugin.ds().delete(q, WriteConcern.ACKNOWLEDGED);
+	}
+
+	public static WriteResult deleteMissionAllowance(final List<JDay> days) {
+		final Collection<Date> dates = Collections2.transform(days, new Function<JDay, Date>() {
 			@Nullable
 			@Override
 			public Date apply(@Nullable final JDay day) {
@@ -122,20 +124,29 @@ public class JClaim extends Model implements MongoModel {
 			                        .field("userId").equal(days.get(0).userId)
 			                        .field("_date").in(dates)
 			                        .field("claimType").equal(ClaimType.MISSION_ALLOWANCE.name());
-		delete(q);
+		return delete(q);
+	}
+	public static WriteResult deleteMissionAllowance(final JDay day, final ObjectId missionId) {
+		final Query<JClaim> q = q()
+			                        .field("userId").equal(day.userId)
+			                        .field("_date").equal(day.date.toDate())
+			                        .field("missionId").equal(missionId)
+			                        .field("claimType").equal(ClaimType.MISSION_ALLOWANCE.name());
+		return delete(q);
 	}
 
 	public static void addMissionAllowance(final List<JDay> days) {
-		final List<JClaim> claims = Lists.newArrayList();
+		final Set<JClaim> claims = Sets.newHashSet();
 		for (final JDay day : days) {
 			claims.addAll(Collections2.transform(day.missionIds(), new Function<ObjectId, JClaim>() {
 				@Nullable
 				@Override
 				public JClaim apply(@Nullable final ObjectId missionId) {
-					return new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance();
+					return JMission.isClaimable(missionId) ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance() : null;
 				}
 			}));
 		}
+		claims.removeAll(Collections.singletonList(null));
 		MorphiaPlugin.ds().save(claims, WriteConcern.ACKNOWLEDGED);
 	}
 
@@ -200,4 +211,6 @@ public class JClaim extends Model implements MongoModel {
 	public ObjectId id() {
 		return this.id;
 	}
+
+
 }

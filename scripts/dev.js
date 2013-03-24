@@ -71,20 +71,20 @@ var customer3 = db.Customer.findOne({code: 'CODE_C_3'});
 /*
  * Mission
  */
-db.Mission.insert({customerId: customer1._id, code: 'C1_M1', description: 'Description de la mission...', allowanceType: 'REAL', _distance: '43', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, JANUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
-db.Mission.insert({customerId: customer1._id, code: 'C1_M2', description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, DECEMBER_JS, NumberInt(31))});
-db.Mission.insert({customerId: customer2._id, code: 'C2_M1', description: 'Description de la mission...', allowanceType: 'REAL', _distance: '72', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
-db.Mission.insert({customerId: customer3._id, code: 'C3_M1', description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, MARCH_JS, ONE), _endDate: new Date(YEAR, NOVEMBER_JS, NumberInt(30))});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M1 (REAL)', description: 'Description de la mission...', allowanceType: 'REAL', _distance: '43', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, JANUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M2 (ZONE)', description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, DECEMBER_JS, NumberInt(31))});
+db.Mission.insert({customerId: customer2._id, code: 'C2_M1 (REAL)', description: 'Description de la mission...', allowanceType: 'REAL', _distance: '72', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
+db.Mission.insert({customerId: customer3._id, code: 'C3_M1 (ZONE)', description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, MARCH_JS, ONE), _endDate: new Date(YEAR, NOVEMBER_JS, NumberInt(30))});
 db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre_sale', isClaimable: true, _startDate: new Date(YEAR, JANUARY_JS, ONE)});
 db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
 db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
 db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
 db.Mission.insert({customerId: genesis._id, code: 'AE', description: 'Absence exceptionnelle', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
 db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not_paid', _startDate: new Date(YEAR, JANUARY_JS, 1)});
-var mission1_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1'});
-var mission2_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2'});
-var mission1_customer2 = db.Mission.findOne({customerId: customer2._id, code: 'C2_M1'});
-var mission1_customer3 = db.Mission.findOne({customerId: customer3._id, code: 'C3_M1'});
+var mission1_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1 (REAL)'});
+var mission2_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2 (ZONE)'});
+var mission1_customer2 = db.Mission.findOne({customerId: customer2._id, code: 'C2_M1 (REAL)'});
+var mission1_customer3 = db.Mission.findOne({customerId: customer3._id, code: 'C3_M1 (ZONE)'});
 var pre_sale = db.Mission.findOne({customerId: genesis._id, missionType: 'pre_sale' });
 var holiday = db.Mission.findOne({customerId: genesis._id, code: 'CP', missionType: 'holiday'});
 var rtte = db.Mission.findOne({customerId: genesis._id, code: 'RTTE', missionType: 'holiday'});
@@ -126,15 +126,15 @@ var bart = db.User.findOne({username: 'bart'});
 /*
  * Vehicle
  */
-/*db.Vehicle.insert({
-	userId: bart._id,
-	vehicleType: "car",
-	power: NumberInt(5),
-	brand: "ALFA_ROMEO",
-	matriculation: "AA-123-AA",
-	_startDate: new Date(YEAR, JANUARY_JS, ONE),
-	active: true
-});*/
+db.Vehicle.insert({
+ userId: bart._id,
+ vehicleType: "car",
+ power: NumberInt(5),
+ brand: "ALFA_ROMEO",
+ matriculation: "AA-123-AA",
+ _startDate: new Date(YEAR, MARCH_JS, ONE),
+ active: true
+ });
 /*
  * Cra
  */

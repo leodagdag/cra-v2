@@ -11,7 +11,7 @@ public enum MomentOfDay {
 	day;
 
 	public static F.Tuple<Boolean, Boolean> to(final String momentOfDay) {
-		final MomentOfDay mod = MomentOfDay.of(momentOfDay);
+		final MomentOfDay mod = MomentOfDay.valueOf(momentOfDay);
 		switch(mod) {
 			case morning:
 				return F.Tuple(Boolean.TRUE, Boolean.FALSE);
@@ -22,14 +22,5 @@ public enum MomentOfDay {
 			default:
 				return F.Tuple(Boolean.FALSE, Boolean.FALSE);
 		}
-	}
-
-	public static MomentOfDay of(final String momentOfDay){
-		for(MomentOfDay mod : MomentOfDay.values()){
-			if(mod.name().equals(momentOfDay)){
-				return mod;
-			}
-		}
-		return null;
 	}
 }

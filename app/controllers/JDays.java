@@ -5,8 +5,10 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import constants.MomentOfDay;
 import dto.DayDTO;
 import exceptions.IllegalDayOperation;
+import models.JClaim;
 import models.JCra;
 import models.JDay;
 import models.JHalfDay;
@@ -31,9 +33,11 @@ import static play.libs.Json.toJson;
  */
 public class JDays extends Controller {
 
-	public static Result fetch(final String idCra,final  Long date) {
+	public static Result fetch(final String craId, final Long date) {
 		final DateTime dt = new DateTime(date);
-		JDay day = JDay.find(new ObjectId(idCra), dt);
+		final ObjectId idCra = ObjectId.massageToObjectId(craId);
+
+		JDay day = JDay.find(idCra, dt);
 		final List<ObjectId> missionsIds = Lists.newArrayList();
 		if (day == null) {
 			day = new JDay(dt);
@@ -64,7 +68,43 @@ public class JDays extends Controller {
 		} catch (IllegalDayOperation e) {
 			return badRequest(toJson(e));
 		}
+	}
 
+	public static Result removeHalfDay(final String craId, final Long date, final String mod) {
+		final MomentOfDay momentOfDay = MomentOfDay.valueOf(mod);
+		final DateTime dt = new DateTime(date);
+		final ObjectId idCra = ObjectId.massageToObjectId(craId);
+
+		final JHalfDay deleteHalfDay = JDay.findHalfDay(idCra, dt, momentOfDay);
+		if (JMission.isAbsenceMission(deleteHalfDay.missionId)) {
+			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
+		}
+		final JDay day = JDay.deleteHalfDay(idCra, dt, momentOfDay);
+
+		// Day empty
+		if (day.morning == null && day.afternoon == null) {
+			return remove(craId, date);
+		}
+
+		final JHalfDay remainder = MomentOfDay.morning.equals(momentOfDay) ? day.afternoon : day.morning;
+		if (!remainder.missionId.equals(deleteHalfDay.missionId)) {
+			JClaim.deleteMissionAllowance(day, deleteHalfDay.missionId);
+		}
+		return ok();
+	}
+
+	public static Result remove(final String craId, final Long date) {
+		final DateTime dt = new DateTime(date);
+		final ObjectId idCra = ObjectId.massageToObjectId(craId);
+
+		final JDay day = JDay.find(idCra, dt);
+		if ((day.morning != null && JMission.isAbsenceMission(day.morning.missionId))
+			    || (day.morning != null && JMission.isAbsenceMission(day.morning.missionId))) {
+			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
+		}
+		JDay.delete(craId, date);
+		JClaim.deleteMissionAllowance(Lists.newArrayList(day));
+		return ok();
 	}
 
 	public static class CreateForm {

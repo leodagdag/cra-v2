@@ -35,7 +35,7 @@
 											<span>{{day.date | dayOfMonth}}</span>
 											<i class="icon-comment" data-ng-show="day.comment"></i>
 											<i class="icon-comment-alt" data-ng-show="!day.comment"></i>
-											<i class="icon-trash pull-right" data-ng-show="isDayDeletable(day)" data-ng-click="removeDay(weekIndex, day.date, $index)"></i>
+											<i class="icon-trash pull-right" data-ng-show="isDayDeletable(day)" data-ng-click="removeDay(wIndex, day.date, $index)"></i>
 										</td>
 									</tr>
 									<tr class="halfday" data-ng-class="getClass(day.morning)">
