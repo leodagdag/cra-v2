@@ -19,6 +19,7 @@ public class WeekDTO {
 	public Integer number;
 	public List<DayDTO> days = Lists.newArrayList();
 
+	@SuppressWarnings({"unused"})
 	public WeekDTO() {
 	}
 

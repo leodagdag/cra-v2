@@ -30,6 +30,7 @@ public class DayDTO {
 	public Boolean inPastOrFuture;
 	public Boolean isSpecial;
 
+	@SuppressWarnings({"unused"})
 	public DayDTO() {
 	}
 

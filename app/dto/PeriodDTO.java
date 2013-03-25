@@ -21,6 +21,7 @@ public class PeriodDTO {
 	public Long endTime;
 	public String periodType = "special";
 
+	@SuppressWarnings({"unused"})
 	public PeriodDTO() {
 	}
 

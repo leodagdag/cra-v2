@@ -28,6 +28,7 @@ public class VehicleDTO {
     public Integer year;
     public Long endDate;
 
+	@SuppressWarnings({"unused"})
     public VehicleDTO() {
     }
 

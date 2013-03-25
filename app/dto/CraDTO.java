@@ -26,6 +26,7 @@ public class CraDTO {
 	public Boolean isValidated;
 	public List<WeekDTO> weeks = Lists.newArrayList();
 
+	@SuppressWarnings({"unused"})
 	public CraDTO() {
 	}
 

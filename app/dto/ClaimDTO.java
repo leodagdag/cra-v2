@@ -37,6 +37,7 @@ public class ClaimDTO {
 	public String journey;
 	public String comment;
 
+	@SuppressWarnings({"unused"})
 	public ClaimDTO() {
 	}
 

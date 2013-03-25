@@ -20,6 +20,7 @@ public class ManagerDTO {
 	public String firstName;
 	public String lastName;
 
+	@SuppressWarnings({"unused"})
 	public ManagerDTO() {
 	}
 

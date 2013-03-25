@@ -202,44 +202,36 @@ class TimeUtilsSpec extends Specification {
 	}
 
 	"TimeUtils.datesBetween" should {
-		"01/01/2013->01/01/2013 without dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,JANUARY,1,0,0), new DateTime(2013,JANUARY,1,0,0), false)
+		"31/12/2012->02/01/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2012,DECEMBER,31,0,0), new DateTime(2013,JANUARY,2,0,0))
+			datesOfWeek.size() must beEqualTo(2)
+		}
+		"01/01/2013->01/01/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,JANUARY,1,0,0), new DateTime(2013,JANUARY,1,0,0))
 			datesOfWeek.size() must beEqualTo(0)
 		}
-		"01/01/2013->01/01/2013 with dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,JANUARY,1,0,0), new DateTime(2013,JANUARY,1,0,0), true)
-			datesOfWeek.size() must beEqualTo(1)
-		}
-		"01/01/2013->03/01/2013 without dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,JANUARY,1,0,0), new DateTime(2013,JANUARY,3,0,0), false)
+		"01/01/2013->03/01/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,JANUARY,1,0,0), new DateTime(2013,JANUARY,3,0,0))
 			datesOfWeek.size() must beEqualTo(2)
 		}
-		"01/01/2013->03/01/2013 with dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,JANUARY,1,0,0), new DateTime(2013,JANUARY,3,0,0), true)
-			datesOfWeek.size() must beEqualTo(3)
-		}
-		"01/02/2013->01/02/2013 without dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,1,0,0), false)
+		"01/02/2013->01/02/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,1,0,0))
 			datesOfWeek.size() must beEqualTo(1)
 		}
-		"01/02/2013->01/02/2013 without dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,1,0,0), false)
+		"01/02/2013->01/02/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,1,0,0))
 			datesOfWeek.size() must beEqualTo(1)
 		}
-		"01/02/2013->03/02/2013 without dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,3,0,0), false)
+		"01/02/2013->03/02/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,3,0,0))
 			datesOfWeek.size() must beEqualTo(1)
 		}
-		"01/02/2013->03/02/2013 with dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,3,0,0), true)
-			datesOfWeek.size() must beEqualTo(1)
-		}
-		"01/02/2013->04/02/2013 with dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,4,0,0), true)
+		"01/02/2013->04/02/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,1,0,0), new DateTime(2013,FEBRUARY,4,0,0))
 			datesOfWeek.size() must beEqualTo(2)
 		}
-		"04/02/2013->08/02/2013 with dayOff" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,4,0,0), new DateTime(2013,FEBRUARY,8,0,0), true)
+		"04/02/2013->08/02/2013" in {
+			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013,FEBRUARY,4,0,0), new DateTime(2013,FEBRUARY,8,0,0))
 			datesOfWeek.size() must beEqualTo(5)
 		}
 	}

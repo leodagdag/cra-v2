@@ -26,17 +26,17 @@ var OCTOBER = NumberInt(10);
 var NOVEMBER = NumberInt(11);
 var DECEMBER = NumberInt(12);
 
+db.Absence.drop();
+db.Claim.drop();
+db.Cra.drop();
+db.Customer.drop();
+db.Day.drop();
+db.HalfDay.drop();
+db.Mission.drop();
+db.PartTime.drop();
 db.Parameter.drop();
 db.User.drop();
 db.Vehicle.drop();
-db.Cra.drop();
-db.Day.drop();
-db.HalfDay.drop();
-db.Absence.drop();
-db.PartTime.drop();
-db.Claim.drop();
-db.Mission.drop();
-db.Customer.drop();
 
 /**
  * Parameter
@@ -236,13 +236,11 @@ db.Absence.insert({
 	userId: bart._id,
 	missionId: holiday._id,
 	startMorning: true,
-	startAfternoon: true,
-	endMorning: true,
 	endAfternoon: true,
 	_nbDays: "3",
 	comment: "Comment absence...",
-	_startDate: new Date(cra.year, MARCH_JS, NumberInt(12)),
-	_endDate: new Date(cra.year, MARCH_JS, NumberInt(14))
+	_startDate: new Date(cra.year, MARCH_JS, NumberInt(12),NumberInt(0),NumberInt(0),NumberInt(0),NumberInt(0)),
+	_endDate: new Date(cra.year, MARCH_JS, NumberInt(14),NumberInt(23),NumberInt(59),NumberInt(59),NumberInt(0))
 });
 
 /*
@@ -330,8 +328,8 @@ db.Day.insert({
 		periods: [
 			{
 				missionId: mission1_customer1._id,
-				_startTime: ISODate("2013-03-07T04:00:00Z"),
-				_endTime: ISODate("2013-03-07T05:00:00Z")
+				_startTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(5),NumberInt(0),NumberInt(0),NumberInt(0)),
+				_endTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(6),NumberInt(0),NumberInt(0),NumberInt(0))
 			}
 		]
 	},
@@ -339,8 +337,8 @@ db.Day.insert({
 		periods: [
 			{
 				missionId: mission1_customer1._id,
-				_startTime: ISODate("2013-03-07T12:00:00Z"),
-				_endTime: ISODate("2013-03-07T13:00:00Z")
+				_startTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(15),NumberInt(0),NumberInt(0),NumberInt(0)),
+				_endTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(16),NumberInt(0),NumberInt(0),NumberInt(0))
 			}
 		]
 	},

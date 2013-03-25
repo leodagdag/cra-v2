@@ -10,7 +10,6 @@ import models.JUser;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import play.Logger;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
@@ -77,9 +76,7 @@ public class JAbsences extends Controller {
 		public String missionId;
 		public Long startDate;
 		public Boolean startMorning;
-		public Boolean startAfternoon;
 		public Long endDate;
-		public Boolean endMorning;
 		public Boolean endAfternoon;
 		public String comment;
 
@@ -90,12 +87,9 @@ public class JAbsences extends Controller {
 		public JAbsence to() {
 			final JAbsence holiday = new JAbsence();
 			holiday.userId = JUser.id(this.username);
-			holiday.startDate = new DateTime(this.startDate);
-			holiday.startMorning = this.startMorning;
-			holiday.startAfternoon = this.startAfternoon;
+			holiday.startDate = startMorning ? new DateTime(this.startDate).withTimeAtStartOfDay() : new DateTime(this.startDate).withTime(12, 0, 0, 0);
+			holiday.endDate = endAfternoon ? new DateTime(this.startDate).withTime(23,59,59,0) : new DateTime(this.startDate).withTime(11,59,59,0);
 			holiday.endDate = new DateTime(this.endDate);
-			holiday.endMorning = this.endMorning;
-			holiday.endAfternoon = this.endAfternoon;
 			holiday.missionId = ObjectId.massageToObjectId(this.missionId);
 			holiday.comment = this.comment;
 			return holiday;

@@ -156,7 +156,8 @@ public class JDay extends Model implements MongoModel {
 	}
 
 	public static void addAbsenceDay(final JAbsence absence) {
-		final List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate, false);
+		// TODO Refactor absence
+		/*final List<DateTime> dts = TimeUtils.datesBetween(absence.startDate, absence.endDate);
 		JCra cra = null;
 
 		for (DateTime dt : dts) {
@@ -194,7 +195,7 @@ public class JDay extends Model implements MongoModel {
 				day.afternoon = new JHalfDay(absence.missionId);
 			}
 			day.insert();
-		}
+		}*/
 	}
 
 	public static void deleteAbsenceDays(final List<DateTime> dates, final String userId, final Boolean includeStartMorning, final Boolean includeEndAfternoon) {

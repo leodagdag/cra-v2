@@ -25,6 +25,7 @@ public class PartTimeDTO {
 	public Integer frequency;
 	public Boolean active;
 
+	@SuppressWarnings({"unused"})
 	public PartTimeDTO() {
 	}
 

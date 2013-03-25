@@ -25,6 +25,7 @@ public class EmployeeDTO {
     public ObjectId managerId;
     public Boolean isManager = Boolean.FALSE;
 
+	@SuppressWarnings({"unused"})
     public EmployeeDTO() {
     }
 

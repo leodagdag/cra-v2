@@ -24,6 +24,7 @@ public class MissionDTO {
 	public String code;
 	public String description;
 
+	@SuppressWarnings({"unused"})
 	public MissionDTO() {
 	}
 

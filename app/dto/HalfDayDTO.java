@@ -22,6 +22,7 @@ public class HalfDayDTO {
 	public List<PeriodDTO> periods = Lists.newArrayList();
 	public Boolean isSpecial = Boolean.FALSE;
 
+	@SuppressWarnings({"unused"})
 	public HalfDayDTO() {
 	}
 

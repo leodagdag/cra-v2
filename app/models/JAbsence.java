@@ -29,15 +29,10 @@ public class JAbsence extends Model implements MongoModel {
 	public ObjectId id;
 	public ObjectId userId;
 	public ObjectId missionId;
-
 	@Transient
 	public DateTime startDate;
-	public Boolean startMorning;
-	public Boolean startAfternoon;
 	@Transient
 	public DateTime endDate;
-	public Boolean endMorning;
-	public Boolean endAfternoon;
 	@Transient
 	public BigDecimal nbDays;
 	public String comment;
@@ -51,8 +46,8 @@ public class JAbsence extends Model implements MongoModel {
 
 	public static JAbsence delete(final String userId, final String id) {
 		final JAbsence absence = MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
-		final List<DateTime> dates = TimeUtils.datesBetween(absence.startDate, absence.endDate, false);
-		JDay.deleteAbsenceDays(dates, userId, absence.startMorning, absence.endAfternoon);
+		final List<DateTime> dates = TimeUtils.datesBetween(absence.startDate, absence.endDate);
+		JDay.deleteAbsenceDays(dates, userId, TimeUtils.startDay().isEqual(absence.startDate.toLocalTime()), TimeUtils.endDay().isEqual(absence.endDate.toLocalTime()));
 		return absence;
 	}
 
@@ -141,9 +136,9 @@ public class JAbsence extends Model implements MongoModel {
 	}
 
 	private String computeNbDays() {
-		return new BigDecimal(TimeUtils.datesBetween(this.startDate, this.endDate, false).size())
-			       .subtract(Boolean.FALSE.equals(this.startMorning) ? new BigDecimal("0.5") : BigDecimal.ZERO)
-			       .subtract(Boolean.FALSE.equals(this.endAfternoon) ? new BigDecimal("0.5") : BigDecimal.ZERO)
+		return new BigDecimal(TimeUtils.datesBetween(this.startDate, this.endDate).size())
+			       //.subtract(Boolean.FALSE.equals(this.startMorning) ? new BigDecimal("0.5") : BigDecimal.ZERO)
+			       //.subtract(Boolean.FALSE.equals(this.endAfternoon) ? new BigDecimal("0.5") : BigDecimal.ZERO)
 			       .toPlainString();
 	}
 

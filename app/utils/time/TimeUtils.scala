@@ -2,13 +2,16 @@ package utils.time
 
 import JodaUtils.dateTimeOrdering
 import java.util.Date
-import org.joda.time.{Duration, Interval, DateTimeConstants, DateTime}
+import org.joda.time._
 import scala.collection.JavaConverters._
 
 /**
  * @author f.patin
  */
 object TimeUtils {
+
+	val startDay = LocalTime.fromMillisOfDay(0)
+	val endDay = new LocalTime(23, 59, 59)
 
 	def dateTime2Date(dts: java.util.List[DateTime]): java.util.List[Date] = dts.asScala.map(_.toDate).asJava
 
@@ -69,14 +72,20 @@ object TimeUtils {
 
 	}
 
-	def datesBetween(start: Long, end: Long, withDayOff: Boolean): java.util.List[DateTime] = datesBetween(new DateTime(start), new DateTime(end), withDayOff)
+	def datesBetween(start: Long, end: Long): java.util.List[DateTime] = datesBetween(new DateTime(start), new DateTime(end))
 
-	def datesBetween(start: DateTime, end: DateTime, withDayOff: Boolean): java.util.List[DateTime] = {
-		val duration = new Duration(start, end)
-		(0 until (duration.toStandardDays.getDays + 1))
-			.filter(i => (TimeUtils.isNotSaturdayOrSunday(start.plusDays(i))) && (if (!withDayOff) TimeUtils.isNotDayOff(start.plusDays(i)) else true))
-			.map(i => start.plusDays(i))
-			.asJava
+	def datesBetween(start: DateTime, end: DateTime): java.util.List[DateTime] = {
+		def add(dt: DateTime, xs: List[DateTime]): List[DateTime] = {
+			if (dt.isAfter(end.withTimeAtStartOfDay())) {
+				xs
+			} else
+			if (TimeUtils.isNotSaturdayOrSunday(dt) && TimeUtils.isNotDayOff(dt)) {
+				add(dt.plusDays(1),dt :: xs)
+			} else {
+				add(dt.plusDays(1),xs)
+			}
+		}
+		add(start.withTimeAtStartOfDay(), List.empty[DateTime]).asJava
 	}
 
 	def toNextDayOfWeek(dt: DateTime, dayOfWeek: Integer): DateTime = {

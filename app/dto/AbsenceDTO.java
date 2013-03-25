@@ -30,14 +30,11 @@ public class AbsenceDTO {
     public String code;
     public String description;
     public Long startDate;
-    public Boolean startMorning;
-    public Boolean startAfternoon;
     public Long endDate;
-    public Boolean endMorning;
-    public Boolean endAfternoon;
     public BigDecimal nbDays;
     public String comment;
 
+	@SuppressWarnings({"unused"})
     public AbsenceDTO() {
     }
 
@@ -50,11 +47,7 @@ public class AbsenceDTO {
             this.description = mission.description;
         }
         this.startDate = absence.startDate.getMillis();
-        this.startMorning = absence.startMorning;
-        this.startAfternoon = absence.startAfternoon;
         this.endDate = absence.endDate.getMillis();
-        this.endMorning = absence.endMorning;
-        this.endAfternoon = absence.endAfternoon;
         this.nbDays = absence.nbDays;
         this.comment = absence.comment;
     }

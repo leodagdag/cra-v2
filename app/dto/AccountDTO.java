@@ -25,6 +25,7 @@ public class AccountDTO {
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId managerId;
 
+	@SuppressWarnings({"unused"})
 	public AccountDTO() {
 	}
 
