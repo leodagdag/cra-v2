@@ -31,14 +31,14 @@ object TimeUtils {
 	def getEaster(year: Integer): DateTime = DaysOff.getEaster(year)
 
 	def getWeeks(year: Integer, month: Integer): java.util.List[Integer] = {
-		def add(xs: List[Integer], curr: DateTime): List[Integer] = {
+		def add(curr: DateTime, xs: List[Integer]): List[Integer] = {
 			if (curr.getMonthOfYear != month) {
 				xs
 			} else {
-				add(curr.getWeekOfWeekyear :: xs, curr.plusWeeks(1))
+				add(curr.plusWeeks(1), curr.getWeekOfWeekyear :: xs)
 			}
 		}
-		add(List.empty[Integer], getFirstDayOfMonth(year, month)).asJava
+		add(getFirstDayOfMonth(year, month), List.empty[Integer]).asJava
 	}
 
 	def getFirstDayOfMonth(dt: DateTime): DateTime = new DateTime(dt.getYear, dt.getMonthOfYear, 1, 0, 0)
@@ -72,15 +72,11 @@ object TimeUtils {
 	def datesBetween(start: Long, end: Long, withDayOff: Boolean): java.util.List[DateTime] = datesBetween(new DateTime(start), new DateTime(end), withDayOff)
 
 	def datesBetween(start: DateTime, end: DateTime, withDayOff: Boolean): java.util.List[DateTime] = {
-		if (start.isEqual(end)){
-			List(start).asJava
-		}   else {
 		val duration = new Duration(start, end)
-		(0 until duration.toStandardDays.getDays + 1)
+		(0 until (duration.toStandardDays.getDays + 1))
 			.filter(i => (TimeUtils.isNotSaturdayOrSunday(start.plusDays(i))) && (if (!withDayOff) TimeUtils.isNotDayOff(start.plusDays(i)) else true))
 			.map(i => start.plusDays(i))
 			.asJava
-		}
 	}
 
 	def toNextDayOfWeek(dt: DateTime, dayOfWeek: Integer): DateTime = {

@@ -11,3 +11,10 @@ println(new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("
 println(new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("ned".getBytes("UTF-8")))))
 println(new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("seymour".getBytes("UTF-8")))))
 println(new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("marge".getBytes("UTF-8")))))
+
+println(s"true && false = ${true && false}")
+println(s"true || false = ${true || false}")
+println(s"true && true = ${true && true}")
+println(s"true || true = ${true || true}")
+println(s"false && false = ${false && false}")
+println(s"false || false = ${false || false}")
