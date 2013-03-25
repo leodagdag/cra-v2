@@ -107,7 +107,95 @@ db.User.insert({username: 'bart', password: '9UFGo/yCqxflJlaVsj9kaw==', role: 'e
 		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
 		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
 	]});
+db.User.insert({username: 'bart-tpl1', password: 'UPqEsTqdRcMBOzNzAu/+3A==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Pleins 1', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
+		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
+db.User.insert({username: 'bart-tpl2', password: 'ivRfEpsPVrTmmYMZp3R2jw==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Pleins 2', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
+		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
+db.User.insert({username: 'bart-tpa1', password: '2rB/O7F/etPodCrKvO1AWg==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Partiel 1', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
+		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
+db.User.insert({username: 'bart-tpa2', password: 'VP93vlWN1p2qcLVYq/hvXw==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Partiel 2', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
+		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
 db.User.insert({username: 'moe', password: 'fzMzTUwvbdb/xwGUTOwvHA==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
+		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
+db.User.insert({username: 'moe-tpl1', password: 'lBfPWQj8f3NeGIa3B5+SWw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Pleins 1', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
+		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
+db.User.insert({username: 'moe-tpl2', password: 'GRB47IMDzwrCDZkunDMRXw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Pleins 2', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
+		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
+db.User.insert({username: 'moe-tpa1', password: 'tn6Qc/dtRaO9Iye32h4UOw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Partiel 1', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
+		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
+db.User.insert({username: 'moe-tpa2', password: 'pcUHwGQpyWBqwVQhh6c5Pg==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Partiel 2', trigramme: 'MSK', email: 'moe@szyslak.com',
 	affectedMissions: [
 		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
 		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id},
