@@ -4,7 +4,6 @@ import JodaUtils.dateTimeOrdering
 import java.util.Date
 import org.joda.time._
 import scala.collection.JavaConverters._
-import java.util
 
 /**
  * @author f.patin
@@ -19,6 +18,8 @@ object TimeUtils {
 	def getMondayOfDate(firstDay: DateTime): DateTime = firstDay.minusDays(firstDay.getDayOfWeek - DateTimeConstants.MONDAY)
 
 	def getSundayOfDate(lastDay: DateTime): DateTime = lastDay.plusDays(DateTimeConstants.SUNDAY - lastDay.getDayOfWeek)
+
+	def isDayOfOrWeekEnd(dt: DateTime): java.lang.Boolean = DaysOff.isDayOff(dt) || DaysOff.isSaturdayOrSunday(dt)
 
 	def isDayOff(day: DateTime): java.lang.Boolean = DaysOff.isDayOff(day)
 
@@ -77,21 +78,30 @@ object TimeUtils {
 
 	def datesBetween(start: DateTime, end: DateTime): java.util.List[DateTime] = {
 		def add(dt: DateTime, xs: List[DateTime]): List[DateTime] = {
-			if (dt.isAfter(end.withTimeAtStartOfDay())) {
+			if (dt.isEqual(end)) {
 				xs
-			} else if (TimeUtils.isNotSaturdayOrSunday(dt) && TimeUtils.isNotDayOff(dt)) {
-				add(dt.plusDays(1), dt :: xs)
+			} else if (TimeUtils.isDayOfOrWeekEnd(dt)) {
+				add(dt.plusHours(12), xs)
 			} else {
-				add(dt.plusDays(1), xs)
+				add(dt.plusHours(12), xs :+ dt)
 			}
 		}
-		add(start.withTimeAtStartOfDay(), List.empty[DateTime]).asJava
+		add(start, List.empty[DateTime]).asJava
 	}
 
-	def nbDaysBetween(start: DateTime, end: DateTime): java.math.BigDecimal = {
-	    val p = new Period(start, end)
-		(BigDecimal( p.toStandardHours.getHours) / 24).bigDecimal
+	def nbDaysBetween(start: DateTime, end: DateTime): java.math.BigDecimal = (BigDecimal(datesBetween(start, end).size()) / 2).bigDecimal
+
+	def containsOnlyWeekEndOrDayOff(start: DateTime, end: DateTime): java.lang.Boolean = {
+		dateRange(start, end, Period.days(1))
+			.forall{
+			dt =>
+				println(s"dt:$dt")
+				TimeUtils.isSaturdayOrSunday(dt) || TimeUtils.isDayOff(dt)
+		}
 	}
+
+
+	def dateRange(from: DateTime, to: DateTime, step: Period): Iterator[DateTime] = Iterator.iterate(from)(_.plus(step)).takeWhile(!_.isAfter(to))
 
 	def toNextDayOfWeek(dt: DateTime, dayOfWeek: Integer): DateTime = {
 		(dt.getDayOfWeek - dayOfWeek) match {
@@ -100,6 +110,4 @@ object TimeUtils {
 			case nb => dt.plusDays(math.abs(nb))
 		}
 	}
-
-
 }

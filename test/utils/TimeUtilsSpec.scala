@@ -235,4 +235,10 @@ class TimeUtilsSpec extends Specification {
 			datesOfWeek.size() must beEqualTo(5)
 		}
 	}
+	"TimeUtils.datesBetween" should {
+		"29/03/2013->02/04/2013" in {
+			val nbDaysBetween = TimeUtils.nbDaysBetween(new DateTime(2013,MARCH,29,0,0,0), new DateTime(2013,APRIL,2,0,0,0))
+			nbDaysBetween must beEqualTo(2)
+		}
+	}
 }

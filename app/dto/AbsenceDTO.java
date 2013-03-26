@@ -47,7 +47,7 @@ public class AbsenceDTO {
             this.description = mission.description;
         }
         this.startDate = absence.startDate.getMillis();
-        this.endDate = absence.endDate.getMillis();
+        this.endDate = absence.endDate.minusDays(1).getMillis();
         this.nbDays = absence.nbDays;
         this.comment = absence.comment;
     }

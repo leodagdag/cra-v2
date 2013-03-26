@@ -3,8 +3,12 @@ package models;
 import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
+import com.google.common.base.Preconditions;
 import constants.AbsenceType;
 import exceptions.AbsenceAlreadyExistException;
+import exceptions.AbsenceEndIllegalDateException;
+import exceptions.AbsenceStartIllegalDateException;
+import exceptions.ContainsOnlyWeekEndOrDayOfException;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
@@ -52,7 +56,16 @@ public class JAbsence extends Model implements MongoModel {
             .field(Mapper.ID_KEY).equal(id);
     }
 
-    public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException {
+    public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException, ContainsOnlyWeekEndOrDayOfException, AbsenceStartIllegalDateException, AbsenceEndIllegalDateException {
+        if (TimeUtils.isDayOfOrWeekEnd(absence.startDate)) {
+            throw new AbsenceStartIllegalDateException(absence.startDate);
+        }
+        if(TimeUtils.isDayOfOrWeekEnd(absence.endDate.minusDays(1))){
+            throw new AbsenceEndIllegalDateException(absence.endDate.minusDays(1));
+        }
+        if (TimeUtils.containsOnlyWeekEndOrDayOff(absence.startDate.withTimeAtStartOfDay(), absence.endDate.minusDays(1).withTimeAtStartOfDay())) {
+            throw new ContainsOnlyWeekEndOrDayOfException(absence);
+        }
         final Query<JAbsence> dateQuery = MorphiaPlugin.ds().createQuery(JAbsence.class);
         dateQuery.or(
             dateQuery.and(
@@ -68,11 +81,13 @@ public class JAbsence extends Model implements MongoModel {
                 dateQuery.criteria("_endDate").greaterThanOrEq(absence.endDate.toDate())
             )
         );
+
         if (dateQuery.countAll() > 0) {
-            throw new AbsenceAlreadyExistException();
+            throw new AbsenceAlreadyExistException(absence);
         }
+
         absence.insert();
-        //JDay.addAbsenceDay(absence);
+        JDay.addAbsenceDay(absence);
         return absence;
     }
 
