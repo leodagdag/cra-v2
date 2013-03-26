@@ -88,8 +88,7 @@ public class JAbsences extends Controller {
 			final JAbsence holiday = new JAbsence();
 			holiday.userId = JUser.id(this.username);
 			holiday.startDate = startMorning ? new DateTime(this.startDate).withTimeAtStartOfDay() : new DateTime(this.startDate).withTime(12, 0, 0, 0);
-			holiday.endDate = endAfternoon ? new DateTime(this.startDate).withTime(23,59,59,0) : new DateTime(this.startDate).withTime(11,59,59,0);
-			holiday.endDate = new DateTime(this.endDate);
+			holiday.endDate = endAfternoon ? new DateTime(this.endDate).withTime(0,0,0,0).plusDays(1) : new DateTime(this.endDate).withTime(12,0,0,0);
 			holiday.missionId = ObjectId.massageToObjectId(this.missionId);
 			holiday.comment = this.comment;
 			return holiday;
