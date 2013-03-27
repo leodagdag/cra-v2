@@ -57,10 +57,10 @@ public class JAbsence extends Model implements MongoModel {
     }
 
     public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException, ContainsOnlyWeekEndOrDayOfException, AbsenceStartIllegalDateException, AbsenceEndIllegalDateException {
-        if (TimeUtils.isDayOfOrWeekEnd(absence.startDate)) {
+        if (TimeUtils.isDayOffOrWeekEnd(absence.startDate)) {
             throw new AbsenceStartIllegalDateException(absence.startDate);
         }
-        if(TimeUtils.isDayOfOrWeekEnd(absence.endDate.minusDays(1))){
+        if(TimeUtils.isDayOffOrWeekEnd(absence.endDate.minusDays(1))){
             throw new AbsenceEndIllegalDateException(absence.endDate.minusDays(1));
         }
         if (TimeUtils.containsOnlyWeekEndOrDayOff(absence.startDate.withTimeAtStartOfDay(), absence.endDate.minusDays(1).withTimeAtStartOfDay())) {
