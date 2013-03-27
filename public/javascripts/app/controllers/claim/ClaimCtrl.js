@@ -4,7 +4,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 			return {
 				userId: userId,
 				missionId: form.missionId,
-				date: moment(form.date, 'DD/MM/YYYY').valueOf(),
+				date: form.date ? moment(form.date, 'DD/MM/YYYY').valueOf() : null,
 				claimType: form.claimType,
 				amount: form.amount,
 				kilometer: form.kilometer,
@@ -14,6 +14,8 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		};
 
 		$scope.profile = profile.data;
+
+		$scope.errors = {};
 
 		/* Form */
 		$scope.form = {};
@@ -37,6 +39,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		};
 
 		$scope.save = function() {
+			$scope.errors = {};
 			var claim = new Claim($scope.profile.id, $scope.form);
 			var route = jsRoutes.controllers.JClaims.create();
 			$http({
@@ -49,7 +52,10 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 					$rootScope.onSuccess("La note de frais a été créée.");
 					$scope.loadHistory();
 				})
-				.error(function(error, status, headers, config) {
+				.error(function(errors, status, headers, config) {
+					_(errors).forEach(function(err, key) {
+						$scope.errors[key] = err.join('<br>');
+					});
 				});
 		};
 

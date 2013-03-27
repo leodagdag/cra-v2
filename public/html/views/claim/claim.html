@@ -2,62 +2,73 @@
 	<div class="row-fluid">
 		<div class="span4 offset1" data-ng-init="loadRefs()">
 			<form class="form-horizontal well well-small" data-ng-submit="save()">
-				<div class="control-group">
+				<div class="control-group" data-ng-class="{'error': errors.missionId}">
 					<label class="control-label" for="missionId">Mission <i class="icon-mandatory"></i></label>
 
 					<div class="controls">
-						<select class="input-medium" name="missionId" id="missionId" data-ng-model="form.missionId" required="required" data-ng-options="m.id as m.code for m in missions">
+						<select class="input-medium" name="missionId" id="missionId" required="required" data-ng-model="form.missionId" data-ng-options="m.id as m.code for m in missions">
 							<option value=""></option>
 						</select>
+						<span class="help-block"><em>{{errors.missionId}}</em></span>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="control-group" data-ng-class="{'error': errors.date}">
 					<label class="control-label" for="date">Le <i class="icon-mandatory"></i></label>
 
 					<div class="controls">
-						<input type="text" class="input-small" data-b-datepicker id="date" data-ng-model="form.date" required="required">
+						<input type="text" class="input-small" required="required" data-b-datepicker id="date" data-ng-model="form.date">
+						<span class="help-block"><em>{{errors.date}}</em></span>
 					</div>
 				</div>
 				<hr>
 				<h6>Frais</h6>
 
-				<div class="control-group">
+				<div class="control-group" data-ng-class="{'error': errors.claimType}">
 					<label class="control-label" for="type">Type</label>
 
 					<div class="controls">
 						<select class="input-medium" id="type" data-ng-model="form.claimType" data-ng-options="ct.code as ct.label for ct in claimsType">
 							<option value=""></option>
 						</select>
+						<span class="help-block"><em>{{errors.claimType}}</em></span>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="control-group" data-ng-class="{'error': errors.amount}">
 					<label class="control-label" for="amount">Montant </label>
 
 					<div class="controls">
 						<div class="input-append">
 							<input type="text" class="input-mini" data-ng-model="form.amount" id="amount" pattern="\d{1,4}([,.]\d{0,2})?"><span class="add-on">€</span>
 						</div>
+						<span class="help-block"><em>{{errors.amount}}</em></span>
 					</div>
+				</div>
+				<div data-ng-class="{'control-group error': errors.global}">
+					<span class="help-block"><em>{{errors.global}}</em></span>
 				</div>
 				<hr>
 				<h6>Déplacement</h6>
 
-				<div class="control-group">
+				<div class="control-group" data-ng-class="{'error': errors.kilometer}">
 					<label class="control-label" for="kilometer">Nombre de Km </label>
 
 					<div class="controls">
 						<div class="input-append">
-
 							<input type="text" class="input-mini" data-ng-model="form.kilometer" id="kilometer" pattern="\d{1,4}([.]\d{0,2})?"><span class="add-on"><i class="icon-road"></i></span>
 						</div>
+						<span class="help-block"><em>{{errors.kilometer}}</em></span>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="control-group" data-ng-class="{'error': errors.journey}">
 					<label class="control-label" for="journey">Destination</label>
 
 					<div class="controls">
 						<input type="text" class="" id="journey" data-ng-model="form.journey">
+						<span class="help-block"><em>{{errors.journey}}</em></span>
 					</div>
+				</div>
+				<div data-ng-class="{'control-group error': errors.global}">
+					<span class="help-block"><em>{{errors.global}}</em></span>
 				</div>
 				<hr>
 				<div class="control-group">

@@ -13,6 +13,7 @@ import dto.ClaimDTO;
 import models.JClaim;
 import models.JMission;
 import models.JUser;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
@@ -53,7 +54,7 @@ public class JClaims extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
 		final Form<CreateClaimForm> form = Form.form(CreateClaimForm.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 
@@ -82,12 +83,43 @@ public class JClaims extends Controller {
 		public String comment;
 
 		public List<ValidationError> validate() {
-			return null;
+			final List<ValidationError> errors = Lists.newArrayList();
+			if(missionId == null) {
+				errors.add(new ValidationError("missionId", "La mission est requise."));
+			}
+			if(date == null) {
+				errors.add(new ValidationError("date", "La date est requise."));
+			} else if(new DateTime(date).isBefore(DateTime.now().withDayOfMonth(1))) {
+				errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une note de frais précédant le mois en cours."));
+			}
+			if(StringUtils.isBlank(claimType) && StringUtils.isBlank(amount) && StringUtils.isBlank(kilometer) && StringUtils.isBlank(journey)) {
+				errors.add(new ValidationError("global", "Vous devez saisir au moins un frais ou un déplacement."));
+			} else {
+				if(StringUtils.isNotBlank(claimType) && StringUtils.isBlank(amount)) {
+					errors.add(new ValidationError("amount", "Le montant du frais est requis."));
+
+				} else if(StringUtils.isBlank(claimType) && StringUtils.isNotBlank(amount)) {
+					errors.add(new ValidationError("claimType", "Le type de frais est requis."));
+					if(StringUtils.isNotBlank(amount) && new BigDecimal(amount).compareTo(BigDecimal.ZERO) <= 0) {
+						errors.add(new ValidationError("amount", "Le montant du frais doit être supérieur à 0."));
+					}
+				}
+
+				if(StringUtils.isNotBlank(kilometer) && StringUtils.isBlank(journey)) {
+					errors.add(new ValidationError("journey", "La destination est requise."));
+					if(StringUtils.isNotBlank(kilometer) && new BigDecimal(kilometer).compareTo(BigDecimal.ZERO) <= 0) {
+						errors.add(new ValidationError("kilometer", "Le nombre de kilomètre doit être supérieur à 0."));
+					}
+				} else if(StringUtils.isBlank(kilometer) && StringUtils.isNotBlank(journey)) {
+					errors.add(new ValidationError("kilometer", "Le nombre de kilomètre est requis."));
+				}
+			}
+			return errors.isEmpty() ? null : errors;
 		}
 
 		public List<JClaim> to() {
 			final List<JClaim> claims = Lists.newArrayListWithExpectedSize(2);
-			if (this.amount != null) {
+			if(this.amount != null) {
 				final JClaim claim = new JClaim();
 				claim.userId = this.userId;
 				claim.missionId = this.missionId;
@@ -97,7 +129,7 @@ public class JClaims extends Controller {
 				claim.comment = this.comment;
 				claims.add(claim);
 			}
-			if (this.kilometer != null) {
+			if(this.kilometer != null) {
 				final JClaim claim = new JClaim();
 				claim.userId = userId;
 				claim.missionId = this.missionId;
