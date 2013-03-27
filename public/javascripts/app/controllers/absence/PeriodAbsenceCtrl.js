@@ -2,16 +2,14 @@ app.controller('PeriodAbsenceCtrl', ['$scope', '$http', '$log', '$location', '$r
 	function PeriodAbsenceCtrl($scope, $http, $log, $location, $routeParams) {
 		$scope.localSave = function() {
 			var period = {
-				missionId: $scope.missionId,
-				startDate: moment($scope.startDate, 'DD/MM/YYYY').valueOf(),
-				startMorning: $scope.startMorning,
-				startAfternoon: $scope.startAfternoon,
-				endDate: moment($scope.endDate, 'DD/MM/YYYY').valueOf(),
-				endMorning: $scope.endMorning,
-				endAfternoon: $scope.endAfternoon,
-				comment: $scope.comment
+				day: false,
+				missionId: $scope.form.missionId,
+				startDate: $scope.form.startDate ? moment($scope.form.startDate, 'DD/MM/YYYY').valueOf() : null,
+				startMorning: $scope.form.startMorning,
+				endDate: $scope.form.endDate ? moment($scope.form.endDate, 'DD/MM/YYYY').valueOf() : null,
+				endAfternoon: $scope.form.endAfternoon,
+				comment: $scope.form.comment
 			};
-			$log.debug('period', period);
 			$scope.save(period);
 		};
 	}]);

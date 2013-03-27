@@ -1,38 +1,42 @@
 <div class="row-fluid">
-	<form class="span9 offset1 well well-small" data-ng-controller="DayAbsenceCtrl"
-	      data-ng-submit="localSave()">
-		<fieldset>
-			<div class="row-fluid">
-				<div class="span3">
-					<span>Motif <i class="icon-mandatory"></i></span>
+	<div class="span12">
+		<form class="form-horizontal well well-small" data-ng-controller="DayAbsenceCtrl" data-ng-submit="localSave()">
+			<fieldset>
+				<div class="control-group" data-ng-class="{'error': errors.missionId}">
+					<label class="control-label" for="missionId">Motif <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<select id="missionId" required="required" data-ng-model="form.missionId" data-ng-options="mission.id as mission.description for mission  in missions">
+							<option value=""></option>
+						</select>
+						<span class="help-block"><em>{{errors.missionId}}</em></span>
+					</div>
 				</div>
-				<div class="span9">
-					<select data-ng-model="missionId" required="required" data-ng-options="mission.id as mission.description for mission  in missions">
-						<option value=""></option>
-					</select>
+				<div class="control-group" data-ng-class="{'error': errors.date || errors.limits}">
+					<label class="control-label" for="date">Date <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span5" id="date" required="required" data-b-datepicker data-ng-model="form.date">
+						<span class="help-block"><em>{{errors.date}}</em></span>
+					</div>
+					<div class="controls">
+						<input type="checkbox" data-ng-model="form.morning" data-ng-init="form.morning=true"> Matin
+						<input type="checkbox" data-ng-model="form.afternoon" data-ng-init="form.afternoon=true"> Après-midi
+						<span class="help-block"><em>{{errors.limits}}</em></span>
+					</div>
 				</div>
-			</div>
-			<div class="row-fluid">
-				<div class="span3">
-					<span>Date <i class="icon-mandatory"></i></span>
+				<div class="control-group" data-ng-class="{'error': errors.comment}">
+					<label class="control-label" for="comment">Commentaire</label>
+
+					<div class="controls">
+						<textarea id="comment" rows="3" data-ng-model="form.comment"></textarea>
+						<span class="help-block"><em>{{errors.comment}}</em></span>
+					</div>
 				</div>
-				<div class="span9">
-					<input type="text" class="span5" data-b-datepicker data-ng-model="date" required="required">
-					<input type="checkbox" data-ng-model="morning" data-ng-init="morning=true"> Matin
-					<input type="checkbox" data-ng-model="afternoon" data-ng-init="afternoon=true"> Après-midi
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
 				</div>
-			</div>
-			<div class="row-fluid">
-				<div class="span3">
-					<span>Commentaire</span>
-				</div>
-				<div class="span9">
-					<textarea rows="3" data-ng-model="comment"></textarea>
-				</div>
-			</div>
-			<div class="form-actions">
-				<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
-			</div>
-		</fieldset>
-	</form>
+			</fieldset>
+		</form>
+	</div>
 </div>

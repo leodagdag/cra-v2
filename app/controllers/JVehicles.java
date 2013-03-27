@@ -66,7 +66,7 @@ public class JVehicles extends Controller {
 		public String vehicleType;
 		@Constraints.Required(message = "La marque est requise.")
 		public String brand;
-		@Constraints.Required(message = "La puissance fisclae/cylindré est requise.")
+		@Constraints.Required(message = "La puissance fiscale/cylindrée est requise.")
 		public Integer power;
 		@Constraints.Required(message = "L'immatriculation est requise.")
 		public String matriculation;

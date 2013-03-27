@@ -81,8 +81,9 @@ public class JAbsences extends Controller {
 
 	public static class CreateAbsenceForm {
 
+		public Boolean day = Boolean.TRUE;
 		public String username;
-		public String missionId;
+		public ObjectId missionId;
 		public Long startDate;
 		public Boolean startMorning;
 		public Long endDate;
@@ -90,7 +91,33 @@ public class JAbsences extends Controller {
 		public String comment;
 
 		public List<ValidationError> validate() {
-			return null;
+			final List<ValidationError> errors = Lists.newArrayList();
+			if(missionId == null) {
+				errors.add(new ValidationError("missionId", "La mission est requise."));
+			}
+			if(Boolean.TRUE.equals(day)) {
+				if(startDate == null) {
+					errors.add(new ValidationError("date", "La date est requise."));
+				} else if(new DateTime(startDate).isBefore(DateTime.now().withDayOfMonth(1))) {
+					errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une absence précédant le mois en cours."));
+				}
+				if(!Boolean.TRUE.equals(startMorning) && !Boolean.TRUE.equals(endAfternoon)) {
+					errors.add(new ValidationError("limits", "Vous devez sélectionner au moins une demi-journée."));
+				}
+			} else {
+				if(startDate == null) {
+					errors.add(new ValidationError("startDate", "La date de début est requise."));
+				}
+				if(endDate == null) {
+					errors.add(new ValidationError("endDate", "La date de fin est requise."));
+				}
+				if(startDate != null && endDate != null && endDate < startDate) {
+					errors.add(new ValidationError("dates", "La date de début doit être avant la date de fin."));
+				} else if(new DateTime(startDate).isBefore(DateTime.now().withDayOfMonth(1))) {
+					errors.add(new ValidationError("dates", "Vous ne pouvez pas saisir une absence précédant le mois en cours."));
+				}
+			}
+			return errors.isEmpty() ? null : errors;
 		}
 
 		public JAbsence to() {

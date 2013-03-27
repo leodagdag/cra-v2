@@ -1,16 +1,14 @@
 app.controller('DayAbsenceCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
 	function DayAbsenceCtrl($scope, $http, $log, $location, $routeParams) {
-
 		$scope.localSave = function() {
 			var day = {
-				missionId: $scope.missionId,
-				startDate: moment($scope.date, 'DD/MM/YYYY').valueOf(),
-				startMorning: $scope.morning,
-				startAfternoon: $scope.afternoon,
-				endDate: moment($scope.date, 'DD/MM/YYYY').valueOf(),
-				endMorning: $scope.morning,
-				endAfternoon: $scope.afternoon,
-				comment: $scope.comment
+				day: true,
+				missionId: $scope.form.missionId,
+				startDate: $scope.form.date ? moment($scope.form.date, 'DD/MM/YYYY').valueOf() : null,
+				startMorning: $scope.form.morning,
+				endDate: moment($scope.form.date, 'DD/MM/YYYY').valueOf(),
+				endAfternoon: $scope.form.afternoon,
+				comment: $scope.form.comment
 			};
 			$scope.save(day);
 		};

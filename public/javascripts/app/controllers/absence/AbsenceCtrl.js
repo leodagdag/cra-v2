@@ -24,9 +24,19 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 				loadMissions();
 			}
 		};
+		$scope.form = {};
 
+		$scope.errors ={
+			global:null,
+			missionId:null,
+			date:null,
+			startDate:null,
+			endDate:null,
+			limits:null
+		};
 		$scope.save = function(absence) {
 			absence.username = $scope.profile.username;
+			$scope.errors = {};
 			var route = jsRoutes.controllers.JAbsences.create();
 			$http({
 				method: route.method,
@@ -35,10 +45,14 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			})
 				.success(function(absence, status, headers, config) {
 					$rootScope.onSuccess("L'absence a été créée.");
+					$scope.form = {};
 					$scope.loadHistory();
 				})
-				.error(function(error, status, headers, config) {
-					$log.error(error);
+				.error(function(errors, status, headers, config) {
+					$log.error(errors);
+					_(errors).forEach(function(err, key) {
+						$scope.errors[key] = err.join('<br>');
+					});
 				});
 		};
 
