@@ -81,7 +81,7 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		};
 
 		$scope.deactivate = function(id) {
-			if(confirm('Êtes vous sur de vouloir désactivé votre véhicule ?')) {
+			if(confirm('Êtes-vous sûr de vouloir désactiver votre véhicule ?')) {
 				var route = jsRoutes.controllers.JVehicles.deactivate();
 				$http({
 					'method': route.method,

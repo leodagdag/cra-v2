@@ -5,5 +5,6 @@ package constants;
  */
 public enum MissionAllowanceType {
 	REAL,
-	ZONE
+	ZONE,
+	NONE
 }

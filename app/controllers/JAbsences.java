@@ -9,7 +9,6 @@ import exceptions.AbsenceEndIllegalDateException;
 import exceptions.AbsenceStartIllegalDateException;
 import exceptions.ContainsOnlyWeekEndOrDayOfException;
 import models.JAbsence;
-import models.JClaim;
 import models.JDay;
 import models.JUser;
 import org.bson.types.ObjectId;
@@ -31,9 +30,10 @@ import static play.libs.Json.toJson;
 public class JAbsences extends Controller {
 
 	@BodyParser.Of(BodyParser.Json.class)
+	@ResponseCache.NoCacheResponse
 	public static Result create() {
 		final Form<CreateAbsenceForm> form = Form.form(CreateAbsenceForm.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateAbsenceForm createAbsenceForm = form.get();
@@ -41,31 +41,27 @@ public class JAbsences extends Controller {
 			final JAbsence absence = JAbsence.create(createAbsenceForm.to());
 			JDay.addAbsenceDays(absence);
 			return created(toJson(AbsenceDTO.of(absence)));
-		} catch (AbsenceAlreadyExistException | ContainsOnlyWeekEndOrDayOfException | AbsenceStartIllegalDateException | AbsenceEndIllegalDateException e) {
+		} catch(AbsenceAlreadyExistException | ContainsOnlyWeekEndOrDayOfException | AbsenceStartIllegalDateException | AbsenceEndIllegalDateException e) {
 			return internalServerError(toJson(e.getMessage()));
 		}
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result remove(final String userId, final String id) {
-		/*final JAbsence absence = JAbsence.delete(userId, id);
-		final Map<DateTime, F.Tuple<Boolean, Boolean>> m = AbsenceUtils.extractDays(absence.startDate, absence.endDate);
-		final List<JDay> days = JDay.find(userId, m.keySet());
-		final ObjectId userObjectId = ObjectId.massageToObjectId(userId);
-		JDay.deleteAbsenceDays(m, userObjectId);
-		JClaim.computeMissionAllowance(userObjectId, days);
-		return ok(toJson(AbsenceDTO.of(absence)));*/
-		return ok();
+		final JAbsence absence = JAbsence.delete(userId, id);
+		JDay.deleteAbsenceDays(absence);
+		return ok(toJson(AbsenceDTO.of(absence)));
 	}
 
 	@ResponseCache.NoCacheResponse
 	public static Result history(final String userId, final String absenceType, final Integer year, final Integer month) {
 		final List<JAbsence> absences = Lists.newArrayList();
 		final AbsenceType at = AbsenceType.of(absenceType);
-		if (year == 0) {
+		if(year == 0) {
 			absences.addAll(JAbsence.fetch(userId, at));
 		} else {
-			if (month == 0) {
-				switch (at) {
+			if(month == 0) {
+				switch(at) {
 					case CP:
 						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
 						break;

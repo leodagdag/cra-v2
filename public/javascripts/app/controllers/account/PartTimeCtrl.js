@@ -80,7 +80,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 		};
 
 		$scope.deactivate = function(id) {
-			if(confirm('Êtes vous sur de vouloir désactivé votre temps partiel ?')) {
+			if(confirm('Êtes-vous sûr de vouloir désactiver votre temps partiel ?')) {
 				var route = jsRoutes.controllers.JPartTimes.deactivate();
 				$http({
 					method: route.method,

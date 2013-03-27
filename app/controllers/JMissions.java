@@ -1,5 +1,6 @@
 package controllers;
 
+import caches.ResponseCache;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import dto.MissionDTO;
@@ -15,16 +16,19 @@ import static play.libs.Json.toJson;
  */
 public class JMissions extends Controller {
 
+	@ResponseCache.NoCacheResponse
 	public static Result absences() {
 		final ImmutableList<JMission> missions = JMission.getAbsencesMissions();
 		return ok(toJson(MissionDTO.of(missions)));
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result claimable(final String username) {
 		final ImmutableList<JMission> missions = JMission.getClaimableMissions(JUser.affectedMissions(username, null, null));
 		return ok(toJson(MissionDTO.of(missions)));
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result affectedMissions(final String username, final Long startDate, final Long endDate) {
 		final ImmutableCollection<JMission> missions = JMission.codeAndMissionType(JUser.affectedMissions(username, startDate, endDate)).values();
 		return ok(toJson(MissionDTO.of(missions)));

@@ -1,6 +1,6 @@
 package utils.business
 
-import org.joda.time.{LocalTime, DateTime}
+import org.joda.time.{Period, LocalTime, DateTime}
 import utils.time.TimeUtils
 import scala.collection.JavaConverters._
 import play.libs.F
@@ -46,11 +46,23 @@ object AbsenceUtils {
 		}
 		_halfDays(start, end)
 			.groupBy(hd => hd.withTimeAtStartOfDay())
-			.map {
-			k =>
-				println(k)
-				(k._1, toTuple(k._2))
-		}
+			.map(k => (k._1, toTuple(k._2)))
 			.asJava
+	}
+
+	def containsOnlyWeekEndOrDayOff(start: DateTime, end: DateTime): java.lang.Boolean = {
+
+		val s: DateTime = start.withTimeAtStartOfDay
+		val e: DateTime = end.withTimeAtStartOfDay
+		if (s.isEqual(e)) {
+			// HalfDay
+			TimeUtils.isDayOffOrWeekEnd(start)
+		} else if (s.isEqual(e.minusDays(1))) {
+			// One Day
+			TimeUtils.isDayOffOrWeekEnd(start)
+		} else {
+			TimeUtils.dateRange(s, e, Period.days(1))
+				.forall(dt => TimeUtils.isDayOffOrWeekEnd(dt))
+		}
 	}
 }

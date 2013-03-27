@@ -75,12 +75,12 @@ db.Mission.insert({customerId: customer1._id, code: 'C1_M1 (REAL)', description:
 db.Mission.insert({customerId: customer1._id, code: 'C1_M2 (ZONE)', description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, DECEMBER_JS, NumberInt(31))});
 db.Mission.insert({customerId: customer2._id, code: 'C2_M1 (REAL)', description: 'Description de la mission...', allowanceType: 'REAL', _distance: '72', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
 db.Mission.insert({customerId: customer3._id, code: 'C3_M1 (ZONE)', description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, MARCH_JS, ONE), _endDate: new Date(YEAR, NOVEMBER_JS, NumberInt(30))});
-db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', missionType: 'pre_sale', isClaimable: true, _startDate: new Date(YEAR, JANUARY_JS, ONE)});
-db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
-db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
-db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
-db.Mission.insert({customerId: genesis._id, code: 'AE', description: 'Absence exceptionnelle', missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
-db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel', missionType: 'not_paid', _startDate: new Date(YEAR, JANUARY_JS, 1)});
+db.Mission.insert({customerId: genesis._id, code: 'AV', description: 'Avant vente', allowanceType: 'NONE',missionType: 'pre_sale', isClaimable: true, _startDate: new Date(YEAR, JANUARY_JS, ONE)});
+db.Mission.insert({customerId: genesis._id, code: 'CP', description: 'Congé payé', allowanceType: 'NONE',missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
+db.Mission.insert({customerId: genesis._id, code: 'RTTE', description: 'RTT Employeur', allowanceType: 'NONE',missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
+db.Mission.insert({customerId: genesis._id, code: 'RTTS', description: 'RTT Salarié', allowanceType: 'NONE',missionType: 'holiday', absenceType: 'RTT', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
+db.Mission.insert({customerId: genesis._id, code: 'AE', description: 'Absence exceptionnelle', allowanceType: 'NONE',missionType: 'holiday', absenceType: 'CP', _startDate: new Date(YEAR, JANUARY_JS, ONE) });
+db.Mission.insert({customerId: genesis._id, code: 'TP', description: 'Temps partiel',allowanceType: 'NONE', missionType: 'not_paid', _startDate: new Date(YEAR, JANUARY_JS, 1)});
 var mission1_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1 (REAL)'});
 var mission2_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2 (ZONE)'});
 var mission1_customer2 = db.Mission.findOne({customerId: customer2._id, code: 'C2_M1 (REAL)'});
@@ -226,12 +226,14 @@ db.Vehicle.insert({
 /*
  * Cra
  */
+/*
 db.Cra.insert({year: YEAR, month: MARCH, userId: bart._id, comment: 'Commentaire cra...', isValidated: false});
 var cra = db.Cra.findOne({year: YEAR, month: MARCH});
-
+*/
 /*
  * Absence
  */
+/*
 db.Absence.insert({
 	userId: bart._id,
 	missionId: holiday._id,
@@ -242,7 +244,7 @@ db.Absence.insert({
 	_startDate: new Date(cra.year, MARCH_JS, NumberInt(12), NumberInt(0), NumberInt(0), NumberInt(0), NumberInt(0)),
 	_endDate: new Date(cra.year, MARCH_JS, NumberInt(14), NumberInt(23), NumberInt(59), NumberInt(59), NumberInt(0))
 });
-
+      */
 /*
  * Day
  */

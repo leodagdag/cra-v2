@@ -1,12 +1,6 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.Index;
-import com.github.jmkgreen.morphia.annotations.Indexes;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
@@ -26,11 +20,7 @@ import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author f.patin
@@ -77,6 +67,90 @@ public class JClaim extends Model implements MongoModel {
 		return MorphiaPlugin.ds().createQuery(JClaim.class);
 	}
 
+	private static Query<JClaim> queryToFindMe(final ObjectId id) {
+		return q().field(Mapper.ID_KEY).equal(id);
+	}
+
+	private static WriteResult delete(final Query<JClaim> q) {
+		return MorphiaPlugin.ds().delete(q, WriteConcern.ACKNOWLEDGED);
+	}
+
+	private static void addMissionAllowance(final List<JDay> days) {
+		final Set<JClaim> claims = Sets.newHashSet();
+		for(final JDay day : days) {
+			claims.addAll(Collections2.transform(day.missionIds(), new Function<ObjectId, JClaim>() {
+				@Nullable
+				@Override
+				public JClaim apply(@Nullable final ObjectId missionId) {
+					return JMission.isClaimable(missionId) ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance() : null;
+				}
+			}));
+		}
+		claims.removeAll(Collections.singletonList(null));
+		MorphiaPlugin.ds().save(claims, WriteConcern.ACKNOWLEDGED);
+	}
+
+	private JClaim computeMissionAllowance() {
+		final JVehicle vehicle = JVehicle.active(this.userId);
+		final JMission mission = JMission.fetch(this.missionId);
+		switch(MissionAllowanceType.valueOf(mission.allowanceType)) {
+			case ZONE:
+				this.amount = JParameter.zoneAmount(date);
+				return this;
+			case REAL:
+				final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);
+				this.amount = mission.distance.multiply(coefficient);
+				return this;
+			case NONE:
+			default:
+				return null;
+		}
+
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(date != null) {
+			_date = date.toDate();
+			year = new DateTime(_date).getYear();
+			month = new DateTime(_date).getMonthOfYear();
+		}
+		if(amount != null) {
+			_amount = amount.toPlainString();
+		}
+		if(kilometer != null) {
+			_kilometer = kilometer.toPlainString();
+		}
+		compute();
+	}
+
+	private void compute() {
+		if(this.kilometer != null) {
+			final JVehicle vehicle = JVehicle.active(this.userId);
+			final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);
+			kilometerAmount = kilometer.multiply(coefficient);
+			_kilometerAmount = kilometerAmount.toPlainString();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_date != null) {
+			date = new DateTime(_date.getTime());
+		}
+		if(StringUtils.isNotBlank(_amount)) {
+			amount = new BigDecimal(_amount);
+		}
+		if(StringUtils.isNotBlank(_kilometer)) {
+			kilometer = new BigDecimal(_kilometer);
+		}
+		if(StringUtils.isNotBlank(_kilometerAmount)) {
+			kilometerAmount = new BigDecimal(_kilometerAmount);
+		}
+	}
+
 	public static List<JClaim> create(final List<JClaim> claims) {
 		MorphiaPlugin.ds().save(claims);
 		return claims;
@@ -85,14 +159,6 @@ public class JClaim extends Model implements MongoModel {
 	public static ObjectId delete(final String id) {
 		delete(queryToFindMe(ObjectId.massageToObjectId(id)));
 		return ObjectId.massageToObjectId(id);
-	}
-
-	private static Query<JClaim> queryToFindMe(final ObjectId id) {
-		return q().field(Mapper.ID_KEY).equal(id);
-	}
-
-	private static WriteResult delete(final Query<JClaim> q) {
-		return MorphiaPlugin.ds().delete(q, WriteConcern.ACKNOWLEDGED);
 	}
 
 	public static ImmutableList<JClaim> history(final ObjectId userId, final Integer year, final Integer month) {
@@ -127,36 +193,11 @@ public class JClaim extends Model implements MongoModel {
 		addMissionAllowance(days);
 	}
 
-	private static void addMissionAllowance(final List<JDay> days) {
-		final Set<JClaim> claims = Sets.newHashSet();
-		for (final JDay day : days) {
-			claims.addAll(Collections2.transform(day.missionIds(), new Function<ObjectId, JClaim>() {
-				@Nullable
-				@Override
-				public JClaim apply(@Nullable final ObjectId missionId) {
-					return JMission.isClaimable(missionId) ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance() : null;
-				}
-			}));
-		}
-		claims.removeAll(Collections.singletonList(null));
-		MorphiaPlugin.ds().save(claims, WriteConcern.ACKNOWLEDGED);
+	public static WriteResult deleteMissionAllowance(final ObjectId userId, final DateTime dt) {
+		return deleteMissionAllowance(userId, Lists.newArrayList(dt));
 	}
 
-	private JClaim computeMissionAllowance() {
-		final JVehicle vehicle = JVehicle.active(this.userId);
-		final JMission mission = JMission.fetch(this.missionId);
-		switch (MissionAllowanceType.valueOf(mission.allowanceType)) {
-			case ZONE:
-				this.amount = JParameter.zoneAmount(date);
-				break;
-			case REAL:
-				final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);
-				this.amount = mission.distance.multiply(coefficient);
-		}
-		return this;
-	}
-
-	private static WriteResult deleteMissionAllowance(final ObjectId userId, final List<DateTime> dts) {
+	public static WriteResult deleteMissionAllowance(final ObjectId userId, final List<DateTime> dts) {
 		final Collection<Date> dates = Collections2.transform(dts, new Function<DateTime, Date>() {
 			@Nullable
 			@Override
@@ -169,49 +210,6 @@ public class JClaim extends Model implements MongoModel {
 			                        .field("_date").in(dates)
 			                        .field("claimType").equal(ClaimType.MISSION_ALLOWANCE.name());
 		return delete(q);
-	}
-
-	@SuppressWarnings({"unused"})
-	@PrePersist
-	private void prePersist() {
-		if (date != null) {
-			_date = date.toDate();
-			year = new DateTime(_date).getYear();
-			month = new DateTime(_date).getMonthOfYear();
-		}
-		if (amount != null) {
-			_amount = amount.toPlainString();
-		}
-		if (kilometer != null) {
-			_kilometer = kilometer.toPlainString();
-		}
-		compute();
-	}
-
-	private void compute() {
-		if (this.kilometer != null) {
-			final JVehicle vehicle = JVehicle.active(this.userId);
-			final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);
-			kilometerAmount = kilometer.multiply(coefficient);
-			_kilometerAmount = kilometerAmount.toPlainString();
-		}
-	}
-
-	@SuppressWarnings({"unused"})
-	@PostLoad
-	private void postLoad() {
-		if (_date != null) {
-			date = new DateTime(_date.getTime());
-		}
-		if (StringUtils.isNotBlank(_amount)) {
-			amount = new BigDecimal(_amount);
-		}
-		if (StringUtils.isNotBlank(_kilometer)) {
-			kilometer = new BigDecimal(_kilometer);
-		}
-		if (StringUtils.isNotBlank(_kilometerAmount)) {
-			kilometerAmount = new BigDecimal(_kilometerAmount);
-		}
 	}
 
 	@Override

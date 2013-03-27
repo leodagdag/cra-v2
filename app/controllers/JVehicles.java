@@ -44,6 +44,7 @@ public class JVehicles extends Controller {
 		return ok(toJson(VehicleDTO.of(JVehicle.active(userId))));
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result history(final String userId) {
 		return ok(toJson(VehicleDTO.of(JVehicle.history(userId))));
 	}

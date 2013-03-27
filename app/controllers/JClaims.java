@@ -65,6 +65,7 @@ public class JClaims extends Controller {
 	}
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
+	@ResponseCache.NoCacheResponse
 	public static Result remove(final String id) {
 		return ok(toJson(JClaim.delete(id)));
 	}

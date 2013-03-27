@@ -1,5 +1,6 @@
 package controllers;
 
+import caches.ResponseCache;
 import com.google.common.collect.Lists;
 import dto.AccountDTO;
 import models.JUser;
@@ -19,11 +20,13 @@ import static play.libs.Json.toJson;
  */
 public class JAccounts extends Controller {
 
+	@ResponseCache.NoCacheResponse
 	public static Result fetch(final String id) {
 		return ok(toJson(AccountDTO.of(JUser.account(id))));
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
+	@ResponseCache.NoCacheResponse
 	public static Result update() {
 		final Form<AccountDTO> form = Form.form(AccountDTO.class).bind(request().body().asJson());
 		if (form.hasErrors()) {

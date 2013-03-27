@@ -78,14 +78,7 @@ object TimeUtils {
 
 	}
 
-	def containsOnlyWeekEndOrDayOff(start: DateTime, end: DateTime): java.lang.Boolean = {
-		dateRange(start, end, Period.days(1))
-			.forall {
-			dt =>
-				println(s"dt:$dt")
-				TimeUtils.isSaturdayOrSunday(dt) || TimeUtils.isDayOff(dt)
-		}
-	}
+
 
 	def dateRange(from: DateTime, to: DateTime, step: Period): Iterator[DateTime] = Iterator.iterate(from)(_.plus(step)).takeWhile(!_.isAfter(to))
 

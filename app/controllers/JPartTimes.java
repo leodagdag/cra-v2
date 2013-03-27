@@ -1,5 +1,6 @@
 package controllers;
 
+import caches.ResponseCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import dto.PartTimeDTO;
@@ -25,6 +26,7 @@ import static play.libs.Json.toJson;
 public class JPartTimes extends Controller {
 
 	@BodyParser.Of(BodyParser.Json.class)
+	@ResponseCache.NoCacheResponse
 	public static Result addPartTimes() {
 		final Form<CreateForm> form = Form.form(CreateForm.class).bind(request().body().asJson());
 		if (form.hasErrors()) {
@@ -35,14 +37,17 @@ public class JPartTimes extends Controller {
 		return created(toJson(PartTimeDTO.of(JPartTime.addPartTimes(pts))));
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result active(final String userId) {
 		return ok(toJson(PartTimeDTO.of(JPartTime.activeByUser(userId))));
 	}
 
+	@ResponseCache.NoCacheResponse
 	public static Result history(final String userId) {
 		return ok(toJson(PartTimeDTO.of(JPartTime.byUser(userId))));
 	}
 
+	@BodyParser.Of(BodyParser.Json.class)
 	public static Result deactivate() {
 		final Form<String> form = Form.form(String.class).bind(request().body().asJson());
 		if (form.hasErrors()) {

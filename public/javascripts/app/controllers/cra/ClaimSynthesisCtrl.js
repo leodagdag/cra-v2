@@ -16,20 +16,23 @@ app.controller('ClaimSynthesisCtrl', ['$scope', '$rootScope', '$http', '$log', '
 						.keys()
 						.sortBy()
 						.valueOf();
-					$scope.body = [];
+					$scope.body = {};
 
 					_.forEach($scope.header, function(week) {
 						_.forEach(_(synthesis[week]).keys().valueOf(), function(claim) {
 							if(!$scope.body[claim]) {
-								$scope.body[claim] = [];
+								$scope.body[claim] = {};
 							}
 							if(!$scope.body[claim][week]) {
-								$scope.body[claim][week] = [];
+								$scope.body[claim][week] = {};
 							}
-							$scope.body[claim][week].push(synthesis[week][claim]);
+							$scope.body[claim][week] = synthesis[week][claim];
 						});
 					});
 
+					$scope.claimTypes = _($scope.body)
+						.keys()
+						.valueOf();
 					$log.debug('$scope.body', $scope.body);
 
 				})

@@ -1,5 +1,6 @@
 package controllers;
 
+import caches.ResponseCache;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -33,6 +34,7 @@ import static play.libs.Json.toJson;
  */
 public class JDays extends Controller {
 
+	@ResponseCache.NoCacheResponse
 	public static Result fetch(final String craId, final Long date) {
 		final DateTime dt = new DateTime(date);
 		final ObjectId idCra = ObjectId.massageToObjectId(craId);
@@ -49,6 +51,7 @@ public class JDays extends Controller {
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
+	@ResponseCache.NoCacheResponse
 	public static Result create() {
 		final Form<CreateForm> form = Form.form(CreateForm.class).bind(request().body().asJson());
 		if (form.hasErrors()) {
@@ -100,7 +103,7 @@ public class JDays extends Controller {
 			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
 		}
 		JDay.delete(craId, date);
-		JClaim.computeMissionAllowance(day.userId, day);
+		JClaim.deleteMissionAllowance(day.userId, day.date);
 		return ok();
 	}
 
