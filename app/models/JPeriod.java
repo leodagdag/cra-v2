@@ -8,10 +8,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
-import utils.serializer.LocalTimeSerializer;
 
 import javax.annotation.Nullable;
 import java.util.Date;
@@ -62,7 +60,7 @@ public class JPeriod {
 		}
 	}
 
-	public static List<ObjectId> missionIds(final List<JPeriod> periods){
+	public static List<ObjectId> missionIds(final List<JPeriod> periods) {
 		return Lists.newArrayList(Collections2.transform(periods, new Function<JPeriod, ObjectId>() {
 			@Nullable
 			@Override

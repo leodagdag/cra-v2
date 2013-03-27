@@ -75,6 +75,7 @@ public class JVehicle extends Model {
 	public static JVehicle active(final String userId) {
 		return active(ObjectId.massageToObjectId(userId));
 	}
+
 	public static JVehicle active(final ObjectId userId) {
 		return active(byUserId(userId));
 	}
@@ -93,8 +94,6 @@ public class JVehicle extends Model {
 		return MorphiaPlugin.ds().createQuery(JVehicle.class)
 			       .field("userId").equal(userId);
 	}
-
-
 
 	public static List<JVehicle> history(final String userId) {
 		return byUserId(userId)

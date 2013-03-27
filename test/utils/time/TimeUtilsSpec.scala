@@ -3,7 +3,7 @@ package utils.time
 import org.joda.time.{Period, DateTime}
 import org.joda.time.DateTimeConstants._
 import org.specs2.mutable.Specification
-import utils.transformer.AbsenceUtils
+import utils.business.AbsenceUtils
 
 /**
  * @author f.patin

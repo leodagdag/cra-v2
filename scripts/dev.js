@@ -215,14 +215,14 @@ var bart = db.User.findOne({username: 'bart'});
  * Vehicle
  */
 db.Vehicle.insert({
- userId: bart._id,
- vehicleType: "car",
- power: NumberInt(5),
- brand: "ALFA_ROMEO",
- matriculation: "AA-123-AA",
- _startDate: new Date(YEAR, MARCH_JS, ONE),
- active: true
- });
+	userId: bart._id,
+	vehicleType: "car",
+	power: NumberInt(5),
+	brand: "ALFA_ROMEO",
+	matriculation: "AA-123-AA",
+	_startDate: new Date(YEAR, MARCH_JS, ONE),
+	active: true
+});
 /*
  * Cra
  */
@@ -239,220 +239,208 @@ db.Absence.insert({
 	endAfternoon: true,
 	_nbDays: "3",
 	comment: "Comment absence...",
-	_startDate: new Date(cra.year, MARCH_JS, NumberInt(12),NumberInt(0),NumberInt(0),NumberInt(0),NumberInt(0)),
-	_endDate: new Date(cra.year, MARCH_JS, NumberInt(14),NumberInt(23),NumberInt(59),NumberInt(59),NumberInt(0))
+	_startDate: new Date(cra.year, MARCH_JS, NumberInt(12), NumberInt(0), NumberInt(0), NumberInt(0), NumberInt(0)),
+	_endDate: new Date(cra.year, MARCH_JS, NumberInt(14), NumberInt(23), NumberInt(59), NumberInt(59), NumberInt(0))
 });
 
 /*
  * Day
  */
-/* 2013/03/01 */
-db.Day.insert({
-	craId: cra._id,
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, ONE),
-	morning: {
-		missionId: mission1_customer1._id
-	},
-	afternoon: {
-		missionId: mission1_customer1._id
-	},
-	comment: 'Comment day ...'
-});
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, ONE),
-	missionId: mission1_customer1._id,
-	claimType: "MISSION_ALLOWANCE",
-	_amount: "4.70"
-});
-/* 2013/03/05 */
-db.Day.insert({
-	craId: cra._id,
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(5)),
-	morning: {
-		missionId: mission1_customer1._id
-	},
-	afternoon: {
-		missionId: mission1_customer1._id
-	}
-});
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(5)),
-	missionId: mission1_customer1._id,
-	claimType: "MISSION_ALLOWANCE",
-	_amount: "4.70"
-});
-/* 2013/03/06 */
-db.Day.insert({
-	craId: cra._id,
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(6)),
-	morning: {
-		missionId: pre_sale._id
-	},
-	afternoon: {
-		missionId: pre_sale._id
-	},
-	comment: 'Comment day ...'
-});
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(6)),
-	missionId: mission1_customer1._id,
-	claimType: "MISSION_ALLOWANCE",
-	_amount: "4.70"
-});
-/* 2013/03/07 */
-db.Day.insert({
-	craId: cra._id,
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(7)),
-	morning: {
-		periods: [
-			{
-				missionId: mission1_customer1._id,
-				_startTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(5),NumberInt(0),NumberInt(0),NumberInt(0)),
-				_endTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(6),NumberInt(0),NumberInt(0),NumberInt(0))
-			}
-		]
-	},
-	afternoon: {
-		periods: [
-			{
-				missionId: mission1_customer1._id,
-				_startTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(15),NumberInt(0),NumberInt(0),NumberInt(0)),
-				_endTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(16),NumberInt(0),NumberInt(0),NumberInt(0))
-			}
-		]
-	},
-	comment: "Comment 1\nComment 2"
-});
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(7)),
-	missionId: mission1_customer1._id,
-	claimType: "MISSION_ALLOWANCE",
-	_amount: "4.70"
-});
-/* 2013/03/12 */
-db.Day.insert({
-	craId: cra._id,
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(12)),
-	morning: {
-		missionId: holiday._id
-	},
-	afternoon: {
-		missionId: holiday._id
-	},
-	comment: 'Comment absence...'
-});
-/* 2013/03/13 */
-db.Day.insert({
-	craId: cra._id,
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(13)),
-	morning: {
-		missionId: holiday._id
-	},
-	afternoon: {
-		missionId: holiday._id
-	},
-	comment: 'Comment absence...'
-});
-/* 2013/03/14 */
-db.Day.insert({
-	craId: cra._id,
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(14)),
-	morning: {
-		missionId: holiday._id
-	},
-	afternoon: {
-		missionId: holiday._id
-	},
-	comment: 'Comment absence...'
-});
+// 2013/03/01
+/*db.Day.insert({
+ craId: cra._id,
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, ONE),
+ morning: {
+ missionId: mission1_customer1._id
+ },
+ afternoon: {
+ missionId: mission1_customer1._id
+ },
+ comment: 'Comment day ...'
+ });
+ db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, ONE),
+ missionId: mission1_customer1._id,
+ claimType: "MISSION_ALLOWANCE",
+ _amount: "4.70"
+ });
+ // 2013/03/05
+ db.Day.insert({
+ craId: cra._id,
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(5)),
+ morning: {
+ missionId: mission1_customer1._id
+ },
+ afternoon: {
+ missionId: mission1_customer1._id
+ }
+ });
+ db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(5)),
+ missionId: mission1_customer1._id,
+ claimType: "MISSION_ALLOWANCE",
+ _amount: "4.70"
+ });
+ // 2013/03/06
+ db.Day.insert({
+ craId: cra._id,
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(6)),
+ morning: {
+ missionId: pre_sale._id
+ },
+ afternoon: {
+ missionId: pre_sale._id
+ },
+ comment: 'Comment day ...'
+ });
+ db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(6)),
+ missionId: mission1_customer1._id,
+ claimType: "MISSION_ALLOWANCE",
+ _amount: "4.70"
+ });
+ // 2013/03/07
+ db.Day.insert({
+ craId: cra._id,
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(7)),
+ morning: {
+ periods: [
+ {
+ missionId: mission1_customer1._id,
+ _startTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(5),NumberInt(0),NumberInt(0),NumberInt(0)),
+ _endTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(6),NumberInt(0),NumberInt(0),NumberInt(0))
+ }
+ ]
+ },
+ afternoon: {
+ periods: [
+ {
+ missionId: mission1_customer1._id,
+ _startTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(15),NumberInt(0),NumberInt(0),NumberInt(0)),
+ _endTime: new Date(cra.year, MARCH_JS, NumberInt(7),NumberInt(16),NumberInt(0),NumberInt(0),NumberInt(0))
+ }
+ ]
+ },
+ comment: "Comment 1\nComment 2"
+ });
+ db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(7)),
+ missionId: mission1_customer1._id,
+ claimType: "MISSION_ALLOWANCE",
+ _amount: "4.70"
+ });
+ // 2013/03/12
+ db.Day.insert({
+ craId: cra._id,
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(12)),
+ morning: {
+ missionId: holiday._id
+ },
+ afternoon: {
+ missionId: holiday._id
+ },
+ comment: 'Comment absence...'
+ });
+ // 2013/03/13
+ db.Day.insert({
+ craId: cra._id,
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(13)),
+ morning: {
+ missionId: holiday._id
+ },
+ afternoon: {
+ missionId: holiday._id
+ },
+ comment: 'Comment absence...'
+ });
+ // 2013/03/14
+ db.Day.insert({
+ craId: cra._id,
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(14)),
+ morning: {
+ missionId: holiday._id
+ },
+ afternoon: {
+ missionId: holiday._id
+ },
+ comment: 'Comment absence...'
+ });*/
 
 /*
  * Claim
  */
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(4)),
-	missionId: mission1_customer1._id,
-	claimType: "TAXI",
-	comment: "Acheter des donuts",
-	_amount: "10.2"
-});
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(4)),
-	missionId: mission1_customer1._id,
-	claimType: "JOURNEY",
-	journey: "Springfield",
-	comment: "Acheter des donuts",
-	_kilometer: "11.5",
-	_kilometerAmount: "63.25"
-});
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(12)),
-	missionId: mission1_customer1._id,
-	claimType: "TOLL",
-	_amount: "11.5"
-});
-db.Claim.insert({
-	userId: bart._id,
-	year: YEAR,
-	month: MARCH,
-	_date: new Date(YEAR, MARCH_JS, NumberInt(4)),
-	missionId: mission1_customer1._id,
-	claimType: "TOLL",
-	_amount: "17"
-});
-
-/* Absence from 11/02/2013 -> 15/02/2013 */
-var a = {
-	"userId": "5129dc23104cb3b916eff64a",
-	"missionId": "5129dc23104cb3b916eff647",
-	"startMorning": true,
-	"startAfternoon": true,
-	"endMorning": true,
-	"endAfternoon": true,
-	"startDate": 1360537200000,
-	"endDate": 1360882800000
-}
+/*db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(4)),
+ missionId: mission1_customer1._id,
+ claimType: "TAXI",
+ comment: "Acheter des donuts",
+ _amount: "10.2"
+ });
+ db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(4)),
+ missionId: mission1_customer1._id,
+ claimType: "JOURNEY",
+ journey: "Springfield",
+ comment: "Acheter des donuts",
+ _kilometer: "11.5",
+ _kilometerAmount: "63.25"
+ });
+ db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(12)),
+ missionId: mission1_customer1._id,
+ claimType: "TOLL",
+ _amount: "11.5"
+ });
+ db.Claim.insert({
+ userId: bart._id,
+ year: YEAR,
+ month: MARCH,
+ _date: new Date(YEAR, MARCH_JS, NumberInt(4)),
+ missionId: mission1_customer1._id,
+ claimType: "TOLL",
+ _amount: "17"
+ });*/
 
 printjson(bart._id);

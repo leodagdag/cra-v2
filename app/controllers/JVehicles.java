@@ -23,73 +23,74 @@ import static play.libs.Json.toJson;
  */
 public class JVehicles extends Controller {
 
-    @BodyParser.Of(BodyParser.Json.class)
-    @ResponseCache.NoCacheResponse
-    public static Result save() {
-        final Form<CreateVehicleForm> form = Form.form(CreateVehicleForm.class).bind(request().body().asJson());
-        if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
-        }
-        final CreateVehicleForm createVehicleForm = form.get();
-        return created(toJson(VehicleDTO.of(JVehicle.save(createVehicleForm.to()))));
+	@BodyParser.Of(BodyParser.Json.class)
+	@ResponseCache.NoCacheResponse
+	public static Result save() {
+		final Form<CreateVehicleForm> form = Form.form(CreateVehicleForm.class).bind(request().body().asJson());
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
+		}
+		final CreateVehicleForm createVehicleForm = form.get();
+		return created(toJson(VehicleDTO.of(JVehicle.save(createVehicleForm.to()))));
 
-    }
+	}
 
 	@ResponseCache.NoCacheResponse
-    public static Result active(final String userId) {
-        final JVehicle vehicle = JVehicle.active(userId);
-        if (vehicle == null) {
-            return ok();
-        }
-        return ok(toJson(VehicleDTO.of(JVehicle.active(userId))));
-    }
+	public static Result active(final String userId) {
+		final JVehicle vehicle = JVehicle.active(userId);
+		if (vehicle == null) {
+			return ok();
+		}
+		return ok(toJson(VehicleDTO.of(JVehicle.active(userId))));
+	}
 
-    public static Result history(final String userId) {
-        return ok(toJson(VehicleDTO.of(JVehicle.history(userId))));
-    }
+	public static Result history(final String userId) {
+		return ok(toJson(VehicleDTO.of(JVehicle.history(userId))));
+	}
 
-    public static Result deactivate() {
-        final Form<String> form = Form.form(String.class).bind(request().body().asJson());
-        if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
-        }
-        final String id = form.data().get("id");
-        JVehicle.deactivate(id);
-        return ok();
-    }
+	public static Result deactivate() {
+		final Form<String> form = Form.form(String.class).bind(request().body().asJson());
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
+		}
+		final String id = form.data().get("id");
+		JVehicle.deactivate(id);
+		return ok();
+	}
 
-    public static class CreateVehicleForm {
+	public static class CreateVehicleForm {
 
-        public ObjectId userId;
-	    @Constraints.Required(message = "Le type de véhicule est requis.")
-        public String vehicleType;
-	    @Constraints.Required(message = "La marque est requise.")
-        public String brand;
-	    @Constraints.Required(message = "La puissance fisclae/cylindré est requise.")
-        public Integer power;
-	    @Constraints.Required(message = "L'immatriculation est requise.")
-        public String matriculation;
-	    @Constraints.Required(message = "Le mois de validité est requis.")
-        public Integer month;
-	    @Constraints.Required(message = "L'année de validité est requise.")
-        public Integer year;
+		public ObjectId userId;
+		@Constraints.Required(message = "Le type de véhicule est requis.")
+		public String vehicleType;
+		@Constraints.Required(message = "La marque est requise.")
+		public String brand;
+		@Constraints.Required(message = "La puissance fisclae/cylindré est requise.")
+		public Integer power;
+		@Constraints.Required(message = "L'immatriculation est requise.")
+		public String matriculation;
+		@Constraints.Required(message = "Le mois de validité est requis.")
+		public Integer month;
+		@Constraints.Required(message = "L'année de validité est requise.")
+		public Integer year;
 
-	    public List<ValidationError> validate() {
-		    final List<ValidationError> errors = Lists.newArrayList();
-		    if(TimeUtils.getFirstDayOfMonth(year, month).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))){
-			    errors.add(new ValidationError("validityDate", "La date de validté doit être supérieure ou égale au mois en cours."));
-		    }
-		    return errors.isEmpty() ? null : errors;
-	    }
-        public JVehicle to() {
-            JVehicle vehicle = new JVehicle();
-            vehicle.userId = this.userId;
-            vehicle.vehicleType = this.vehicleType;
-            vehicle.brand = this.brand;
-            vehicle.power = this.power;
-            vehicle.matriculation = this.matriculation;
-            vehicle.startDate = TimeUtils.getFirstDayOfMonth(year, month);
-            return vehicle;
-        }
-    }
+		public List<ValidationError> validate() {
+			final List<ValidationError> errors = Lists.newArrayList();
+			if (TimeUtils.getFirstDayOfMonth(year, month).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))) {
+				errors.add(new ValidationError("validityDate", "La date de validté doit être supérieure ou égale au mois en cours."));
+			}
+			return errors.isEmpty() ? null : errors;
+		}
+
+		public JVehicle to() {
+			JVehicle vehicle = new JVehicle();
+			vehicle.userId = this.userId;
+			vehicle.vehicleType = this.vehicleType;
+			vehicle.brand = this.brand;
+			vehicle.power = this.power;
+			vehicle.matriculation = this.matriculation;
+			vehicle.startDate = TimeUtils.getFirstDayOfMonth(year, month);
+			return vehicle;
+		}
+	}
 }

@@ -19,7 +19,7 @@ object Cras extends BaseController {
 				Async {
 					Cra.validate(id).map {
 						(lastError: LastError) =>
-							if(lastError.ok){
+							if (lastError.ok) {
 								Ok("Cra validé")
 							} else {
 								InternalServerError(Json.toJson(lastError.errMsg))
@@ -39,7 +39,7 @@ object Cras extends BaseController {
 				Async {
 					Cra.invalidate(id).map {
 						(lastError: LastError) =>
-							if(lastError.ok){
+							if (lastError.ok) {
 								Ok("Cra validé")
 							} else {
 								InternalServerError(Json.toJson(lastError.errMsg))

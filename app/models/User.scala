@@ -60,7 +60,7 @@ object User extends ToIndex {
 		val q = QueryBuilder()
 			.query(s)
 			.projection(p)
-		implicit val reader =  models.BSONObjectIDReader
+		implicit val reader = models.BSONObjectIDReader
 		db.find[BSONObjectID](q).headOption()
 
 	}

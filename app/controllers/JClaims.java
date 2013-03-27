@@ -22,13 +22,10 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import security.JDeadboltHandler;
 import security.JSecurityRoles;
-import utils.transformer.JClaimUtils;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static play.libs.Json.toJson;
 
@@ -56,7 +53,7 @@ public class JClaims extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
 		final Form<CreateClaimForm> form = Form.form(CreateClaimForm.class).bind(request().body().asJson());
-		if(form.hasErrors()) {
+		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 
@@ -89,7 +86,7 @@ public class JClaims extends Controller {
 
 		public List<JClaim> to() {
 			final List<JClaim> claims = Lists.newArrayListWithExpectedSize(2);
-			if(this.amount != null) {
+			if (this.amount != null) {
 				final JClaim claim = new JClaim();
 				claim.userId = this.userId;
 				claim.missionId = this.missionId;
@@ -99,7 +96,7 @@ public class JClaims extends Controller {
 				claim.comment = this.comment;
 				claims.add(claim);
 			}
-			if(this.kilometer != null) {
+			if (this.kilometer != null) {
 				final JClaim claim = new JClaim();
 				claim.userId = userId;
 				claim.missionId = this.missionId;

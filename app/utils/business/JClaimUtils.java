@@ -1,4 +1,4 @@
-package utils.transformer;
+package utils.business;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -20,7 +20,7 @@ import static constants.ClaimType.*;
  */
 public class JClaimUtils {
 
-	public static Map<Integer, Map<ClaimType, List<JClaim>>> transform(final Integer year, final Integer month, final ImmutableList<JClaim> claims) {
+	private static Map<Integer, Map<ClaimType, List<JClaim>>> _transform(final Integer year, final Integer month, final ImmutableList<JClaim> claims) {
 		final List<Integer> weeks = TimeUtils.getWeeks(year, month);
 		final Map<Integer, Map<ClaimType, List<JClaim>>> result = Maps.newTreeMap();
 		for(Integer weekNb : weeks) {
@@ -40,7 +40,8 @@ public class JClaimUtils {
 		return result;
 	}
 
-	public static Map<String, Map<ClaimType, String>> compute(final Map<Integer, Map<ClaimType, List<JClaim>>> synthesis) {
+	public static Map<String, Map<ClaimType, String>> synthesis(final Integer year, final Integer month, final ImmutableList<JClaim> claims) {
+		final Map<Integer, Map<ClaimType, List<JClaim>>> synthesis  =_transform(year, month, claims);
 		final Map<String, Map<ClaimType, String>> result = Maps.newTreeMap();
 		for(Integer week : synthesis.keySet()) {
 			final String w = StringUtils.leftPad(week.toString(), 2, '0');

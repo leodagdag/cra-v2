@@ -18,7 +18,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import security.JDeadboltHandler;
 import security.JSecurityRoles;
-import utils.transformer.JClaimUtils;
+import utils.business.JClaimUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class JCras extends Controller {
 		final List<ObjectId> missionsIds = Lists.newArrayList();
 
 		jDays.addAll(JDay.find(userId, cra.id, year, month, true));
-		for(JDay jDay : jDays) {
+		for (JDay jDay : jDays) {
 			missionsIds.addAll(jDay.missionIds());
 		}
 		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(ImmutableList.copyOf(missionsIds));
@@ -50,7 +50,7 @@ public class JCras extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result claimSynthesis(final String userId, final Integer year, final Integer month) {
 		final ImmutableList<JClaim> claims = JClaim.synthesis(userId, year, month);
-		final Map<String, Map<ClaimType, String>> synthesis = JClaimUtils.compute(JClaimUtils.transform(year, month, claims));
+		final Map<String, Map<ClaimType, String>> synthesis = JClaimUtils.synthesis(year, month, claims);
 		return ok(toJson(synthesis));
 	}
 }

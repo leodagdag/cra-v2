@@ -1,6 +1,5 @@
 package controllers
 
-import play.api.Routes
 import play.api.mvc.Action
 import security.MyDeadboltHandler
 

@@ -59,9 +59,9 @@ public class JCra extends Model {
 
 	private static JCra applyPartTime(final JCra cra) {
 		final ImmutableList<JPartTime> partTimes = JPartTime.activeByUser(cra.userId);
-		for(JPartTime partTime : partTimes) {
+		for (JPartTime partTime : partTimes) {
 			final List<F.Tuple3<DateTime, Boolean, Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
-			for(F.Tuple3<DateTime, Boolean, Boolean> d : dates) {
+			for (F.Tuple3<DateTime, Boolean, Boolean> d : dates) {
 				JDay.addPartTime(cra.id, cra.userId, d._1, d._2, d._3);
 			}
 		}
@@ -82,7 +82,7 @@ public class JCra extends Model {
 
 	public static JCra getOrCreate(final ObjectId userId, final Integer year, final Integer month) {
 		final JCra cra = find(userId, year, month);
-		if(cra != null) {
+		if (cra != null) {
 			return applyPartTime(cra);
 		} else {
 			return create(userId, year, month);
@@ -90,7 +90,7 @@ public class JCra extends Model {
 	}
 
 	public static JCra getOrCreate(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month) {
-		if(craId == null) {
+		if (craId == null) {
 			return create(userId, year, month);
 		} else {
 			return applyPartTime(queryToFindMe(craId).get());

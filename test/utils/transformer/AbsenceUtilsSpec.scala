@@ -3,6 +3,7 @@ package utils.transformer
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants._
 import org.specs2.mutable.Specification
+import utils.business.AbsenceUtils
 
 /**
  * @author f.patin
@@ -67,10 +68,11 @@ class AbsenceUtilsSpec extends Specification {
 			nbDaysBetween must beEqualTo(BigDecimal(2).bigDecimal)
 		}
 	}
-	"AbsenceUtils.days" should {
+
+	"AbsenceUtils.extractDays" should {
 		"26/03/2013 afternoon -> 28/03/2013 morning" in {
-			AbsenceUtils.days(new DateTime(2013, MARCH, 26, 12, 0, 0), new DateTime(2013, MARCH, 28, 12, 0, 0))
-			true must beTrue
+			val toDays = AbsenceUtils.extractDays(new DateTime(2013, MARCH, 26, 12, 0, 0), new DateTime(2013, MARCH, 28, 12, 0, 0))
+			toDays.keySet().size() must beEqualTo(3)
 		}
 	}
 

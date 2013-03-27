@@ -6,7 +6,6 @@ import dto.PartTimeDTO;
 import models.JPartTime;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import play.data.Form;
 import play.data.validation.Constraints;
@@ -14,7 +13,6 @@ import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import utils.serializer.ObjectIdSerializer;
 import utils.time.TimeUtils;
 
 import java.util.List;
@@ -45,22 +43,24 @@ public class JPartTimes extends Controller {
 		return ok(toJson(PartTimeDTO.of(JPartTime.byUser(userId))));
 	}
 
-    public static Result deactivate() {
-        final Form<String> form = Form.form(String.class).bind(request().body().asJson());
-        if(form.hasErrors()){
-            return badRequest(form.errorsAsJson());
-        }
-        final String id = form.data().get("id");
-        JPartTime.deactivate(id);
-        return ok();
-    }
+	public static Result deactivate() {
+		final Form<String> form = Form.form(String.class).bind(request().body().asJson());
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
+		}
+		final String id = form.data().get("id");
+		JPartTime.deactivate(id);
+		return ok();
+	}
 
 	public static class PartTimeWeekDay {
+
 		public Integer dayOfWeek;
 		public String momentOfDay;
 	}
 
 	public static class CreateForm {
+
 		public ObjectId userId;
 		@Constraints.Required(message = "Le date de début est requise.")
 		public Long startDate;
@@ -69,9 +69,9 @@ public class JPartTimes extends Controller {
 		@Constraints.Required(message = "La fréquence est requise.")
 		public Integer frequency;
 
-		public List<ValidationError> validate(){
+		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
-			if(CollectionUtils.isEmpty(daysOfWeek)){
+			if (CollectionUtils.isEmpty(daysOfWeek)) {
 				errors.add(new ValidationError("daysOfWeek", "Vous devez choisir au moins un jour de la semaine."));
 			}
 			return errors.isEmpty() ? null : errors;

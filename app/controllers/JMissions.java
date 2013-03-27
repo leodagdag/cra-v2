@@ -3,13 +3,10 @@ package controllers;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import dto.MissionDTO;
-import models.JAffectedMission;
 import models.JMission;
 import models.JUser;
 import play.mvc.Controller;
 import play.mvc.Result;
-
-import java.util.List;
 
 import static play.libs.Json.toJson;
 

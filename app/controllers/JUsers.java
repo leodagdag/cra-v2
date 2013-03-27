@@ -1,6 +1,5 @@
 package controllers;
 
-import com.google.common.collect.ImmutableList;
 import dto.EmployeeDTO;
 import dto.ManagerDTO;
 import models.JUser;
@@ -19,7 +18,7 @@ public class JUsers extends Controller {
 		return ok(toJson(EmployeeDTO.of(JUser.byRole(SecurityRole.employee()))));
 	}
 
-	public static Result managers(){
+	public static Result managers() {
 		return ok(toJson(ManagerDTO.of(JUser.managers())));
 	}
 

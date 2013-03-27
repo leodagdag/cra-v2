@@ -17,14 +17,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import play.data.Form;
 import play.data.validation.ValidationError;
-import play.libs.F;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import utils.transformer.AbsenceUtils;
 
 import java.util.List;
-import java.util.Map;
 
 import static play.libs.Json.toJson;
 
@@ -36,40 +33,39 @@ public class JAbsences extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
 		final Form<CreateAbsenceForm> form = Form.form(CreateAbsenceForm.class).bind(request().body().asJson());
-		if(form.hasErrors()) {
+		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateAbsenceForm createAbsenceForm = form.get();
 		try {
 			final JAbsence absence = JAbsence.create(createAbsenceForm.to());
-			final Map<DateTime, F.Tuple<Boolean, Boolean>> m = AbsenceUtils.toDays(absence.startDate, absence.endDate);
-			final List<JDay> days = JDay.addAbsenceDay(m, absence.userId, absence.missionId, absence.comment);
-			JClaim.computeMissionAllowance(days.get(0).userId, days);
+			JDay.addAbsenceDays(absence);
 			return created(toJson(AbsenceDTO.of(absence)));
-		} catch(AbsenceAlreadyExistException | ContainsOnlyWeekEndOrDayOfException | AbsenceStartIllegalDateException | AbsenceEndIllegalDateException e) {
+		} catch (AbsenceAlreadyExistException | ContainsOnlyWeekEndOrDayOfException | AbsenceStartIllegalDateException | AbsenceEndIllegalDateException e) {
 			return internalServerError(toJson(e.getMessage()));
 		}
 	}
 
 	public static Result remove(final String userId, final String id) {
-		final JAbsence absence = JAbsence.delete(userId, id);
-		final Map<DateTime, F.Tuple<Boolean, Boolean>> m = AbsenceUtils.toDays(absence.startDate, absence.endDate);
+		/*final JAbsence absence = JAbsence.delete(userId, id);
+		final Map<DateTime, F.Tuple<Boolean, Boolean>> m = AbsenceUtils.extractDays(absence.startDate, absence.endDate);
 		final List<JDay> days = JDay.find(userId, m.keySet());
 		final ObjectId userObjectId = ObjectId.massageToObjectId(userId);
 		JDay.deleteAbsenceDays(m, userObjectId);
 		JClaim.computeMissionAllowance(userObjectId, days);
-		return ok(toJson(AbsenceDTO.of(absence)));
+		return ok(toJson(AbsenceDTO.of(absence)));*/
+		return ok();
 	}
 
 	@ResponseCache.NoCacheResponse
 	public static Result history(final String userId, final String absenceType, final Integer year, final Integer month) {
 		final List<JAbsence> absences = Lists.newArrayList();
 		final AbsenceType at = AbsenceType.of(absenceType);
-		if(year == 0) {
+		if (year == 0) {
 			absences.addAll(JAbsence.fetch(userId, at));
 		} else {
-			if(month == 0) {
-				switch(at) {
+			if (month == 0) {
+				switch (at) {
 					case CP:
 						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
 						break;

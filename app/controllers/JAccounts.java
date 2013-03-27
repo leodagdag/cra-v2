@@ -61,7 +61,7 @@ public class JAccounts extends Controller {
 			if (Boolean.FALSE.equals(JUser.checkAuthentication(session("username"), oldPassword))) {
 				errors.add(new ValidationError("oldPassword", "Le mot de passe actuel est faux."));
 			}
-			if(oldPassword.equals(newPassword)){
+			if (oldPassword.equals(newPassword)) {
 				errors.add(new ValidationError("newPassword", "Le nouveau mot de passe ne peut pas être identique à l'actuel."));
 
 			}

@@ -5,11 +5,7 @@ import com.github.jmkgreen.morphia.annotations.PostLoad;
 import com.github.jmkgreen.morphia.annotations.PrePersist;
 import com.github.jmkgreen.morphia.annotations.Transient;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
-import utils.deserializer.DateTimeDeserializer;
-import utils.serializer.DateTimeSerializer;
 
 import java.util.Date;
 
