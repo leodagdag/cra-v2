@@ -39,19 +39,29 @@ public class JCra extends Model {
 		this.userId = userId;
 	}
 
-	private static Query<JCra> queryByUserId(final ObjectId userId) {
-		return MorphiaPlugin.ds().createQuery(JCra.class).field("userId").equal(userId);
+	private static Query<JCra> q() {
+		return MorphiaPlugin.ds().createQuery(JCra.class);
 	}
 
 	private static Query<JCra> queryToFindMe(final ObjectId id) {
 		return MorphiaPlugin.ds().createQuery(JCra.class).field(Mapper.ID_KEY).equal(id);
 	}
 
+	private static Query<JCra> queryByUserId(final ObjectId userId) {
+		return q().field("userId").equal(userId);
+	}
+
+	private static Query<JCra> queryByUserYearMonth(final ObjectId userId, final Integer year, final Integer month) {
+		return queryByUserId(userId)
+			       .field("year").equal(year)
+			       .field("month").equal(month);
+	}
+
 	private static JCra applyPartTime(final JCra cra) {
 		final ImmutableList<JPartTime> partTimes = JPartTime.activeByUser(cra.userId);
 		for(JPartTime partTime : partTimes) {
-			final List<F.Tuple3<DateTime,Boolean,Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
-			for(F.Tuple3<DateTime, Boolean, Boolean> d: dates){
+			final List<F.Tuple3<DateTime, Boolean, Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
+			for(F.Tuple3<DateTime, Boolean, Boolean> d : dates) {
 				JDay.addPartTime(cra.id, cra.userId, d._1, d._2, d._3);
 			}
 		}
@@ -71,7 +81,6 @@ public class JCra extends Model {
 	}
 
 	public static JCra getOrCreate(final ObjectId userId, final Integer year, final Integer month) {
-
 		final JCra cra = find(userId, year, month);
 		if(cra != null) {
 			return applyPartTime(cra);
@@ -80,10 +89,16 @@ public class JCra extends Model {
 		}
 	}
 
+	public static JCra getOrCreate(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month) {
+		if(craId == null) {
+			return create(userId, year, month);
+		} else {
+			return applyPartTime(queryToFindMe(craId).get());
+		}
+	}
+
 	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
-		return queryByUserId(userId)
-			       .field("year").equal(year)
-			       .field("month").equal(month)
+		return queryByUserYearMonth(userId, year, month)
 			       .get();
 	}
 
@@ -92,15 +107,11 @@ public class JCra extends Model {
 		return applyPartTime(cra.<JCra>insert());
 	}
 
-	public static JCra getOrCreate(final ObjectId id, final ObjectId userId, final Integer year, final Integer month) {
-		if(id == null) {
-			return create(userId, year, month);
-		} else {
-			return queryToFindMe(id).get();
-		}
-	}
-
 	public static void delete(final ObjectId id) {
 		MorphiaPlugin.ds().delete(queryToFindMe(id), WriteConcern.ACKNOWLEDGED);
+	}
+
+	public static void delete(final ObjectId userId, final Integer year, final Integer month) {
+		MorphiaPlugin.ds().delete(queryByUserYearMonth(userId, year, month), WriteConcern.ACKNOWLEDGED);
 	}
 }

@@ -38,6 +38,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 					$scope.loadHistory();
 				})
 				.error(function(error, status, headers, config) {
+					$log.error(error);
 				});
 		};
 

@@ -1,15 +1,15 @@
-package utils
+package utils.time
 
-import org.joda.time.DateTime
+import org.joda.time.{Period, DateTime}
 import org.joda.time.DateTimeConstants._
 import org.specs2.mutable.Specification
-import utils.time.TimeUtils
+import utils.transformer.AbsenceUtils
 
 /**
  * @author f.patin
  */
 class TimeUtilsSpec extends Specification {
-	/*
+
 	"TimeUtils.getDaysOfMonth" should {
 		"in January 2013" in {
 			val daysOfMonth = TimeUtils.getDaysOfMonth(2013, JANUARY)
@@ -201,47 +201,59 @@ class TimeUtilsSpec extends Specification {
 			nbDaysOffInMonth must beEqualTo(1)
 		}
 	}
-  */
-	"TimeUtils.datesBetween" should {
-		"31/12/2012->01/01/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2012, DECEMBER, 31, 0, 0, 0), new DateTime(2013, JANUARY, 1, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(1)
+
+	"TimeUtils.dateRange" should {
+		"31/12/2012->31/12/2012" in {
+			val datesOfWeek: Iterator[DateTime] = TimeUtils.dateRange(new DateTime(2012, DECEMBER, 31, 0, 0, 0), new DateTime(2013, JANUARY, 1, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(2)
 		}
 		"31/12/2012->02/01/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2012, DECEMBER, 31, 0, 0, 0), new DateTime(2013, JANUARY, 2, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(2)
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2012, DECEMBER, 31, 0, 0, 0), new DateTime(2013, JANUARY, 2, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(3)
+		}
+		"31/12/2012->03/01/2013" in {
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2012, DECEMBER, 31, 0, 0, 0), new DateTime(2013, JANUARY, 3, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(4)
 		}
 		"01/01/2013->01/01/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013, JANUARY, 1, 0, 0, 0), new DateTime(2013, JANUARY, 1, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(0)
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, JANUARY, 1, 0, 0, 0), new DateTime(2013, JANUARY, 1, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(1)
+		}
+		"01/01/2013->02/01/2013" in {
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, JANUARY, 1, 0, 0, 0), new DateTime(2013, JANUARY, 2, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(2)
 		}
 		"01/01/2013->03/01/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013, JANUARY, 1, 0, 0, 0), new DateTime(2013, JANUARY, 3, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(2)
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, JANUARY, 1, 0, 0, 0), new DateTime(2013, JANUARY, 3, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(3)
+		}
+		"01/01/2013->04/01/2013" in {
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, JANUARY, 1, 0, 0, 0), new DateTime(2013, JANUARY, 4, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(4)
 		}
 		"01/02/2013->02/02/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013, FEBRUARY, 1, 0, 0, 0), new DateTime(2013, FEBRUARY, 2, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(1)
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, FEBRUARY, 1, 0, 0, 0), new DateTime(2013, FEBRUARY, 2, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(2)
 		}
 		"01/02/2013->03/02/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013, FEBRUARY, 1, 0, 0, 0), new DateTime(2013, FEBRUARY, 3, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(1)
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, FEBRUARY, 1, 0, 0, 0), new DateTime(2013, FEBRUARY, 3, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(3)
+		}
+		"01/02/2013->03/02/2013" in {
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, FEBRUARY, 1, 0, 0, 0), new DateTime(2013, FEBRUARY, 3, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(3)
 		}
 		"01/02/2013->04/02/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013, FEBRUARY, 1, 0, 0, 0), new DateTime(2013, FEBRUARY, 4, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(2)
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, FEBRUARY, 1, 0, 0, 0), new DateTime(2013, FEBRUARY, 4, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(4)
 		}
 		"04/02/2013->08/02/2013" in {
-			val datesOfWeek = TimeUtils.datesBetween(new DateTime(2013, FEBRUARY, 4, 0, 0, 0), new DateTime(2013, FEBRUARY, 8, 0, 0, 0))
-			datesOfWeek.size() must beEqualTo(5)
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, FEBRUARY, 4, 0, 0, 0), new DateTime(2013, FEBRUARY, 8, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(5)
+		}
+		"04/02/2013->09/02/2013" in {
+			val datesOfWeek = TimeUtils.dateRange(new DateTime(2013, FEBRUARY, 4, 0, 0, 0), new DateTime(2013, FEBRUARY, 9, 0, 0, 0), Period.days(1))
+			datesOfWeek.length must beEqualTo(6)
 		}
 	}
-	/*
-	"TimeUtils.nbDaysBetween" should {
-		"26/03/2013->28/04/2013" in {
-			val nbDaysBetween = TimeUtils.nbDaysBetween(new DateTime(2013, MARCH, 26, 0, 0, 0), new DateTime(2013, MARCH, 28, 0, 0, 0))
-			nbDaysBetween must beEqualTo(2)
-		}
-	}
-	*/
 }

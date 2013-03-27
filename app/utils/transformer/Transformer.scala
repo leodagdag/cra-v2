@@ -11,13 +11,18 @@ import org.joda.time.DateTime
  */
 object Transformer {
 
-	def extractDates(days: java.util.List[JDay]): java.util.List[java.util.Date] = {
+	def toDates(days: java.util.List[JDay]): java.util.List[java.util.Date] = {
 		days.asScala
 			.map(_.date.toDate)
 			.asJava
 	}
+	def fromDateTimes(dts: java.util.Set[DateTime]): java.util.Set[java.util.Date] = {
+		dts.asScala
+			.map(_.toDate)
+			.asJava
+	}
 
-	def extractHolidays(days: java.util.List[JDay]): java.util.List[JDay] = {
+	def removeHolidays(days: java.util.List[JDay]): java.util.List[JDay] = {
 		val holidays: ImmutableList[ObjectId] = JMission.getAbsencesMissionIds
 		days.asScala
 			.foreach{
@@ -34,7 +39,7 @@ object Transformer {
 			days
 	}
 
-	def extractObjectId(models: java.util.List[MongoModel]): java.util.List[ObjectId] = {
+	def toObjectId(models: java.util.List[MongoModel]): java.util.List[ObjectId] = {
 		models.asScala
 			.map(_.id)
 			.asJava

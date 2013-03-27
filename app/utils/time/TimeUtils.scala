@@ -4,6 +4,7 @@ import JodaUtils.dateTimeOrdering
 import java.util.Date
 import org.joda.time._
 import scala.collection.JavaConverters._
+import java.util
 
 /**
  * @author f.patin
@@ -58,42 +59,23 @@ object TimeUtils {
 
 	def getNbDaysOffInMonth(year: Integer, month: Integer): Int = (1 to getLastDayOfMonth(year, month)).filter(day => DaysOff.isDayOff(new DateTime(year, month, day, 0, 0))).size
 
-	def getDaysOfMonth(year: Integer, month: Integer, extended: Boolean = false) = {
-		val firstDay = new DateTime(year, month, 1, 0, 0)
-		val current = (1 to getLastDayOfMonth(year, month)).map((day: Int) => new DateTime(year, month, day, 0, 0))
+	def getDaysOfMonth(year: Integer, month: Integer, extended: Boolean = false): util.List[DateTime] = {
+		val current = dateRange(getFirstDayOfMonth(year, month), getLastDateOfMonth(year, month), Period.days(1))
 		val result = extended match {
-			case false => current.sorted
+			case false => current.toList.sorted
 			case _ => {
+				val firstDay = new DateTime(year, month, 1, 0, 0)
 				val lastDay = getLastDateOfMonth(year, month)
 				val nbPastDays = new Interval(getMondayOfDate(firstDay), firstDay).toPeriod.getDays
 				val nbFutureDays = new Interval(lastDay, getSundayOfDate(lastDay)).toPeriod.getDays
-				((1 to nbPastDays).map(i => firstDay.minusDays(i)) ++ current ++ (1 to nbFutureDays).map(j => lastDay.plusDays(j))).sorted
+				((1 to nbPastDays).map(i => firstDay.minusDays(i))
+					++ current
+					++ (1 to nbFutureDays).map(j => lastDay.plusDays(j))
+					).sorted
 			}
 		}
 		result.asJava
 
-	}
-
-	def datesBetween(start: Long, end: Long): java.util.List[DateTime] = datesBetween(new DateTime(start), new DateTime(end))
-
-	def datesBetween(start: DateTime, end: DateTime): java.util.List[DateTime] = {
-		def add(dt: DateTime, xs: List[DateTime]): List[DateTime] = {
-			if (dt.isAfter(end)) {
-				xs
-			} else if (TimeUtils.isDayOffOrWeekEnd(dt)) {
-
-				add(dt.plusHours(12), xs)
-			} else {
-				add(dt.plusHours(12), xs :+ dt)
-			}
-		}
-		add(start, List.empty[DateTime]).asJava
-	}
-
-	def nbDaysBetween(start: DateTime, end: DateTime): java.math.BigDecimal = {
-		val a = datesBetween(start, end)
-		println(s"datesBetween($start, $end) $a")
-		(BigDecimal(a.size()) / 2).bigDecimal
 	}
 
 	def containsOnlyWeekEndOrDayOff(start: DateTime, end: DateTime): java.lang.Boolean = {
@@ -104,7 +86,6 @@ object TimeUtils {
 				TimeUtils.isSaturdayOrSunday(dt) || TimeUtils.isDayOff(dt)
 		}
 	}
-
 
 	def dateRange(from: DateTime, to: DateTime, step: Period): Iterator[DateTime] = Iterator.iterate(from)(_.plus(step)).takeWhile(!_.isAfter(to))
 

@@ -8,13 +8,7 @@ import com.google.common.collect.Lists;
 import constants.MomentOfDay;
 import dto.DayDTO;
 import exceptions.IllegalDayOperation;
-import models.JClaim;
-import models.JCra;
-import models.JDay;
-import models.JHalfDay;
-import models.JMission;
-import models.JPeriod;
-import models.JUser;
+import models.*;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
@@ -39,7 +33,7 @@ public class JDays extends Controller {
 
 		JDay day = JDay.find(idCra, dt);
 		final List<ObjectId> missionsIds = Lists.newArrayList();
-		if (day == null) {
+		if(day == null) {
 			day = new JDay(dt);
 		} else {
 			missionsIds.addAll(day.missionIds());
@@ -51,7 +45,7 @@ public class JDays extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result create() {
 		final Form<CreateForm> form = Form.form(CreateForm.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateForm createForm = form.get();
@@ -59,13 +53,14 @@ public class JDays extends Controller {
 		final String username = createForm.username;
 		final Integer year = createForm.year;
 		final Integer month = createForm.month;
-
-		final JCra cra = JCra.getOrCreate(ObjectId.massageToObjectId(craId), JUser.id(username), year, month);
+		final ObjectId userId = JUser.id(username);
+		final JCra cra = JCra.getOrCreate(ObjectId.massageToObjectId(craId), userId, year, month);
 
 		try {
-			JDay.createDays(cra.id, createForm.days());
+			final List<JDay> days= JDay.createDays(cra.id, createForm.days());
+			JClaim.computeMissionAllowance(userId, days);
 			return created("Journée(s) sauvegardée(s)");
-		} catch (IllegalDayOperation e) {
+		} catch(IllegalDayOperation e) {
 			return badRequest(toJson(e));
 		}
 	}
@@ -76,20 +71,16 @@ public class JDays extends Controller {
 		final ObjectId idCra = ObjectId.massageToObjectId(craId);
 
 		final JHalfDay deleteHalfDay = JDay.findHalfDay(idCra, dt, momentOfDay);
-		if (JMission.isAbsenceMission(deleteHalfDay.missionId)) {
+		if(JMission.isAbsenceMission(deleteHalfDay.missionId)) {
 			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
 		}
 		final JDay day = JDay.deleteHalfDay(idCra, dt, momentOfDay);
 
 		// Day empty
-		if (day.morning == null && day.afternoon == null) {
+		if(day.morning == null && day.afternoon == null) {
 			return remove(craId, date);
 		}
-
-		final JHalfDay remainder = MomentOfDay.morning.equals(momentOfDay) ? day.afternoon : day.morning;
-		if (!remainder.missionId.equals(deleteHalfDay.missionId)) {
-			JClaim.deleteMissionAllowance(day, deleteHalfDay.missionId);
-		}
+		JClaim.computeMissionAllowance(day.userId, day);
 		return ok();
 	}
 
@@ -98,12 +89,12 @@ public class JDays extends Controller {
 		final ObjectId idCra = ObjectId.massageToObjectId(craId);
 
 		final JDay day = JDay.find(idCra, dt);
-		if ((day.morning != null && JMission.isAbsenceMission(day.morning.missionId))
-			    || (day.morning != null && JMission.isAbsenceMission(day.morning.missionId))) {
+		if((day.morning != null && JMission.isAbsenceMission(day.morning.missionId))
+			   || (day.morning != null && JMission.isAbsenceMission(day.morning.missionId))) {
 			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
 		}
 		JDay.delete(craId, date);
-		JClaim.deleteMissionAllowance(Lists.newArrayList(day));
+		JClaim.computeMissionAllowance(day.userId, day);
 		return ok();
 	}
 
@@ -144,11 +135,11 @@ public class JDays extends Controller {
 		public String comment;
 
 		public JHalfDay morning() {
-			if (this.morning == null) {
+			if(this.morning == null) {
 				return null;
 			}
 			final JHalfDay hd = new JHalfDay();
-			if (this.morning.missionId == null) {
+			if(this.morning.missionId == null) {
 				hd.periods.addAll(this.morning.periods());
 			} else {
 				hd.missionId = ObjectId.massageToObjectId(this.morning.missionId);
@@ -157,11 +148,11 @@ public class JDays extends Controller {
 		}
 
 		public JHalfDay afternoon() {
-			if (this.afternoon == null) {
+			if(this.afternoon == null) {
 				return null;
 			}
 			final JHalfDay hd = new JHalfDay();
-			if (this.afternoon.missionId == null) {
+			if(this.afternoon.missionId == null) {
 				hd.periods.addAll(this.afternoon.periods());
 			} else {
 				hd.missionId = ObjectId.massageToObjectId(this.afternoon.missionId);
