@@ -9,6 +9,8 @@ import models.JAbsence;
 import models.JMission;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.joda.time.DateTime;
+import utils.business.AbsenceUtils;
 import utils.serializer.ObjectIdSerializer;
 import utils.time.TimeUtils;
 
@@ -47,7 +49,7 @@ public class AbsenceDTO {
             this.description = mission.description;
         }
         this.startDate = absence.startDate.getMillis();
-        this.endDate = absence.endDate.minusDays(1).getMillis();
+        this.endDate = AbsenceUtils.getHumanEndDate(absence).getMillis();
         this.nbDays = absence.nbDays;
         this.comment = absence.comment;
     }

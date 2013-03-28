@@ -93,7 +93,7 @@ public class JAbsences extends Controller {
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
 			if(missionId == null) {
-				errors.add(new ValidationError("missionId", "La mission est requise."));
+				errors.add(new ValidationError("missionId", "Le motif est requis."));
 			}
 			if(Boolean.TRUE.equals(day)) {
 				if(startDate == null) {
@@ -123,8 +123,8 @@ public class JAbsences extends Controller {
 		public JAbsence to() {
 			final JAbsence holiday = new JAbsence();
 			holiday.userId = JUser.id(this.username);
-			holiday.startDate = startMorning ? new DateTime(this.startDate).withTimeAtStartOfDay() : new DateTime(this.startDate).withTime(12, 0, 0, 0);
-			holiday.endDate = endAfternoon ? new DateTime(this.endDate).withTime(0, 0, 0, 0).plusDays(1) : new DateTime(this.endDate).withTime(12, 0, 0, 0);
+			holiday.startDate = Boolean.TRUE.equals(startMorning)  ? new DateTime(this.startDate).withTimeAtStartOfDay() : new DateTime(this.startDate).withTime(12, 0, 0, 0);
+			holiday.endDate = Boolean.TRUE.equals(endAfternoon) ? new DateTime(this.endDate).withTime(0, 0, 0, 0).plusDays(1) : new DateTime(this.endDate).withTime(12, 0, 0, 0);
 			holiday.missionId = ObjectId.massageToObjectId(this.missionId);
 			holiday.comment = this.comment;
 			return holiday;

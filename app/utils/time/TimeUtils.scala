@@ -79,7 +79,6 @@ object TimeUtils {
 	}
 
 
-
 	def dateRange(from: DateTime, to: DateTime, step: Period): Iterator[DateTime] = Iterator.iterate(from)(_.plus(step)).takeWhile(!_.isAfter(to))
 
 	def toNextDayOfWeek(dt: DateTime, dayOfWeek: Integer): DateTime = {
@@ -88,5 +87,13 @@ object TimeUtils {
 			case nb if nb > 0 => dt.minusDays(nb).plusWeeks(1)
 			case nb => dt.plusDays(math.abs(nb))
 		}
+	}
+
+	def previousWorkingDay(date: DateTime) = {
+		def subtract(dt: DateTime): DateTime = {
+			if (!isDayOffOrWeekEnd(dt)) dt
+			else subtract(dt.minusDays(1))
+		}
+		subtract(date.minusDays(1))
 	}
 }

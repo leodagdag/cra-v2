@@ -245,13 +245,14 @@ public class JDay extends Model implements MongoModel {
 
 		// Delete empty CRA ?
 		for(F.Tuple<Integer, Integer> ym : yearMonth) {
+			final Integer year = ym._1;
+			final Integer month = ym._2;
 			final Query<JDay> q = q()
 				                      .field("userId").equal(userId)
-				                      .field("year").equal(ym._1)
-				                      .field("month").equal(ym._2);
-
-			if(MorphiaPlugin.ds().getCount(q) > 0) {
-				JCra.delete(userId, ym._1, ym._2);
+				                      .field("year").equal(year)
+				                      .field("month").equal(month);
+			if(MorphiaPlugin.ds().getCount(q) == 0) {
+				JCra.delete(userId, year, month);
 			}
 		}
 	}

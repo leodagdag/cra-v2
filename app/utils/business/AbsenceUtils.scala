@@ -4,6 +4,7 @@ import org.joda.time.{Period, LocalTime, DateTime}
 import utils.time.TimeUtils
 import scala.collection.JavaConverters._
 import play.libs.F
+import models.JAbsence
 
 /**
  * @author f.patin
@@ -65,4 +66,8 @@ object AbsenceUtils {
 				.forall(dt => TimeUtils.isDayOffOrWeekEnd(dt))
 		}
 	}
+
+	def getHumanEndDate(absence: JAbsence): DateTime =
+		if (absence.endDate.withTimeAtStartOfDay().isEqual(absence.startDate.withTimeAtStartOfDay())) absence.endDate
+		else TimeUtils.previousWorkingDay(absence.endDate)
 }
