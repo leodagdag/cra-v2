@@ -17,7 +17,7 @@ object ApplicationBuild extends Build {
 		// email
 		"com.typesafe" %% "play-plugins-mailer" % "2.1.0",
 		// PDF
-		"com.itextpdf" % "itextpdf" % "5.3.4",
+		"com.itextpdf" % "itextpdf" % "5.4.0",
 		// security
 		"be.objectify" %% "deadbolt-scala" % "2.1-RC1",
 		// MongoDB

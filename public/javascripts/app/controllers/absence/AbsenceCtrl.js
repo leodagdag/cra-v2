@@ -1,5 +1,5 @@
-app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'profile', 'AbsenceTypeConst', 'MonthsConst',
-	function AbsenceCtrl($rootScope, $scope, $http, $log, $location, $routeParams, profile, AbsenceTypeConst, MonthsConst) {
+app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', '$window', 'profile', 'AbsenceTypeConst', 'MonthsConst',
+	function AbsenceCtrl($rootScope, $scope, $http, $log, $location, $routeParams, $window, profile, AbsenceTypeConst, MonthsConst) {
 		$scope.profile = profile.data;
 
 		$scope.subSections = {
@@ -26,13 +26,13 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		};
 		$scope.form = {};
 
-		$scope.errors ={
-			global:null,
-			missionId:null,
-			date:null,
-			startDate:null,
-			endDate:null,
-			limits:null
+		$scope.errors = {
+			global: null,
+			missionId: null,
+			date: null,
+			startDate: null,
+			endDate: null,
+			limits: null
 		};
 		$scope.save = function(absence) {
 			absence.username = $scope.profile.username;
@@ -45,7 +45,10 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			})
 				.success(function(absence, status, headers, config) {
 					$rootScope.onSuccess("L'absence a été créée.");
-					$scope.form = {};
+					$scope.form = {
+						startMorning: true,
+						endAfternoon: true
+					};
 					$scope.loadHistory();
 				})
 				.error(function(errors, status, headers, config) {
@@ -70,6 +73,24 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 					.error(function(error, status, headers, config) {
 					});
 			}
+		};
+
+		$scope.send = function(id) {
+			var route = jsRoutes.controllers.JAbsences.send($scope.profile.id, id);
+			$http({
+				method: route.method,
+				url: route.url
+			})
+				.success(function(absence, status, headers, config) {
+					$rootScope.onSuccess("Votre demande a été envoyée.");
+				})
+				.error(function(error, status, headers, config) {
+				});
+		};
+
+		$scope.export = function(id) {
+			// /absences/export/:id
+			$window.open(_.str.sprintf("/absences/export/%s", id));
 		};
 
 		var loadMissions = function() {

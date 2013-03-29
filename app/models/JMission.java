@@ -1,20 +1,10 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.Index;
-import com.github.jmkgreen.morphia.annotations.Indexes;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import constants.AbsenceType;
 import constants.GenesisMissionCode;
 import constants.MissionType;
@@ -59,8 +49,44 @@ public class JMission {
 	private Date _startDate;
 	private Date _endDate;
 
+	private static Query<JMission> q() {
+		return MorphiaPlugin.ds().createQuery(JMission.class);
+	}
+
+	private static Query<JMission> queryToFindMe(final ObjectId id) {
+		return q().field(Mapper.ID_KEY).equal(id);
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(startDate != null) {
+			_startDate = startDate.toDate();
+		}
+		if(endDate != null) {
+			_endDate = endDate.toDate();
+		}
+		if(distance != null) {
+			_distance = distance.toPlainString();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_startDate != null) {
+			startDate = new DateTime(_startDate.getTime());
+		}
+		if(_endDate != null) {
+			endDate = new DateTime(_endDate.getTime());
+		}
+		if(_distance != null) {
+			distance = new BigDecimal(_distance);
+		}
+	}
+
 	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final ImmutableList<ObjectId> missionsIds) {
-		if (CollectionUtils.isNotEmpty(missionsIds)) {
+		if(CollectionUtils.isNotEmpty(missionsIds)) {
 			final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
 				                                .field(Mapper.ID_KEY).in(missionsIds)
 				                                .retrievedFields(true, Mapper.ID_KEY, "code", "missionType")
@@ -140,14 +166,6 @@ public class JMission {
 			       .id;
 	}
 
-	private static Query<JMission> q() {
-		return MorphiaPlugin.ds().createQuery(JMission.class);
-	}
-
-	private static Query<JMission> queryToFindMe(final ObjectId id) {
-		return q().field(Mapper.ID_KEY).equal(id);
-	}
-
 	public static JMission fetch(final ObjectId id) {
 		return queryToFindMe(id).get();
 	}
@@ -155,34 +173,6 @@ public class JMission {
 	public static Boolean isAbsenceMission(final ObjectId missionId) {
 		return MorphiaPlugin.ds().getCount(queryToFindMe(missionId)
 			                                   .field("missionType").equal(MissionType.holiday.name())) > 0;
-	}
-
-	@SuppressWarnings({"unused"})
-	@PrePersist
-	private void prePersist() {
-		if (startDate != null) {
-			_startDate = startDate.toDate();
-		}
-		if (endDate != null) {
-			_endDate = endDate.toDate();
-		}
-		if (distance != null) {
-			_distance = distance.toPlainString();
-		}
-	}
-
-	@SuppressWarnings({"unused"})
-	@PostLoad
-	private void postLoad() {
-		if (_startDate != null) {
-			startDate = new DateTime(_startDate.getTime());
-		}
-		if (_endDate != null) {
-			endDate = new DateTime(_endDate.getTime());
-		}
-		if (_distance != null) {
-			distance = new BigDecimal(_distance);
-		}
 	}
 
 	public static Boolean isClaimable(final ObjectId missionId) {

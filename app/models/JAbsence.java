@@ -1,10 +1,6 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import constants.AbsenceType;
@@ -40,16 +36,17 @@ public class JAbsence extends Model implements MongoModel {
 	@Transient
 	public BigDecimal nbDays;
 	public String comment;
+	@Transient
+	public DateTime creationDate;
+	public DateTime sentDate;
 	private Date _startDate;
 	private Date _endDate;
 	private String _nbDays;
+	private Date _creationDate = DateTime.now().toDate();
+	private Date _sentDate;
 
 	@SuppressWarnings({"unused"})
 	public JAbsence() {
-	}
-
-	public static JAbsence delete(final String userId, final String id) {
-		return MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
 	}
 
 	private static Query<JAbsence> queryToFindMe(final ObjectId id) {
@@ -57,14 +54,62 @@ public class JAbsence extends Model implements MongoModel {
 			       .field(Mapper.ID_KEY).equal(id);
 	}
 
+	private static Query<JAbsence> queryToFindMeByUser(final ObjectId id) {
+		return MorphiaPlugin.ds().createQuery(JAbsence.class)
+			       .field("userId").equal(id);
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(startDate != null) {
+			_startDate = startDate.toDate();
+		}
+		if(endDate != null) {
+			_endDate = endDate.toDate();
+		}
+		if(sentDate != null) {
+			_sentDate = sentDate.toDate();
+		}
+		if(nbDays == null) {
+			_nbDays = AbsenceUtils.nbDaysBetween(startDate, endDate).toPlainString();
+		} else {
+			_nbDays = nbDays.toPlainString();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_startDate != null) {
+			startDate = new DateTime(_startDate.getTime());
+		}
+		if(_endDate != null) {
+			endDate = new DateTime(_endDate.getTime());
+		}
+		if(_creationDate != null) {
+			creationDate = new DateTime(_creationDate.getTime());
+		}
+		if(_sentDate != null) {
+			sentDate = new DateTime(_sentDate.getTime());
+		}
+		if(_nbDays != null) {
+			nbDays = new BigDecimal(_nbDays);
+		}
+	}
+
+	public static JAbsence delete(final String userId, final String id) {
+		return MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
+	}
+
 	public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException, ContainsOnlyWeekEndOrDayOfException, AbsenceStartIllegalDateException, AbsenceEndIllegalDateException {
-		if (TimeUtils.isDayOffOrWeekEnd(absence.startDate)) {
+		if(TimeUtils.isDayOffOrWeekEnd(absence.startDate)) {
 			throw new AbsenceStartIllegalDateException(absence.startDate);
 		}
-		if (!absence.startDate.withTimeAtStartOfDay().isEqual(absence.endDate.withTimeAtStartOfDay()) && TimeUtils.isDayOffOrWeekEnd(absence.endDate.minusDays(1))) {
+		if(!absence.startDate.withTimeAtStartOfDay().isEqual(absence.endDate.withTimeAtStartOfDay()) && TimeUtils.isDayOffOrWeekEnd(absence.endDate.minusDays(1))) {
 			throw new AbsenceEndIllegalDateException(absence.endDate.minusDays(1));
 		}
-		if (AbsenceUtils.containsOnlyWeekEndOrDayOff(absence.startDate, absence.endDate)) {
+		if(AbsenceUtils.containsOnlyWeekEndOrDayOff(absence.startDate, absence.endDate)) {
 			throw new ContainsOnlyWeekEndOrDayOfException(absence);
 		}
 		final Query<JAbsence> dateQuery = MorphiaPlugin.ds().createQuery(JAbsence.class);
@@ -82,7 +127,7 @@ public class JAbsence extends Model implements MongoModel {
 				                         dateQuery.criteria("_endDate").greaterThanOrEq(absence.endDate.toDate())
 			            )
 		);
-		if (dateQuery.countAll() > 0) {
+		if(dateQuery.countAll() > 0) {
 			throw new AbsenceAlreadyExistException(absence);
 		}
 		return absence.insert();
@@ -96,8 +141,7 @@ public class JAbsence extends Model implements MongoModel {
 		final Query<JAbsence> q = queryToFindMeByUser(ObjectId.massageToObjectId(userId));
 
 
-
-		if (startYear != null && startMonth != null && endYear != null && endMonth != null) {
+		if(startYear != null && startMonth != null && endYear != null && endMonth != null) {
 			final DateTime startFirstDay = TimeUtils.getFirstDayOfMonth(startYear, startMonth);
 			final DateTime endFirstDay = TimeUtils.getLastDateOfMonth(endYear, endMonth);
 			q.or(
@@ -112,45 +156,14 @@ public class JAbsence extends Model implements MongoModel {
 			);
 		}
 
-		if (!AbsenceType.ALL.equals(absenceType)) {
+		if(!AbsenceType.ALL.equals(absenceType)) {
 			q.field("missionId").in(JMission.getAbsencesMissionIds(absenceType));
 		}
 		return q.asList();
 	}
 
-	private static Query<JAbsence> queryToFindMeByUser(final ObjectId id) {
-		return MorphiaPlugin.ds().createQuery(JAbsence.class)
-			       .field("userId").equal(id);
-	}
-
-	@SuppressWarnings({"unused"})
-	@PrePersist
-	private void prePersist() {
-		if (startDate != null) {
-			_startDate = startDate.toDate();
-		}
-		if (endDate != null) {
-			_endDate = endDate.toDate();
-		}
-		if (nbDays == null) {
-			_nbDays = AbsenceUtils.nbDaysBetween(startDate, endDate).toPlainString();
-		} else {
-			_nbDays = nbDays.toPlainString();
-		}
-	}
-
-	@SuppressWarnings({"unused"})
-	@PostLoad
-	private void postLoad() {
-		if (_startDate != null) {
-			startDate = new DateTime(_startDate.getTime());
-		}
-		if (_endDate != null) {
-			endDate = new DateTime(_endDate.getTime());
-		}
-		if (_nbDays != null) {
-			nbDays = new BigDecimal(_nbDays);
-		}
+	public static JAbsence fetch(final String id) {
+		return queryToFindMe(ObjectId.massageToObjectId(id)).get();
 	}
 
 	@Override

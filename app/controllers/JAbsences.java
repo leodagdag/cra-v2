@@ -8,6 +8,7 @@ import exceptions.AbsenceAlreadyExistException;
 import exceptions.AbsenceEndIllegalDateException;
 import exceptions.AbsenceStartIllegalDateException;
 import exceptions.ContainsOnlyWeekEndOrDayOfException;
+import export.PDF;
 import models.JAbsence;
 import models.JDay;
 import models.JUser;
@@ -79,6 +80,13 @@ public class JAbsences extends Controller {
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 
+	public static Result send(final String id){
+		return ok();
+	}
+
+	public static Result export(final String id){
+		return ok(PDF.absence(JAbsence.fetch(id))).as("application/pdf");
+	}
 	public static class CreateAbsenceForm {
 
 		public Boolean day = Boolean.TRUE;

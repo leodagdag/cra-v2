@@ -5,9 +5,9 @@ app.controller('DayAbsenceCtrl', ['$scope', '$http', '$log', '$location', '$rout
 				day: true,
 				missionId: $scope.form.missionId,
 				startDate: $scope.form.date ? moment($scope.form.date, 'DD/MM/YYYY').valueOf() : null,
-				startMorning: $scope.form.morning,
+				startMorning: $scope.form.startMorning,
 				endDate: moment($scope.form.date, 'DD/MM/YYYY').valueOf(),
-				endAfternoon: $scope.form.afternoon,
+				endAfternoon: $scope.form.endAfternoon,
 				comment: $scope.form.comment
 			};
 			$scope.save(day);

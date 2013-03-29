@@ -3,11 +3,7 @@ package models;
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
-import com.github.jmkgreen.morphia.annotations.Embedded;
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.Index;
-import com.github.jmkgreen.morphia.annotations.Indexes;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -57,6 +53,10 @@ public class JUser implements Subject {
 		return MorphiaPlugin.ds().createQuery(JUser.class).field(Mapper.ID_KEY).equal(id);
 	}
 
+	private static Query<JUser> queryToFindMe(final String username) {
+		return MorphiaPlugin.ds().createQuery(JUser.class).field("username").equal(username);
+	}
+
 	public static Boolean checkAuthentication(final String username, final String password) {
 		return MorphiaPlugin.ds().createQuery(JUser.class)
 			       .field("username").equal(username)
@@ -87,6 +87,13 @@ public class JUser implements Subject {
 
 	}
 
+	public static JUser identity(final ObjectId id) {
+		return queryToFindMe(id)
+			       .retrievedFields(true, "firstName", "lastName")
+			       .disableValidation()
+			       .get();
+	}
+
 	public static ImmutableList<JUser> byRole(final String role) {
 		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JUser.class)
 			                            .field("role").equal(role)
@@ -103,7 +110,7 @@ public class JUser implements Subject {
 			                   .disableValidation()
 			                   .get();
 		final Collection<JAffectedMission> affectedMissions = Lists.newArrayList();
-		if (start != null && end != null) {
+		if(start != null && end != null) {
 			final DateTime startDate = new DateTime(start);
 			final DateTime endDate = new DateTime(end);
 			affectedMissions.addAll(Collections2.filter(user.affectedMissions, new Predicate<JAffectedMission>() {
@@ -150,10 +157,6 @@ public class JUser implements Subject {
 	public static void password(final String username, final String newPassword) {
 		final UpdateOperations<JUser> uop = MorphiaPlugin.ds().createUpdateOperations(JUser.class).set("password", MD5.apply(newPassword));
 		MorphiaPlugin.ds().update(queryToFindMe(username), uop, false, WriteConcern.ACKNOWLEDGED);
-	}
-
-	private static Query<JUser> queryToFindMe(final String username) {
-		return MorphiaPlugin.ds().createQuery(JUser.class).field("username").equal(username);
 	}
 
 	@Override
