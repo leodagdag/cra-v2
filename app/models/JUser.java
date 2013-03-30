@@ -47,26 +47,31 @@ public class JUser implements Subject {
 	public Boolean isManager = Boolean.FALSE;
 	@Embedded
 	public List<JAffectedMission> affectedMissions = Lists.newArrayList();
+	@SuppressWarnings({"unused"})
 	private String password;
 
+	private static Query<JUser> q() {
+		return MorphiaPlugin.ds().createQuery(JUser.class);
+	}
+
 	private static Query<JUser> queryToFindMe(final ObjectId id) {
-		return MorphiaPlugin.ds().createQuery(JUser.class).field(Mapper.ID_KEY).equal(id);
+		return q()
+			       .field(Mapper.ID_KEY).equal(id);
 	}
 
 	private static Query<JUser> queryToFindMe(final String username) {
-		return MorphiaPlugin.ds().createQuery(JUser.class).field("username").equal(username);
+		return q()
+			       .field("username").equal(username);
 	}
 
 	public static Boolean checkAuthentication(final String username, final String password) {
-		return MorphiaPlugin.ds().createQuery(JUser.class)
-			       .field("username").equal(username)
+		return queryToFindMe(username)
 			       .field("password").equal(MD5.apply(password))
 			       .countAll() > 0;
 	}
 
 	public static Subject getSubject(final String username) {
-		return MorphiaPlugin.ds().createQuery(JUser.class)
-			       .field("username").equal(username)
+		return queryToFindMe(username)
 			       .retrievedFields(true, "username", "role")
 			       .disableValidation()
 			       .get();
@@ -74,28 +79,32 @@ public class JUser implements Subject {
 
 	public static ObjectId id(final String username) {
 		return queryToFindMe(username)
-			       .retrievedFields(true, "id")
+			       .retrievedFields(true, Mapper.ID_KEY)
 			       .disableValidation()
 			       .get().id;
 	}
 
-	public static JUser account(final String id) {
-		return queryToFindMe(ObjectId.massageToObjectId(id))
-			       .retrievedFields(false, "role", "username", "password", "isManager")
+	public static JUser account(final ObjectId id) {
+		return queryToFindMe(id)
+			       .retrievedFields(Boolean.FALSE, "role", "username", "password", "isManager")
 			       .disableValidation()
 			       .get();
 
 	}
 
+	public static JUser account(final String id) {
+		return account(ObjectId.massageToObjectId(id));
+	}
+
 	public static JUser identity(final ObjectId id) {
 		return queryToFindMe(id)
-			       .retrievedFields(true, "firstName", "lastName")
+			       .retrievedFields(true, "firstName", "lastName", "email")
 			       .disableValidation()
 			       .get();
 	}
 
 	public static ImmutableList<JUser> byRole(final String role) {
-		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JUser.class)
+		return ImmutableList.copyOf(q()
 			                            .field("role").equal(role)
 			                            .retrievedFields(true, "username", "firstName", "lastName", "role")
 			                            .disableValidation()
@@ -135,14 +144,14 @@ public class JUser implements Subject {
 	}
 
 	public static ImmutableList<JUser> all() {
-		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JUser.class)
-			                            .retrievedFields(false, "affectedMissions")
+		return ImmutableList.copyOf(q()
+			                            .retrievedFields(Boolean.FALSE, "affectedMissions")
 			                            .disableValidation()
 			                            .asList());
 	}
 
 	public static ImmutableList<JUser> managers() {
-		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JUser.class)
+		return ImmutableList.copyOf(q()
 			                            .field("isManager").equal(Boolean.TRUE)
 			                            .retrievedFields(true, Mapper.ID_KEY, "lastName", "firstName")
 			                            .disableValidation()
@@ -155,8 +164,9 @@ public class JUser implements Subject {
 	}
 
 	public static void password(final String username, final String newPassword) {
-		final UpdateOperations<JUser> uop = MorphiaPlugin.ds().createUpdateOperations(JUser.class).set("password", MD5.apply(newPassword));
-		MorphiaPlugin.ds().update(queryToFindMe(username), uop, false, WriteConcern.ACKNOWLEDGED);
+		final UpdateOperations<JUser> ops = MorphiaPlugin.ds().createUpdateOperations(JUser.class)
+			                                    .set("password", MD5.apply(newPassword));
+		MorphiaPlugin.ds().update(queryToFindMe(username), ops, false, WriteConcern.ACKNOWLEDGED);
 	}
 
 	@Override

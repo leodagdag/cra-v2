@@ -7,6 +7,8 @@ import com.itextpdf.text._
 import pdf.{PdfPTable, PdfWriter}
 import java.io.ByteArrayOutputStream
 import utils.business.AbsenceUtils
+import com.github.jmkgreen.morphia.Morphia
+import leodagdag.play2morphia.MorphiaPlugin
 
 /**
  * @author f.patin
@@ -58,5 +60,8 @@ case class PDFAbsence(userId: ObjectId,
 }
 
 object PDFAbsence {
-  def apply(absence: JAbsence) = new PDFAbsence(absence).export()
+  def apply(absence: JAbsence) = {
+    new PDFAbsence(absence).export()
+  }
+
 }

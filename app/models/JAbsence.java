@@ -3,6 +3,9 @@ package models;
 import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
+import com.github.jmkgreen.morphia.query.UpdateOperations;
+import com.github.jmkgreen.morphia.query.UpdateResults;
+import com.mongodb.WriteConcern;
 import constants.AbsenceType;
 import exceptions.AbsenceAlreadyExistException;
 import exceptions.AbsenceEndIllegalDateException;
@@ -29,6 +32,7 @@ public class JAbsence extends Model implements MongoModel {
 	public ObjectId id;
 	public ObjectId userId;
 	public ObjectId missionId;
+	public ObjectId fileId;
 	@Transient
 	public DateTime startDate;
 	@Transient
@@ -49,13 +53,21 @@ public class JAbsence extends Model implements MongoModel {
 	public JAbsence() {
 	}
 
+	private static Query<JAbsence> q() {
+		return MorphiaPlugin.ds().createQuery(JAbsence.class);
+	}
+
+	private static UpdateOperations<JAbsence> ops() {
+		return MorphiaPlugin.ds().createUpdateOperations(JAbsence.class);
+	}
+
 	private static Query<JAbsence> queryToFindMe(final ObjectId id) {
-		return MorphiaPlugin.ds().createQuery(JAbsence.class)
+		return q()
 			       .field(Mapper.ID_KEY).equal(id);
 	}
 
 	private static Query<JAbsence> queryToFindMeByUser(final ObjectId id) {
-		return MorphiaPlugin.ds().createQuery(JAbsence.class)
+		return q()
 			       .field("userId").equal(id);
 	}
 
@@ -112,7 +124,7 @@ public class JAbsence extends Model implements MongoModel {
 		if(AbsenceUtils.containsOnlyWeekEndOrDayOff(absence.startDate, absence.endDate)) {
 			throw new ContainsOnlyWeekEndOrDayOfException(absence);
 		}
-		final Query<JAbsence> dateQuery = MorphiaPlugin.ds().createQuery(JAbsence.class);
+		final Query<JAbsence> dateQuery = q();
 		dateQuery.or(
 			            dateQuery.and(
 				                         dateQuery.criteria("_startDate").greaterThanOrEq(absence.startDate.toDate()),
@@ -164,6 +176,12 @@ public class JAbsence extends Model implements MongoModel {
 
 	public static JAbsence fetch(final String id) {
 		return queryToFindMe(ObjectId.massageToObjectId(id)).get();
+	}
+
+	public static UpdateResults<JAbsence> updateFileId(final ObjectId id, final ObjectId fileId) {
+		final UpdateOperations<JAbsence> ops = ops()
+			                                       .set("fileId", fileId);
+		return MorphiaPlugin.ds().update(queryToFindMe(id), ops, false, WriteConcern.ACKNOWLEDGED);
 	}
 
 	@Override

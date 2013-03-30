@@ -76,7 +76,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		};
 
 		$scope.send = function(id) {
-			var route = jsRoutes.controllers.JAbsences.send($scope.profile.id, id);
+			var route = jsRoutes.controllers.JAbsences.send(id);
 			$http({
 				method: route.method,
 				url: route.url

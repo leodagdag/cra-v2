@@ -9,6 +9,7 @@ import exceptions.AbsenceEndIllegalDateException;
 import exceptions.AbsenceStartIllegalDateException;
 import exceptions.ContainsOnlyWeekEndOrDayOfException;
 import export.PDF;
+import mail.Mailer;
 import models.JAbsence;
 import models.JDay;
 import models.JUser;
@@ -80,13 +81,16 @@ public class JAbsences extends Controller {
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 
-	public static Result send(final String id){
+	public static Result send(final String id) {
+		final JAbsence absence = JAbsence.fetch(id);
+		Mailer.apply(absence);
 		return ok();
 	}
 
-	public static Result export(final String id){
+	public static Result export(final String id) {
 		return ok(PDF.absence(JAbsence.fetch(id))).as("application/pdf");
 	}
+
 	public static class CreateAbsenceForm {
 
 		public Boolean day = Boolean.TRUE;
@@ -131,7 +135,7 @@ public class JAbsences extends Controller {
 		public JAbsence to() {
 			final JAbsence holiday = new JAbsence();
 			holiday.userId = JUser.id(this.username);
-			holiday.startDate = Boolean.TRUE.equals(startMorning)  ? new DateTime(this.startDate).withTimeAtStartOfDay() : new DateTime(this.startDate).withTime(12, 0, 0, 0);
+			holiday.startDate = Boolean.TRUE.equals(startMorning) ? new DateTime(this.startDate).withTimeAtStartOfDay() : new DateTime(this.startDate).withTime(12, 0, 0, 0);
 			holiday.endDate = Boolean.TRUE.equals(endAfternoon) ? new DateTime(this.endDate).withTime(0, 0, 0, 0).plusDays(1) : new DateTime(this.endDate).withTime(12, 0, 0, 0);
 			holiday.missionId = ObjectId.massageToObjectId(this.missionId);
 			holiday.comment = this.comment;
