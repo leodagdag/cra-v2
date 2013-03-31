@@ -9,10 +9,12 @@ import exceptions.AbsenceEndIllegalDateException;
 import exceptions.AbsenceStartIllegalDateException;
 import exceptions.ContainsOnlyWeekEndOrDayOfException;
 import export.PDF;
-import mail.Mailer;
+import mail.MailerAbsence;
+import models.DbFile;
 import models.JAbsence;
 import models.JDay;
 import models.JUser;
+import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -22,6 +24,7 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.io.File;
 import java.util.List;
 
 import static play.libs.Json.toJson;
@@ -50,7 +53,23 @@ public class JAbsences extends Controller {
 
 	@ResponseCache.NoCacheResponse
 	public static Result remove(final String userId, final String id) {
+		// Suppression de l'absence concernée
 		final JAbsence absence = JAbsence.delete(userId, id);
+		if(absence.fileId != null) {
+
+			// supprimer le fichier
+			DbFile.remove(absence.fileId);
+			// récupérer toutes les absences de ce fichier SAUF celle concerné
+			final List<JAbsence> remainAbsences = JAbsence.byFileId(absence.fileId);
+			if(CollectionUtils.isNotEmpty(remainAbsences)) {
+				// Créer nouveau fichier et l'affecter à celle restante
+				PDF.createFile(remainAbsences);
+			}
+		}
+		// Envoi de l'annulation sans stockage du fichier
+		final JUser user = JUser.account(userId);
+		final File file = PDF.createCancelAbsenceFile(absence, user);
+		MailerAbsence.sendCancelAbsence(user, file);
 		JDay.deleteAbsenceDays(absence);
 		return ok(toJson(AbsenceDTO.of(absence)));
 	}
@@ -83,7 +102,9 @@ public class JAbsences extends Controller {
 
 	public static Result send(final String id) {
 		final JAbsence absence = JAbsence.fetch(id);
-		Mailer.apply(absence);
+		final File file = PDF.absenceFile(absence, JUser.account(absence.userId));
+		final DateTime date = MailerAbsence.send(absence, file);
+		JAbsence.updateSentDate(absence.id, date);
 		return ok();
 	}
 

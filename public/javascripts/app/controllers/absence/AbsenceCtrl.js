@@ -83,6 +83,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 			})
 				.success(function(absence, status, headers, config) {
 					$rootScope.onSuccess("Votre demande a été envoyée.");
+					$scope.loadHistory();
 				})
 				.error(function(error, status, headers, config) {
 				});

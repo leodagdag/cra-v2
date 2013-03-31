@@ -9,10 +9,8 @@ import models.JAbsence;
 import models.JMission;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.joda.time.DateTime;
 import utils.business.AbsenceUtils;
 import utils.serializer.ObjectIdSerializer;
-import utils.time.TimeUtils;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -23,59 +21,64 @@ import java.util.List;
  */
 public class AbsenceDTO {
 
-    @JsonSerialize(using = ObjectIdSerializer.class)
-    public ObjectId id;
-    @JsonSerialize(using = ObjectIdSerializer.class)
-    public ObjectId userId;
-    @JsonSerialize(using = ObjectIdSerializer.class)
-    public ObjectId missionId;
-    public String code;
-    public String description;
-    public Long startDate;
-    public Long endDate;
-    public BigDecimal nbDays;
-    public String comment;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId id;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId userId;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId missionId;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId fileId;
+	public String code;
+	public String description;
+	public Long startDate;
+	public Long endDate;
+	public BigDecimal nbDays;
+	public String comment;
+	public Long sentDate;
 
 	@SuppressWarnings({"unused"})
-    public AbsenceDTO() {
-    }
+	public AbsenceDTO() {
+	}
 
-    public AbsenceDTO(final JAbsence absence, final JMission mission) {
-        this.id = absence.id;
-        this.userId = absence.userId;
-        this.missionId = absence.missionId;
-        if (mission != null) {
-            this.code = mission.code;
-            this.description = mission.description;
-        }
-        this.startDate = absence.startDate.getMillis();
-        this.endDate = AbsenceUtils.getHumanEndDate(absence).getMillis();
-        this.nbDays = absence.nbDays;
-        this.comment = absence.comment;
-    }
+	public AbsenceDTO(final JAbsence absence, final JMission mission) {
+		this.id = absence.id;
+		this.userId = absence.userId;
+		this.missionId = absence.missionId;
+		if(mission != null) {
+			this.code = mission.code;
+			this.description = mission.description;
+		}
+		this.fileId = absence.fileId;
+		this.startDate = absence.startDate.getMillis();
+		this.endDate = AbsenceUtils.getHumanEndDate(absence).getMillis();
+		this.nbDays = absence.nbDays;
+		this.comment = absence.comment;
+		this.sentDate = absence.sentDate != null ? absence.sentDate.getMillis() : null;
+	}
 
-    public static List<AbsenceDTO> of(final List<JAbsence> absences) {
-        final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(ImmutableList.copyOf(Collections2.transform(absences, new Function<JAbsence, ObjectId>() {
-	        @Nullable
-	        @Override
-	        public ObjectId apply(@Nullable final JAbsence absence) {
-		        return absence.missionId;
-	        }
-        })));
-        return Lists.newArrayList(Collections2.transform(absences, new Function<JAbsence, AbsenceDTO>() {
-            @Nullable
-            @Override
-            public AbsenceDTO apply(@Nullable final JAbsence absence) {
-                return AbsenceDTO.of(absence, missions.get(absence.missionId));
-            }
-        }));
-    }
+	private static AbsenceDTO of(JAbsence absence, final JMission missions) {
+		return new AbsenceDTO(absence, missions);
+	}
 
-    private static AbsenceDTO of(JAbsence absence, final JMission missions) {
-        return new AbsenceDTO(absence, missions);
-    }
+	public static List<AbsenceDTO> of(final List<JAbsence> absences) {
+		final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(ImmutableList.copyOf(Collections2.transform(absences, new Function<JAbsence, ObjectId>() {
+			@Nullable
+			@Override
+			public ObjectId apply(@Nullable final JAbsence absence) {
+				return absence.missionId;
+			}
+		})));
+		return Lists.newArrayList(Collections2.transform(absences, new Function<JAbsence, AbsenceDTO>() {
+			@Nullable
+			@Override
+			public AbsenceDTO apply(@Nullable final JAbsence absence) {
+				return AbsenceDTO.of(absence, missions.get(absence.missionId));
+			}
+		}));
+	}
 
-    public static AbsenceDTO of(JAbsence absence) {
-        return of(Lists.newArrayList(absence)).get(0);
-    }
+	public static AbsenceDTO of(JAbsence absence) {
+		return of(Lists.newArrayList(absence)).get(0);
+	}
 }

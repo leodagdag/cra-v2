@@ -1,67 +1,36 @@
 package export
 
-import org.bson.types.ObjectId
-import org.joda.time.DateTime
-import models.JAbsence
-import com.itextpdf.text._
-import pdf.{PdfPTable, PdfWriter}
+import com.itextpdf.text.pdf.{PdfPTable, PdfWriter}
 import java.io.ByteArrayOutputStream
-import utils.business.AbsenceUtils
-import com.github.jmkgreen.morphia.Morphia
-import leodagdag.play2morphia.MorphiaPlugin
+import models.JAbsence
 
 /**
  * @author f.patin
  */
-case class PDFAbsence(userId: ObjectId,
-                      absenceId: ObjectId,
-                      missionId: ObjectId,
-                      startDate: DateTime,
-                      endDate: DateTime,
-                      nbDays: BigDecimal,
-                      comment: String,
-                      creationDate: DateTime,
-                      sentDate: DateTime) extends PDFAbsenceTools {
+object PDFAbsence extends PDFAbsenceTools {
 
-
-  def this(abs: JAbsence) =
-    this(abs.userId, abs.id, abs.missionId, abs.startDate, AbsenceUtils.getHumanEndDate(abs), abs.nbDays, abs.comment, abs.creationDate, abs.sentDate)
-
-
-  lazy val header: Element = header(userId, Option(sentDate))
-
-  def body = {
-    val table = new PdfPTable(5)
-    table.setWidthPercentage(100f)
-    table.setHeaderRows(1)
-    table.getDefaultCell.setPadding(5f)
-    table.getDefaultCell.setPaddingBottom(10f)
-
-    setTableHeader(table)
-    setTableRow(table, this)
-    setTableFooter(table, this.nbDays)
-    table
-
+  def compose(absence: JAbsence): Array[Byte] = {
+    compose(List(absence))
   }
 
-  def export() = {
+  def compose(absences: List[JAbsence]): Array[Byte] = {
+    val firstAbsence = absences.head
     val doc = document()
     val os = new ByteArrayOutputStream()
     PdfWriter.getInstance(doc, os)
-
     doc.open()
     doc.addCreationDate()
-    doc.add(header)
+    doc.add(header(firstAbsence.userId))
+
+    val body = new PdfPTable(5)
+    body.setWidthPercentage(100f)
+    setTableHeader(body)
+    setTableBody(body, absences)
+    val total = absences.foldLeft(Zero)((acc, cur) => acc + cur.nbDays)
+    setTableFooter(body, total)
     doc.add(body)
 
     doc.close()
     os.toByteArray
   }
-}
-
-object PDFAbsence {
-  def apply(absence: JAbsence) = {
-    new PDFAbsence(absence).export()
-  }
-
 }

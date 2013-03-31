@@ -29,6 +29,9 @@ object ApplicationBuild extends Build {
 	)
 
 	val main = play.Project(appName, appVersion, appDependencies)
+    .settings(
+    scalacOptions ++= Seq("-feature")
+  )
 		.settings(
 		lessEntryPoints <<= baseDirectory(appLessEntryPoints)
 	)

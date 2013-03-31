@@ -1,14 +1,14 @@
 package export
 
-import play.api.Play
-import java.net.URL
-import com.itextpdf.text._
-import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
 import com.itextpdf.text.pdf.codec.PngImage
-import models.{JMission, JUser}
+import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
+import com.itextpdf.text.{PageSize, Element, Rectangle, Image, Paragraph, Font, Phrase, Document}
+import java.net.URL
+import models.{JAbsence, JMission, JUser}
 import org.bson.types.ObjectId
-import org.joda.time.DateTime
+import play.api.Play.current
 import scala.collection.JavaConverters._
+import utils.time.TimeUtils
 import utils.business.AbsenceUtils
 
 /**
@@ -16,72 +16,53 @@ import utils.business.AbsenceUtils
  */
 trait PDFTools {
 
+  val Zero = BigDecimal(java.math.BigDecimal.ZERO)
+
+  type Alignment = Int
+  type Border = Int
+  val BOTTOM_LEFT: Border = Rectangle.BOTTOM + Rectangle.LEFT
+  val BOTTOM_RIGHT: Border = Rectangle.BOTTOM + Rectangle.RIGHT
+  val BOTTOM: Border = Rectangle.BOTTOM
+
   def document(): Document
 
-  def phraseln(phrase: String) = {
+  def phraseln(phrase: String): Phrase = {
     new Phrase(phrase + "\n")
   }
 
-  def phrase(phrase: String) = {
+  def phrase(phrase: String): Phrase = {
     new Phrase(phrase)
   }
 
-  def phrase(phrase: String, font: Font) = {
+  def phrase(phrase: String, font: Font): Phrase = {
     new Phrase(phrase, font)
   }
 
-  def phraseln(p: String, font: Font) = {
+  def phraseln(p: String, font: Font): Phrase = {
     phrase(p + "\n", font)
   }
 
-  def phraseln(p: Phrase*) = {
+  def phraseln(p: Phrase*): Phrase = {
     val ps = new Phrase()
     ps.addAll((p :+ blankLine).asJavaCollection)
     ps
   }
 
-  val blankLine = new Phrase("\n")
+  val blankLine: Phrase = new Phrase("\n")
 
-  private val base = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
 
-  val bold: Font = {
-    val f = new Font(base)
-    f.setStyle(Font.BOLD)
-    f
-  }
-  val tableHeaderFont: Font = {
-    val f = new Font(bold)
-    f.setSize(12f)
-    f
-  }
 
-  val headerFont: Font = {
-    val f = new Font(base)
-    f.setSize(12f)
-    f
-  }
 
-  val headerFontBold: Font = {
-    val f = new Font(headerFont)
-    f.setStyle(bold.getStyle)
-    f
-  }
-
-  val titleFont: Font = {
-    val f = new Font(bold)
-    f.setSize(15f)
-    f
-  }
 
   private lazy val logo: Image = {
-    val url: URL = Play.current.resource("/public/images/genesis_logo_export.png").get
+    val url: URL = current.resource("/public/images/genesis_logo_export.png").get
     val img = PngImage.getImage(url)
     img.setBorder(0)
     img.scaleAbsolute(248f, 73f)
     img
   }
 
-  protected def header(title: Paragraph) = {
+  protected def header(title: Paragraph): PdfPTable = {
     val table = new PdfPTable(2)
     table.getDefaultCell.setBorder(Rectangle.NO_BORDER)
     table.setWidthPercentage(100f)
@@ -99,36 +80,101 @@ trait PDFTools {
   }
 }
 
+object PDFFont {
+
+  private val base: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
+
+  val bold: Font = {
+    val f = new Font(base)
+    f.setStyle(Font.BOLD)
+    f
+  }
+
+  private val tableBase: Font = {
+    val f = new Font(base)
+    f
+  }
+
+  val tableBody: Font = {
+    val f = new Font(tableBase)
+    f
+  }
+
+  val tableHeader: Font = {
+    val f = new Font(tableBase)
+    f.setStyle(Font.BOLD)
+    f.setSize(12f)
+    f
+  }
+
+  val tableFooter: Font = {
+    val f = new Font(tableBase)
+    f.setStyle(Font.BOLD)
+    f
+  }
+
+  val title: Font = {
+    val f = new Font(bold)
+    f.setSize(15f)
+    f
+  }
+  val header: Font = {
+    val f = new Font(base)
+    f.setSize(12f)
+    f
+  }
+  val headerBold: Font = {
+    val f = new Font(header)
+    f.setStyle(Font.BOLD)
+    f
+  }
+}
 trait PDFAbsenceTools extends PDFTools {
 
-  private lazy val missions = JMission.getAbsencesMissions
+  private lazy val missions = JMission.getAbsencesMissions.asScala
 
   private val title = "Demande de congés"
 
-  private def headerCell(text: String) = {
-    val cell = new PdfPCell(new Phrase(text, tableHeaderFont))
-    cell.setHorizontalAlignment(Element.ALIGN_CENTER)
+  private def defaultCell(phrase: Phrase) = {
+    val cell = new PdfPCell(phrase)
     cell.setPadding(5f)
     cell.setPaddingBottom(10f)
     cell
   }
 
+  private def headerCell(text: String) = {
+    val cell = defaultCell(new Phrase(text, PDFFont.tableHeader))
+    cell.setHorizontalAlignment(Element.ALIGN_CENTER)
+    cell
+  }
+
+  private def bodyCell(text: String, alignment: Alignment) = {
+    val cell = defaultCell(new Phrase(text, PDFFont.tableBody))
+    cell.setHorizontalAlignment(alignment)
+    cell
+  }
+
+  private def footerCell(text: String, alignment: Alignment, extendedBorder: Border = BOTTOM, colspan: Int = 1) = {
+    val cell = defaultCell(new Phrase(text, PDFFont.tableFooter))
+    cell.setHorizontalAlignment(alignment)
+    cell.setBorder(extendedBorder)
+    cell.setColspan(colspan)
+    cell
+  }
+
   def document(): Document = new Document(PageSize.A4)
 
-  def header(userId: ObjectId, sentDate: Option[DateTime]) = {
+  def header(userId: ObjectId): PdfPTable = {
     val § = new Paragraph()
     val user = JUser.identity(userId)
-    val date = sentDate.map(_.toString("EE dd MMMM YYYY à HH:mm:ss")).getOrElse("")
     §.addAll(
       phraseln(
-        phraseln(title, titleFont),
+        phraseln(title, PDFFont.title),
         blankLine,
         phraseln(
-          phrase("Collaborateur : ", headerFont),
-          phrase(s"${user.lastName.toLowerCase.capitalize} ${user.firstName.toLowerCase.capitalize}", headerFontBold)
+          phrase("Collaborateur : ", PDFFont.header),
+          phrase(s"${user.fullName()}", PDFFont.headerBold)
         ),
-        blankLine,
-        phraseln(s"Date d'envoi : $date", headerFont),
         blankLine
       )
     )
@@ -136,6 +182,7 @@ trait PDFAbsenceTools extends PDFTools {
   }
 
   def setTableHeader(table: PdfPTable) {
+    table.setHeaderRows(1)
     table.addCell(headerCell("Motif"))
     table.addCell(headerCell("Du"))
     table.addCell(headerCell("Au"))
@@ -143,33 +190,23 @@ trait PDFAbsenceTools extends PDFTools {
     table.addCell(headerCell("Commentaire"))
   }
 
-
-  def setTableRow(table: PdfPTable, absence: PDFAbsence) {
-    table.getDefaultCell.setHorizontalAlignment(Element.ALIGN_LEFT)
-    val mission = missions.asScala.find(_.id == absence.missionId)
+  private def setTableRow(table: PdfPTable, absence: JAbsence) {
+    val mission = missions.find(_.id == absence.missionId)
     val description = mission.map(_.description).getOrElse(s"Erreur (id:${absence.missionId.toString})")
-    table.addCell(new Phrase(description))
-    table.getDefaultCell.setHorizontalAlignment(Element.ALIGN_CENTER)
-    table.addCell(new Phrase(absence.startDate.toString("dd/MM/YYYY")))
-    table.addCell(new Phrase(absence.endDate.toString("dd/MM/YYYY")))
-    table.addCell(new Phrase(absence.nbDays.toString()))
-    table.getDefaultCell.setHorizontalAlignment(Element.ALIGN_LEFT)
-    table.addCell(new Phrase(absence.comment))
+    table.addCell(bodyCell(description, Element.ALIGN_LEFT))
+    table.addCell(bodyCell(absence.startDate.toString("dd/MM/YYYY"), Element.ALIGN_CENTER))
+    table.addCell(bodyCell(AbsenceUtils.getHumanEndDate(absence).toString("dd/MM/YYYY"), Element.ALIGN_CENTER))
+    table.addCell(bodyCell(absence.nbDays.toString, Element.ALIGN_CENTER))
+    table.addCell(bodyCell(absence.comment, Element.ALIGN_LEFT))
+  }
+
+  def setTableBody(table: PdfPTable, absences: List[JAbsence]) {
+    absences.foreach(setTableRow(table, _))
   }
 
   def setTableFooter(table: PdfPTable, nbDays: BigDecimal) {
-    table.getDefaultCell.setHorizontalAlignment(Element.ALIGN_RIGHT)
-    table.getDefaultCell.setBorder(Rectangle.BOTTOM + Rectangle.LEFT)
-    table.getDefaultCell.setColspan(3)
-    table.addCell("Total")
-
-    table.getDefaultCell.setBorder(Rectangle.BOTTOM)
-    table.getDefaultCell.setHorizontalAlignment(Element.ALIGN_CENTER)
-    table.getDefaultCell.setColspan(1)
-    table.addCell(nbDays.toString())
-
-    table.getDefaultCell.setBorder(Rectangle.BOTTOM + Rectangle.RIGHT)
-    table.getDefaultCell.setHorizontalAlignment(Element.ALIGN_LEFT)
-    table.addCell("jours(s) ouvré(s)")
+    table.addCell(footerCell("Total", Element.ALIGN_RIGHT, BOTTOM_LEFT, 3))
+    table.addCell(footerCell(nbDays.toString(), Element.ALIGN_CENTER))
+    table.addCell(footerCell("jours(s) ouvré(s)", Element.ALIGN_LEFT, BOTTOM_RIGHT))
   }
 }

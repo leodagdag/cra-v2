@@ -1,11 +1,16 @@
+import org.joda.time.{Duration, DateTime}
+
+
 import java.lang.String
 import java.security.MessageDigest
 import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
-
+/*
 val d = new DateTime(1362092400000L)
 println(d)
+*/
 
+/*
 println(s"lisa:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("lisa".getBytes("UTF-8"))))}]")
 println(s"moe:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("moe".getBytes("UTF-8"))))}]")
 println(s"ned:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("ned".getBytes("UTF-8"))))}]")
@@ -26,3 +31,21 @@ println(s"true && true = ${true && true}")
 println(s"true || true = ${true || true}")
 println(s"false && false = ${false && false}")
 println(s"false || false = ${false || false}")
+*/
+val now = DateTime.now()
+val time = now.withHourOfDay(23).withMinuteOfHour(30).withSecondOfMinute(0).withMillisOfSecond(0)
+val tick = new Duration(now, time)
+
+println(s"now: $now")
+println(s"time: $time")
+println(s"tick: $tick")
+println(s"tick.getStandardHours: ${tick.getStandardHours}")
+println(s"tick.getStandardMinutes: ${tick.getStandardMinutes}")
+println(s"tick.getStandardSeconds: ${tick.getStandardSeconds}")
+
+println(s"tick.toStandardHours: ${tick.toStandardHours}")
+println(s"tick.toStandardHours.getHours: ${tick.toStandardHours.getHours}")
+println(s"tick.toStandardMinutes: ${tick.toStandardMinutes}")
+println(s"tick.toStandardMinutes.getMinutes: ${tick.toStandardMinutes.getMinutes}")
+println(s"tick.toStandardSeconds: ${tick.toStandardSeconds}")
+println(s"tick.toStandardSeconds.getSeconds: ${tick.toStandardSeconds.getSeconds}")

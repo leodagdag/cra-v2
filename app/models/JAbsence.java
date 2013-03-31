@@ -4,7 +4,10 @@ import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
-import com.github.jmkgreen.morphia.query.UpdateResults;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.mongodb.WriteConcern;
 import constants.AbsenceType;
 import exceptions.AbsenceAlreadyExistException;
@@ -18,6 +21,7 @@ import org.joda.time.DateTime;
 import utils.business.AbsenceUtils;
 import utils.time.TimeUtils;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +46,7 @@ public class JAbsence extends Model implements MongoModel {
 	public String comment;
 	@Transient
 	public DateTime creationDate;
+	@Transient
 	public DateTime sentDate;
 	private Date _startDate;
 	private Date _endDate;
@@ -178,14 +183,65 @@ public class JAbsence extends Model implements MongoModel {
 		return queryToFindMe(ObjectId.massageToObjectId(id)).get();
 	}
 
-	public static UpdateResults<JAbsence> updateFileId(final ObjectId id, final ObjectId fileId) {
+	public static JAbsence updateFileId(final ObjectId id, final ObjectId fileId) {
 		final UpdateOperations<JAbsence> ops = ops()
 			                                       .set("fileId", fileId);
-		return MorphiaPlugin.ds().update(queryToFindMe(id), ops, false, WriteConcern.ACKNOWLEDGED);
+		return MorphiaPlugin.ds().findAndModify(queryToFindMe(id), ops, false, false);
+	}
+
+	public static void updateFileId(final List<ObjectId> ids, final ObjectId fileId) {
+		final UpdateOperations<JAbsence> ops = ops()
+			                                       .set("fileId", fileId);
+		final Query<JAbsence> q = q()
+			                          .field(Mapper.ID_KEY).in(ids);
+		MorphiaPlugin.ds().update(q, ops, false, WriteConcern.ACKNOWLEDGED);
+	}
+
+	public static JAbsence updateSentDate(final ObjectId id, final DateTime date) {
+		final UpdateOperations<JAbsence> ops = ops()
+			                                       .set("_sentDate", date.toDate());
+		return MorphiaPlugin.ds().findAndModify(queryToFindMe(id), ops, false, false);
+	}
+
+	public static void updateSentDate(final List<ObjectId> ids, final DateTime date) {
+		final UpdateOperations<JAbsence> ops = ops()
+			                                       .set("_sentDate", date.toDate());
+		final Query<JAbsence> q = q()
+			                          .field(Mapper.ID_KEY).in(ids);
+		MorphiaPlugin.ds().update(q, ops, false, WriteConcern.ACKNOWLEDGED);
+	}
+
+	public static List<ObjectId> usersToSend() {
+		final List<JAbsence> userIds = q()
+			                               .field("_sentDate").doesNotExist()
+			                               .retrievedFields(true, "userId")
+			                               .disableValidation()
+			                               .asList();
+
+		return Lists.newArrayList(Sets.newHashSet(Collections2.transform(userIds, new Function<JAbsence, ObjectId>() {
+			@Nullable
+			@Override
+			public ObjectId apply(@Nullable final JAbsence absence) {
+				return absence.userId;
+			}
+		})));
+	}
+
+	public static List<JAbsence> byUserToSent(final ObjectId userId) {
+		return q()
+			       .field("userId").equal(userId)
+			       .field("_sentDate").doesNotExist()
+			       .asList();
 	}
 
 	@Override
 	public ObjectId id() {
 		return this.id;
+	}
+
+	public static List<JAbsence> byFileId(final ObjectId fileId) {
+		return q()
+			.field("fileId").equal(fileId)
+			.asList();
 	}
 }

@@ -66,7 +66,7 @@ object Auth {
 		db.find[Auth](q).headOption
 	}
 
-	def asSubject(username: String) = {
+	def asSubject(username: String): Future[Option[Subject]] = {
 		val s = BSONDocument("username" -> new BSONString(username))
 		val q = QueryBuilder()
 			.query(s)

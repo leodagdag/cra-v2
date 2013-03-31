@@ -97,17 +97,6 @@ var part_time = db.Mission.findOne({customerId: genesis._id, code: 'TP', mission
  * User
  */
 db.User.insert({username: 'lisa', password: '7RT0pNfs3bba6OVJADALHg==', role: 'admin', firstName: 'lisa', lastName: 'Simpson', trigramme: 'LSN', email: 'lisa@simpson.com'});
-db.User.insert({username: 'bart', password: '9UFGo/yCqxflJlaVsj9kaw==', role: 'employee', firstName: 'bart', lastName: 'Simpson', trigramme: 'BSN', email: 'bart@simpson.com',
-	affectedMissions: [
-		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
-		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id},
-		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
-		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
-		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
-		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
-		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
-		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
-	]});
 db.User.insert({username: 'bart-tpl1', password: 'UPqEsTqdRcMBOzNzAu/+3A==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Pleins 1', trigramme: 'BSN', email: 'bart@simpson.com',
 	affectedMissions: [
 		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
@@ -207,10 +196,25 @@ db.User.insert({username: 'moe-tpa2', password: 'pcUHwGQpyWBqwVQhh6c5Pg==', role
 		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
 		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
 	]});
-db.User.insert({username: 'ned', password: '9o2q0Ymy//0LjKteNuydlg==', role: 'employee', firstName: 'Ned', lastName: 'Flanders', trigramme: 'NFS', email: 'ned@flanders.com', isManager: true});
 db.User.insert({username: 'seymour', password: '/mQGPJqqQBru0Shwi1/MeQ==', role: 'employee', firstName: 'Seymour', lastName: 'Skinner', trigramme: 'SSR', email: 'seymour@skinner.com', isManager: true});
 db.User.insert({username: 'marge', password: '9FC56hi/fYLa0SL3KcCTXw==', role: 'production', firstName: 'marge', lastName: 'Simpson', trigramme: 'MSN', email: 'marge@simpson.com'});
+db.User.insert({username: 'ned', password: '9o2q0Ymy//0LjKteNuydlg==', role: 'employee', firstName: 'Ned', lastName: 'Flanders', trigramme: 'NFS',
+	email: 'ned@flanders.com', isManager: true});
+var ned = db.User.findOne({username: 'ned'});
+db.User.insert({username: 'bart', password: '9UFGo/yCqxflJlaVsj9kaw==', role: 'employee', firstName: 'bart', lastName: 'Simpson', trigramme: 'BSN', email: 'bart@simpson.com',
+	'managerId': ned._id,
+	affectedMissions: [
+		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
+		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id},
+		{_startDate: pre_sale._startDate, _endDate: pre_sale._endDate, missionId: pre_sale._id},
+		{_startDate: holiday._startDate, _endDate: holiday._endDate, missionId: holiday._id},
+		{_startDate: rtte._startDate, _endDate: rtte._endDate, missionId: rtte._id},
+		{_startDate: rtts._startDate, _endDate: rtts._endDate, missionId: rtts._id},
+		{_startDate: ae._startDate, _endDate: ae._endDate, missionId: ae._id},
+		{_startDate: part_time._startDate, _endDate: part_time._endDate, missionId: part_time._id}
+	]});
 var bart = db.User.findOne({username: 'bart'});
+
 
 /*
  * Vehicle

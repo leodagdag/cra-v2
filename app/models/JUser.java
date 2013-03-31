@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteConcern;
 import leodagdag.play2morphia.MorphiaPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
@@ -23,7 +24,7 @@ import utils.MD5;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
-
+import play.Play;
 /**
  * @author f.patin
  */
@@ -169,6 +170,17 @@ public class JUser implements Subject {
 		MorphiaPlugin.ds().update(queryToFindMe(username), ops, false, WriteConcern.ACKNOWLEDGED);
 	}
 
+	public static JUser add(final JUser user){
+		MorphiaPlugin.ds().save(user, WriteConcern.ACKNOWLEDGED);
+		return user;
+	}
+
+	public static Boolean exist(final String username){
+		return MorphiaPlugin.ds().getCount(queryToFindMe(username)) > 0;
+	}
+	public String fullName(){
+		return String.format("%s %s",StringUtils.capitalize(lastName.toLowerCase()), StringUtils.capitalize(firstName.toLowerCase()));
+	}
 	@Override
 	@JsonIgnore
 	public List<? extends Role> getRoles() {

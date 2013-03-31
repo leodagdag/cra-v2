@@ -12,4 +12,5 @@ import security.SecurityRole
 trait BaseController extends Controller with DeadboltActions with MongoController {
 
 	val everybody = List(Array(SecurityRole.employee), Array(SecurityRole.production), Array(SecurityRole.administrator))
+	val batch = List(Array(SecurityRole.batch))
 }

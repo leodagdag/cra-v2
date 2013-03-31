@@ -73,4 +73,6 @@ object AbsenceUtils {
     else
       TimeUtils.previousWorkingDay(absence.endDate)
   }
+
+
 }

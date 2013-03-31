@@ -11,11 +11,13 @@ GET     /login                                                      controllers.
 POST    /auth                                                       controllers.Authentication.authenticate()
 GET     /logout                                                     controllers.Authentication.logout()
 GET     /profile                                                    controllers.Authentication.profile()
+
 # Claims
 # ~~~~
 GET     /claims/:userId/:year/:month                              	controllers.JClaims.history(userId: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /claims						                                controllers.JClaims.create()
 DELETE  /claims/:id                                                 controllers.JClaims.remove(id: String)
+
 # Absences
 # ~~~~
 GET		/absences/send/:id											controllers.JAbsences.send(id: String)
@@ -23,6 +25,7 @@ GET		/absences/export/:id										controllers.JAbsences.export(id: String)
 GET     /absences/:userId/history/:absenceType/:year/:month         controllers.JAbsences.history(userId: String, absenceType :String, year: Integer, month: Integer)
 POST    /absences                                                   controllers.JAbsences.create()
 DELETE  /absences/:userId/:id                                       controllers.JAbsences.remove(userId: String, id: String)
+
 # Day
 # ~~~~
 GET     /cra/claims/synthesis/:userId/:year/:month                  controllers.JCras.claimSynthesis(userId: String, year: java.lang.Integer, month: java.lang.Integer)
@@ -30,16 +33,19 @@ DELETE  /cra/:id/day/:date                                          controllers.
 DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.JDays.removeHalfDay(id: String, date: Long, momentOfDay:String)
 GET     /cra/:craId/day/:date                                       controllers.JDays.fetch(craId: String, date: Long)
 POST    /days/                                                      controllers.JDays.create()
+
 # Cra
 # ~~~~
 GET     /cra/:username/:year/:month                                 controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /cra/:id/validate                                           controllers.Cras.validate(id: String)
 POST    /cra/:id/invalidate                                         controllers.Cras.invalidate(id: String)
+
 # Mission
 # ~~~~
 GET     /missions/absences                                          controllers.JMissions.absences()
 GET     /missions/claims/:username                                  controllers.JMissions.claimable(username: String)
 GET     /missions/affectedMissions/:username/:startDate/:endDate    controllers.JMissions.affectedMissions(username: String, startDate :Long, endDate: Long)
+
 # User
 # ~~~~
 GET     /users/employees                                            controllers.JUsers.employees()
@@ -48,7 +54,6 @@ GET     /users                                                      controllers.
 
 # Account
 # ~~~~
-
 GET     /account/:id                                                controllers.JAccounts.fetch(id: String)
 PUT     /account/password                                           controllers.JAccounts.password()
 PUT     /account                                                    controllers.JAccounts.update()
@@ -64,9 +69,14 @@ GET		/vehicles/:userId/active									controllers.JVehicles.active(userId: Strin
 GET		/vehicles/:userId											controllers.JVehicles.history(userId: String)
 POST    /vehicles/                                                  controllers.JVehicles.save()
 PUT		/vehicles/deactivate										controllers.JVehicles.deactivate()
+
+# Batch
+# ~~~~
+GET		/launch/absences											controllers.Batches.absence()
 # HtmlPage
 # ~~~~
 GET     /unsupportedBrowser                                         controllers.HtmlPages.unsupportedBrowser
+
 # Javascript routing
 # ~~~~
 GET     /assets/javascripts/routes                                  controllers.JsRouter.javascriptRoutes()
