@@ -49,7 +49,7 @@
 				<hr>
 				<h6>Déplacement</h6>
 
-				<div class="control-group" data-ng-class="{'error': errors.kilometer}">
+				<div class="control-group" data-ng-class="{'error': errors.kilometer || errors.globalJourney}">
 					<label class="control-label" for="kilometer">Nombre de Km </label>
 
 					<div class="controls">
@@ -59,13 +59,16 @@
 						<span class="help-block"><em>{{errors.kilometer}}</em></span>
 					</div>
 				</div>
-				<div class="control-group" data-ng-class="{'error': errors.journey}">
+				<div class="control-group" data-ng-class="{'error': errors.journey || errors.globalJourney}">
 					<label class="control-label" for="journey">Destination</label>
 
 					<div class="controls">
 						<input type="text" class="" id="journey" data-ng-model="form.journey">
 						<span class="help-block"><em>{{errors.journey}}</em></span>
 					</div>
+				</div>
+				<div data-ng-class="{'control-group error': errors.globalJourney}">
+					<span class="help-block"><em>{{errors.globalJourney}}</em></span>
 				</div>
 				<div data-ng-class="{'control-group error': errors.global}">
 					<span class="help-block"><em>{{errors.global}}</em></span>

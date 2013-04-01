@@ -120,7 +120,7 @@ public class JPartTime {
 			                           .field("active").equal(true);
 		q.or(
 			    q.and(
-				         q.criteria("_startDate").lessThan(end),
+				         q.criteria("_startDate").lessThanOrEq(end),
 				         q.criteria("_endDate").doesNotExist()
 			    ),
 			    q.and(
@@ -128,8 +128,6 @@ public class JPartTime {
 				         q.criteria("_endDate").greaterThanOrEq(start)
 			    )
 		);
-
-
 		return ImmutableList.copyOf(q.asList());
 	}
 

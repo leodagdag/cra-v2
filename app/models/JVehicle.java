@@ -1,12 +1,6 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.Index;
-import com.github.jmkgreen.morphia.annotations.Indexes;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -45,6 +39,51 @@ public class JVehicle extends Model {
 	private Date _endDate;
 	private Boolean active = Boolean.TRUE;
 
+	private static JVehicle active(final Query<JVehicle> q) {
+		return q
+			       .field("active").equal(Boolean.TRUE)
+			       .get();
+	}
+
+	private static Query<JVehicle> byUserId(final String userId) {
+		return byUserId(ObjectId.massageToObjectId(userId));
+	}
+
+	private static Query<JVehicle> byUserId(final ObjectId userId) {
+		return MorphiaPlugin.ds().createQuery(JVehicle.class)
+			       .field("userId").equal(userId);
+	}
+
+	private static Query<JVehicle> queryToFindMe(final ObjectId id) {
+		return q().field(Mapper.ID_KEY).equal(id);
+	}
+
+	private static Query<JVehicle> q() {
+		return MorphiaPlugin.ds().createQuery(JVehicle.class);
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(startDate != null) {
+			_startDate = startDate.toDate();
+		}
+		if(endDate != null) {
+			_endDate = endDate.toDate();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_startDate != null) {
+			startDate = new DateTime(_startDate.getTime());
+		}
+		if(_endDate != null) {
+			endDate = new DateTime(_endDate.getTime());
+		}
+	}
+
 	public static JVehicle save(final JVehicle vehicle) {
 		final UpdateOperations<JVehicle> disableUpdt = MorphiaPlugin.ds().createUpdateOperations(JVehicle.class)
 			                                               .set("active", false)
@@ -80,21 +119,6 @@ public class JVehicle extends Model {
 		return active(byUserId(userId));
 	}
 
-	private static JVehicle active(final Query<JVehicle> q) {
-		return q
-			       .field("active").equal(Boolean.TRUE)
-			       .get();
-	}
-
-	private static Query<JVehicle> byUserId(final String userId) {
-		return byUserId(ObjectId.massageToObjectId(userId));
-	}
-
-	private static Query<JVehicle> byUserId(final ObjectId userId) {
-		return MorphiaPlugin.ds().createQuery(JVehicle.class)
-			       .field("userId").equal(userId);
-	}
-
 	public static List<JVehicle> history(final String userId) {
 		return byUserId(userId)
 			       .field("active").equal(Boolean.FALSE)
@@ -108,33 +132,21 @@ public class JVehicle extends Model {
 		MorphiaPlugin.ds().update(q, upo, false, WriteConcern.ACKNOWLEDGED);
 	}
 
-	private static Query<JVehicle> queryToFindMe(final ObjectId id) {
-		return q().field(Mapper.ID_KEY).equal(id);
-	}
-
-	private static Query<JVehicle> q() {
-		return MorphiaPlugin.ds().createQuery(JVehicle.class);
-	}
-
-	@SuppressWarnings({"unused"})
-	@PrePersist
-	private void prePersist() {
-		if (startDate != null) {
-			_startDate = startDate.toDate();
-		}
-		if (endDate != null) {
-			_endDate = endDate.toDate();
-		}
-	}
-
-	@SuppressWarnings({"unused"})
-	@PostLoad
-	private void postLoad() {
-		if (_startDate != null) {
-			startDate = new DateTime(_startDate.getTime());
-		}
-		if (_endDate != null) {
-			endDate = new DateTime(_endDate.getTime());
-		}
+	public static boolean exist(final ObjectId userId, final DateTime dt) {
+		final Query<JVehicle> q = q()
+			                          .field("userId").equal(userId)
+			                          .field("active").equal(Boolean.TRUE);
+		final Date date = dt.toDate();
+		q.or(
+			    q.and(
+				         q.criteria("_startDate").lessThanOrEq(date),
+				         q.criteria("_endDate").doesNotExist()
+			    ),
+			    q.and(
+				         q.criteria("_startDate").lessThanOrEq(date),
+				         q.criteria("_endDate").greaterThanOrEq(date)
+			    )
+		);
+		return MorphiaPlugin.ds().getCount(q) > 0;
 	}
 }
