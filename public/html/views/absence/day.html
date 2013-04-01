@@ -6,7 +6,7 @@
 					<label class="control-label" for="missionId">Motif <i class="icon-mandatory"></i></label>
 
 					<div class="controls">
-						<select id="missionId" required="required" data-ng-model="form.missionId" data-ng-options="mission.id as mission.description for mission  in missions">
+						<select id="missionId" required="required" data-ng-model="form.missionId" data-ng-options="mission.id as mission.label for mission  in missions">
 							<option value=""></option>
 						</select>
 						<span class="help-block"><em>{{errors.missionId}}</em></span>

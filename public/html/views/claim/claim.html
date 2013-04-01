@@ -6,7 +6,7 @@
 					<label class="control-label" for="missionId">Mission <i class="icon-mandatory"></i></label>
 
 					<div class="controls">
-						<select class="input-medium" name="missionId" id="missionId" required="required" data-ng-model="form.missionId" data-ng-options="m.id as m.code for m in missions">
+						<select class="input-medium" name="missionId" id="missionId" required="required" data-ng-model="form.missionId" data-ng-options="m.id as m.label for m in missions">
 							<option value=""></option>
 						</select>
 						<span class="help-block"><em>{{errors.missionId}}</em></span>
@@ -115,7 +115,7 @@
 				<div class="span12 scrollable">
 					<div class="row-fluid table-line" data-ng-repeat="claim in history">
 						<div class="span10">
-							<span>Mission : {{claim.mission.code}} le {{claim.date | date}}</span><br>
+							<span>Mission : {{claim.mission.label}} le {{claim.date | date}}</span><br>
 							<span data-ng-show="claim.amount">Frais : {{claim.label | capitalize}} <strong>{{claim.amount | currency}}</strong></span>
 							<span data-ng-show="claim.kilometerAmount">Déplacement : {{claim.kilometer | kilometer}} ({{claim.journey}}) <strong>{{claim.kilometerAmount | currency}}</strong></span>
 						</div>

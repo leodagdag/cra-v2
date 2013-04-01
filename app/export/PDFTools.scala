@@ -192,7 +192,7 @@ trait PDFAbsenceTools extends PDFTools {
 
   private def setTableRow(table: PdfPTable, absence: JAbsence) {
     val mission = missions.find(_.id == absence.missionId)
-    val description = mission.map(_.description).getOrElse(s"Erreur (id:${absence.missionId.toString})")
+    val description = mission.map(_.label).getOrElse(s"Erreur (id:${absence.missionId.toString})")
     table.addCell(bodyCell(description, Element.ALIGN_LEFT))
     table.addCell(bodyCell(absence.startDate.toString("dd/MM/YYYY"), Element.ALIGN_CENTER))
     table.addCell(bodyCell(AbsenceUtils.getHumanEndDate(absence).toString("dd/MM/YYYY"), Element.ALIGN_CENTER))

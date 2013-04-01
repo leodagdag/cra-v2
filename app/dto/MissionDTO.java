@@ -22,7 +22,7 @@ public class MissionDTO {
     @JsonSerialize(using = ObjectIdSerializer.class)
     public ObjectId id;
 	public String code;
-	public String description;
+	public String label;
 
 	@SuppressWarnings({"unused"})
 	public MissionDTO() {
@@ -31,7 +31,7 @@ public class MissionDTO {
 	public MissionDTO(final JMission mission) {
 		this.id = mission.id;
 		this.code = mission.code;
-		this.description = mission.description;
+		this.label = mission.label;
 	}
 
 	public static MissionDTO of(final JMission mission) {

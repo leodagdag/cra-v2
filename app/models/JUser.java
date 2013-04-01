@@ -22,9 +22,8 @@ import security.JSecurityRole;
 import utils.MD5;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
-import play.Play;
+
 /**
  * @author f.patin
  */
@@ -63,6 +62,19 @@ public class JUser implements Subject {
 	private static Query<JUser> queryToFindMe(final String username) {
 		return q()
 			       .field("username").equal(username);
+	}
+
+	private static ImmutableList<JAffectedMission> filterByDates(final ImmutableList<JAffectedMission> xs, final DateTime startDate, final DateTime endDate) {
+		if(startDate == null || endDate == null) {
+			return xs;
+		}
+		return ImmutableList.copyOf(Collections2.filter(xs, new Predicate<JAffectedMission>() {
+			@Override
+			public boolean apply(@Nullable final JAffectedMission affectedMission) {
+				return ((affectedMission.startDate == null || affectedMission.startDate.isBefore(startDate))
+					        && (affectedMission.endDate == null || affectedMission.endDate.isAfter(endDate)));
+			}
+		}));
 	}
 
 	public static Boolean checkAuthentication(final String username, final String password) {
@@ -113,35 +125,25 @@ public class JUser implements Subject {
 			                            .asList());
 	}
 
-	public static ImmutableList<ObjectId> affectedMissions(final String username, final Long start, final Long end) {
+	public static ImmutableList<ObjectId> affectedMissions(final String username) {
+		return affectedMissions(username, null, null);
+	}
 
-		final JUser user = queryToFindMe(username)
-			                   .retrievedFields(true, "affectedMissions")
-			                   .disableValidation()
-			                   .get();
-		final Collection<JAffectedMission> affectedMissions = Lists.newArrayList();
-		if(start != null && end != null) {
-			final DateTime startDate = new DateTime(start);
-			final DateTime endDate = new DateTime(end);
-			affectedMissions.addAll(Collections2.filter(user.affectedMissions, new Predicate<JAffectedMission>() {
-				@Override
-				public boolean apply(@Nullable final JAffectedMission affectedMission) {
-					return ((affectedMission.startDate == null || affectedMission.startDate.isBefore(startDate))
-						        && (affectedMission.endDate == null || affectedMission.endDate.isAfter(endDate)));
-				}
-			}));
+	public static ImmutableList<ObjectId> affectedMissions(final String username, final DateTime startDate, final DateTime endDate) {
+		final ImmutableList<JAffectedMission> affectedMissions = ImmutableList.copyOf(queryToFindMe(username)
+			                                                                              .retrievedFields(true, "affectedMissions")
+			                                                                              .disableValidation()
+			                                                                              .get().affectedMissions);
 
-		} else {
-			affectedMissions.addAll(user.affectedMissions);
-		}
-
-		return ImmutableList.copyOf(Collections2.transform(affectedMissions, new Function<JAffectedMission, ObjectId>() {
+		final Function<JAffectedMission, ObjectId> getId = new Function<JAffectedMission, ObjectId>() {
 			@Nullable
 			@Override
 			public ObjectId apply(@Nullable final JAffectedMission am) {
 				return am.missionId;
 			}
-		}));
+		};
+
+		return ImmutableList.copyOf(Collections2.transform(filterByDates(affectedMissions, startDate, endDate), getId));
 	}
 
 	public static ImmutableList<JUser> all() {
@@ -170,17 +172,19 @@ public class JUser implements Subject {
 		MorphiaPlugin.ds().update(queryToFindMe(username), ops, false, WriteConcern.ACKNOWLEDGED);
 	}
 
-	public static JUser add(final JUser user){
+	public static JUser add(final JUser user) {
 		MorphiaPlugin.ds().save(user, WriteConcern.ACKNOWLEDGED);
 		return user;
 	}
 
-	public static Boolean exist(final String username){
+	public static Boolean exist(final String username) {
 		return MorphiaPlugin.ds().getCount(queryToFindMe(username)) > 0;
 	}
-	public String fullName(){
-		return String.format("%s %s",StringUtils.capitalize(lastName.toLowerCase()), StringUtils.capitalize(firstName.toLowerCase()));
+
+	public String fullName() {
+		return String.format("%s %s", StringUtils.capitalize(lastName.toLowerCase()), StringUtils.capitalize(firstName.toLowerCase()));
 	}
+
 	@Override
 	@JsonIgnore
 	public List<? extends Role> getRoles() {

@@ -38,6 +38,7 @@ object JsRouter extends Controller {
 					JMissions.absences,
 					JMissions.claimable,
 					JMissions.affectedMissions,
+					JMissions.craMissions,
 
 					JUsers.employees,
 					JUsers.managers,

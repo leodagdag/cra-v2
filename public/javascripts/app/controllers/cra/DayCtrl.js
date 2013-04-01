@@ -33,7 +33,7 @@ app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams
 		$scope.title = _.str.toSentence($scope.days, ', ', ' et ') + ' ' + _.str.capitalize(moment($scope.date).format('MMMM YYYY'));
 
 		$scope.init = function() {
-			var route = jsRoutes.controllers.JMissions.affectedMissions($scope.username, _.head($scope.dates), $scope.dates[$scope.dates.length - 1]);
+			var route = jsRoutes.controllers.JMissions.craMissions($scope.username, _.head($scope.dates), $scope.dates[$scope.dates.length - 1]);
 			$http({
 				method: route.method,
 				url: route.url

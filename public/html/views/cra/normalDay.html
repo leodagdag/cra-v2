@@ -5,12 +5,12 @@
                 <label for="morning">Matin</label>
 
                 <select id="morning" data-ng-model="form.morning.missionId" autofocus>
-                    <option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.morning.missionId">{{am.code}}</option>
+                    <option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.morning.missionId">{{am.label}}</option>
                 </select>
                 <label for="afternoon">Après-midi</label>
 
                 <select id="afternoon" data-ng-model="form.afternoon.missionId">
-                    <option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.afternoon.missionId">{{am.code}}</option>
+                    <option data-ng-repeat="am in affectedMissions" value="{{am.id}}" data-ng-selected="am.id == form.afternoon.missionId">{{am.label}}</option>
                 </select>
                 <label for="comment">Commentaire</label>
 

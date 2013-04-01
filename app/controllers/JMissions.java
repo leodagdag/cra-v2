@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import dto.MissionDTO;
 import models.JMission;
 import models.JUser;
+import org.joda.time.DateTime;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -24,13 +25,20 @@ public class JMissions extends Controller {
 
 	@ResponseCache.NoCacheResponse
 	public static Result claimable(final String username) {
-		final ImmutableList<JMission> missions = JMission.getClaimableMissions(JUser.affectedMissions(username, null, null));
+		final ImmutableList<JMission> missions = JMission.getClaimableMissions(JUser.affectedMissions(username));
 		return ok(toJson(MissionDTO.of(missions)));
 	}
 
 	@ResponseCache.NoCacheResponse
 	public static Result affectedMissions(final String username, final Long startDate, final Long endDate) {
-		final ImmutableCollection<JMission> missions = JMission.codeAndMissionType(JUser.affectedMissions(username, startDate, endDate)).values();
+		final ImmutableCollection<JMission> missions = JMission.codeAndMissionType(JUser.affectedMissions(username, new DateTime(startDate), new DateTime(endDate))).values();
 		return ok(toJson(MissionDTO.of(missions)));
 	}
+
+	@ResponseCache.NoCacheResponse
+	public static Result craMissions(final String username, final Long startDate, final Long endDate) {
+		final ImmutableCollection<JMission> missions = JMission.craMissions(JUser.affectedMissions(username, new DateTime(startDate), new DateTime(endDate)));
+		return ok(toJson(MissionDTO.of(missions)));
+	}
+
 }

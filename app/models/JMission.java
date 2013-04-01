@@ -34,6 +34,7 @@ public class JMission {
 	public ObjectId id;
 	public ObjectId customerId;
 	public String code;
+	public String label;
 	public String description;
 	public String missionType;
 	public String absenceType;
@@ -89,7 +90,7 @@ public class JMission {
 		if(CollectionUtils.isNotEmpty(missionsIds)) {
 			final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
 				                                .field(Mapper.ID_KEY).in(missionsIds)
-				                                .retrievedFields(true, Mapper.ID_KEY, "code", "missionType")
+				                                .retrievedFields(true, Mapper.ID_KEY, "code", "label", "missionType")
 				                                .disableValidation()
 				                                .asList();
 			return Maps.uniqueIndex(missions, new Function<JMission, ObjectId>() {
@@ -107,7 +108,7 @@ public class JMission {
 	public static JMission codeAndMissionType(final ObjectId missionId) {
 		return MorphiaPlugin.ds().createQuery(JMission.class)
 			       .field(Mapper.ID_KEY).equal(missionId)
-			       .retrievedFields(true, Mapper.ID_KEY, "code", "missionType")
+			       .retrievedFields(true, Mapper.ID_KEY, "code", "label", "missionType")
 			       .disableValidation()
 			       .get();
 	}
@@ -116,7 +117,17 @@ public class JMission {
 		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
 			                            .field(Mapper.ID_KEY).in(ids)
 			                            .field("isClaimable").equal(true)
-			                            .retrievedFields(true, Mapper.ID_KEY, "code")
+			                            .retrievedFields(true, Mapper.ID_KEY, "code", "label")
+			                            .disableValidation()
+			                            .asList());
+	}
+
+
+	public static ImmutableList<JMission> craMissions(final ImmutableList<ObjectId> ids) {
+		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
+			                            .field(Mapper.ID_KEY).in(ids)
+			                            .field("missionType").in(MissionType.craMissionType)
+			                            .retrievedFields(true, Mapper.ID_KEY, "code", "label")
 			                            .disableValidation()
 			                            .asList());
 	}
@@ -129,7 +140,7 @@ public class JMission {
 		final List<String> absenceTypes = AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
 		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
 			                            .field("absenceType").in(absenceTypes)
-			                            .retrievedFields(true, Mapper.ID_KEY, "code", "description")
+			                            .retrievedFields(true, Mapper.ID_KEY, "code", "label")
 			                            .disableValidation()
 			                            .asList());
 	}
@@ -178,4 +189,6 @@ public class JMission {
 	public static Boolean isClaimable(final ObjectId missionId) {
 		return Boolean.TRUE.equals(queryToFindMe(missionId).get().isClaimable);
 	}
+
+
 }
