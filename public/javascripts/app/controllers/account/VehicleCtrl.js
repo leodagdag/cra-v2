@@ -44,7 +44,7 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		};
 
 		$scope.save = function() {
-
+			$scope.errors = {};
 			var vehicle = new Vehicle($scope.form);
 			var route = jsRoutes.controllers.JVehicles.save();
 			$http({
