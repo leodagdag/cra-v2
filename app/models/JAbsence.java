@@ -129,19 +129,22 @@ public class JAbsence extends Model implements MongoModel {
 		if(AbsenceUtils.containsOnlyWeekEndOrDayOff(absence.startDate, absence.endDate)) {
 			throw new ContainsOnlyWeekEndOrDayOfException(absence);
 		}
+
 		final Query<JAbsence> dateQuery = q();
+		final Date start = absence.startDate.toDate();
+		final Date end = absence.endDate.toDate();
 		dateQuery.or(
 			            dateQuery.and(
-				                         dateQuery.criteria("_startDate").greaterThanOrEq(absence.startDate.toDate()),
-				                         dateQuery.criteria("_startDate").lessThan(absence.endDate.toDate())
+				                         dateQuery.criteria("_startDate").greaterThanOrEq(start),
+				                         dateQuery.criteria("_startDate").lessThan(end)
 			            ),
 			            dateQuery.and(
-				                         dateQuery.criteria("_endDate").greaterThan(absence.startDate.toDate()),
-				                         dateQuery.criteria("_endDate").lessThanOrEq(absence.endDate.toDate())
+				                         dateQuery.criteria("_endDate").greaterThan(start),
+				                         dateQuery.criteria("_endDate").lessThanOrEq(end)
 			            ),
 			            dateQuery.and(
-				                         dateQuery.criteria("_startDate").lessThanOrEq(absence.startDate.toDate()),
-				                         dateQuery.criteria("_endDate").greaterThanOrEq(absence.endDate.toDate())
+				                         dateQuery.criteria("_startDate").lessThanOrEq(start),
+				                         dateQuery.criteria("_endDate").greaterThanOrEq(end)
 			            )
 		);
 		if(dateQuery.countAll() > 0) {

@@ -25,7 +25,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 			frequency: null
 		};
 
-		$scope.dayMoments = [
+		$scope.momentsOfDay = [
 			{moment: "day", label: "Journée"},
 			{moment: "morning", label: "Matin"},
 			{moment: "afternoon", label: "Après-midi"}
@@ -33,9 +33,9 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 
 		$scope.form = new Form();
 
-		$scope.toggleDay = function(dayId, dayMoment) {
-			if(dayMoment) {
-				var weekDay = {"dayOfWeek": dayId, "momentOfDay": dayMoment.moment};
+		$scope.toggleDay = function(dayId, momentOfDay) {
+			if(momentOfDay) {
+				var weekDay = {"dayOfWeek": dayId, "momentOfDay": momentOfDay.moment};
 				$scope.form.daysOfWeek.push(weekDay);
 			} else {
 				$scope.form.daysOfWeek = _($scope.form.daysOfWeek)
@@ -48,6 +48,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 
 		$scope.save = function() {
 			var partTime = new PartTime($scope.form);
+			$log.debug(partTime);
 			var route = jsRoutes.controllers.JPartTimes.addPartTimes();
 			$http({
 				method: route.method,
@@ -56,6 +57,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 			})
 				.success(function(data, status, headers, config) {
 					$rootScope.onSuccess("Votre temps partiel a été sauvegardé.");
+					$scope.form = new Form();
 					$scope.loadActive();
 				})
 				.error(function(errors, status, headers, config) {
@@ -88,7 +90,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 					data: {'id': id}
 				})
 					.success(function(result, status, headers, config) {
-						$scope.activePartTime = {};
+						$scope.loadActive();
 						$rootScope.onSuccess("Le temps partiel a été désactivé.");
 					});
 			}

@@ -1,6 +1,6 @@
 <div class="row-fluid" data-ng-controller="PartTimeNewCtrl">
     <div class="span5">
-        <form class="form-horizontal well well-small" name="newPartTimeForm" data-ng-submit="save()">
+        <form class="form-horizontal well well-small" data-ng-submit="save()">
             <fieldset>
                 <div class="control-group" data-ng-class="{'error': errors.startDate}">
                     <label class="control-label" for="startDate">Date de début <i class="icon-mandatory"></i></label>
@@ -23,7 +23,7 @@
                     <label class="control-label" for="monday">Lundi</label>
 
                     <div class="controls">
-                        <select class="span8" id="monday" data-ng-model="monday" data-ng-change="toggleDay(1, monday)" data-ng-options="dm.label for dm in dayMoments">
+                        <select class="span8" id="monday" data-ng-model="form.monday" data-ng-change="toggleDay(1, form.monday)" data-ng-options="dm.label for dm in momentsOfDay">
                             <option value=""></option>
                         </select>
                     </div>
@@ -32,7 +32,7 @@
                     <label class="control-label" for="tuesday">Mardi</label>
 
                     <div class="controls">
-                        <select class="span8" id="tuesday" data-ng-model="tuesday" data-ng-change="toggleDay(1, tuesday)" data-ng-options="dm.label for dm in dayMoments">
+                        <select class="span8" id="tuesday" data-ng-model="form.tuesday" data-ng-change="toggleDay(2, form.tuesday)" data-ng-options="dm.label for dm in momentsOfDay">
                             <option value=""></option>
                         </select>
                     </div>
@@ -41,7 +41,7 @@
                     <label class="control-label" for="wednesday">Mercredi</label>
 
                     <div class="controls">
-                        <select class="span8" id="wednesday" data-ng-model="wednesday" data-ng-change="toggleDay(1, wednesday)" data-ng-options="dm.label for dm in dayMoments">
+                        <select class="span8" id="wednesday" data-ng-model="form.wednesday" data-ng-change="toggleDay(3, form.wednesday)" data-ng-options="dm.label for dm in momentsOfDay">
                             <option value=""></option>
                         </select>
                     </div>
@@ -50,7 +50,7 @@
                     <label class="control-label" for="thursday">Jeudi</label>
 
                     <div class="controls">
-                        <select class="span8" id="thursday" data-ng-model="thursday" data-ng-change="toggleDay(1, thursday)" data-ng-options="dm.label for dm in dayMoments">
+                        <select class="span8" id="thursday" data-ng-model="form.thursday" data-ng-change="toggleDay(4, form.thursday)" data-ng-options="dm.label for dm in momentsOfDay">
                             <option value=""></option>
                         </select>
                     </div>
@@ -59,7 +59,7 @@
                     <label class="control-label" for="friday">Vendredi</label>
 
                     <div class="controls">
-                        <select class="span8" id="friday" data-ng-model="friday" data-ng-change="toggleDay(1, friday)" data-ng-options="dm.label for dm in dayMoments">
+                        <select class="span8" id="friday" data-ng-model="form.friday" data-ng-change="toggleDay(5, form.friday)" data-ng-options="dm.label for dm in momentsOfDay">
                             <option value=""></option>
                         </select>
                     </div>
@@ -72,9 +72,8 @@
                     <label class="control-label" for="frequency">Toutes les <i class="icon-mandatory"> <em class="hidden-desktop">(en semaine)</em> </i></label>
 
                     <div class="controls">
-                        <div class="span6 input-append">
+                        <div class="span12 input-append">
                             <select class="span4" id="frequency" data-ng-model="form.frequency">
-                                <option value=""></option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -102,7 +101,7 @@
                         <div class="span10">
                             <ul>
                                 <li>A partir du <strong>{{pt.startDate | date:'dd/MM/yyyy'}}</strong>,
-                                    <span data-ng-show="pt.endDate">jusqu'à {{pt.endDate | date:'dd/MM/yyyy'}}.</span>
+                                    <span data-ng-show="pt.endDate">jusqu'à <strong>{{pt.endDate | date:'dd/MM/yyyy'}}</strong>.</span>
                                     <span data-ng-hide="pt.endDate">sans date de fin.</span>
                                     <ul>
                                         <li>le {{pt.dayOfWeek | dayOfWeek}} ({{pt.momentOfDay | momentOfDay}}),<br></li>

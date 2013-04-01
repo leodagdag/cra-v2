@@ -1,11 +1,7 @@
 package models;
 
 import com.github.jmkgreen.morphia.Key;
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -17,6 +13,7 @@ import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import utils.time.TimeUtils;
 
 import java.util.Date;
 
@@ -50,7 +47,7 @@ public class JPartTime {
 	public JPartTime() {
 	}
 
-	private static UpdateResults<JPartTime> deactivateAll(final ObjectId userId) {
+	public static UpdateResults<JPartTime> deactivateAll(final ObjectId userId) {
 		UpdateOperations<JPartTime> uop = MorphiaPlugin.ds().createUpdateOperations(JPartTime.class).set("active", false);
 		Query<JPartTime> q = MorphiaPlugin.ds().createQuery(JPartTime.class)
 			                     .field("userId").equal(userId)
@@ -67,21 +64,41 @@ public class JPartTime {
 		return q().field(Mapper.ID_KEY).equal(id);
 	}
 
-	private static Query<JPartTime> byUser(final ObjectId userId) {
+	private static Query<JPartTime> queryToFindMeByUser(final ObjectId userId) {
 		return q().field("userId").equal(userId);
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(startDate != null) {
+			_startDate = startDate.toDate();
+		}
+		if(endDate != null) {
+			_endDate = endDate.toDate();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_startDate != null) {
+			startDate = new DateTime(_startDate.getTime());
+		}
+		if(_endDate != null) {
+			endDate = new DateTime(_endDate.getTime());
+		}
 	}
 
 	public static ImmutableList<JPartTime> addPartTimes(ImmutableList<JPartTime> pts) {
 		Preconditions.checkArgument(CollectionUtils.isNotEmpty(pts));
-		deactivateAll(pts.get(0).userId);
 		final Iterable<Key<JPartTime>> keys = MorphiaPlugin.ds().save(pts, WriteConcern.ACKNOWLEDGED);
 		return ImmutableList.copyOf(MorphiaPlugin.ds().getByKeys(JPartTime.class, keys));
 	}
 
-	public static ImmutableList<JPartTime> byUser(final String userId) {
-		return ImmutableList.copyOf(
-			                           byUser(ObjectId.massageToObjectId(userId))
-				                           .asList()
+	public static ImmutableList<JPartTime> history(final String userId) {
+		return ImmutableList.copyOf(queryToFindMeByUser(ObjectId.massageToObjectId(userId))
+			                            .asList()
 		);
 	}
 
@@ -90,39 +107,41 @@ public class JPartTime {
 	}
 
 	public static ImmutableList<JPartTime> activeByUser(final ObjectId userId) {
-		return ImmutableList.copyOf(
-			                           byUser(userId)
-				                           .field("active").equal(true)
-				                           .asList()
+		return ImmutableList.copyOf(queryToFindMeByUser(userId)
+			                            .field("active").equal(true)
+			                            .asList()
 		);
 	}
 
-	public static void deactivate(final String id) {
+	public static ImmutableList<JPartTime> activeByUser(final ObjectId userId, final Integer year, final Integer month) {
+		final Date start = TimeUtils.getFirstDayOfMonth(year, month).toDate();
+		final Date end = TimeUtils.getLastDateOfMonth(year, month).toDate();
+		final Query<JPartTime> q = queryToFindMeByUser(userId)
+			                           .field("active").equal(true);
+		q.or(
+			    q.and(
+				         q.criteria("_startDate").lessThan(end),
+				         q.criteria("_endDate").doesNotExist()
+			    ),
+			    q.and(
+				         q.criteria("_startDate").lessThanOrEq(end),
+				         q.criteria("_endDate").greaterThanOrEq(start)
+			    )
+		);
+
+
+		return ImmutableList.copyOf(q.asList());
+	}
+
+	public static JPartTime deactivate(final String id) {
 		final Query<JPartTime> q = queryToFindMe(ObjectId.massageToObjectId(id));
 		final UpdateOperations<JPartTime> upo = MorphiaPlugin.ds().createUpdateOperations(JPartTime.class)
 			                                        .set("active", false);
-		MorphiaPlugin.ds().update(q, upo, false, WriteConcern.ACKNOWLEDGED);
+		return MorphiaPlugin.ds().findAndModify(q, upo, false, false);
 	}
 
-	@SuppressWarnings({"unused"})
-	@PrePersist
-	private void prePersist() {
-		if (startDate != null) {
-			_startDate = startDate.toDate();
-		}
-		if (endDate != null) {
-			_endDate = endDate.toDate();
-		}
-	}
-
-	@SuppressWarnings({"unused"})
-	@PostLoad
-	private void postLoad() {
-		if (_startDate != null) {
-			startDate = new DateTime(_startDate.getTime());
-		}
-		if (_endDate != null) {
-			endDate = new DateTime(_endDate.getTime());
-		}
+	public static Boolean existActive(final ObjectId userId) {
+		return MorphiaPlugin.ds().getCount(queryToFindMeByUser(userId)
+			                                   .field("active").equal(Boolean.TRUE)) > 0;
 	}
 }

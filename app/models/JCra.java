@@ -29,6 +29,7 @@ public class JCra extends Model {
 	public ObjectId userId;
 	public String comment;
 	public Boolean isValidated = Boolean.FALSE;
+	public Boolean partTimeApplied = Boolean.FALSE;
 
 	public JCra() {
 	}
@@ -41,6 +42,10 @@ public class JCra extends Model {
 
 	private static Query<JCra> q() {
 		return MorphiaPlugin.ds().createQuery(JCra.class);
+	}
+
+	private static UpdateOperations<JCra> uop() {
+		return MorphiaPlugin.ds().createUpdateOperations(JCra.class);
 	}
 
 	private static Query<JCra> queryToFindMe(final ObjectId id) {
@@ -58,53 +63,63 @@ public class JCra extends Model {
 	}
 
 	private static JCra applyPartTime(final JCra cra) {
-		final ImmutableList<JPartTime> partTimes = JPartTime.activeByUser(cra.userId);
-		for (JPartTime partTime : partTimes) {
-			final List<F.Tuple3<DateTime, Boolean, Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
-			for (F.Tuple3<DateTime, Boolean, Boolean> d : dates) {
-				JDay.addPartTime(cra.id, cra.userId, d._1, d._2, d._3);
+		if(Boolean.FALSE.equals(cra.partTimeApplied)) {
+			final ImmutableList<JPartTime> partTimes = JPartTime.activeByUser(cra.userId, cra.year, cra.month);
+
+			for(JPartTime partTime : partTimes) {
+				final List<F.Tuple3<DateTime, Boolean, Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
+				for(F.Tuple3<DateTime, Boolean, Boolean> d : dates) {
+					JDay.addPartTime(cra.id, cra.userId, d._1, d._2, d._3);
+				}
+
+			}
+			if(!partTimes.isEmpty()) {
+				cra.partTimeApplied = Boolean.TRUE;
+				cra.update();
 			}
 		}
 		return cra;
 	}
 
+
+
 	public static JCra validate(final ObjectId userId, final Integer year, final Integer month) {
-		UpdateOperations<JCra> op = MorphiaPlugin.ds().createUpdateOperations(JCra.class)
+		UpdateOperations<JCra> op = uop()
 			                            .set("isValidated", true);
 		return MorphiaPlugin.ds().findAndModify(queryByUserId(userId), op);
 	}
 
 	public static JCra invalidate(final ObjectId userId, final Integer year, final Integer month) {
-		UpdateOperations<JCra> op = MorphiaPlugin.ds().createUpdateOperations(JCra.class)
+		UpdateOperations<JCra> op = uop()
 			                            .set("isValidated", false);
 		return MorphiaPlugin.ds().findAndModify(queryByUserId(userId), op);
 	}
 
 	public static JCra getOrCreate(final ObjectId userId, final Integer year, final Integer month) {
 		final JCra cra = find(userId, year, month);
-		if (cra != null) {
-			return applyPartTime(cra);
-		} else {
+		if(cra == null) {
 			return create(userId, year, month);
+		} else {
+			return applyPartTime(cra);
 		}
 	}
 
 	public static JCra getOrCreate(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month) {
-		if (craId == null) {
+		if(craId == null) {
 			return create(userId, year, month);
 		} else {
 			return applyPartTime(queryToFindMe(craId).get());
 		}
 	}
 
+	private static JCra create(final ObjectId userId, final Integer year, final Integer month) {
+		JCra cra = new JCra(userId, year, month);
+		return applyPartTime(cra.<JCra>insert());
+	}
+
 	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
 		return queryByUserYearMonth(userId, year, month)
 			       .get();
-	}
-
-	public static JCra create(final ObjectId userId, final Integer year, final Integer month) {
-		JCra cra = new JCra(userId, year, month);
-		return applyPartTime(cra.<JCra>insert());
 	}
 
 	public static void delete(final ObjectId id) {
@@ -113,5 +128,17 @@ public class JCra extends Model {
 
 	public static void delete(final ObjectId userId, final Integer year, final Integer month) {
 		MorphiaPlugin.ds().delete(queryByUserYearMonth(userId, year, month), WriteConcern.ACKNOWLEDGED);
+	}
+
+	public static void unapplyPartTime(final JPartTime partTime) {
+		final Query<JCra> q = queryByUserId(partTime.userId)
+			                      .field("year").greaterThanOrEq(partTime.startDate.getYear())
+			                      .field("month").greaterThanOrEq(partTime.startDate.getMonthOfYear());
+		if(partTime.endDate != null) {
+			q
+				.field("year").lessThanOrEq(partTime.endDate.getYear())
+				.field("month").lessThanOrEq(partTime.endDate.getMonthOfYear());
+		}
+		MorphiaPlugin.ds().update(q, uop().set("partTimeApplied", false), false, WriteConcern.ACKNOWLEDGED);
 	}
 }
