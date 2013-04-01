@@ -85,34 +85,47 @@ public class JClaims extends Controller {
 
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
-			if(missionId == null) {
+			if(this.missionId == null) {
 				errors.add(new ValidationError("missionId", "La mission est requise."));
 			}
-			if(date == null) {
+			if(this.date == null) {
 				errors.add(new ValidationError("date", "La date est requise."));
-			} else if(new DateTime(date).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))) {
+			} else if(new DateTime(this.date).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))) {
 				errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une note de frais précédant le mois en cours."));
 			}
-			if(StringUtils.isBlank(claimType) && StringUtils.isBlank(amount) && StringUtils.isBlank(kilometer) && StringUtils.isBlank(journey)) {
+			if(StringUtils.isBlank(this.claimType) && StringUtils.isBlank(this.amount) && StringUtils.isBlank(this.kilometer) && StringUtils.isBlank(this.journey)) {
 				errors.add(new ValidationError("global", "Vous devez saisir au moins un frais ou un déplacement."));
 			} else {
-				if(StringUtils.isNotBlank(claimType) && StringUtils.isBlank(amount)) {
+				if(StringUtils.isNotBlank(this.claimType) && StringUtils.isBlank(this.amount)) {
 					errors.add(new ValidationError("amount", "Le montant du frais est requis."));
-
-				} else if(StringUtils.isBlank(claimType) && StringUtils.isNotBlank(amount)) {
-					errors.add(new ValidationError("claimType", "Le type de frais est requis."));
-					if(StringUtils.isNotBlank(amount) && new BigDecimal(amount).compareTo(BigDecimal.ZERO) <= 0) {
-						errors.add(new ValidationError("amount", "Le montant du frais doit être supérieur à 0."));
+				} else if(StringUtils.isNotBlank(this.amount)) {
+					if(StringUtils.isBlank(this.claimType)) {
+						errors.add(new ValidationError("claimType", "Le type de frais est requis."));
+					}
+					this.amount = this.amount.replace(',', '.');
+					try {
+						if(new BigDecimal(this.amount).compareTo(BigDecimal.ZERO) <= 0) {
+							errors.add(new ValidationError("amount", "Le montant du frais doit être supérieur à 0."));
+						}
+					} catch(NumberFormatException e) {
+						errors.add(new ValidationError("amount", "La montant du frais n'est pas au format requis (12.34)"));
 					}
 				}
 
-				if(StringUtils.isNotBlank(kilometer) && StringUtils.isBlank(journey)) {
-					errors.add(new ValidationError("journey", "La destination est requise."));
-					if(StringUtils.isNotBlank(kilometer) && new BigDecimal(kilometer).compareTo(BigDecimal.ZERO) <= 0) {
-						errors.add(new ValidationError("kilometer", "Le nombre de kilomètre doit être supérieur à 0."));
+				if(StringUtils.isNotBlank(this.journey) && StringUtils.isBlank(this.kilometer)) {
+					errors.add(new ValidationError("amount", "Le nombre de kilomètre est requis."));
+				} else if(StringUtils.isNotBlank(this.kilometer)) {
+					if(StringUtils.isBlank(this.journey)) {
+						errors.add(new ValidationError("journey", "La destination est requise."));
 					}
-				} else if(StringUtils.isBlank(kilometer) && StringUtils.isNotBlank(journey)) {
-					errors.add(new ValidationError("kilometer", "Le nombre de kilomètre est requis."));
+					this.kilometer = this.kilometer.replace(',', '.');
+					try {
+						if(new BigDecimal(this.kilometer).compareTo(BigDecimal.ZERO) <= 0) {
+							errors.add(new ValidationError("kilometer", "Le nombre de kilomètre doit être supérieur à 0."));
+						}
+					} catch(NumberFormatException e) {
+						errors.add(new ValidationError("kilometer", "La nombre de kilomètre n'est pas au format requis (12.34)"));
+					}
 				}
 			}
 			return errors.isEmpty() ? null : errors;
