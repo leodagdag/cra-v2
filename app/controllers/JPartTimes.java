@@ -74,15 +74,26 @@ public class JPartTimes extends Controller {
 	public static class CreateForm {
 
 		public ObjectId userId;
-		@Constraints.Required(message = "Le date de début est requise.")
 		public Long startDate;
 		public Long endDate;
 		public List<PartTimeWeekDay> daysOfWeek = Lists.newArrayList();
-		@Constraints.Required(message = "La fréquence est requise.")
 		public Integer frequency;
 
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
+			if(startDate == null) {
+				errors.add(new ValidationError("startDate", "Le date de début est requise."));
+			} else {
+				if( new DateTime(startDate).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))){
+					errors.add(new ValidationError("startDate", "Le temps partiel ne peut pas commencer dans le passé."));
+				}
+				if(endDate != null && new DateTime(endDate).isBefore(new DateTime(startDate))) {
+					errors.add(new ValidationError("endDate", "La date de fin doit être postérieur à la date de début."));
+				}
+			}
+			if(frequency == null) {
+				errors.add(new ValidationError("frequency", "La fréquence est requise."));
+			}
 			if(CollectionUtils.isEmpty(daysOfWeek)) {
 				errors.add(new ValidationError("daysOfWeek", "Vous devez choisir au moins un jour de la semaine."));
 			}

@@ -145,7 +145,7 @@ public class JAbsences extends Controller {
 					errors.add(new ValidationError("endDate", "La date de fin est requise."));
 				}
 				if(startDate != null && endDate != null && endDate < startDate) {
-					errors.add(new ValidationError("dates", "La date de début doit être avant la date de fin."));
+					errors.add(new ValidationError("dates", "La date de début doit être antérieur la date de fin."));
 				} else if(new DateTime(startDate).isBefore(DateTime.now().withDayOfMonth(1))) {
 					errors.add(new ValidationError("dates", "Vous ne pouvez pas saisir une absence précédant le mois en cours."));
 				}
