@@ -23,6 +23,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import security.JDeadboltHandler;
 import security.JSecurityRoles;
+import utils.time.TimeUtils;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -89,7 +90,7 @@ public class JClaims extends Controller {
 			}
 			if(date == null) {
 				errors.add(new ValidationError("date", "La date est requise."));
-			} else if(new DateTime(date).isBefore(DateTime.now().withDayOfMonth(1))) {
+			} else if(new DateTime(date).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))) {
 				errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une note de frais précédant le mois en cours."));
 			}
 			if(StringUtils.isBlank(claimType) && StringUtils.isBlank(amount) && StringUtils.isBlank(kilometer) && StringUtils.isBlank(journey)) {
