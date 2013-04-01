@@ -49,13 +49,13 @@ object TimeUtils {
     add(getFirstDayOfMonth(year, month), List.empty[Integer]).asJava
   }
 
-  def getFirstDayOfMonth(dt: DateTime): DateTime = new DateTime(dt.getYear, dt.getMonthOfYear, 1, 0, 0)
+  def getFirstDayOfMonth(dt: DateTime): DateTime = getFirstDayOfMonth(dt.getYear, dt.getMonthOfYear)
 
-  def getFirstDayOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0)
+  def getFirstDayOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0,0,0)
 
-  def getLastDayOfMonth(year: Integer, month: Integer): Int = new DateTime(year, month, 1, 0, 0).dayOfMonth.withMaximumValue.getDayOfMonth
+  def getLastDayOfMonth(year: Integer, month: Integer): Int = getFirstDayOfMonth(year,month).dayOfMonth.withMaximumValue.getDayOfMonth
 
-  def getLastDateOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0).dayOfMonth.withMaximumValue
+  def getLastDateOfMonth(year: Integer, month: Integer): DateTime = getFirstDayOfMonth(year,month).dayOfMonth.withMaximumValue
 
   def getLastDateOfMonth(dt: DateTime): DateTime = dt.dayOfMonth.withMaximumValue
 
@@ -66,7 +66,7 @@ object TimeUtils {
     val result = extended match {
       case false => current.toList.sorted
       case _ => {
-        val firstDay = new DateTime(year, month, 1, 0, 0)
+        val firstDay = getFirstDayOfMonth(year,month)
         val lastDay = getLastDateOfMonth(year, month)
         val nbPastDays = new Interval(getMondayOfDate(firstDay), firstDay).toPeriod.getDays
         val nbFutureDays = new Interval(lastDay, getSundayOfDate(lastDay)).toPeriod.getDays
