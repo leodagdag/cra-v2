@@ -1,5 +1,5 @@
-app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'profile',
-	function DayCtrl($scope, $http, $log, $location, $routeParams, profile) {
+app.controller('DayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
+	function DayCtrl($scope, $http, $log, $location, $routeParams) {
 		$scope.subSections = {
 			'normal': 'public/html/views/cra/normalDay.html',
 			'special': 'public/html/views/cra/specialDay.html'

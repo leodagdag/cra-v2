@@ -22,16 +22,14 @@
 				<tbody>
 					<tr data-ng-repeat="week in cra.weeks" data-ng-init="wIndex = $index">
 						<th>
-							<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture" value="selectedWeeks[wIndex].number" data-ng-model="selectedWeeks[wIndex].checked" dat
-							       a-ng-checked="selectedWeeks[wIndex].checked" data-ng-change="toggleWeek(wIndex)">&nbsp;{{week.number}}
+							<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture" value="selectedWeeks[wIndex].number" data-ng-model="selectedWeeks[wIndex].checked" data-ng-checked="selectedWeeks[wIndex].checked" data-ng-change="toggleWeek(wIndex)">&nbsp;{{week.number}}
 						</th>
 						<td data-ng-repeat="day in week.days" data-ng-init="dIndex = (wIndex * 7) + $index">
 							<table class="day" data-ng-class="{pastOrFuture : day.inPastOrFuture}">
 								<tbody>
 									<tr>
 										<td colspan="2" class="head" data-ng-class="{saturday: day.isSaturday, sunday: day.isSunday, dayOff: day.isDayOff, pastOrFuture : day.inPastOrFuture}">
-											<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture" value="selectedDays[dIndex].date" data-ng-model="selectedDays[dIndex].checked" dat
-											       a-ng-checked="selectedDays[dIndex].checked">
+											<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture" value="selectedDays[dIndex].date" data-ng-model="selectedDays[dIndex].checked" data-ng-checked="selectedDays[dIndex].checked">
 											<span>{{day.date | dayOfMonth}}</span>
 											<i class="icon-comment" data-ng-show="day.comment"></i>
 											<i class="icon-comment-alt" data-ng-show="!day.comment"></i>
@@ -39,7 +37,7 @@
 										</td>
 									</tr>
 									<tr class="halfday" data-ng-class="getClass(day.morning)">
-										<td  data-ng-click="selectedDays[dIndex].checked = true;openDay()">
+										<td data-ng-class="{pastOrFuture : day.inPastOrFuture}" data-ng-click="openDay(dIndex)">
 											{{day.morning.label || '&nbsp;'}}
 										</td>
 										<td class="halfday" data-ng-class="getClass(day.morning)">
@@ -47,7 +45,7 @@
 										</td>
 									</tr>
 									<tr class="halfday" data-ng-class="getClass(day.afternoon)">
-										<td data-ng-click="selectedDays[dIndex].checked = true;openDay()">
+										<td data-ng-class="{pastOrFuture : day.inPastOrFuture}" data-ng-click="openDay(dIndex)">
 											{{day.afternoon.label || '&nbsp;'}}
 										</td>
 										<td class="halfday" data-ng-class="getClass(day.afternoon)">
