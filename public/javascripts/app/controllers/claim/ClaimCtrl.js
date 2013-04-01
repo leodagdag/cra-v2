@@ -1,20 +1,18 @@
 app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', 'ClaimTypeConst', 'MonthsConst', 'profile',
 	function ClaimCtrl($scope, $rootScope, $http, $log, $location, ClaimTypeConst, MonthsConst, profile) {
 		var Claim = function(userId, form) {
-			return {
-				userId: userId,
-				missionId: form.missionId,
-				date: form.date ? moment(form.date, 'DD/MM/YYYY').valueOf() : null,
-				claimType: form.claimType,
-				amount: form.amount,
-				kilometer: form.kilometer,
-				journey: form.journey,
-				comment: form.comment
-			}
+			this.userId = userId;
+			this.missionId = form.missionId;
+			this.date = form.date ? moment(form.date, 'DD/MM/YYYY').valueOf() : null;
+			this.claimType = form.claimType;
+			this.amount = form.amount;
+			this.kilometer = form.kilometer;
+			this.journey = form.journey;
+			this.comment = form.comment
 		};
 
 		$scope.profile = profile.data;
-
+		$scope.form = {};
 		$scope.errors = {};
 
 		/* Form */
@@ -50,6 +48,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 			})
 				.success(function(claim, status, headers, config) {
 					$rootScope.onSuccess("La note de frais a été créée.");
+					$scope.form = {};
 					$scope.loadHistory();
 				})
 				.error(function(errors, status, headers, config) {
