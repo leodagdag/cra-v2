@@ -1,9 +1,9 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler)(implicit request: play.api.mvc.Request[Any])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, version: String)(implicit request: play.api.mvc.Request[Any])
 
 @import be.objectify.deadbolt.core.utils.TemplateUtils.as
 @import be.objectify.deadbolt.scala.views.html.{restrictOr, subjectPresent}
 @import security.SecurityRole
-
+@import utils.Version
 @defining(
     play.Play.isProd match {
         case true => ".min.js"
@@ -34,7 +34,7 @@
 }
 
 @if(play.Play.isProd){
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/cra-v2.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/cra-v2-"+ version +".min.js")"></script>
 } else {
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/app.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/constants.js")"></script>

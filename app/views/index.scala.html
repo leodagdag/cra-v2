@@ -1,4 +1,4 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler)(implicit request: play.api.mvc.Request[Any])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, version: String)(implicit request: play.api.mvc.Request[Any])
 
 @import layout.{header, navigation, scripts}
 
@@ -25,6 +25,6 @@
 			</div>
 			<div data-ng-view=""></div>
 		</div>
-		@scripts(handler)
+		@scripts(handler, version)
 	</body>
 </html>

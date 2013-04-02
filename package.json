@@ -1,14 +1,14 @@
 {
 	"name": "cra-v2",
-	"version": "1.0.0",
+	"version": "2.0.18-SNAPSHOT",
 	"src": "public/javascripts/app/**/*.js",
 	"build": {
 		"path": "buildjs/",
-		"file": "cra-v2.js"
+		"file": "cra-v2"
 	},
 	"dist": {
 		"path": "public/javascripts/",
-		"file": "cra-v2.min.js"
+		"file": "cra-v2"
 	},
 	"devDependencies": {
 		"grunt": "~0.4.0",

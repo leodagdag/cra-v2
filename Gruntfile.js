@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		clean: ['<%= pkg.build.path %>', '<%= pkg.dist.path + pkg.dist.file %>'],
+		clean: ['<%= pkg.build.path %>'],
 		concat: {
 			options: {
 				// define a string to put between each file in the concatenated output
@@ -16,27 +16,16 @@ module.exports = function(grunt) {
 				dest: '<%= pkg.build.path + pkg.build.file %>'
 			}
 		},
-		uglify: {
-			options: {
-				banner: '/*! <%= pkg.name %> | <%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n'
-			},
-			dist: {
-				files: {
-					'<%= pkg.dist.path + pkg.dist.file %>': ['<%= concat.dist.dest %>']
-				}
-			}
-		},
 		copy:{
 			main:{
 				files:[
-					{src: ['<%= concat.dist.dest %>'], dest: '<%= pkg.dist.path + pkg.dist.file %>', filter: 'isFile'}
+					{src: ['<%= concat.dist.dest %>'], dest: '<%= pkg.dist.path + pkg.dist.file %>-<%= pkg.version %>.min.js', filter: 'isFile'}
 				]
 			}
 		}
 	});
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	// Default task(s).
