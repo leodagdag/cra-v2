@@ -24,7 +24,7 @@ trait PDFTools {
   val BOTTOM_RIGHT: Border = Rectangle.BOTTOM + Rectangle.RIGHT
   val BOTTOM: Border = Rectangle.BOTTOM
 
-  def document(): Document
+  protected def document(): Document
 
   def phraseln(phrase: String): Phrase = {
     new Phrase(phrase + "\n")
@@ -49,10 +49,6 @@ trait PDFTools {
   }
 
   val blankLine: Phrase = new Phrase("\n")
-
-
-
-
 
   private lazy val logo: Image = {
     val url: URL = current.resource("/public/images/genesis_logo_export.png").get
@@ -129,6 +125,7 @@ object PDFFont {
     f
   }
 }
+
 trait PDFAbsenceTools extends PDFTools {
 
   private lazy val missions = JMission.getAbsencesMissions.asScala
@@ -162,9 +159,9 @@ trait PDFAbsenceTools extends PDFTools {
     cell
   }
 
-  def document(): Document = new Document(PageSize.A4)
+  override protected def document(): Document = new Document(PageSize.A4)
 
-  def header(userId: ObjectId): PdfPTable = {
+  protected def header(userId: ObjectId): PdfPTable = {
     val § = new Paragraph()
     val user = JUser.identity(userId)
     §.addAll(
@@ -181,7 +178,7 @@ trait PDFAbsenceTools extends PDFTools {
     super.header(§)
   }
 
-  def setTableHeader(table: PdfPTable) {
+  protected def setTableHeader(table: PdfPTable) {
     table.setHeaderRows(1)
     table.addCell(headerCell("Motif"))
     table.addCell(headerCell("Du"))
@@ -200,11 +197,11 @@ trait PDFAbsenceTools extends PDFTools {
     table.addCell(bodyCell(absence.comment, Element.ALIGN_LEFT))
   }
 
-  def setTableBody(table: PdfPTable, absences: List[JAbsence]) {
+  protected def setTableBody(table: PdfPTable, absences: List[JAbsence]) {
     absences.foreach(setTableRow(table, _))
   }
 
-  def setTableFooter(table: PdfPTable, nbDays: BigDecimal) {
+  protected def setTableFooter(table: PdfPTable, nbDays: BigDecimal) {
     table.addCell(footerCell("Total", Element.ALIGN_RIGHT, BOTTOM_LEFT, 3))
     table.addCell(footerCell(nbDays.toString(), Element.ALIGN_CENTER))
     table.addCell(footerCell("jours(s) ouvré(s)", Element.ALIGN_LEFT, BOTTOM_RIGHT))

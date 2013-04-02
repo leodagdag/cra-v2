@@ -54,7 +54,7 @@ public class JAbsences extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result remove(final String userId, final String id) {
 		// Suppression de l'absence concernée
-		final JAbsence absence = JAbsence.delete(userId, id);
+		final JAbsence absence = JAbsence.delete(id);
 		if(absence.fileId != null) {
 
 			// supprimer le fichier
@@ -63,7 +63,7 @@ public class JAbsences extends Controller {
 			final List<JAbsence> remainAbsences = JAbsence.byFileId(absence.fileId);
 			if(CollectionUtils.isNotEmpty(remainAbsences)) {
 				// Créer nouveau fichier et l'affecter à celle restante
-				PDF.createFile(remainAbsences);
+				PDF.createAbsenceData(remainAbsences);
 			}
 		}
 		// Envoi de l'annulation sans stockage du fichier
@@ -102,14 +102,14 @@ public class JAbsences extends Controller {
 
 	public static Result send(final String id) {
 		final JAbsence absence = JAbsence.fetch(id);
-		final File file = PDF.absenceFile(absence, JUser.account(absence.userId));
+		final File file = PDF.getOrCreateAbsenceFile(absence, JUser.account(absence.userId));
 		final DateTime date = MailerAbsence.send(absence, file);
 		JAbsence.updateSentDate(absence.id, date);
 		return ok();
 	}
 
 	public static Result export(final String id) {
-		return ok(PDF.absence(JAbsence.fetch(id))).as("application/pdf");
+		return ok(PDF.getAbsenceData(JAbsence.fetch(id))).as("application/pdf");
 	}
 
 	public static class CreateAbsenceForm {

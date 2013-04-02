@@ -90,8 +90,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		};
 
 		$scope.export = function(id) {
-			// /absences/export/:id
-			$window.open(_.str.sprintf("/absences/export/%s", id));
+			$window.open(jsRoutes.controllers.JAbsences.export(id).url);
 		};
 
 		var loadMissions = function() {

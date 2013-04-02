@@ -23,7 +23,7 @@ object Batches extends BaseController {
         userId =>
           val absences = JAbsence.byUserToSent(userId).asScala.toList
           val user = JUser.account(userId)
-          val file = PDF.absenceFile(absences, user)
+          val file = PDF.getOrCreateAbsenceFile(absences, user)
           val sentDate = MailerAbsence.sendAbsences(user, file)
           JAbsence.updateSentDate(absences.map(_.id).asJava, sentDate)
       }
