@@ -4,11 +4,11 @@
 	"src": "public/javascripts/app/**/*.js",
 	"build": {
 		"path": "buildjs/",
-		"file": "cra-v2-<%=version %>.js"
+		"file": "cra-v2"
 	},
 	"dist": {
 		"path": "public/javascripts/",
-		"file": "cra-v2-<%= version %>.min.js"
+		"file": "cra-v2"
 	},
 	"devDependencies": {
 		"grunt": "~0.4.0",
