@@ -8,7 +8,11 @@
 	},
 	"dist": {
 		"path": "public/javascripts/",
-		"file": "cra-v2"
+		"file": "cra-v2.js"
+	},
+	"dist": {
+		"path": "public/javascripts/",
+		"file": "cra-v2-<%= version %>.min.js"
 	},
 	"devDependencies": {
 		"grunt": "~0.4.0",
