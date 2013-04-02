@@ -9,10 +9,6 @@ import models.JAbsence
  */
 object PDFAbsence extends PDFAbsenceTools {
 
-  def compose(absence: JAbsence): Array[Byte] = {
-    compose(List(absence))
-  }
-
   def compose(absences: List[JAbsence]): Array[Byte] = {
     val firstAbsence = absences.head
     val doc = document()
