@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		clean: ['<%= pkg.build.path %>', '<%= pkg.dist.path + pkg.dist.file %>'],
+		clean: ['<%= pkg.build.path %>'],
 		concat: {
 			options: {
 				// define a string to put between each file in the concatenated output

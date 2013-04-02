@@ -1,3 +1,4 @@
+
 import sbt._
 import Keys._
 import play.Project._
@@ -5,7 +6,14 @@ import play.Project._
 object ApplicationBuild extends Build {
 
 	val appName = "cra-v2"
-	val appVersion = "2.0.18-SNAPSHOT"
+	//val appVersion = "2.0.18-SNAPSHOT"
+
+	val appVersion = {
+    // scala is imported implicitly
+
+    io.Source.fromFile(new File("version"), "UTF-8").mkString
+
+  }
 
 	val appDependencies = Seq(
 		// Add your project dependencies here,
