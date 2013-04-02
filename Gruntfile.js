@@ -16,16 +16,6 @@ module.exports = function(grunt) {
 				dest: '<%= pkg.build.path + pkg.build.file %>'
 			}
 		},
-		uglify: {
-			options: {
-				banner: '/*! <%= pkg.name %> | <%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n'
-			},
-			dist: {
-				files: {
-					'<%= pkg.dist.path + pkg.dist.file %>': ['<%= concat.dist.dest %>']
-				}
-			}
-		},
 		copy:{
 			main:{
 				files:[
@@ -36,7 +26,6 @@ module.exports = function(grunt) {
 	});
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	// Default task(s).
