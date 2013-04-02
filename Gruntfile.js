@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 		copy:{
 			main:{
 				files:[
-					{src: ['<%= concat.dist.dest %>'], dest: '<%= pkg.dist.path + pkg.dist.file %>', filter: 'isFile'}
+					{src: ['<%= concat.dist.dest %>'], dest: '<%= pkg.dist.path + pkg.dist.file %>-<%= pkg.version %>.min.js', filter: 'isFile'}
 				]
 			}
 		}
