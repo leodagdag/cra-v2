@@ -1,13 +1,11 @@
 package mail
 
-import java.io.{Serializable, File}
+import java.io.File
 import models.{JUser, JAbsence}
 import org.apache.commons.mail.{DefaultAuthenticator, HtmlEmail, EmailAttachment}
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.Play.current
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigValue
 
 /**
  * @author f.patin
@@ -119,7 +117,6 @@ sealed trait Mailer {
   protected def address(user: JUser) = s"${user.fullName} <${user.email}>"
 
 
-
   protected def attachment(file: File) = {
     val attachment = new EmailAttachment()
     attachment.setPath(file.getAbsolutePath)
@@ -130,6 +127,7 @@ sealed trait Mailer {
 object MailerAbsence extends Mailer {
 
   private def subject(user: JUser) = s"Demande d'absence pour ${user.fullName}"
+
   private def subjectCancel(user: JUser) = s"Demande d'absence pour ${user.fullName}"
 
   private[MailerAbsence] object Body {
@@ -189,7 +187,7 @@ object MailerAbsence extends Mailer {
       (html, text)
     }
 
-    def cancelAbsence(user: JUser): (String, String)  ={
+    def cancelAbsence(user: JUser): (String, String) = {
       val html = htmlCancelAbsenceTemplate.format(s"${user.firstName.toLowerCase.capitalize} ${user.lastName.toLowerCase.capitalize}")
       val text = textCancelAbsenceTemplate.format(s"${user.firstName.toLowerCase.capitalize} ${user.lastName.toLowerCase.capitalize}")
       (html, text)
@@ -216,7 +214,7 @@ object MailerAbsence extends Mailer {
     now
   }
 
-  def sendAbsences(user : JUser, file: File) = {
+  def sendAbsences(user: JUser, file: File) = {
     val now = DateTime.now()
     val manager = JUser.account(user.managerId)
 
@@ -255,9 +253,9 @@ private case class MailerConfiguration(smtpHost: String, smtpPort: Int, smtpSsl:
 private object MailerConfiguration {
 
   private lazy val mock = current.configuration.getBoolean("smtp.mock").getOrElse(false)
-  private lazy val config = current.configuration.getConfig("smtp").getOrElse(throw current.configuration.reportError("smtp","smtp needs to be set in application.conf in order to send email"))
+  private lazy val config = current.configuration.getConfig("smtp").getOrElse(throw current.configuration.reportError("smtp", "smtp needs to be set in application.conf in order to send email"))
 
-  lazy val smtpHost = config.getString("host").getOrElse(throw current.configuration.reportError("smtp.host","smtp.host needs to be set in application.conf in order to send email"))
+  lazy val smtpHost = config.getString("host").getOrElse(throw current.configuration.reportError("smtp.host", "smtp.host needs to be set in application.conf in order to send email"))
   lazy val smtpPort = config.getInt("port").getOrElse(25)
   lazy val smtpSsl = config.getBoolean("ssl").getOrElse(false)
   lazy val smtpTls = config.getBoolean("tls").getOrElse(false)
@@ -265,11 +263,8 @@ private object MailerConfiguration {
   lazy val smtpPassword = config.getString("password")
 
   def email = {
-    if (mock) {
-      MockEmail
-    } else {
-      new RealEmail(smtpHost, smtpPort, smtpSsl, smtpTls, smtpUser, smtpPassword)
-    }
+    if (mock) MockEmail
+    else new RealEmail(smtpHost, smtpPort, smtpSsl, smtpTls, smtpUser, smtpPassword)
   }
 }
 
