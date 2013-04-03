@@ -17,7 +17,7 @@ object PDF {
 
   def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = {
     val file = newFile(user)
-    FileUtils.writeByteArrayToFile(file, PDFAbsence.compose(List(absence)))
+    FileUtils.writeByteArrayToFile(file, PDFAbsence(List(absence)))
     file
   }
 
@@ -39,7 +39,7 @@ object PDF {
   }
 
   private def createAbsenceData(absences: List[JAbsence]): Array[Byte] = {
-    val data = PDFAbsence.compose(absences)
+    val data = PDFAbsence(absences)
     val fileId = DbFile.save(data)
     JAbsence.updateFileId(absences.map(_.id).asJava, fileId)
     data

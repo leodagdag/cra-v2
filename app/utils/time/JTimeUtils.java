@@ -14,7 +14,7 @@ import java.util.List;
 
 public class JTimeUtils {
 
-	public static List<F.Tuple3<DateTime, Boolean, Boolean>> extractDatesInYearMonth(final Integer year, final Integer month, final DateTime startDate, final Integer dayOfWeek, final String momentOfDay, final Integer frequency) {
+	public static List<F.Tuple3<DateTime, Boolean, Boolean>> extractDatesInYearMonth(final Integer year, final Integer month, final DateTime startDate, final DateTime endDate, final Integer dayOfWeek, final String momentOfDay, final Integer frequency) {
 		final List<F.Tuple3<DateTime, Boolean, Boolean>> result = Lists.newArrayList();
 		final F.Tuple<Boolean, Boolean> mod = MomentOfDay.to(momentOfDay);
 		final MutableDateTime curr = startDate.toMutableDateTime();
@@ -22,8 +22,8 @@ public class JTimeUtils {
 		while(curr.isBefore(firstDayOfMonth)) {
 			curr.addWeeks(frequency);
 		}
-		final DateTime lastDayOfMonth = TimeUtils.getLastDateOfMonth(firstDayOfMonth);
-		while(curr.isBefore(lastDayOfMonth)) {
+		final DateTime lastDayOfMonth = endDate != null ? endDate : TimeUtils.getLastDateOfMonth(firstDayOfMonth) ;
+		while(!curr.isAfter(lastDayOfMonth)) {
 			if(curr.getDayOfWeek() == dayOfWeek && TimeUtils.isNotDayOff(curr.toDateTime())) {
 				result.add(F.Tuple3(curr.toDateTime(), mod._1, mod._2));
 			}
