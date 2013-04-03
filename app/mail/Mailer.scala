@@ -1,12 +1,13 @@
 package mail
 
-import java.io.File
+import java.io.{Serializable, File}
 import models.{JUser, JAbsence}
 import org.apache.commons.mail.{DefaultAuthenticator, HtmlEmail, EmailAttachment}
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.Play.current
 import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigValue
 
 /**
  * @author f.patin
@@ -254,17 +255,19 @@ private case class MailerConfiguration(smtpHost: String, smtpPort: Int, smtpSsl:
 private object MailerConfiguration {
 
   private lazy val mock = current.configuration.getBoolean("smtp.mock").getOrElse(false)
+  private lazy val config = current.configuration.getConfig("smtp").getOrElse(throw current.configuration.reportError("smtp","smtp needs to be set in application.conf in order to send email"))
 
-  lazy val email = {
+  lazy val smtpHost = config.getString("host").getOrElse(throw current.configuration.reportError("smtp.host","smtp.host needs to be set in application.conf in order to send email"))
+  lazy val smtpPort = config.getInt("port").getOrElse(25)
+  lazy val smtpSsl = config.getBoolean("ssl").getOrElse(false)
+  lazy val smtpTls = config.getBoolean("tls").getOrElse(false)
+  lazy val smtpUser = config.getString("user")
+  lazy val smtpPassword = config.getString("password")
+
+  def email = {
     if (mock) {
       MockEmail
     } else {
-      val smtpHost = current.configuration.getString("smtp.host").getOrElse(throw new RuntimeException("smtp.host needs to be set in application.conf in order to use this plugin (or set smtp.mock to true)"))
-      val smtpPort = current.configuration.getInt("smtp.port").getOrElse(25)
-      val smtpSsl = current.configuration.getBoolean("smtp.ssl").getOrElse(false)
-      val smtpTls = current.configuration.getBoolean("smtp.tls").getOrElse(false)
-      val smtpUser = current.configuration.getString("smtp.user")
-      val smtpPassword = current.configuration.getString("smtp.password")
       new RealEmail(smtpHost, smtpPort, smtpSsl, smtpTls, smtpUser, smtpPassword)
     }
   }
