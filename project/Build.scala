@@ -7,7 +7,7 @@ object ApplicationBuild extends Build {
 
   val appName = "cra-v2"
 
-  //val appVersion = "2.0.18-SNAPSHOT"
+  // val appVersion = "2.0.18-SNAPSHOT"
   val appVersion =  io.Source.fromFile(new File("version"), "UTF-8").mkString
 
   val appDependencies = Seq(

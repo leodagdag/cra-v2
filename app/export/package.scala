@@ -1,11 +1,7 @@
 import com.itextpdf.text.Rectangle
 
 /**
- * Created with IntelliJ IDEA.
- * User: patinfr
- * Date: 03/04/13
- * Time: 13:32
- * To change this template use File | Settings | File Templates.
+ * @author f.patin
  */
 package object export {
   type Alignment = Int
