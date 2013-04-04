@@ -10,7 +10,7 @@ object ApplicationBuild extends Build {
   val appName = "cra-v2"
 
   // val appVersion = "2.0.18-SNAPSHOT"
-  val appVersion =  FileUtils.readLines(new File("version"), "UTF-8").asScala.head
+  val appVersion =  FileUtils.readLines(new File("build.version"), "UTF-8").asScala.head
 
   val appDependencies = Seq(
     // Add your project dependencies here,
