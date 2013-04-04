@@ -3,10 +3,12 @@ package utils
 import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.collection.JavaConverters._
+import play.api.Play.current
+
 
 /**
  * @author f.patin
  */
 object Version {
-  val version = FileUtils.readLines(new File("conf/version"), "UTF-8").asScala.head
+  lazy val version = current.configuration.getString("version").getOrElse(throw current.configuration.reportError("version", "version needs to be set in application.conf"))
 }
