@@ -108,7 +108,7 @@ public class JAbsences extends Controller {
 		return ok();
 	}
 
-	public static Result export(final String id) {
+	public static Result exportFile(final String id) {
 		return ok(PDF.getAbsenceData(JAbsence.fetch(id))).as("application/pdf");
 	}
 

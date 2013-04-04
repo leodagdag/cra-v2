@@ -89,7 +89,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 				});
 		};
 
-		$scope.export = function(id) {
+		$scope.exportFile = function(id) {
 			$window.open(jsRoutes.controllers.JAbsences.export(id).url);
 		};
 

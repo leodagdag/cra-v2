@@ -21,7 +21,7 @@ DELETE  /claims/:id                                                 controllers.
 # Absences
 # ~~~~
 GET		/absences/send/:id											controllers.JAbsences.send(id: String)
-GET		/absences/export/:id										controllers.JAbsences.export(id: String)
+GET		/absences/export/:id										controllers.JAbsences.exportFile(id: String)
 GET     /absences/:userId/history/:absenceType/:year/:month         controllers.JAbsences.history(userId: String, absenceType :String, year: Integer, month: Integer)
 POST    /absences                                                   controllers.JAbsences.create()
 DELETE  /absences/:userId/:id                                       controllers.JAbsences.remove(userId: String, id: String)
