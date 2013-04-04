@@ -77,7 +77,7 @@ public class JVehicles extends Controller {
 
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
-			if (TimeUtils.getFirstDayOfMonth(year, month).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))) {
+			if (TimeUtils.firstDayOfMonth(year, month).isBefore(TimeUtils.firstDayOfMonth(DateTime.now()))) {
 				errors.add(new ValidationError("validityDate", "La date de validté doit être supérieure ou égale au mois en cours."));
 			}
 			return errors.isEmpty() ? null : errors;
@@ -90,7 +90,7 @@ public class JVehicles extends Controller {
 			vehicle.brand = this.brand;
 			vehicle.power = this.power;
 			vehicle.matriculation = this.matriculation;
-			vehicle.startDate = TimeUtils.getFirstDayOfMonth(year, month);
+			vehicle.startDate = TimeUtils.firstDayOfMonth(year, month);
 			return vehicle;
 		}
 	}

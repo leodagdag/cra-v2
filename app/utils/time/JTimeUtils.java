@@ -18,11 +18,11 @@ public class JTimeUtils {
 		final List<F.Tuple3<DateTime, Boolean, Boolean>> result = Lists.newArrayList();
 		final F.Tuple<Boolean, Boolean> mod = MomentOfDay.to(momentOfDay);
 		final MutableDateTime curr = startDate.toMutableDateTime();
-		final DateTime firstDayOfMonth = TimeUtils.getFirstDayOfMonth(year, month);
+		final DateTime firstDayOfMonth = TimeUtils.firstDayOfMonth(year, month);
 		while(curr.isBefore(firstDayOfMonth)) {
 			curr.addWeeks(frequency);
 		}
-		final DateTime lastDayOfMonth = endDate != null ? endDate : TimeUtils.getLastDateOfMonth(firstDayOfMonth) ;
+		final DateTime lastDayOfMonth = endDate != null ? endDate : TimeUtils.lastDateOfMonth(firstDayOfMonth) ;
 		while(!curr.isAfter(lastDayOfMonth)) {
 			if(curr.getDayOfWeek() == dayOfWeek && TimeUtils.isNotDayOff(curr.toDateTime())) {
 				result.add(F.Tuple3(curr.toDateTime(), mod._1, mod._2));

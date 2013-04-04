@@ -1,15 +1,12 @@
 package export
 
 import com.itextpdf.text.pdf.codec.PngImage
-import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
 import com.itextpdf.text._
 import java.net.URL
+import pdf.{PdfPCell, PdfPTable, PdfWriter}
 import play.api.Play.current
 import scala.collection.JavaConverters._
-import models.{JAbsence, JUser, JMission}
-import scala.List
-import org.bson.types.ObjectId
-import utils.business.AbsenceUtils
+import java.io.ByteArrayOutputStream
 
 /**
  * @author f.patin
@@ -17,12 +14,6 @@ import utils.business.AbsenceUtils
 
 
 trait PDFTools {
-
-
-
-
-
-  protected def document(): Document
 
   def phraseln(phrase: String): Phrase = {
     new Phrase(phrase + "\n")
@@ -56,7 +47,7 @@ trait PDFTools {
     img
   }
 
-  protected def pageHeader(title: Paragraph): PdfPTable = {
+  protected def pageHeader(`§`: Paragraph): PdfPTable = {
     val table = new PdfPTable(2)
     table.getDefaultCell.setBorder(Rectangle.NO_BORDER)
     table.setWidthPercentage(100f)
@@ -66,7 +57,7 @@ trait PDFTools {
     img.setBorder(0)
     // Title
     table.addCell(img)
-    table.addCell(title)
+    table.addCell(§)
     table.getDefaultCell.setColspan(2)
     table.addCell(" ")
     table.addCell(" ")
@@ -113,7 +104,7 @@ trait PDFFont {
     f
   }
   val headerFont: Font = {
-    val f = new Font(boldFont)
+    val f = new Font(baseFont)
     f.setSize(12f)
     f
   }
@@ -124,7 +115,7 @@ trait PDFFont {
   }
 }
 
-trait PDFTableTools extends  PDFFont {
+trait PDFTableTools extends PDFFont {
 
   protected def defaultCell(phrase: Phrase) = {
     val cell = new PdfPCell(phrase)
@@ -153,61 +144,28 @@ trait PDFTableTools extends  PDFFont {
     cell
   }
 }
-trait PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
 
-  private lazy val missions = JMission.getAbsencesMissions.asScala
+trait PDFComposer[T] {
 
-  private val title = "Demande de congés"
+  protected def document(): Document
 
-  protected def pageHeader(userId: ObjectId): PdfPTable = {
-    val § = new Paragraph()
-    val user = JUser.identity(userId)
-    §.addAll(
-      phraseln(
-        phraseln(title, titleFont),
-        blankLine,
-        phraseln(
-          phrase("Collaborateur : ", headerFont),
-          phrase(s"${user.fullName()}", headerFontBold)
-        ),
-        blankLine
-      )
-    )
-    super.pageHeader(§)
+  def apply(obj: T): Array[Byte] = {
+    compose(obj, content)
   }
 
-  protected def setTableHeader(table: PdfPTable) {
-    table.setHeaderRows(1)
-    table.addCell(headerCell("Motif"))
-    table.addCell(headerCell("Du"))
-    table.addCell(headerCell("Au"))
-    table.addCell(headerCell("Nb jours ouvrés"))
-    table.addCell(headerCell("Commentaire"))
+  def compose(cra: T, f: (Document, T) => Unit): Array[Byte] = {
+    val doc = document()
+    val os = new ByteArrayOutputStream()
+    PdfWriter.getInstance(doc, os)
+    doc.open()
+    doc.addCreationDate()
+
+    f(doc, cra)
+
+    doc.close()
+    os.toByteArray
   }
 
-  private def setTableRow(table: PdfPTable, absence: JAbsence) {
-    val mission = missions.find(_.id == absence.missionId)
-    val description = mission.map(_.label).getOrElse(s"Erreur (id:${absence.missionId.toString})")
-    table.addCell(bodyCell(description, Element.ALIGN_LEFT))
-    table.addCell(bodyCell(absence.startDate.toString("dd/MM/YYYY"), Element.ALIGN_CENTER))
-    table.addCell(bodyCell(AbsenceUtils.getHumanEndDate(absence).toString("dd/MM/YYYY"), Element.ALIGN_CENTER))
-    table.addCell(bodyCell(absence.nbDays.toString, Element.ALIGN_CENTER))
-    table.addCell(bodyCell(absence.comment, Element.ALIGN_LEFT))
-  }
-
-  protected def setTableBody(table: PdfPTable, absences: List[JAbsence]) {
-    absences.foreach(setTableRow(table, _))
-  }
-
-  protected def setTableFooter(table: PdfPTable, nbDays: BigDecimal) {
-    table.addCell(footerCell("Total", Element.ALIGN_RIGHT, BOTTOM_LEFT, 3))
-    table.addCell(footerCell(nbDays.toString(), Element.ALIGN_CENTER))
-    table.addCell(footerCell("jours(s) ouvré(s)", Element.ALIGN_LEFT, BOTTOM_RIGHT))
-  }
+  def content(doc: Document, obj: T)
 }
 
-trait PDFCraTools extends PDFTools {
-
-
-
-}

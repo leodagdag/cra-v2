@@ -84,7 +84,7 @@ public class JPartTimes extends Controller {
 			if(startDate == null) {
 				errors.add(new ValidationError("startDate", "Le date de début est requise."));
 			} else {
-				if( new DateTime(startDate).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))){
+				if( new DateTime(startDate).isBefore(TimeUtils.firstDayOfMonth(DateTime.now()))){
 					errors.add(new ValidationError("startDate", "Le temps partiel ne peut pas commencer dans le passé."));
 				}
 				if(endDate != null && new DateTime(endDate).isBefore(new DateTime(startDate))) {

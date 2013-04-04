@@ -114,8 +114,8 @@ public class JPartTime {
 	}
 
 	public static ImmutableList<JPartTime> activeByUser(final ObjectId userId, final Integer year, final Integer month) {
-		final Date start = TimeUtils.getFirstDayOfMonth(year, month).toDate();
-		final Date end = TimeUtils.getLastDateOfMonth(year, month).toDate();
+		final Date start = TimeUtils.firstDayOfMonth(year, month).toDate();
+		final Date end = TimeUtils.lastDateOfMonth(year, month).toDate();
 		final Query<JPartTime> q = queryToFindMeByUser(userId)
 			                           .field("active").equal(true);
 		q.or(

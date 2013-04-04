@@ -36,6 +36,7 @@ POST    /days/                                                      controllers.
 
 # Cra
 # ~~~~
+GET		/cra/export/:id												controllers.JCras.export(id: String)
 GET     /cra/:username/:year/:month                                 controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /cra/:id/validate                                           controllers.Cras.validate(id: String)
 POST    /cra/:id/invalidate                                         controllers.Cras.invalidate(id: String)

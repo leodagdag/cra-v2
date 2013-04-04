@@ -94,7 +94,7 @@ public class JClaims extends Controller {
 			if(this.date == null) {
 				errors.add(new ValidationError("date", "La date est requise."));
 				dateValid = false;
-			} else if(new DateTime(this.date).isBefore(TimeUtils.getFirstDayOfMonth(DateTime.now()))) {
+			} else if(new DateTime(this.date).isBefore(TimeUtils.firstDayOfMonth(DateTime.now()))) {
 				errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une note de frais précédant le mois en cours."));
 				dateValid = false;
 			}

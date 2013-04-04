@@ -139,4 +139,8 @@ public class JCra extends Model {
         }
         MorphiaPlugin.ds().update(q, uop().set("partTimeApplied", false), false, WriteConcern.ACKNOWLEDGED);
     }
+
+    public static JCra fetch(final String id) {
+        return queryToFindMe(ObjectId.massageToObjectId(id)).get();
+    }
 }

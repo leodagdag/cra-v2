@@ -123,8 +123,8 @@ public class JAbsence extends Model implements MongoModel {
 
 
         if (startYear != null && startMonth != null && endYear != null && endMonth != null) {
-            final DateTime startFirstDay = TimeUtils.getFirstDayOfMonth(startYear, startMonth);
-            final DateTime endFirstDay = TimeUtils.getLastDateOfMonth(endYear, endMonth);
+            final DateTime startFirstDay = TimeUtils.firstDayOfMonth(startYear, startMonth);
+            final DateTime endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth);
             q.or(
                 q.and(
                     q.criteria("_startDate").greaterThanOrEq(startFirstDay.toDate()),
