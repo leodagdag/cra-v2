@@ -8,5 +8,5 @@ import scala.collection.JavaConverters._
  * @author f.patin
  */
 object Version {
-  val version = FileUtils.readLines(new File("version"), "UTF-8").asScala.head
+  val version = FileUtils.readLines(new File("conf/version"), "UTF-8").asScala.head
 }
