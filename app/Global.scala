@@ -23,7 +23,7 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     Logger info "Application start ..."
     import models._
-    models.modelsToIndex.foreach(m => m.ensureIndexes)
+    //models.modelsToIndex.foreach(m => m.ensureIndexes)
     createBatchUser(app)
     super.onStart(app)
   }

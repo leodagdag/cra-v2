@@ -5,6 +5,9 @@ import java.util
 import java.util.Date
 import org.joda.time._
 import scala.collection.JavaConverters._
+import play.libs.F
+import play.libs.F.Tuple
+
 
 /**
  * @author f.patin
@@ -116,5 +119,11 @@ object TimeUtils {
       else dt
     }
     subtract(date.minusDays(1))
+  }
+
+  def getMonthYear(dts: java.util.List[DateTime]): util.Collection[Tuple[Integer, Integer]] = {
+    val a: Set[(Int, Int)] = dts.asScala.map(dt => (dt.getYear, dt.getMonthOfYear)).toSet
+    a.map(k => F.Tuple(Integer.valueOf(k._1),Integer.valueOf(k._2)))                       .asJavaCollection
+
   }
 }

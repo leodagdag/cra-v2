@@ -35,7 +35,7 @@ public class JCras extends Controller {
         final List<JDay> jDays = Lists.newArrayList();
         final List<ObjectId> missionsIds = Lists.newArrayList();
 
-        jDays.addAll(JDay.find(cra.id, year, month, true));
+        jDays.addAll(JDay.find(cra.id, userId, year, month, true));
         for (JDay jDay : jDays) {
             missionsIds.addAll(jDay.missionIds());
         }

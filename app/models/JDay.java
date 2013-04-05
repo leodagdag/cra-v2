@@ -3,6 +3,8 @@ package models;
 import com.github.jmkgreen.morphia.Key;
 import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
+import com.github.jmkgreen.morphia.query.Criteria;
+import com.github.jmkgreen.morphia.query.CriteriaContainer;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.google.common.base.Function;
@@ -37,7 +39,9 @@ import java.util.*;
 @Indexes({
     @Index("craId"),
     @Index("_date"),
-    @Index("year, month")
+    @Index("userId, year, month"),
+    /*@Index("userId"),
+    @Index("year, month")*/
 })
 public class JDay extends Model implements MongoModel {
 
@@ -76,14 +80,32 @@ public class JDay extends Model implements MongoModel {
         return MorphiaPlugin.ds().createQuery(JDay.class);
     }
 
-    public static List<JDay> find(final ObjectId craId, final Integer year, final Integer month, final Boolean withPastAndFuture) {
+    public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final Boolean withPastAndFuture) {
         final List<DateTime> allDates = Lists.newArrayList(TimeUtils.getDaysOfMonth(year, month, withPastAndFuture));
+        final Collection<F.Tuple<Integer, Integer>> yearMonths = TimeUtils.getMonthYear(allDates);
         final List<JDay> days = Lists.newArrayList();
         if (craId != null) {
-            days.addAll(q()
-                .field("craId").equal(craId)
-                .field("_date").in(TimeUtils.dateTime2Date(allDates))
-                .asList());
+
+            final Query<JDay> q = q()
+                .field("userId").equal(userId);
+            final List<CriteriaContainer> criterias = Lists.newArrayList();
+            for (F.Tuple<Integer, Integer> ym : yearMonths) {
+                final Query<JDay> crit = q();
+                criterias.add(crit.and(
+                    crit.criteria("year").equal(ym._1),
+                    crit.criteria("month").equal(ym._2)
+                ));
+            }
+
+            q.or(criterias.toArray(new Criteria[criterias.size()]));
+
+            final List<JDay> dbDays = Lists.newArrayList(q.asList());
+            days.addAll(Collections2.filter(dbDays, new Predicate<JDay>() {
+                @Override
+                public boolean apply(@Nullable JDay dbDay) {
+                    return allDates.contains(dbDay.date);
+                }
+            }));
         } else {
             days.addAll(Collections2.transform(allDates, new Function<DateTime, JDay>() {
                 @Nullable
@@ -93,6 +115,7 @@ public class JDay extends Model implements MongoModel {
                 }
             }));
         }
+
         for (final DateTime dt : allDates) {
             final JDay existDay = Iterables.find(days, new Predicate<JDay>() {
                 @Override
@@ -325,7 +348,7 @@ public class JDay extends Model implements MongoModel {
             _date = date.toDate();
             year = date.getYear();
             month = date.getMonthOfYear();
-            week =  date.getWeekOfWeekyear();
+            week = date.getWeekOfWeekyear();
         }
     }
 
@@ -340,7 +363,7 @@ public class JDay extends Model implements MongoModel {
             if (month == null) {
                 month = date.getMonthOfYear();
             }
-            if(week == null){
+            if (week == null) {
                 week = date.getWeekOfWeekyear();
             }
         }
