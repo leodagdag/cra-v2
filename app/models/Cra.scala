@@ -21,18 +21,11 @@ case class Cra(id: Option[BSONObjectID],
                isValidated: Boolean) {
 }
 
-object Cra extends ToIndex {
+object Cra {
 	private val dbName = "Cra"
 	private val db = ReactiveMongoPlugin.db.collection(dbName)
 
-	def ensureIndexes {
-		import models.ensureIndex
-		List(
-			Index(List("userId" -> Ascending)),
-			Index(List("year" -> Ascending, "month" -> Ascending)),
-			Index(List("validated" -> Ascending))
-		).foreach(index => ensureIndex(index)(db))
-	}
+
 
 	def validate(id: String) = {
 		val s = BSONDocument("_id" -> BSONObjectID(id))

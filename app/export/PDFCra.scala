@@ -1,6 +1,6 @@
 package export
 
-import models.{JDay, Day, JUser, JCra}
+import models.{JDay, JUser, JCra}
 import com.itextpdf.text.{Paragraph, PageSize, Document}
 import org.bson.types.ObjectId
 import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}

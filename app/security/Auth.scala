@@ -1,7 +1,6 @@
 package security
 
 import be.objectify.deadbolt.core.models.{Subject, Permission}
-import models.User
 import play.libs.Scala
 import reactivemongo.api.QueryBuilder
 import reactivemongo.bson.handlers.DefaultBSONHandlers.{DefaultBSONDocumentWriter, DefaultBSONReaderHandler}
@@ -9,6 +8,8 @@ import reactivemongo.bson.handlers.{BSONWriter, BSONReader}
 import reactivemongo.bson.{BSONInteger, BSONString, BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import concurrent.Future
+import play.modules.reactivemongo.ReactiveMongoPlugin
+import play.api.Play.current
 
 
 /**
@@ -26,7 +27,7 @@ case class Auth(id: Option[BSONObjectID],
 
 object Auth {
 
-	private val db = User.db
+	private val db = ReactiveMongoPlugin.db.collection("User")
 
 	implicit object AuthBSONReader extends BSONReader[Auth] {
 		def fromBSON(document: BSONDocument): Auth = {
@@ -81,6 +82,8 @@ case class Profile(id:String,
 
 object Profile {
 
+	private val db = ReactiveMongoPlugin.db.collection("User")
+
 	object ProfileBSONReader extends BSONReader[Profile] {
 		def fromBSON(document: BSONDocument): Profile = {
 			val doc = document.toTraversable
@@ -103,6 +106,6 @@ object Profile {
 			.query(s)
 			.projection(p)
 		implicit val reader = ProfileBSONReader
-		User.db.find[Profile](query).headOption()
+		db.find[Profile](query).headOption()
 	}
 }

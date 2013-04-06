@@ -15,21 +15,6 @@ import reactivemongo.bson.{BSONObjectID, BSONDocument}
  * @author f.patin
  */
 package object models {
-	/**
-	 * List des object Models à indexer.
-	 */
-	val modelsToIndex = List[ToIndex](User, Day, Cra)
-
-	def ensureIndex(index: Index)(db: DefaultCollection) {
-		db.indexesManager.ensure(index).onComplete {
-			case result: Try[Boolean] =>
-				if (result.isFailure) {
-					Logger.error(s"Checked index ${index.key} for [${db.name}], result is $result")
-				} else {
-					Logger.info(s"Checked index ${index.key} for [${db.name}]")
-				}
-		}
-	}
 
 	private val dtf = DateTimeFormat.forPattern("dd/MM/yyyy").withLocale(Locale.FRANCE)
 
