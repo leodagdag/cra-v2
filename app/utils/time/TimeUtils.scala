@@ -54,11 +54,11 @@ object TimeUtils {
 
   def firstDayOfMonth(dt: DateTime): DateTime = firstDayOfMonth(dt.getYear, dt.getMonthOfYear)
 
-  def firstDayOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0,0,0)
+  def firstDayOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0, 0, 0)
 
-  def lastDayOfMonth(year: Integer, month: Integer): Int = firstDayOfMonth(year,month).dayOfMonth.withMaximumValue.getDayOfMonth
+  def lastDayOfMonth(year: Integer, month: Integer): Int = firstDayOfMonth(year, month).dayOfMonth.withMaximumValue.getDayOfMonth
 
-  def lastDateOfMonth(year: Integer, month: Integer): DateTime = firstDayOfMonth(year,month).dayOfMonth.withMaximumValue
+  def lastDateOfMonth(year: Integer, month: Integer): DateTime = firstDayOfMonth(year, month).dayOfMonth.withMaximumValue
 
   def lastDateOfMonth(dt: DateTime): DateTime = dt.dayOfMonth.withMaximumValue
 
@@ -69,19 +69,18 @@ object TimeUtils {
     val result = extended match {
       case false => current.toList.sorted
       case _ => {
-        val firstDay = firstDayOfMonth(year,month)
+        val firstDay = firstDayOfMonth(year, month)
         val lastDay = lastDateOfMonth(year, month)
         val nbPastDays = new Interval(getMondayOfDate(firstDay), firstDay).toPeriod.getDays
         val nbFutureDays = new Interval(lastDay, getSundayOfDate(lastDay)).toPeriod.getDays
         ((1 to nbPastDays).map(i => firstDay.minusDays(i))
           ++ current
-          ++ (1 to nbFutureDays).map(j => lastDay.plusDays(j))
-          ).sorted
+          ++ (1 to nbFutureDays).map(j => lastDay.plusDays(j)))
+          .sorted
       }
     }
     result.asJava
   }
-
 
   def dateRange(from: DateTime, to: DateTime, step: Period): Iterator[DateTime] = Iterator.iterate(from)(_.plus(step)).takeWhile(!_.isAfter(to))
 
@@ -123,7 +122,7 @@ object TimeUtils {
 
   def getMonthYear(dts: java.util.List[DateTime]): util.Collection[Tuple[Integer, Integer]] = {
     val a: Set[(Int, Int)] = dts.asScala.map(dt => (dt.getYear, dt.getMonthOfYear)).toSet
-    a.map(k => F.Tuple(Integer.valueOf(k._1),Integer.valueOf(k._2)))                       .asJavaCollection
+    a.map(k => F.Tuple(Integer.valueOf(k._1), Integer.valueOf(k._2))).asJavaCollection
 
   }
 }

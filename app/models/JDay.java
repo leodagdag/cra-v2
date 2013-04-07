@@ -53,8 +53,6 @@ import java.util.Set;
 	         @Index("_date"),
 	         @Index("userId, year, month"),
 	         @Index("userId, _date")
-	/*@Index("userId"),
-	@Index("year, month")*/
 })
 public class JDay extends Model implements MongoModel {
 
@@ -87,6 +85,45 @@ public class JDay extends Model implements MongoModel {
 		this.date = date;
 		this.month = date.getMonthOfYear();
 		this.year = date.getYear();
+	}
+
+	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final ObjectId missionId) {
+		return Lists.newArrayList(Collections2.transform(find(craId, userId, year, month, false), new Function<JDay, JDay>() {
+			@Nullable
+			@Override
+			public JDay apply(@Nullable final JDay day) {
+				if (day.missionIds().contains(missionId)) {
+					if (day.morning != null) {
+						if (day.morning.isSpecial()) {
+							day.morning.periods.retainAll(Lists.newArrayList(Iterables.filter(day.morning.periods, new Predicate<JPeriod>() {
+								@Override
+								public boolean apply(@Nullable final JPeriod period) {
+									return period.missionId.equals(missionId);
+								}
+							})));
+						} else if (!missionId.equals(day.morning.missionId)) {
+							day.morning = null;
+						}
+					}
+					if (day.afternoon != null) {
+						if (day.afternoon.isSpecial()) {
+							day.afternoon.periods.retainAll(Lists.newArrayList(Iterables.filter(day.afternoon.periods, new Predicate<JPeriod>() {
+								@Override
+								public boolean apply(@Nullable final JPeriod period) {
+									return period.missionId.equals(missionId);
+								}
+							})));
+						} else if (!missionId.equals(day.afternoon.missionId)) {
+							day.afternoon = null;
+						}
+					}
+				} else {
+					day.morning = null;
+					day.afternoon = null;
+				}
+				return day;
+			}
+		}));
 	}
 
 	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final Boolean withPastAndFuture) {
@@ -130,6 +167,17 @@ public class JDay extends Model implements MongoModel {
 
 	private static Query<JDay> q() {
 		return MorphiaPlugin.ds().createQuery(JDay.class);
+	}
+
+	public Set<ObjectId> missionIds() {
+		final Set<ObjectId> result = Sets.newHashSet();
+		if (morning != null) {
+			result.addAll(morning.missionIds());
+		}
+		if (afternoon != null) {
+			result.addAll(afternoon.missionIds());
+		}
+		return result;
 	}
 
 	public static List<JDay> find(final ObjectId userId, final Set<DateTime> dateTimes) {
@@ -353,17 +401,6 @@ public class JDay extends Model implements MongoModel {
 
 	public Boolean inPastOrFuture(final Integer year, final Integer month) {
 		return year != date.getYear() || month != date.getMonthOfYear();
-	}
-
-	public Set<ObjectId> missionIds() {
-		final Set<ObjectId> result = Sets.newHashSet();
-		if (morning != null) {
-			result.addAll(morning.missionIds());
-		}
-		if (afternoon != null) {
-			result.addAll(afternoon.missionIds());
-		}
-		return result;
 	}
 
 	@Override

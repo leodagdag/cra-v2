@@ -21,6 +21,8 @@ public class DayDTO {
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId id;
 	public DateTime date;
+	public Integer year;
+	public Integer month;
 	public HalfDayDTO morning;
 	public HalfDayDTO afternoon;
 	public String comment;
@@ -37,6 +39,8 @@ public class DayDTO {
 	public DayDTO(final JDay day, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
 		this.id = day.id;
 		this.date = day.date;
+		this.year = day.year;
+		this.month = day.month;
 		this.morning = HalfDayDTO.of(day.morning, missions);
 		this.afternoon = HalfDayDTO.of(day.afternoon, missions);
 		this.comment = day.comment;

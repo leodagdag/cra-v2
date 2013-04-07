@@ -36,7 +36,8 @@ POST    /days/                                                      controllers.
 
 # Cra
 # ~~~~
-GET		/cra/export/:id												controllers.JCras.export(id: String)
+GET		/cra/export/:craId/:missionId								controllers.JCras.exportByMission(craId: String, missionId: String)
+GET		/cra/export/:craId											controllers.JCras.exportByEmployee(craId: String)
 GET     /cra/:username/:year/:month                                 controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
 POST    /cra/:id/validate                                           controllers.Cras.validate(id: String)
 POST    /cra/:id/invalidate                                         controllers.Cras.invalidate(id: String)
@@ -71,6 +72,11 @@ GET		/vehicles/:userId/active									controllers.JVehicles.active(userId: Strin
 GET		/vehicles/:userId											controllers.JVehicles.history(userId: String)
 POST    /vehicles/                                                  controllers.JVehicles.save()
 PUT		/vehicles/deactivate										controllers.JVehicles.deactivate()
+
+# Export
+# ~~~~
+GET		/export/cra/:craId/:missionId/:title						controllers.JExports.exportByMission(craId: String, missionId: String, title: String)
+GET		/export/cra/:craId/:title									controllers.JExports.exportByEmployee(craId: String, title: String)
 
 # Batch
 # ~~~~

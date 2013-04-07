@@ -8,14 +8,17 @@
 		<button class="btn btn-small btn-danger" data-ng-show="cra.isValidated" data-ng-click="invalidate()">Invalider</button>
 		<button disabled="disabled" class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}"><i class="icon-comment"></i> Commentaire</button>
 		<button class="btn btn-small" data-ng-click="claimSynthesis()"><i class="icon-money"></i> Frais</button>
-		<div disabled="disabled" class="btn-group">
+		<div class="btn-group">
 			<a class="btn btn-small dropdown-toggle disable" data-toggle="dropdown" href="#">
 				<i class="icon-print"></i> Imprimer
 				<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu">
-				<li><a href="#">Complet</a></li>
-				<li><a href="#">Client 1</a></li>
+				<li><a href="" data-ng-click="exportByEmployee(m.id)">Complet</a></li>
+                <li class="divider" data-ng-show="missionsOfCra.length > 0"></li>
+                <li data-ng-repeat="m in missionsOfCra">
+                    <a href="" data-ng-click="exportByMission(m.id)">{{m.label}}</a>
+                </li>
 			</ul>
 		</div>
 		<div class="pull-right well well-small form-inline">

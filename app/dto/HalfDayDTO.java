@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class HalfDayDTO {
 
+	public String code;
 	public String label;
     @JsonSerialize(using = ObjectIdSerializer.class)
     public ObjectId  missionId;
@@ -26,19 +27,21 @@ public class HalfDayDTO {
 	public HalfDayDTO() {
 	}
 
-	public HalfDayDTO(final JHalfDay halfDay, JMission mission) {
+	public HalfDayDTO(final JHalfDay halfDay, ImmutableMap<ObjectId, JMission> missions) {
 		this.isSpecial = halfDay.isSpecial();
-		if (halfDay.isSpecial()) {
-			this.periods.addAll(PeriodDTO.of(halfDay.periods));
+		if (this.isSpecial) {
+			this.periods.addAll(PeriodDTO.of(halfDay.periods, missions));
 			this.label = "special";
 		} else {
-			this.label = mission.code;
+            final JMission mission = missions.get(halfDay.missionId);
+			this.code = mission.code;
+			this.label = mission.label;
 			this.missionId = halfDay.missionId;
 			this.missionType = mission.missionType;
 		}
 	}
 
 	public static HalfDayDTO of(final JHalfDay halfDay, final ImmutableMap<ObjectId, JMission> missions) {
-		return (halfDay != null) ? new HalfDayDTO(halfDay,  missions.get(halfDay.missionId)) : null;
+		return (halfDay != null) ? new HalfDayDTO(halfDay,  missions) : null;
 	}
 }

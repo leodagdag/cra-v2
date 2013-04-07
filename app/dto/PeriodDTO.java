@@ -2,7 +2,9 @@ package dto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import models.JMission;
 import models.JPeriod;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -17,6 +19,9 @@ import java.util.List;
 public class PeriodDTO {
     @JsonSerialize(using = ObjectIdSerializer.class)
     public ObjectId missionId;
+    public String code;
+    public String label;
+    public String missionType;
 	public Long startTime;
 	public Long endTime;
 	public String periodType = "special";
@@ -25,18 +30,22 @@ public class PeriodDTO {
 	public PeriodDTO() {
 	}
 
-	public PeriodDTO(final JPeriod period) {
+	public PeriodDTO(final JPeriod period, final  ImmutableMap<ObjectId, JMission> missions) {
+        final JMission mission = missions.get(period.missionId);
 		this.missionId = period.missionId;
+		this.code = mission.code;
+		this.label = mission.label;
+		this.missionType = mission.missionType;
 		this.startTime = period.startTime.toDateTimeToday().getMillis();
 		this.endTime = period.endTime.toDateTimeToday().getMillis();
 	}
 
-	public static List<PeriodDTO> of(final List<JPeriod> periods) {
+	public static List<PeriodDTO> of(final List<JPeriod> periods, final  ImmutableMap<ObjectId, JMission> missions) {
 		return Lists.newArrayList(Collections2.transform(periods, new Function<JPeriod, PeriodDTO>() {
 			@Nullable
 			@Override
 			public PeriodDTO apply(@Nullable final JPeriod p) {
-				return new PeriodDTO(p);
+				return new PeriodDTO(p, missions);
 			}
 		}));
 	}

@@ -69,12 +69,23 @@ trait PDFFont {
 
   private val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
 
+  val normal = baseFont
+
   val boldFont: Font = {
     val f = new Font(baseFont)
     f.setStyle(Font.BOLD)
     f
   }
-
+  val underlineFont: Font = {
+    val f = new Font(baseFont)
+    f.setStyle(Font.UNDERLINE)
+    f
+  }
+  val boldUnderlineFont: Font = {
+    val f = new Font(baseFont)
+    f.setStyle(Font.UNDERLINE + Font.BOLD)
+    f
+  }
   private val tableBaseFont: Font = {
     val f = new Font(baseFont)
     f
@@ -141,6 +152,19 @@ trait PDFTableTools extends PDFFont {
     cell.setHorizontalAlignment(alignment)
     cell.setBorder(extendedBorder)
     cell.setColspan(colspan)
+    cell
+  }
+
+  protected def colspanCell(colspan: Int) = {
+    val cell = new PdfPCell(new Phrase(" "))
+    cell.setColspan(colspan)
+    cell.setBorder(NO_BORDER)
+    cell
+  }
+  protected def noBorderCell(phrase: Phrase) = {
+    val cell = defaultCell(phrase)
+    cell.setHorizontalAlignment(Element.ALIGN_CENTER)
+    cell.setBorder(NO_BORDER)
     cell
   }
 }

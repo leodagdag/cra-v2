@@ -41,7 +41,7 @@
 											{{day.morning.label || '&nbsp;'}}
 										</td>
 										<td class="halfday" data-ng-class="getClass(day.morning)">
-											<i class="icon-trash pull-right" data-ng-show="isHalfDayDeletable(day.morning)" data-ng-click="removeHalfDay(wIndex, day.date, $index,'morning')"></i>
+											<i class="icon-trash pull-right" data-ng-show="isHalfDayDeletable(day.morning, day.inPastOrFuture)" data-ng-click="removeHalfDay(wIndex, day.date, $index,'morning')"></i>
 										</td>
 									</tr>
 									<tr class="halfday" data-ng-class="getClass(day.afternoon)">
@@ -49,7 +49,7 @@
 											{{day.afternoon.label || '&nbsp;'}}
 										</td>
 										<td class="halfday" data-ng-class="getClass(day.afternoon)">
-											<i class="icon-trash pull-right" data-ng-show="isHalfDayDeletable(day.afternoon)" data-ng-click="removeHalfDay(wIndex, day.date, $index,'afternoon')"></i>
+											<i class="icon-trash pull-right" data-ng-show="isHalfDayDeletable(day.afternoon, day.inPastOrFuture)" data-ng-click="removeHalfDay(wIndex, day.date, $index,'afternoon')"></i>
 										</td>
 									</tr>
 								</tbody>

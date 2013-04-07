@@ -19,7 +19,8 @@ object JsRouter extends Controller {
 
 					JCras.fetch,
 					JCras.claimSynthesis,
-          JCras.export,
+          JCras.exportByEmployee,
+          JCras.exportByMission,
 
 					JDays.fetch,
 					JDays.create,

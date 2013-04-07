@@ -1,5 +1,5 @@
-app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CraYearsConst', 'MonthsConst', 'RolesConst', 'profile',
-	function CraCtrl($rootScope, $scope, $http, $log, $location, $routeParams, CraYearsConst, MonthsConst, RolesConst, profile) {
+app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CraYearsConst', 'MonthsConst', 'RolesConst', 'profile',
+	function CraCtrl($window, $rootScope, $scope, $http, $log, $location, $routeParams, CraYearsConst, MonthsConst, RolesConst, profile) {
 		$scope.profile = profile.data;
 		/* Toolbar */
 		var initialUsername = $routeParams.username || ($scope.profile.role === RolesConst.EMPLOYEE ? $scope.profile.username : $scope.employee);
@@ -14,7 +14,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			'label': _.str.capitalize(moment(($routeParams.month || (moment().month())).toString(), 'MMMM').format('MMMM'))
 		};
 
-
 		$scope.criterias = {
 			'employees': [],
 			'years': CraYearsConst,
@@ -27,6 +26,7 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			}
 		};
 
+		$scope.missionsOfCra = [];
 		$scope.init = function() {
 			if(profile.data.role === RolesConst.EMPLOYEE) {
 				loadCra(initialUsername, initialYear.label, initialMonth.code);
@@ -71,7 +71,12 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			loadCra($scope.criterias.selected.employee, $scope.criterias.selected.year.label, $scope.criterias.selected.month.code);
 		};
 
-
+		$scope.exportByEmployee = function() {
+			$window.open(jsRoutes.controllers.JCras.exportByEmployee($scope.cra.id).url);
+		};
+		$scope.exportByMission = function(id) {
+			$window.open(jsRoutes.controllers.JCras.exportByMission($scope.cra.id, id).url);
+		};
 		$scope.getClass = function(halfday) {
 			if(!halfday) {
 				return "";
@@ -84,13 +89,13 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 		};
 
 		$scope.isDayDeletable = function(day) {
-			return day &&
-				((day.morning && day.morning.missionType != 'holiday') ||
-					(day.afternoon && day.afternoon.missionType != 'holiday'));
+			return day
+				&& !(day.inPastOrFuture)
+				&& ($scope.isHalfDayDeletable(day.morning) || $scope.isHalfDayDeletable(day.afternoon));
 		};
 
-		$scope.isHalfDayDeletable = function(halfday) {
-			return halfday && halfday.missionType != 'holiday';
+		$scope.isHalfDayDeletable = function(halfday, inPastOrFuture) {
+			return !inPastOrFuture && halfday && halfday.missionType != 'holiday';
 		};
 
 		$scope.validate = function() {
@@ -184,6 +189,61 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 			day.afternoon = null;
 		};
 
+		var extractMissionsOfCra = function(cra) {
+			return  _(cra.weeks)
+				.map(function(week, index) {
+					return _(week.days)
+						.map(function(day, index) {
+							if(day.year === cra.year && day.month === cra.month) {
+								return extractMissionsOfDay(day);
+							} else {
+								return [];
+							}
+						})
+						.valueOf();
+				})
+				.flatten()
+				.unique('id')
+				.valueOf();
+		};
+
+		var extractMissionsOfDay = function(day) {
+			return _(extractMissionsOfHalfDay(day.morning)).union(extractMissionsOfHalfDay(day.afternoon))
+				.valueOf();
+		};
+
+		var extractMissionsOfHalfDay = function(halfDay) {
+			var result = [];
+			if(halfDay) {
+				if(halfDay.isSpecial) {
+					result = _(halfDay.periods)
+						.map(function(period, index) {
+							return {
+								'id': period.missionId,
+								'code': period.code,
+								'label': period.label,
+								'missionType': period.missionType
+							}
+						})
+						.valueOf();
+				} else {
+					result = [
+						{
+							'id': halfDay.missionId,
+							'code': halfDay.code,
+							'label': halfDay.label,
+							'missionType': halfDay.missionType
+						}
+					];
+				}
+			}
+
+			return _(result)
+				.filter(function(mission) {
+					return mission.missionType === 'customer';
+				})
+				.valueOf();
+		};
 
 		var loadCra = function(username, year, month) {
 			var route = jsRoutes.controllers.JCras.fetch(username, year, month);
@@ -195,6 +255,8 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 					$log.debug('cra', cra);
 					$scope.cra = cra;
 					$scope.selectedMonth = {name: month, checked: false};
+					$scope.missionsOfCra = extractMissionsOfCra(cra);
+					$log.debug('$scope.missionsOfCra', $scope.missionsOfCra);
 					$scope.$watch('selectedMonth.checked', function() {
 						_.forEach($scope.selectedWeeks, function(week, wIdx) {
 							week.checked = $scope.selectedMonth.checked;
@@ -204,7 +266,6 @@ app.controller('CraCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 					$scope.selectedWeeks = _.map($scope.cra.weeks, function(week, i) {
 						return {number: week.number, checked: false}
 					});
-
 					$scope.selectedDays = _($scope.cra.weeks)
 						.map(function(week) {
 							return _.map(week.days, function(day, dIdx) {

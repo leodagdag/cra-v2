@@ -7,6 +7,7 @@ import scala.collection.JavaConverters._
 
 object ApplicationBuild extends Build {
 
+
   val appName = "cra-v2"
 
   // val appVersion = "2.0.18-SNAPSHOT"
@@ -35,6 +36,7 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies)
     .settings(
+      scalaVersion := "2.10.1",
     scalacOptions ++= Seq("-feature")
   )
     .settings(

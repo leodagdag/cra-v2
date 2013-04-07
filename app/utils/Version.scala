@@ -1,8 +1,5 @@
 package utils
 
-import java.io.File
-import org.apache.commons.io.FileUtils
-import scala.collection.JavaConverters._
 import play.api.Play.current
 
 

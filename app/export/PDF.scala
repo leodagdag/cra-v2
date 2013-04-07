@@ -2,7 +2,7 @@ package export
 
 import java.io.File
 import java.util.UUID
-import models.{JCra, JUser, DbFile, JAbsence}
+import models._
 import org.apache.commons.io.FileUtils
 import scala.collection.JavaConverters._
 
@@ -11,7 +11,9 @@ import scala.collection.JavaConverters._
  */
 object PDF {
 
-  def getCraData(cra: JCra): Array[Byte] = PDFCra.apply(cra)
+  def getEmployeeCraData(cra: JCra): Array[Byte] = PDFEmployeeCra.apply(cra)
+
+  def getMissionCraData(cra: JCra, mission: JMission): Array[Byte] = PDFMissionCra.apply((cra, mission))
 
   def getAbsenceData(absence: JAbsence): Array[Byte] = DbFile.fetch(absence.fileId)
 
@@ -35,9 +37,9 @@ object PDF {
     data
   }
 
-  private def toFile[T](user: JUser, absences: T, f: (T) => Array[Byte]) = {
+  private def toFile[T](user: JUser, obj: T, f: (T) => Array[Byte]) = {
     val file = newFile(user)
-    FileUtils.writeByteArrayToFile(file, f(absences))
+    FileUtils.writeByteArrayToFile(file, f(obj))
     file
   }
 
