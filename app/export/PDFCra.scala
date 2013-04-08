@@ -91,10 +91,9 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
   private val total = {
     val cells = mission match {
       case Some(m) => {
-
         val label = new Phrase("Total : ", tableHeaderFont)
         val total = new Phrase(totalForMission.toString(), tableHeaderFont)
-        List(label, total)
+        List(noBorderCell(label), noBorderCell(total))
       }
       case None => {
         List(defaultCell(new Phrase("test")))
@@ -102,10 +101,7 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
     }
     val table = new PdfPTable(cells.size)
     table.getDefaultCell.setBorder(NO_BORDER)
-    cells match {
-      case phs: List[Phrase] => phs.foreach(ph => table.addCell(noBorderCell(ph)))
-      case cs: List[PdfPCell] => cs.foreach(table.addCell(_))
-    }
+    cells.foreach(table.addCell(_))
 
     table
   }
