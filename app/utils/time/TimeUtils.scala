@@ -109,7 +109,7 @@ object TimeUtils {
       if (isDayOffOrWeekEnd(dt)) add(dt.plusDays(1))
       else dt
     }
-    add(date.plusDays(1))
+    add(date.plusDays(0))
   }
 
   def previousWorkingDay(date: DateTime): DateTime = {
@@ -117,12 +117,18 @@ object TimeUtils {
       if (isDayOffOrWeekEnd(dt)) subtract(dt.minusDays(1))
       else dt
     }
-    subtract(date.minusDays(1))
+    subtract(date.minusDays(0))
   }
 
   def getMonthYear(dts: java.util.List[DateTime]): util.Collection[Tuple[Integer, Integer]] = {
     val a: Set[(Int, Int)] = dts.asScala.map(dt => (dt.getYear, dt.getMonthOfYear)).toSet
-    a.map(k => F.Tuple(Integer.valueOf(k._1), Integer.valueOf(k._2))).asJavaCollection
+    a.map(k => F.Tuple(int2Integer(k._1), int2Integer(k._2))).asJavaCollection
+  }
 
+
+  def getMonthYear(start: DateTime, end: DateTime): util.Collection[Tuple[Integer, Integer]] = {
+    dateRange(firstDayOfMonth(start), lastDateOfMonth(end), Period.months(1))
+      .map(dt => F.Tuple(int2Integer(dt.getYear), int2Integer(dt.getMonthOfYear)))
+      .toList.asJavaCollection
   }
 }

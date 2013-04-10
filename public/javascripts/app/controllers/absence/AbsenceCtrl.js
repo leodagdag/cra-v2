@@ -43,7 +43,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 				url: route.url,
 				data: absence
 			})
-				.success(function(absence, status, headers, config) {
+				.success(function(abs, status, headers, config) {
 					$rootScope.onSuccess("L'absence a été créée.");
 					$scope.form = {
 						startMorning: true,

@@ -71,7 +71,7 @@ object AbsenceUtils {
     if (absence.endDate.toLocalTime.isEqual(new LocalTime(12,0,0,0)))
       absence.endDate
     else
-      TimeUtils.previousWorkingDay(absence.endDate)
+      TimeUtils.previousWorkingDay(absence.endDate.minusDays(1))
   }
 
 

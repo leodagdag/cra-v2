@@ -5,9 +5,6 @@ import com.google.common.collect.Lists;
 import constants.AbsenceType;
 import dto.AbsenceDTO;
 import exceptions.AbsenceAlreadyExistException;
-import exceptions.AbsenceEndIllegalDateException;
-import exceptions.AbsenceStartIllegalDateException;
-import exceptions.ContainsOnlyWeekEndOrDayOfException;
 import export.PDF;
 import mail.MailerAbsence;
 import models.DbFile;
@@ -20,11 +17,14 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import play.data.Form;
 import play.data.validation.ValidationError;
+import play.libs.F;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import utils.time.TimeUtils;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import static play.libs.Json.toJson;
@@ -43,10 +43,13 @@ public class JAbsences extends Controller {
 		}
 		final CreateAbsenceForm createAbsenceForm = form.get();
 		try {
-			final JAbsence absence = JAbsence.create(createAbsenceForm.to());
-			JDay.addAbsenceDays(absence);
-			return created(toJson(AbsenceDTO.of(absence)));
-		} catch(AbsenceAlreadyExistException | ContainsOnlyWeekEndOrDayOfException | AbsenceStartIllegalDateException | AbsenceEndIllegalDateException e) {
+			final List<JAbsence> absences = createAbsenceForm.to();
+			for(JAbsence abs : absences) {
+				final JAbsence absence = JAbsence.create(abs);
+				JDay.addAbsenceDays(absence);
+			}
+			return created(toJson(AbsenceDTO.of(absences)));
+		} catch(AbsenceAlreadyExistException e) {
 			return internalServerError(toJson(e.getMessage()));
 		}
 	}
@@ -123,6 +126,8 @@ public class JAbsences extends Controller {
 		public Boolean endAfternoon;
 		public String comment;
 
+
+
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
 			if(missionId == null) {
@@ -137,30 +142,71 @@ public class JAbsences extends Controller {
 				if(!Boolean.TRUE.equals(startMorning) && !Boolean.TRUE.equals(endAfternoon)) {
 					errors.add(new ValidationError("limits", "Vous devez sélectionner au moins une demi-journée."));
 				}
+				if(TimeUtils.isDayOffOrWeekEnd(new DateTime(startDate))) {
+					errors.add(new ValidationError("date", "Vous ne pouvez pas sélectionner un jour férié ou un week-end."));
+				}
 			} else {
 				if(startDate == null) {
 					errors.add(new ValidationError("startDate", "La date de début est requise."));
+				} else if(TimeUtils.isDayOffOrWeekEnd(new DateTime(startDate))) {
+					errors.add(new ValidationError("startDate", "Vous ne pouvez pas sélectionner un jour férié ou un week-end."));
 				}
 				if(endDate == null) {
 					errors.add(new ValidationError("endDate", "La date de fin est requise."));
+				} else if(TimeUtils.isDayOffOrWeekEnd(new DateTime(endDate))) {
+					errors.add(new ValidationError("endDate", "Vous ne pouvez pas sélectionner un jour férié ou un week-end."));
 				}
 				if(startDate != null && endDate != null && endDate < startDate) {
 					errors.add(new ValidationError("dates", "La date de début doit être antérieur la date de fin."));
 				} else if(new DateTime(startDate).isBefore(DateTime.now().withDayOfMonth(1))) {
 					errors.add(new ValidationError("dates", "Vous ne pouvez pas saisir une absence précédant le mois en cours."));
 				}
+
 			}
 			return errors.isEmpty() ? null : errors;
 		}
 
-		public JAbsence to() {
-			final JAbsence holiday = new JAbsence();
-			holiday.userId = JUser.id(this.username);
-			holiday.startDate = Boolean.TRUE.equals(startMorning) ? new DateTime(this.startDate).withTimeAtStartOfDay() : new DateTime(this.startDate).withTime(12, 0, 0, 0);
-			holiday.endDate = Boolean.TRUE.equals(endAfternoon) ? new DateTime(this.endDate).withTime(0, 0, 0, 0).plusDays(1) : new DateTime(this.endDate).withTime(12, 0, 0, 0);
-			holiday.missionId = ObjectId.massageToObjectId(this.missionId);
-			holiday.comment = this.comment;
-			return holiday;
+		public List<JAbsence> to() {
+
+			final Collection<F.Tuple<Integer, Integer>> yearMonths = TimeUtils.getMonthYear(new DateTime(this.startDate), new DateTime(this.endDate));
+			final List<JAbsence> absences = Lists.newArrayListWithCapacity(yearMonths.size());
+			for(F.Tuple<Integer, Integer> yearMonth : yearMonths) {
+				final Integer year = yearMonth._1;
+				final Integer month = yearMonth._2;
+
+				final JAbsence absence = new JAbsence();
+				absence.userId = JUser.id(this.username);
+				absence.missionId = ObjectId.massageToObjectId(this.missionId);
+				absence.comment = this.comment;
+
+				final DateTime startDate = Boolean.TRUE.equals(startMorning) ? TimeUtils.nextWorkingDay(new DateTime(this.startDate)).withTimeAtStartOfDay() : TimeUtils.nextWorkingDay(new DateTime(this.startDate)).withTime(12, 0, 0, 0);
+				final int startYear = startDate.getYear();
+				final int startMonth = startDate.getMonthOfYear();
+				final DateTime endDate = Boolean.TRUE.equals(endAfternoon) ?  TimeUtils.previousWorkingDay(new DateTime(this.endDate)).plusDays(1).withTimeAtStartOfDay() : TimeUtils.previousWorkingDay(new DateTime(this.endDate)).withTime(12, 0, 0, 0)  ;
+
+				final int endYear = endDate.getYear();
+				final int endMonth = endDate.getMonthOfYear();
+				if(startYear == endYear && startMonth == endMonth) {
+					// Same Month
+
+					absence.startDate =startDate;
+					absence.endDate = endDate;
+				} else {
+					if(startYear == year && startMonth == month) { // first absence...
+						absence.startDate = startDate;
+						absence.endDate = TimeUtils.previousWorkingDay(TimeUtils.lastDateOfMonth(startDate)).withTimeAtStartOfDay().plusDays(1);
+					} else if(endYear == year && endMonth == month) { // ...last absence...
+						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDayOfMonth(endDate)).withTimeAtStartOfDay();
+						absence.endDate = endDate;
+					} else { // ...and other
+						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDayOfMonth(year, month));
+						absence.endDate = TimeUtils.previousWorkingDay(TimeUtils.lastDateOfMonth(year, month)).plusDays(1);
+					}
+				}
+				absences.add(absence);
+
+			}
+			return absences;
 		}
 	}
 }

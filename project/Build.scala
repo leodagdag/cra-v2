@@ -11,7 +11,7 @@ object ApplicationBuild extends Build {
   val appName = "cra-v2"
 
   // val appVersion = "2.0.18-SNAPSHOT"
-  val appVersion =  FileUtils.readLines(new File("build.version"), "UTF-8").asScala.head
+  val appVersion = FileUtils.readLines(new File("build.version"), "UTF-8").asScala.head
 
   val appDependencies = Seq(
     // Add your project dependencies here,
@@ -36,7 +36,7 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies)
     .settings(
-      scalaVersion := "2.10.1",
+    scalaVersion := "2.10.1",
     scalacOptions ++= Seq("-feature")
   )
     .settings(
@@ -55,9 +55,7 @@ object ApplicationBuild extends Build {
 
   // Only compile the bootstrap bootstrap.less file and any other *.less file in the stylesheets directory
   def appLessEntryPoints(base: File): PathFinder = (
-    (base / "app" / "assets" / "stylesheets" / "vendors" / "bootstrap-2.3.0" ** "bootstrap.less") +++
-      (base / "app" / "assets" / "stylesheets" / "vendors" / "bootstrap-2.3.0" ** "responsive.less") +++
-      (base / "app" / "assets" / "stylesheets" ** "main.less")
+    (base / "app" / "assets" / "stylesheets" ** "main.less")
     )
 
 }
