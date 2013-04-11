@@ -52,7 +52,6 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 					$scope.loadHistory();
 				})
 				.error(function(errors, status, headers, config) {
-					$log.error(errors);
 					_(errors).forEach(function(err, key) {
 						$scope.errors[key] = err.join('<br>');
 					});

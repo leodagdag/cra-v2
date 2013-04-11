@@ -2,20 +2,14 @@ package controllers;
 
 import caches.ResponseCache;
 import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
+import constants.MissionAllowanceType;
 import constants.MomentOfDay;
 import dto.DayDTO;
 import exceptions.IllegalDayOperation;
-import models.JClaim;
-import models.JCra;
-import models.JDay;
-import models.JHalfDay;
-import models.JMission;
-import models.JPeriod;
-import models.JUser;
+import models.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
@@ -26,6 +20,8 @@ import play.mvc.Result;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static play.libs.Json.toJson;
 
@@ -58,12 +54,11 @@ public class JDays extends Controller {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateForm createForm = form.get();
-		final String craId = createForm.craId;
-		final String username = createForm.username;
+		final ObjectId craId = createForm.craId;
+		final ObjectId userId = createForm.userId;
 		final Integer year = createForm.year;
 		final Integer month = createForm.month;
-		final ObjectId userId = JUser.id(username);
-		final JCra cra = JCra.getOrCreate(ObjectId.massageToObjectId(craId), userId, year, month);
+		final JCra cra = JCra.getOrCreate(craId, userId, year, month);
 
 		try {
 			final List<JDay> days = JDay.createDays(cra.id, createForm.days());
@@ -109,15 +104,30 @@ public class JDays extends Controller {
 
 	public static class CreateForm {
 
-		public String username;
-		public String craId;
+		public ObjectId userId;
+		public ObjectId craId;
 		public Integer year;
 		public Integer month;
 		public List<Long> dates;
 		public CreateDayForm day;
 
 		public List<ValidationError> validate() {
-			return null;
+            final List<ValidationError> errors = Lists.newArrayList();
+            if(day != null){
+                final Map<ObjectId, JMission> missions = Maps.newHashMap();
+                final boolean activeVehicleExists = JVehicle.active(userId) != null;
+                for(ObjectId missionId: day.missionIds()){
+                    if(!missions.containsKey(missionId)){
+                        missions.put(missionId, JMission.fetch(missionId));
+                    }
+                    final JMission mission = missions.get(missionId);
+                    if(MissionAllowanceType.REAL.name().equals(mission.allowanceType) & !activeVehicleExists){
+                        errors.add(new ValidationError("global", String.format("Vous ne pouvez pas choisir cette mission [%s] (véhicule requis).", mission.label)));
+                    }
+                }
+            }
+
+            return errors.isEmpty() ? null : errors;
 		}
 
 		public List<JDay> days() {
@@ -126,8 +136,8 @@ public class JDays extends Controller {
 				@Override
 				public JDay apply(@Nullable final Long date) {
 					JDay d = new JDay(date);
-					d.craId = ObjectId.massageToObjectId(craId);
-					d.userId = JUser.id(username);
+					d.craId = craId;
+					d.userId = userId;
 					d.morning = day.morning();
 					d.afternoon = day.afternoon();
 					d.comment = day.comment;
@@ -142,6 +152,17 @@ public class JDays extends Controller {
 		public CreateHalfDayForm morning;
 		public CreateHalfDayForm afternoon;
 		public String comment;
+
+        public Set<ObjectId> missionIds() {
+            final Set<ObjectId> result = Sets.newHashSet();
+            if (morning != null) {
+                result.addAll(morning.missionIds());
+            }
+            if (afternoon != null) {
+                result.addAll(afternoon.missionIds());
+            }
+            return result;
+        }
 
 		public JHalfDay morning() {
 			if (this.morning == null) {
@@ -173,8 +194,22 @@ public class JDays extends Controller {
 
 	public static class CreateHalfDayForm {
 
-		public String missionId;
+		public ObjectId missionId;
 		public List<CreatePeriodForm> periods;
+
+        public Set<ObjectId> missionIds() {
+            if (CollectionUtils.isNotEmpty(periods)) {
+                return Sets.newHashSet(Collections2.transform(periods, new Function<CreatePeriodForm, ObjectId>() {
+                    @Nullable
+                    @Override
+                    public ObjectId apply(@Nullable final CreatePeriodForm p) {
+                        return p.missionId;
+                    }
+                }));
+            } else {
+                return Sets.newHashSet(missionId);
+            }
+        }
 
 		public List<JPeriod> periods() {
 			return Lists.newArrayList(Collections2.transform(periods, new Function<CreatePeriodForm, JPeriod>() {
@@ -185,11 +220,13 @@ public class JDays extends Controller {
 				}
 			}));
 		}
+
+
 	}
 
 	public static class CreatePeriodForm {
 
-		public String missionId;
+		public ObjectId missionId;
 		public Long startTime;
 		public Long endTime;
 

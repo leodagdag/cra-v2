@@ -1,9 +1,9 @@
 app.controller('MainCtrl', ['$scope', '$rootScope', '$http', '$log', '$location',
 	function MainCtrl($scope, $rootScope, $http, $log, $location) {
-		$rootScope.onSuccess = function(msg) {
+		$rootScope.onSuccess = function (msg) {
 			$rootScope.$broadcast('event:success', msg);
 		}
-		$rootScope.onError = function(msg) {
+		$rootScope.onError = function (msg) {
 			$rootScope.$broadcast('event:error', msg);
 		}
 	}]);
@@ -13,45 +13,47 @@ app.controller('AlertCtrl', ['$scope', '$rootScope', '$timeout', '$log',
 		$rootScope.errors = [];
 		$rootScope.successes = [];
 
-		var closeError = function(ts) {
+		var closeError = function (ts) {
 			close('errors', ts);
 		};
-		var closeSuccess = function(ts) {
+		var closeSuccess = function (ts) {
 			close('successes', ts);
 		};
-		var close = function(list, ts) {
+		var close = function (list, ts) {
 			$rootScope[list] = _($rootScope[list])
-				.filter(function(alert) {
+				.filter(function (alert) {
 					return alert.ts != ts
 				})
 				.valueOf();
 		};
 
-		$scope.show = function() {
+		$scope.show = function () {
 			return $rootScope.errors.length || $rootScope.successes.length;
 		};
 		$scope.closeError = closeError;
 		$scope.closeSuccess = closeSuccess;
 
-		$scope.$on('event:error', function(evt, err) {
+		$scope.$on('event:error', function (evt, err) {
 			$log.error('Erreur', err);
 			var now = moment().valueOf();
-			$rootScope.errors.push(
-				{msg: _(err.data).filter(function(c) {
+			$rootScope.errors.push({
+				msg: _(err.data).filter(function (c) {
 					return c !== '"';
-				}).valueOf().join(''), ts: now}
-			);
-			$timeout(function() {
+				}).valueOf().join(''),
+				ts: now
+			});
+			$timeout(function () {
 				closeError(now)
 			}, 5000, true);
 		});
 
-		$scope.$on('event:success', function(evt, msg) {
+		$scope.$on('event:success', function (evt, msg) {
 			var now = moment().valueOf();
-			$rootScope.successes.push(
-				{msg: msg, ts: now}
-			);
-			$timeout(function() {
+			$rootScope.successes.push({
+				msg: msg,
+				ts: now
+			});
+			$timeout(function () {
 				closeSuccess(now);
 			}, 5000, true);
 		});

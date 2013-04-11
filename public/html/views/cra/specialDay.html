@@ -1,98 +1,99 @@
 <div class="row-fluid special-day" data-ng-controller="SpecialDayCtrl">
-    <div class="span5 offset4">
-        <form class="well well-small" data-ng-submit="addPeriod(form)">
-            <table class="table table-condensed middle-vertical-align" id="newPeriod">
-                <thead>
-                <tr>
-                    <th>Client</th>
-                    <th colspan="2">Quand</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td rowspan="2">
-                        <select data-ng-model="form.missionId" name="missionId" data-ng-required="required" tabindex="1"
-                                autofocus>
-                            <option data-ng-repeat="am in affectedMissions" value="{{am.id}}">{{am.label}}</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="radio" name="periodType" id="morning" data-ng-model="form.periodType" value="morning" required="required"> Matin
-                    </td>
-                    <td>
-                        <input type="radio" name="periodType" id="afternoon" data-ng-model="form.periodType" value="afternoon" required="required"> Après-midi
-                    </td>
-                    <td rowspan="2">
-                        <button type="submit" class="btn btn-small btn-primary" tabindex="5"><i class="icon-plus"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div class="inline">
-                            <input type="radio" name="periodType" data-ng-model="form.periodType" value="special" required="required" tabindex="2">
-                            <input type="text" class="input-mini timeInput" data-ng-model="form.startTime" data-ng-change="form.periodType='special'" pattern="([01]\d|2[0-3]):([0-5]\d)" title="format HH:mm" tabindex="3">
-                            <input type="text" class="input-mini timeInput" data-ng-model="form.endTime" data-ng-change="form.periodType='special'" pattern="([01]\d|2[0-3]):([0-5]\d)" title="format HH:mm" tabindex="4">
-                        </div>
-                    </td>
-                </tr>
-                <tr data-ng-show="error">
-                    <td colspan="4">
+	<div class="span5 offset4">
+		<form class="well well-small" data-ng-submit="addPeriod(form)">
+			<table class="table table-condensed middle-vertical-align" id="newPeriod">
+				<thead>
+					<tr>
+						<th>Client</th>
+						<th colspan="2">Quand</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td rowspan="2">
+							<select data-ng-model="form.missionId" name="missionId" data-ng-required="required" tabindex="1" autofocus>
+								<option data-ng-repeat="am in affectedMissions" value="{{am.id}}">{{am.label}}</option>
+							</select>
+						</td>
+						<td>
+							<input type="radio" name="periodType" id="morning" data-ng-model="form.periodType" value="morning" required="required"> Matin
+						</td>
+						<td>
+							<input type="radio" name="periodType" id="afternoon" data-ng-model="form.periodType" value="afternoon" required="required"> Après-midi
+						</td>
+						<td rowspan="2">
+							<button type="submit" class="btn btn-small btn-primary" tabindex="5"><i class="icon-plus"></i>
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div class="inline">
+								<input type="radio" name="periodType" data-ng-model="form.periodType" value="special" required="required" tabindex="2">
+								<input type="text" class="input-mini timeInput" data-ng-model="form.startTime" data-ng-change="form.periodType='special'" pattern="([01]\d|2[0-3]):([0-5]\d)" title="format HH:mm" tabindex="3">
+								<input type="text" class="input-mini timeInput" data-ng-model="form.endTime" data-ng-change="form.periodType='special'" pattern="([01]\d|2[0-3]):([0-5]\d)" title="format HH:mm" tabindex="4">
+							</div>
+						</td>
+					</tr>
+					<tr data-ng-show="error">
+						<td colspan="4">
                             <span class="label label-important">
                                 <span>{{error}}</span>
                                 <i class="icon-remove" data-ng-click="error=null"></i>
                             </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        <div class="control-group">
-                            <label class="control-label" for="comment">Commentaire</label>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<div class="control-group">
+								<label class="control-label" for="comment">Commentaire</label>
 
-                            <div class="controls">
-                                <textarea class="input-block-level" id="comment" rows="3" data-ng-model="comment"></textarea>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+								<div class="controls">
+									<textarea class="input-block-level" id="comment" rows="3" data-ng-model="comment"></textarea>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 
-        </form>
+		</form>
 
-        <table class="table table-condensed table-striped table-bordered all-periods">
-            <thead>
-            <tr>
-                <th>Activité</th>
-                <th>Demi-journée</th>
-                <th>De</th>
-                <th>A</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr data-ng-repeat="p in periods" data-ng-class="{'special' : isSpecial(p)}">
-                <td>{{getMissionLabel(p.missionId)}}</td>
-                <td>{{p.periodType | momentOfDay | capitalize}}</td>
-                <td>{{p.startTime | localTime}}</td>
-                <td>{{p.endTime | localTime}}</td>
-                <td>
-                    <button class="btn btn-danger btn-mini" data-ng-click="removePeriod(p)"><i class="icon-trash"></i>
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="span12">
-                <div class="control-group">
-                    <div class="controls pull-right">
-                        <button class="btn btn-primary" data-ng-click="localSave()">Sauvegarder</button>
-                        <button class="btn" data-ng-click="back()">Annuler</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+		<table class="table table-condensed table-striped table-bordered all-periods">
+			<thead>
+				<tr>
+					<th>Activité</th>
+					<th>Demi-journée</th>
+					<th>De</th>
+					<th>A</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="p in periods" data-ng-class="{'special' : isSpecial(p)}">
+					<td>{{getMissionLabel(p.missionId)}}</td>
+					<td>{{p.periodType | momentOfDay | capitalize}}</td>
+					<td>{{p.startTime | localTime}}</td>
+					<td>{{p.endTime | localTime}}</td>
+					<td>
+						<button class="btn btn-danger btn-mini" data-ng-click="removePeriod(p)"><i class="icon-trash"></i></button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div data-ng-class="{'control-group error': errors.global}">
+			<span class="help-block"><em>{{errors.global}}</em></span>
+		</div>
+		<div class="row">
+			<div class="span12">
+				<div class="control-group">
+					<div class="controls pull-right">
+						<button class="btn btn-primary" data-ng-click="localSave()">Sauvegarder</button>
+						<button class="btn" data-ng-click="back()">Annuler</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
