@@ -99,7 +99,7 @@ public class JDays extends Controller {
 
 		final JDay day = JDay.find(idCra, dt);
 		if ((day.morning != null && JMission.isAbsenceMission(day.morning.missionId))
-			    || (day.morning != null && JMission.isAbsenceMission(day.morning.missionId))) {
+			    || (day.afternoon != null && JMission.isAbsenceMission(day.afternoon.missionId))) {
 			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
 		}
 		JDay.delete(craId, date);
