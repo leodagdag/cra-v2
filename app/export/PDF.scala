@@ -21,9 +21,9 @@ object PDF {
 
   def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFAbsence.apply)
 
-  def getOrCreateAbsenceFile(absence: JAbsence, user: JUser): File = getOrCreateAbsenceFile(List(absence), user)
+  def createAbsenceFile(absence: JAbsence, user: JUser): File = createAbsenceFile(List(absence), user)
 
-  def getOrCreateAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, PDF.getOrCreateAbsenceData)
+  def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, PDF.getOrCreateAbsenceData)
 
   private def getOrCreateAbsenceData(absences: List[JAbsence]): Array[Byte] = {
     if (absences.head.fileId == null) createAbsenceData(absences)

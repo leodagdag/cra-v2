@@ -25,7 +25,7 @@ object Batches extends BaseController {
             .foreach {
             abs =>
               val user = JUser.account(userId)
-              val file = PDF.getOrCreateAbsenceFile(abs._2, user)
+              val file = PDF.createAbsenceFile(abs._2, user)
               val sentDate = MailerAbsence.sendAbsences(user, file)
               JAbsence.updateSentDate(abs._2.map(_.id).asJava, sentDate)
           }

@@ -105,7 +105,7 @@ public class JAbsences extends Controller {
 
 	public static Result send(final String id) {
 		final JAbsence absence = JAbsence.fetch(id);
-		final File file = PDF.getOrCreateAbsenceFile(absence, JUser.account(absence.userId));
+		final File file = PDF.createAbsenceFile(absence, JUser.account(absence.userId));
 		final DateTime date = MailerAbsence.send(absence, file);
 		JAbsence.updateSentDate(absence.id, date);
 		return ok();

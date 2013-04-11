@@ -128,7 +128,7 @@ object MailerAbsence extends Mailer {
 
   private def subject(user: JUser) = s"Demande d'absence pour ${user.fullName}"
 
-  private def subjectCancel(user: JUser) = s"Demande d'absence pour ${user.fullName}"
+  private def subjectCancel(user: JUser) = s"Annulation d'absence pour ${user.fullName}"
 
   private[MailerAbsence] object Body {
 
