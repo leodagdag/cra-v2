@@ -2,20 +2,21 @@ package dto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import models.JPartTime;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @author f.patin
  */
 public class PartTimeDTO {
 
-    @JsonSerialize(using = ObjectIdSerializer.class)
+	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId id;
 	public ObjectId userId;
 	public Long startDate;
@@ -40,17 +41,17 @@ public class PartTimeDTO {
 		this.active = partTime.active;
 	}
 
-	public static ImmutableList<PartTimeDTO> of(ImmutableList<JPartTime> partTimes) {
-		return ImmutableList.copyOf(Collections2.transform(partTimes, new Function<JPartTime, PartTimeDTO>() {
+	private static PartTimeDTO of(final JPartTime partTime) {
+		return new PartTimeDTO(partTime);
+	}
+
+	public static List<PartTimeDTO> of(List<JPartTime> partTimes) {
+		return Lists.newArrayList(Collections2.transform(partTimes, new Function<JPartTime, PartTimeDTO>() {
 			@Nullable
 			@Override
 			public PartTimeDTO apply(@Nullable final JPartTime partTime) {
 				return of(partTime);
 			}
 		}));
-	}
-
-	private static PartTimeDTO of(final JPartTime partTime) {
-		return new PartTimeDTO(partTime);
 	}
 }

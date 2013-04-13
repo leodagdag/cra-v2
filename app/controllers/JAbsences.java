@@ -127,7 +127,6 @@ public class JAbsences extends Controller {
 		public String comment;
 
 
-
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
 			if(missionId == null) {
@@ -182,24 +181,24 @@ public class JAbsences extends Controller {
 				final DateTime startDate = Boolean.TRUE.equals(startMorning) ? TimeUtils.nextWorkingDay(new DateTime(this.startDate)).withTimeAtStartOfDay() : TimeUtils.nextWorkingDay(new DateTime(this.startDate)).withTime(12, 0, 0, 0);
 				final int startYear = startDate.getYear();
 				final int startMonth = startDate.getMonthOfYear();
-				final DateTime endDate = Boolean.TRUE.equals(endAfternoon) ?  TimeUtils.previousWorkingDay(new DateTime(this.endDate)).plusDays(1).withTimeAtStartOfDay() : TimeUtils.previousWorkingDay(new DateTime(this.endDate)).withTime(12, 0, 0, 0)  ;
+				final DateTime endDate = Boolean.TRUE.equals(endAfternoon) ? TimeUtils.previousWorkingDay(new DateTime(this.endDate)).plusDays(1).withTimeAtStartOfDay() : TimeUtils.previousWorkingDay(new DateTime(this.endDate)).withTime(12, 0, 0, 0);
 
 				final int endYear = endDate.getYear();
 				final int endMonth = endDate.getMonthOfYear();
 				if(startYear == endYear && startMonth == endMonth) {
 					// Same Month
 
-					absence.startDate =startDate;
+					absence.startDate = startDate;
 					absence.endDate = endDate;
 				} else {
 					if(startYear == year && startMonth == month) { // first absence...
 						absence.startDate = startDate;
 						absence.endDate = TimeUtils.previousWorkingDay(TimeUtils.lastDateOfMonth(startDate)).withTimeAtStartOfDay().plusDays(1);
 					} else if(endYear == year && endMonth == month) { // ...last absence...
-						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDayOfMonth(endDate)).withTimeAtStartOfDay();
+						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDateOfMonth(endDate)).withTimeAtStartOfDay();
 						absence.endDate = endDate;
 					} else { // ...and other
-						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDayOfMonth(year, month));
+						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDateOfMonth(year, month));
 						absence.endDate = TimeUtils.previousWorkingDay(TimeUtils.lastDateOfMonth(year, month)).plusDays(1);
 					}
 				}

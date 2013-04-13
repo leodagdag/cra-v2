@@ -3,16 +3,10 @@ package controllers;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import caches.ResponseCache;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import constants.ClaimType;
 import dto.CraDTO;
-import models.JClaim;
-import models.JCra;
-import models.JDay;
-import models.JMission;
-import models.JUser;
+import models.*;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.libs.F;
@@ -23,8 +17,10 @@ import security.JSecurityRoles;
 import utils.business.JClaimUtils;
 import utils.time.TimeUtils;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static play.libs.Json.toJson;
 
@@ -42,17 +38,17 @@ public class JCras extends Controller {
 		final List<ObjectId> missionsIds = Lists.newArrayList();
 
 		jDays.addAll(JDay.find(cra.id, userId, year, month, true));
-		for (JDay jDay : jDays) {
+		for(JDay jDay : jDays) {
 			missionsIds.addAll(jDay.missionIds());
 		}
-		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(ImmutableList.copyOf(missionsIds));
+		final Map<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
 		return ok(toJson(CraDTO.of(cra, jDays, jMissions)));
 	}
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	@ResponseCache.NoCacheResponse
 	public static Result claimSynthesis(final String userId, final Integer year, final Integer month) {
-		final ImmutableList<JClaim> claims = JClaim.synthesis(userId, year, month);
+		final List<JClaim> claims = JClaim.synthesis(userId, year, month);
 		final Map<String, Map<ClaimType, String>> synthesis = JClaimUtils.synthesis(year, month, claims);
 		return ok(toJson(synthesis));
 	}
@@ -65,12 +61,12 @@ public class JCras extends Controller {
 	private static String title(final String craId, final F.Option<String> missionId) {
 		final JCra cra = JCra.fetch(craId);
 		final JUser user = JUser.account(cra.userId);
-		final DateTime dt = TimeUtils.firstDayOfMonth(cra.year, cra.month);
+		final DateTime dt = TimeUtils.firstDateOfMonth(cra.year, cra.month);
 		final StringBuilder title = new StringBuilder()
 			                            .append(user.trigramme)
 			                            .append("_")
 			                            .append(dt.toString("yyyy_MMMM").toLowerCase());
-		if (missionId.isDefined()) {
+		if(missionId.isDefined()) {
 			final JMission mission = JMission.codeAndMissionType(ObjectId.massageToObjectId(missionId.get()));
 			title.append("_")
 				.append(mission.label);

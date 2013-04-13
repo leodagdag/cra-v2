@@ -10,12 +10,12 @@ import utils.Version
  */
 object Application extends BaseController {
 
-	def index() = SubjectPresent(new MyDeadboltHandler) {
-		Action {
-			implicit request =>
-				Ok(views.html.index(new MyDeadboltHandler(), Version.version))
-		}
-	}
+  def index() = SubjectPresent(new MyDeadboltHandler) {
+    Action {
+      implicit request =>
+        Ok(views.html.index(new MyDeadboltHandler(), Version.version))
+    }
+  }
 
 
 }

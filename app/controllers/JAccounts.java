@@ -29,7 +29,7 @@ public class JAccounts extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result update() {
 		final Form<AccountDTO> form = Form.form(AccountDTO.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final AccountDTO dto = form.get();
@@ -40,7 +40,7 @@ public class JAccounts extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result password() {
 		Form<PasswordForm> form = Form.form(PasswordForm.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final PasswordForm passwordForm = form.get();
@@ -61,14 +61,14 @@ public class JAccounts extends Controller {
 
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
-			if (Boolean.FALSE.equals(JUser.checkAuthentication(session("username"), oldPassword))) {
+			if(Boolean.FALSE.equals(JUser.checkAuthentication(session("username"), oldPassword))) {
 				errors.add(new ValidationError("oldPassword", "Le mot de passe actuel est faux."));
 			}
-			if (oldPassword.equals(newPassword)) {
+			if(oldPassword.equals(newPassword)) {
 				errors.add(new ValidationError("newPassword", "Le nouveau mot de passe ne peut pas être identique à l'actuel."));
 
 			}
-			if (!newPassword.equals(confirmPassword)) {
+			if(!newPassword.equals(confirmPassword)) {
 				errors.add(new ValidationError("confirmPassword", "Le nouveau mot de passe n'est pas confirmé."));
 			}
 			return errors.isEmpty() ? null : errors;

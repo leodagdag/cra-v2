@@ -1,6 +1,5 @@
 package dto;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import models.JHalfDay;
 import models.JMission;
@@ -9,6 +8,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import utils.serializer.ObjectIdSerializer;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author f.patin
@@ -17,8 +17,8 @@ public class HalfDayDTO {
 
 	public String code;
 	public String label;
-    @JsonSerialize(using = ObjectIdSerializer.class)
-    public ObjectId  missionId;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId missionId;
 	public String missionType;
 	public List<PeriodDTO> periods = Lists.newArrayList();
 	public Boolean isSpecial = Boolean.FALSE;
@@ -27,13 +27,13 @@ public class HalfDayDTO {
 	public HalfDayDTO() {
 	}
 
-	public HalfDayDTO(final JHalfDay halfDay, ImmutableMap<ObjectId, JMission> missions) {
+	public HalfDayDTO(final JHalfDay halfDay, Map<ObjectId, JMission> missions) {
 		this.isSpecial = halfDay.isSpecial();
-		if (this.isSpecial) {
+		if(this.isSpecial) {
 			this.periods.addAll(PeriodDTO.of(halfDay.periods, missions));
 			this.label = "special";
 		} else {
-            final JMission mission = missions.get(halfDay.missionId);
+			final JMission mission = missions.get(halfDay.missionId);
 			this.code = mission.code;
 			this.label = mission.label;
 			this.missionId = halfDay.missionId;
@@ -41,7 +41,7 @@ public class HalfDayDTO {
 		}
 	}
 
-	public static HalfDayDTO of(final JHalfDay halfDay, final ImmutableMap<ObjectId, JMission> missions) {
-		return (halfDay != null) ? new HalfDayDTO(halfDay,  missions) : null;
+	public static HalfDayDTO of(final JHalfDay halfDay, final Map<ObjectId, JMission> missions) {
+		return (halfDay != null) ? new HalfDayDTO(halfDay, missions) : null;
 	}
 }

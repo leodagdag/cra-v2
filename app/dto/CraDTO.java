@@ -1,6 +1,5 @@
 package dto;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import models.JCra;
 import models.JDay;
@@ -10,6 +9,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import utils.serializer.ObjectIdSerializer;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author f.patin
@@ -30,18 +30,18 @@ public class CraDTO {
 	public CraDTO() {
 	}
 
-	public CraDTO(final JCra cra, final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions) {
+	public CraDTO(final JCra cra, final List<JDay> days, final Map<ObjectId, JMission> missions) {
 		this.id = cra.id;
 		this.userId = cra.userId;
 		this.year = cra.year;
 		this.month = cra.month;
 		this.comment = cra.comment;
 		this.isValidated = cra.isValidated;
-		this.weeks.addAll(WeekDTO.of(days,missions, cra.year, cra.month));
+		this.weeks.addAll(WeekDTO.of(days, missions, cra.year, cra.month));
 	}
 
 
-	public static CraDTO of(final JCra cra, final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions) {
+	public static CraDTO of(final JCra cra, final List<JDay> days, final Map<ObjectId, JMission> missions) {
 		return new CraDTO(cra, days, missions);
 	}
 

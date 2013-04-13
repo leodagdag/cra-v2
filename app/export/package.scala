@@ -1,4 +1,5 @@
 import com.itextpdf.text.{Element, Rectangle}
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter, DateTimeFormatterBuilder}
 
 /**
  * @author f.patin
@@ -22,5 +23,8 @@ package object export {
   val Zero = BigDecimal(java.math.BigDecimal.ZERO)
   val ZeroPointFive = BigDecimal("0.5")
 
+  val dummyCellContent = " "
+
+  val `dd/MM/yyyy`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy")
 
 }

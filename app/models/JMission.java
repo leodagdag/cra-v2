@@ -1,10 +1,19 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.*;
+import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.annotations.Id;
+import com.github.jmkgreen.morphia.annotations.Index;
+import com.github.jmkgreen.morphia.annotations.Indexes;
+import com.github.jmkgreen.morphia.annotations.PostLoad;
+import com.github.jmkgreen.morphia.annotations.PrePersist;
+import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import constants.AbsenceType;
 import constants.GenesisMissionCode;
 import constants.MissionType;
@@ -18,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author f.patin
@@ -86,7 +96,7 @@ public class JMission {
 		}
 	}
 
-	public static ImmutableMap<ObjectId, JMission> codeAndMissionType(final ImmutableList<ObjectId> missionsIds) {
+	public static Map<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds) {
 		if(CollectionUtils.isNotEmpty(missionsIds)) {
 			final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
 				                                .field(Mapper.ID_KEY).in(missionsIds)
@@ -113,58 +123,61 @@ public class JMission {
 			       .get();
 	}
 
-	public static ImmutableList<JMission> getClaimableMissions(final List<ObjectId> ids) {
-		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
-			                            .field(Mapper.ID_KEY).in(ids)
-			                            .field("isClaimable").equal(true)
-			                            .retrievedFields(true, Mapper.ID_KEY, "code", "label")
-			                            .disableValidation()
-			                            .asList());
+	public static List<JMission> getClaimableMissions(final List<ObjectId> ids) {
+		return MorphiaPlugin.ds().createQuery(JMission.class)
+			       .field(Mapper.ID_KEY).in(ids)
+			       .field("isClaimable").equal(true)
+			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
+			       .disableValidation()
+			       .asList();
 	}
 
 
-	public static ImmutableList<JMission> craMissions(final ImmutableList<ObjectId> ids) {
-		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
-			                            .field(Mapper.ID_KEY).in(ids)
-			                            .field("missionType").in(MissionType.craMissionType)
-			                            .retrievedFields(true, Mapper.ID_KEY, "code", "label")
-			                            .disableValidation()
-			                            .asList());
+	public static List<JMission> craMissions(final List<ObjectId> ids) {
+		return MorphiaPlugin.ds().createQuery(JMission.class)
+			       .field(Mapper.ID_KEY).in(ids)
+			       .field("missionType").in(MissionType.craMissionType)
+			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
+			       .disableValidation()
+			       .asList();
 	}
 
-	public static ImmutableList<JMission> getAbsencesMissions() {
+	public static List<JMission> getAbsencesMissions() {
 		return getAbsencesMissions(null);
 	}
 
-	public static ImmutableList<JMission> getAbsencesMissions(final AbsenceType absenceType) {
-		final List<String> absenceTypes = AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
-		return ImmutableList.copyOf(MorphiaPlugin.ds().createQuery(JMission.class)
-			                            .field("absenceType").in(absenceTypes)
-			                            .retrievedFields(true, Mapper.ID_KEY, "code", "label")
-			                            .disableValidation()
-			                            .asList());
+	public static List<JMission> getAbsencesMissions(final AbsenceType absenceType) {
+		final List<String> absenceTypes = newAbsenceTypesList(absenceType);
+		return MorphiaPlugin.ds().createQuery(JMission.class)
+			       .field("absenceType").in(absenceTypes)
+			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
+			       .disableValidation()
+			       .asList();
 	}
 
-	public static ImmutableList<ObjectId> getAbsencesMissionIds() {
+	private static List<String> newAbsenceTypesList(final AbsenceType absenceType) {
+		return AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
+	}
+
+	public static List<ObjectId> getAbsencesMissionIds() {
 		return getAbsencesMissionIds(null);
 	}
 
-	public static ImmutableList<ObjectId> getAbsencesMissionIds(final AbsenceType absenceType) {
-		final List<String> absenceTypes = AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
+	public static List<ObjectId> getAbsencesMissionIds(final AbsenceType absenceType) {
+		final List<String> absenceTypes = newAbsenceTypesList(absenceType);
 		final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
 			                                .field("absenceType").in(absenceTypes)
 			                                .retrievedFields(true, Mapper.ID_KEY)
 			                                .disableValidation()
 			                                .asList();
 
-		final List<ObjectId> missionIds = Lists.newArrayList(Collections2.transform(missions, new Function<JMission, ObjectId>() {
+		return Lists.newArrayList(Collections2.transform(missions, new Function<JMission, ObjectId>() {
 			@Nullable
 			@Override
 			public ObjectId apply(@Nullable final JMission mission) {
 				return mission.id;
 			}
 		}));
-		return ImmutableList.copyOf(missionIds);
 	}
 
 	public static ObjectId getPartTimeId() {

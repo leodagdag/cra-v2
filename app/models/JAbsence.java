@@ -11,9 +11,6 @@ import com.google.common.collect.Sets;
 import com.mongodb.WriteConcern;
 import constants.AbsenceType;
 import exceptions.AbsenceAlreadyExistException;
-import exceptions.AbsenceEndIllegalDateException;
-import exceptions.AbsenceStartIllegalDateException;
-import exceptions.ContainsOnlyWeekEndOrDayOfException;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
@@ -30,7 +27,7 @@ import java.util.List;
  * @author f.patin
  */
 @Entity("Absence")
-public class JAbsence extends Model implements  MongoModel {
+public class JAbsence extends Model implements MongoModel {
 
 	@Id
 	public ObjectId id;
@@ -152,7 +149,7 @@ public class JAbsence extends Model implements  MongoModel {
 
 
 		if(startYear != null && startMonth != null && endYear != null && endMonth != null) {
-			final DateTime startFirstDay = TimeUtils.firstDayOfMonth(startYear, startMonth);
+			final DateTime startFirstDay = TimeUtils.firstDateOfMonth(startYear, startMonth);
 			final DateTime endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth);
 			q.or(
 				    q.and(

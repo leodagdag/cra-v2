@@ -2,7 +2,6 @@ package dto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import models.JDay;
 import models.JMission;
@@ -13,6 +12,7 @@ import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author f.patin
@@ -36,7 +36,7 @@ public class DayDTO {
 	public DayDTO() {
 	}
 
-	public DayDTO(final JDay day, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
+	public DayDTO(final JDay day, final Map<ObjectId, JMission> missions, final Integer year, final Integer month) {
 		this.id = day.id;
 		this.date = day.date;
 		this.year = day.year;
@@ -52,7 +52,7 @@ public class DayDTO {
 	}
 
 
-	public static List<DayDTO> of(final List<JDay> days, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
+	public static List<DayDTO> of(final List<JDay> days, final Map<ObjectId, JMission> missions, final Integer year, final Integer month) {
 		return Lists.newArrayList(Collections2.transform(days, new Function<JDay, DayDTO>() {
 			@Nullable
 			@Override
@@ -62,11 +62,11 @@ public class DayDTO {
 		}));
 	}
 
-	public static DayDTO of(final JDay day, final ImmutableMap<ObjectId, JMission> missions, final Integer year, final Integer month) {
+	public static DayDTO of(final JDay day, final Map<ObjectId, JMission> missions, final Integer year, final Integer month) {
 		return new DayDTO(day, missions, year, month);
 	}
 
-	private Boolean isSpecial(final JDay day){
+	private Boolean isSpecial(final JDay day) {
 		return (day.morning != null && day.morning.isSpecial()) || (day.afternoon != null && day.afternoon.isSpecial());
 	}
 }

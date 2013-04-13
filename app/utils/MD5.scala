@@ -8,7 +8,7 @@ import org.apache.commons.codec.binary.Base64
  */
 object MD5 {
 
-	def apply(s: String): String = {
-		new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8"))))
-	}
+  def apply(s: String): String = {
+    new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8"))))
+  }
 }

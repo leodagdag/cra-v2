@@ -10,7 +10,6 @@ import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteConcern;
 import leodagdag.play2morphia.MorphiaPlugin;
@@ -64,11 +63,11 @@ public class JUser implements Subject {
 			       .field("username").equal(username);
 	}
 
-	private static ImmutableList<JAffectedMission> filterByDates(final ImmutableList<JAffectedMission> xs, final DateTime startDate, final DateTime endDate) {
+	private static List<JAffectedMission> filterByDates(final List<JAffectedMission> xs, final DateTime startDate, final DateTime endDate) {
 		if(startDate == null || endDate == null) {
 			return xs;
 		}
-		return ImmutableList.copyOf(Collections2.filter(xs, new Predicate<JAffectedMission>() {
+		return Lists.newArrayList(Collections2.filter(xs, new Predicate<JAffectedMission>() {
 			@Override
 			public boolean apply(@Nullable final JAffectedMission affectedMission) {
 				return ((affectedMission.startDate == null || affectedMission.startDate.isBefore(startDate))
@@ -116,24 +115,24 @@ public class JUser implements Subject {
 			       .get();
 	}
 
-	public static ImmutableList<JUser> byRole(final String role) {
-		return ImmutableList.copyOf(q()
-			                            .field("role").equal(role)
-			                            .retrievedFields(true, "username", "firstName", "lastName", "role")
-			                            .disableValidation()
-			                            .order("lastName, firstName")
-			                            .asList());
+	public static List<JUser> byRole(final String role) {
+		return q()
+			       .field("role").equal(role)
+			       .retrievedFields(true, "username", "firstName", "lastName", "role")
+			       .disableValidation()
+			       .order("lastName, firstName")
+			       .asList();
 	}
 
-	public static ImmutableList<ObjectId> affectedMissions(final String username) {
+	public static List<ObjectId> affectedMissions(final String username) {
 		return affectedMissions(username, null, null);
 	}
 
-	public static ImmutableList<ObjectId> affectedMissions(final String username, final DateTime startDate, final DateTime endDate) {
-		final ImmutableList<JAffectedMission> affectedMissions = ImmutableList.copyOf(queryToFindMe(username)
-			                                                                              .retrievedFields(true, "affectedMissions")
-			                                                                              .disableValidation()
-			                                                                              .get().affectedMissions);
+	public static List<ObjectId> affectedMissions(final String username, final DateTime startDate, final DateTime endDate) {
+		final List<JAffectedMission> affectedMissions = queryToFindMe(username)
+			                                                .retrievedFields(true, "affectedMissions")
+			                                                .disableValidation()
+			                                                .get().affectedMissions;
 
 		final Function<JAffectedMission, ObjectId> getId = new Function<JAffectedMission, ObjectId>() {
 			@Nullable
@@ -143,22 +142,22 @@ public class JUser implements Subject {
 			}
 		};
 
-		return ImmutableList.copyOf(Collections2.transform(filterByDates(affectedMissions, startDate, endDate), getId));
+		return Lists.newArrayList(Collections2.transform(filterByDates(affectedMissions, startDate, endDate), getId));
 	}
 
-	public static ImmutableList<JUser> all() {
-		return ImmutableList.copyOf(q()
-			                            .retrievedFields(Boolean.FALSE, "affectedMissions")
-			                            .disableValidation()
-			                            .asList());
+	public static List<JUser> all() {
+		return q()
+			       .retrievedFields(Boolean.FALSE, "affectedMissions")
+			       .disableValidation()
+			       .asList();
 	}
 
-	public static ImmutableList<JUser> managers() {
-		return ImmutableList.copyOf(q()
-			                            .field("isManager").equal(Boolean.TRUE)
-			                            .retrievedFields(true, Mapper.ID_KEY, "lastName", "firstName")
-			                            .disableValidation()
-			                            .asList());
+	public static List<JUser> managers() {
+		return q()
+			       .field("isManager").equal(Boolean.TRUE)
+			       .retrievedFields(true, Mapper.ID_KEY, "lastName", "firstName")
+			       .disableValidation()
+			       .asList();
 	}
 
 	public static JUser update(final JUser user) {

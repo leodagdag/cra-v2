@@ -35,7 +35,7 @@ public class AccountDTO {
 		this.firstName = user.firstName;
 		this.lastName = user.lastName;
 		this.email = user.email;
-		if (user.managerId != null) {
+		if(user.managerId != null) {
 			this.managerId = user.managerId;
 		}
 	}

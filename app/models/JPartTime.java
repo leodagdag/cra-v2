@@ -7,7 +7,6 @@ import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.github.jmkgreen.morphia.query.UpdateResults;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.mongodb.WriteConcern;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
@@ -16,6 +15,7 @@ import org.joda.time.DateTime;
 import utils.time.TimeUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author f.patin
@@ -90,31 +90,29 @@ public class JPartTime {
 		}
 	}
 
-	public static ImmutableList<JPartTime> addPartTimes(ImmutableList<JPartTime> pts) {
+	public static List<JPartTime> addPartTimes(List<JPartTime> pts) {
 		Preconditions.checkArgument(CollectionUtils.isNotEmpty(pts));
 		final Iterable<Key<JPartTime>> keys = MorphiaPlugin.ds().save(pts, WriteConcern.ACKNOWLEDGED);
-		return ImmutableList.copyOf(MorphiaPlugin.ds().getByKeys(JPartTime.class, keys));
+		return MorphiaPlugin.ds().getByKeys(JPartTime.class, keys);
 	}
 
-	public static ImmutableList<JPartTime> history(final String userId) {
-		return ImmutableList.copyOf(queryToFindMeByUser(ObjectId.massageToObjectId(userId))
-			                            .asList()
-		);
+	public static List<JPartTime> history(final String userId) {
+		return queryToFindMeByUser(ObjectId.massageToObjectId(userId))
+			                            .asList()                     ;
 	}
 
-	public static ImmutableList<JPartTime> activeByUser(final String userId) {
+	public static List<JPartTime> activeByUser(final String userId) {
 		return activeByUser(ObjectId.massageToObjectId(userId));
 	}
 
-	public static ImmutableList<JPartTime> activeByUser(final ObjectId userId) {
-		return ImmutableList.copyOf(queryToFindMeByUser(userId)
+	public static List<JPartTime> activeByUser(final ObjectId userId) {
+		return queryToFindMeByUser(userId)
 			                            .field("active").equal(true)
-			                            .asList()
-		);
+			                            .asList();
 	}
 
-	public static ImmutableList<JPartTime> activeByUser(final ObjectId userId, final Integer year, final Integer month) {
-		final Date start = TimeUtils.firstDayOfMonth(year, month).toDate();
+	public static List<JPartTime> activeByUser(final ObjectId userId, final Integer year, final Integer month) {
+		final Date start = TimeUtils.firstDateOfMonth(year, month).toDate();
 		final Date end = TimeUtils.lastDateOfMonth(year, month).toDate();
 		final Query<JPartTime> q = queryToFindMeByUser(userId)
 			                           .field("active").equal(true);
@@ -128,7 +126,7 @@ public class JPartTime {
 				         q.criteria("_endDate").greaterThanOrEq(start)
 			    )
 		);
-		return ImmutableList.copyOf(q.asList());
+		return q.asList();
 	}
 
 	public static JPartTime deactivate(final String id) {

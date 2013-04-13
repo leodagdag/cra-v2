@@ -41,10 +41,10 @@ public class JPeriod {
 	@SuppressWarnings({"unused"})
 	@PrePersist
 	private void prePersist() {
-		if (startTime != null) {
+		if(startTime != null) {
 			_startTime = startTime.toDateTimeToday().toDate();
 		}
-		if (endTime != null) {
+		if(endTime != null) {
 			_endTime = endTime.toDateTimeToday().toDate();
 		}
 	}
@@ -52,10 +52,10 @@ public class JPeriod {
 	@SuppressWarnings({"unused"})
 	@PostLoad
 	private void postLoad() {
-		if (_startTime != null) {
+		if(_startTime != null) {
 			startTime = new DateTime(_startTime.getTime()).toLocalTime();
 		}
-		if (_endTime != null) {
+		if(_endTime != null) {
 			endTime = new DateTime(_endTime.getTime()).toLocalTime();
 		}
 	}

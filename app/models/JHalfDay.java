@@ -36,7 +36,7 @@ public class JHalfDay {
 	}
 
 	public Set<ObjectId> missionIds() {
-		if (isSpecial()) {
+		if(isSpecial()) {
 			return Sets.newHashSet(Collections2.transform(periods, new Function<JPeriod, ObjectId>() {
 				@Nullable
 				@Override

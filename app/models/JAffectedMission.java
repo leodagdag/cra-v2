@@ -27,10 +27,10 @@ public class JAffectedMission {
 	@SuppressWarnings({"unused"})
 	@PrePersist
 	private void prePersist() {
-		if (startDate != null) {
+		if(startDate != null) {
 			_startDate = startDate.toDate();
 		}
-		if (endDate != null) {
+		if(endDate != null) {
 			_endDate = endDate.toDate();
 		}
 	}
@@ -38,10 +38,10 @@ public class JAffectedMission {
 	@SuppressWarnings({"unused"})
 	@PostLoad
 	private void postLoad() {
-		if (_startDate != null) {
+		if(_startDate != null) {
 			startDate = new DateTime(_startDate.getTime());
 		}
-		if (_endDate != null) {
+		if(_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
 		}
 	}

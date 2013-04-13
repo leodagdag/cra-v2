@@ -1,12 +1,6 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.Index;
-import com.github.jmkgreen.morphia.annotations.Indexes;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -55,20 +49,20 @@ public class JParameter extends Model {
 	}
 
 	public static BigDecimal coefficient(final JVehicle vehicle, final DateTime date) {
-		if (VehicleType.car.equals(VehicleType.valueOf(vehicle.vehicleType))) {
+		if(VehicleType.car.equals(VehicleType.valueOf(vehicle.vehicleType))) {
 			final ImmutableMap<Integer, BigDecimal> refs = JParameter.cars(date);
-			if (vehicle.power >= 11) {
+			if(vehicle.power >= 11) {
 				return refs.get(11);
-			} else if (vehicle.power >= 8) {
+			} else if(vehicle.power >= 8) {
 				return refs.get(8);
-			} else if (vehicle.power >= 5) {
+			} else if(vehicle.power >= 5) {
 				return refs.get(5);
 			} else {
 				return refs.get(0);
 			}
 		} else {
 			final ImmutableMap<Integer, BigDecimal> refs = JParameter.motorcyles(date);
-			if (vehicle.power < 501) {
+			if(vehicle.power < 501) {
 				return refs.get(0);
 			} else {
 				return refs.get(501);
@@ -114,13 +108,13 @@ public class JParameter extends Model {
 	@SuppressWarnings({"unused"})
 	@PrePersist
 	private void prePersist() {
-		if (startDate != null) {
+		if(startDate != null) {
 			_startDate = startDate.toDate();
 		}
-		if (endDate != null) {
+		if(endDate != null) {
 			_endDate = endDate.toDate();
 		}
-		if (car != null) {
+		if(car != null) {
 			_car = Maps.transformValues(car, new Function<BigDecimal, String>() {
 				@Nullable
 				@Override
@@ -129,7 +123,7 @@ public class JParameter extends Model {
 				}
 			});
 		}
-		if (motorcycle != null) {
+		if(motorcycle != null) {
 			_motorcycle = Maps.transformValues(motorcycle, new Function<BigDecimal, String>() {
 				@Nullable
 				@Override
@@ -138,7 +132,7 @@ public class JParameter extends Model {
 				}
 			});
 		}
-		if (zoneAmount != null) {
+		if(zoneAmount != null) {
 			_zoneAmount = zoneAmount.toPlainString();
 		}
 	}
@@ -146,13 +140,13 @@ public class JParameter extends Model {
 	@SuppressWarnings({"unused"})
 	@PostLoad
 	private void postLoad() {
-		if (_startDate != null) {
+		if(_startDate != null) {
 			startDate = new DateTime(_startDate.getTime());
 		}
-		if (_endDate != null) {
+		if(_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
 		}
-		if (_car != null) {
+		if(_car != null) {
 			car = Maps.transformValues(_car, new Function<String, BigDecimal>() {
 				@Nullable
 				@Override
@@ -161,7 +155,7 @@ public class JParameter extends Model {
 				}
 			});
 		}
-		if (_motorcycle != null) {
+		if(_motorcycle != null) {
 			motorcycle = Maps.transformValues(_motorcycle, new Function<String, BigDecimal>() {
 				@Nullable
 				@Override
@@ -170,7 +164,7 @@ public class JParameter extends Model {
 				}
 			});
 		}
-		if (_zoneAmount != null) {
+		if(_zoneAmount != null) {
 			zoneAmount = new BigDecimal(_zoneAmount);
 		}
 	}

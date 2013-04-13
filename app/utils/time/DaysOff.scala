@@ -1,8 +1,8 @@
 package utils.time
 
 import java.lang.Boolean
-
 import org.joda.time.{DateTimeConstants, DateTime}
+
 
 /**
  * @author f.patin

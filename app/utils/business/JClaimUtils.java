@@ -1,6 +1,5 @@
 package utils.business;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import constants.ClaimType;
 import models.JClaim;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static constants.ClaimType.*;
 
@@ -20,7 +20,9 @@ import static constants.ClaimType.*;
  */
 public class JClaimUtils {
 
-	private static Map<Integer, Map<ClaimType, List<JClaim>>> _transform(final Integer year, final Integer month, final ImmutableList<JClaim> claims) {
+	private static final String totalKey = "Total";
+
+	public static Map<Integer, Map<ClaimType, List<JClaim>>> transform(final Integer year, final Integer month, final List<JClaim> claims) {
 		final List<Integer> weeks = TimeUtils.getWeeks(year, month);
 		final Map<Integer, Map<ClaimType, List<JClaim>>> result = Maps.newTreeMap();
 		for(Integer weekNb : weeks) {
@@ -40,8 +42,8 @@ public class JClaimUtils {
 		return result;
 	}
 
-	public static Map<String, Map<ClaimType, String>> synthesis(final Integer year, final Integer month, final ImmutableList<JClaim> claims) {
-		final Map<Integer, Map<ClaimType, List<JClaim>>> synthesis  =_transform(year, month, claims);
+	public static Map<String, Map<ClaimType, String>> synthesis(final Integer year, final Integer month, final List<JClaim> claims) {
+		final Map<Integer, Map<ClaimType, List<JClaim>>> synthesis = transform(year, month, claims);
 		final Map<String, Map<ClaimType, String>> result = Maps.newTreeMap();
 		for(Integer week : synthesis.keySet()) {
 			final String w = StringUtils.leftPad(week.toString(), 2, '0');
@@ -77,14 +79,15 @@ public class JClaimUtils {
 		}
 
 		// Total by claimType
-		result.put("TOTAL", new EnumMap<ClaimType, String>(ClaimType.class));
+
+		result.put(totalKey, new EnumMap<ClaimType, String>(ClaimType.class));
 		for(String w : result.keySet()) {
-			if(!w.equals("TOTAL")) {
+			if(!totalKey.equals(w)) {
 				for(ClaimType c : result.get(w).keySet()) {
-					if(!result.get("TOTAL").containsKey(c)) {
-						result.get("TOTAL").put(c, BigDecimal.ZERO.toPlainString());
+					if(!result.get(totalKey).containsKey(c)) {
+						result.get(totalKey).put(c, BigDecimal.ZERO.toPlainString());
 					}
-					result.get("TOTAL").put(c, new BigDecimal(result.get(w).get(c)).add(new BigDecimal(result.get("TOTAL").get(c))).toPlainString());
+					result.get(totalKey).put(c, new BigDecimal(result.get(w).get(c)).add(new BigDecimal(result.get(totalKey).get(c))).toPlainString());
 				}
 			}
 		}

@@ -27,7 +27,7 @@ public class JVehicles extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result save() {
 		final Form<CreateVehicleForm> form = Form.form(CreateVehicleForm.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateVehicleForm createVehicleForm = form.get();
@@ -38,7 +38,7 @@ public class JVehicles extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result active(final String userId) {
 		final JVehicle vehicle = JVehicle.active(userId);
-		if (vehicle == null) {
+		if(vehicle == null) {
 			return ok();
 		}
 		return ok(toJson(VehicleDTO.of(JVehicle.active(userId))));
@@ -51,7 +51,7 @@ public class JVehicles extends Controller {
 
 	public static Result deactivate() {
 		final Form<String> form = Form.form(String.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final String id = form.data().get("id");
@@ -77,7 +77,7 @@ public class JVehicles extends Controller {
 
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
-			if (TimeUtils.firstDayOfMonth(year, month).isBefore(TimeUtils.firstDayOfMonth(DateTime.now()))) {
+			if(TimeUtils.firstDateOfMonth(year, month).isBefore(TimeUtils.firstDateOfMonth(DateTime.now()))) {
 				errors.add(new ValidationError("validityDate", "La date de validté doit être supérieure ou égale au mois en cours."));
 			}
 			return errors.isEmpty() ? null : errors;
@@ -90,7 +90,7 @@ public class JVehicles extends Controller {
 			vehicle.brand = this.brand;
 			vehicle.power = this.power;
 			vehicle.matriculation = this.matriculation;
-			vehicle.startDate = TimeUtils.firstDayOfMonth(year, month);
+			vehicle.startDate = TimeUtils.firstDateOfMonth(year, month);
 			return vehicle;
 		}
 	}

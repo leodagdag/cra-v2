@@ -1,12 +1,12 @@
 package export
 
-import com.itextpdf.text.pdf.codec.PngImage
 import com.itextpdf.text._
+import com.itextpdf.text.pdf.codec.PngImage
+import java.io.ByteArrayOutputStream
 import java.net.URL
 import pdf.{PdfPCell, PdfPTable, PdfWriter}
 import play.api.Play.current
 import scala.collection.JavaConverters._
-import java.io.ByteArrayOutputStream
 
 /**
  * @author f.patin
@@ -161,10 +161,15 @@ trait PDFTableTools extends PDFFont {
     cell.setBorder(NO_BORDER)
     cell
   }
-  protected def noBorderCell(phrase: Phrase) = {
-    val cell = defaultCell(phrase)
-    cell.setHorizontalAlignment(Element.ALIGN_CENTER)
+
+  protected def noBorderCell(phrase: String, font: Font = normal, frontColor: BaseColor = BaseColor.BLACK, backgroundColor: BaseColor = BaseColor.WHITE) = {
+    val f = new Font(font)
+    f.setColor(frontColor)
+
+    val cell = new PdfPCell(new Phrase(phrase, f))
+    cell.setHorizontalAlignment(Element.ALIGN_LEFT)
     cell.setBorder(NO_BORDER)
+    cell.setBackgroundColor(backgroundColor)
     cell
   }
 }

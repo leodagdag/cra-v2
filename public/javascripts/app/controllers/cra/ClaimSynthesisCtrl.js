@@ -11,7 +11,6 @@ app.controller('ClaimSynthesisCtrl', ['$scope', '$rootScope', '$http', '$log', '
 				'url': route.url
 			})
 				.success(function(synthesis, status, headers, config) {
-					$log.debug('synthesis', synthesis);
 					$scope.header = _(synthesis)
 						.keys()
 						.sortBy()
@@ -33,8 +32,6 @@ app.controller('ClaimSynthesisCtrl', ['$scope', '$rootScope', '$http', '$log', '
 					$scope.claimTypes = _($scope.body)
 						.keys()
 						.valueOf();
-					$log.debug('$scope.body', $scope.body);
-
 				})
 				.error(function(error, status, headers, config) {
 					$log.error(error);

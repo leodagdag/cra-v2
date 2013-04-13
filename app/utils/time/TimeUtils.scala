@@ -4,9 +4,9 @@ import JodaUtils.dateTimeOrdering
 import java.util
 import java.util.Date
 import org.joda.time._
-import scala.collection.JavaConverters._
 import play.libs.F
 import play.libs.F.Tuple
+import scala.collection.JavaConverters._
 
 
 /**
@@ -26,6 +26,8 @@ object TimeUtils {
   def isDayOffOrWeekEnd(dt: DateTime): java.lang.Boolean = isDayOff(dt) || isSaturdayOrSunday(dt)
 
   def isNotDayOffAndNotWeekEnd(dt: DateTime): java.lang.Boolean = !isDayOffOrWeekEnd(dt)
+
+  def isWorkingDay(dt: DateTime): java.lang.Boolean = isNotDayOffAndNotWeekEnd(dt)
 
   def isDayOff(day: DateTime): java.lang.Boolean = DaysOff.isDayOff(day)
 
@@ -49,27 +51,38 @@ object TimeUtils {
         add(curr.plusWeeks(1), curr.getWeekOfWeekyear :: xs)
       }
     }
-    add(firstDayOfMonth(year, month), List.empty[Integer]).asJava
+    add(firstDateOfMonth(year, month), List.empty[Integer]).asJava
   }
 
-  def firstDayOfMonth(dt: DateTime): DateTime = firstDayOfMonth(dt.getYear, dt.getMonthOfYear)
+  def firstDateOfMonth(dt: DateTime): DateTime = firstDateOfMonth(dt.getYear, dt.getMonthOfYear)
 
-  def firstDayOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0, 0, 0)
+  def firstDateOfMonth(year: Integer, month: Integer): DateTime = new DateTime(year, month, 1, 0, 0).withTimeAtStartOfDay()
 
-  def lastDayOfMonth(year: Integer, month: Integer): Int = firstDayOfMonth(year, month).dayOfMonth.withMaximumValue.getDayOfMonth
+  def lastDayOfMonth(year: Integer, month: Integer): Int = firstDateOfMonth(year, month).dayOfMonth.withMaximumValue.getDayOfMonth
 
-  def lastDateOfMonth(year: Integer, month: Integer): DateTime = firstDayOfMonth(year, month).dayOfMonth.withMaximumValue
+  def lastDateOfMonth(year: Integer, month: Integer): DateTime = firstDateOfMonth(year, month).dayOfMonth.withMaximumValue
 
   def lastDateOfMonth(dt: DateTime): DateTime = dt.dayOfMonth.withMaximumValue
 
   def nbDaysOffInMonth(year: Integer, month: Integer): Int = (1 to lastDayOfMonth(year, month)).filter(day => DaysOff.isDayOff(new DateTime(year, month, day, 0, 0))).size
 
+  def nbWeekEndDayInMonth(year: Integer, month: Integer) =
+    dateRange(firstDateOfMonth(year, month), lastDateOfMonth(year, month), Period.days(1))
+      .filter(isSaturdayOrSunday(_))
+      .size
+
+  def nbWorkingDaysInMonth(year: Integer, month: Integer): Int =
+    dateRange(firstDateOfMonth(year, month), lastDateOfMonth(year, month), Period.days(1))
+      .filter(isNotDayOffAndNotWeekEnd(_))
+      .size
+
+
   def getDaysOfMonth(year: Integer, month: Integer, extended: Boolean = false): util.List[DateTime] = {
-    val current = dateRange(firstDayOfMonth(year, month), lastDateOfMonth(year, month), Period.days(1))
+    val current = dateRange(firstDateOfMonth(year, month), lastDateOfMonth(year, month), Period.days(1))
     val result = extended match {
       case false => current.toList.sorted
-      case _ => {
-        val firstDay = firstDayOfMonth(year, month)
+      case true => {
+        val firstDay = firstDateOfMonth(year, month)
         val lastDay = lastDateOfMonth(year, month)
         val nbPastDays = new Interval(getMondayOfDate(firstDay), firstDay).toPeriod.getDays
         val nbFutureDays = new Interval(lastDay, getSundayOfDate(lastDay)).toPeriod.getDays
@@ -127,7 +140,7 @@ object TimeUtils {
 
 
   def getMonthYear(start: DateTime, end: DateTime): util.Collection[Tuple[Integer, Integer]] = {
-    dateRange(firstDayOfMonth(start), lastDateOfMonth(end), Period.months(1))
+    dateRange(firstDateOfMonth(start), lastDateOfMonth(end), Period.months(1))
       .map(dt => F.Tuple(int2Integer(dt.getYear), int2Integer(dt.getMonthOfYear)))
       .toList.asJavaCollection
   }

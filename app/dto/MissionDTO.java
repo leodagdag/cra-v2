@@ -3,7 +3,6 @@ package dto;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import models.JMission;
@@ -12,6 +11,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class MissionDTO {
 
-    @JsonSerialize(using = ObjectIdSerializer.class)
-    public ObjectId id;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId id;
 	public String code;
 	public String label;
 
@@ -48,7 +48,7 @@ public class MissionDTO {
 		}));
 	}
 
-	public static List<MissionDTO> of(ImmutableList<JMission> missions) {
+	public static List<MissionDTO> of(Collection<JMission> missions) {
 		return Lists.newArrayList(Collections2.transform(missions, new Function<JMission, MissionDTO>() {
 			@Nullable
 			@Override

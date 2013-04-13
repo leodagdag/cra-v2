@@ -5,10 +5,11 @@ import java.lang.String
 import java.security.MessageDigest
 import org.apache.commons.codec.binary.Base64
 import org.joda.time.DateTime
-/*
+
 val d = new DateTime(1362092400000L)
 println(d)
-*/
+println(d)
+
 
 /*
 println(s"lisa:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("lisa".getBytes("UTF-8"))))}]")
@@ -35,14 +36,12 @@ println(s"false || false = ${false || false}")
 val now = DateTime.now()
 val time = now.withHourOfDay(23).withMinuteOfHour(30).withSecondOfMinute(0).withMillisOfSecond(0)
 val tick = new Duration(now, time)
-
 println(s"now: $now")
 println(s"time: $time")
 println(s"tick: $tick")
 println(s"tick.getStandardHours: ${tick.getStandardHours}")
 println(s"tick.getStandardMinutes: ${tick.getStandardMinutes}")
 println(s"tick.getStandardSeconds: ${tick.getStandardSeconds}")
-
 println(s"tick.toStandardHours: ${tick.toStandardHours}")
 println(s"tick.toStandardHours.getHours: ${tick.toStandardHours.getHours}")
 println(s"tick.toStandardMinutes: ${tick.toStandardMinutes}")

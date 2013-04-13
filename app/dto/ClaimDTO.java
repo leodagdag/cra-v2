@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class ClaimDTO {
 
-    @JsonSerialize(using = ObjectIdSerializer.class)
-    public ObjectId id;
-    @JsonSerialize(using = ObjectIdSerializer.class)
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	public ObjectId id;
+	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId userId;
 	public Integer year;
 	public Integer month;
@@ -57,7 +57,7 @@ public class ClaimDTO {
 		this.comment = claim.comment;
 	}
 
-	public static List<ClaimDTO> of(final ImmutableList<JClaim> claims, final ImmutableList<JMission> missions) {
+	public static List<ClaimDTO> of(final List<JClaim> claims, final List<JMission> missions) {
 		return ImmutableList.copyOf(Collections2.transform(claims, new Function<JClaim, ClaimDTO>() {
 			@Nullable
 			@Override

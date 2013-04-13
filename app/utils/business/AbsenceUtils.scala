@@ -1,10 +1,10 @@
 package utils.business
 
-import org.joda.time.{Period, LocalTime, DateTime}
-import utils.time.TimeUtils
-import scala.collection.JavaConverters._
-import play.libs.F
 import models.JAbsence
+import org.joda.time.{Period, LocalTime, DateTime}
+import play.libs.F
+import scala.collection.JavaConverters._
+import utils.time.TimeUtils
 
 /**
  * @author f.patin
@@ -68,7 +68,7 @@ object AbsenceUtils {
   }
 
   def getHumanEndDate(absence: JAbsence): DateTime = {
-    if (absence.endDate.toLocalTime.isEqual(new LocalTime(12,0,0,0)))
+    if (absence.endDate.toLocalTime.isEqual(new LocalTime(12, 0, 0, 0)))
       absence.endDate
     else
       TimeUtils.previousWorkingDay(absence.endDate.minusDays(1))

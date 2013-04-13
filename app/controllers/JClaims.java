@@ -5,8 +5,6 @@ import be.objectify.deadbolt.java.actions.Restrict;
 import caches.ResponseCache;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import constants.ClaimType;
 import dto.ClaimDTO;
@@ -29,6 +27,7 @@ import utils.time.TimeUtils;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import static play.libs.Json.toJson;
 
@@ -40,16 +39,16 @@ public class JClaims extends Controller {
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	@ResponseCache.NoCacheResponse
 	public static Result history(final String userId, final Integer year, final Integer month) {
-		final ImmutableList<JClaim> claims = JClaim.history(JUser.id(userId), year, month);
-		final ImmutableList<ObjectId> missionIds = ImmutableList.copyOf(Collections2.transform(claims, new Function<JClaim, ObjectId>() {
+		final List<JClaim> claims = JClaim.history(JUser.id(userId), year, month);
+		final List<ObjectId> missionIds = Lists.newArrayList(Collections2.transform(claims, new Function<JClaim, ObjectId>() {
 			@Nullable
 			@Override
 			public ObjectId apply(@Nullable final JClaim claim) {
 				return claim.missionId;
 			}
 		}));
-		final ImmutableMap<ObjectId, JMission> missions = JMission.codeAndMissionType(missionIds);
-		return ok(toJson(ClaimDTO.of(claims, missions.values().asList())));
+		final Map<ObjectId, JMission> missions = JMission.codeAndMissionType(missionIds);
+		return ok(toJson(ClaimDTO.of(claims, Lists.newArrayList(missions.values()))));
 	}
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
@@ -94,7 +93,7 @@ public class JClaims extends Controller {
 			if(this.date == null) {
 				errors.add(new ValidationError("date", "La date est requise."));
 				dateValid = false;
-			} else if(new DateTime(this.date).isBefore(TimeUtils.firstDayOfMonth(DateTime.now()))) {
+			} else if(new DateTime(this.date).isBefore(TimeUtils.firstDateOfMonth(DateTime.now()))) {
 				errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une note de frais précédant le mois en cours."));
 				dateValid = false;
 			}

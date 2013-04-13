@@ -15,8 +15,8 @@ import java.io.IOException;
  */
 public final class DateTimeSerializer extends JsonSerializer<DateTime> {
 
-    @Override
-    public void serialize(final DateTime dateTime, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonGenerationException {
-        jgen.writeString(dateTime.toString("dd/MM/yyyy"));
-    }
+	@Override
+	public void serialize(final DateTime dateTime, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonGenerationException {
+		jgen.writeString(dateTime.toString("dd/MM/yyyy"));
+	}
 }

@@ -11,7 +11,7 @@ import play.mvc.Result;
 /**
  * @author f.patin
  */
-public class JExports  extends Controller {
+public class JExports extends Controller {
 
 	@ResponseCache.NoCacheResponse
 	public static Result exportByEmployee(final String id, final String title) {

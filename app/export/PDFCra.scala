@@ -1,19 +1,20 @@
 package export
 
 
-import org.bson.types.ObjectId
+import com.itextpdf.text.pdf.draw.LineSeparator
 import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
+import com.itextpdf.text.{BaseColor, Phrase, Paragraph, PageSize, Document}
+import constants.{ClaimType, MissionTypeColor, MissionType}
+import java.util.{Map => JMap, EnumMap => JEnumMap, List => JList, ArrayList => JArrayList}
+import models.{JClaim, JHalfDay, JDay, JUser, JMission, JCra}
+import org.bson.types.ObjectId
 import org.joda.time.{DateTimeConstants, DateTime}
-import utils.time.TimeUtils
-import scala.collection.JavaConversions._
-import collection.immutable.{TreeSet, TreeMap}
-import models._
-import com.itextpdf.text._
 import scala.Some
-import scala.List
-import scala.collection.JavaConverters._
-import com.google.common.collect.ImmutableList
-import java.util
+import scala.collection.convert.WrapAsJava._
+import scala.collection.convert.WrapAsScala._
+import scala.collection.immutable.{SortedMap, TreeSet, TreeMap, List}
+import utils.business.JClaimUtils
+import utils.time.TimeUtils
 
 /**
  * @author f.patin
@@ -21,7 +22,7 @@ import java.util
 
 abstract class PDFCra[T]() extends PDFComposer[T] {
 
-  override protected def document(): Document = new Document(PageSize.A4.rotate())
+  protected def document(): Document = new Document(PageSize.A4.rotate())
 
 }
 
@@ -31,9 +32,17 @@ object PDFEmployeeCra extends PDFCra[JCra] {
     // Header
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month))
     // Page
-    doc.add(PDFCraTools.calendar(cra))
-    //doc.add(PDFCraTools.blankLine)
-
+    doc.add(Calendar(cra).compose())
+    doc.add(PDFCraTools.blankLine)
+    doc.add(Total(cra).compose)
+    doc.add(PDFCraTools.blankLine)
+    // Claims
+    doc.add(new LineSeparator())
+    val claims = Claims(cra)
+    doc.add(claims.title)
+    doc.add(claims.synthesis())
+    doc.add(PDFCraTools.blankLine)
+    doc.add(claims.details())
   }
 }
 
@@ -45,7 +54,9 @@ object PDFMissionCra extends PDFCra[(JCra, JMission)] {
     // Header
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month, Some(mission)))
     // Page
-    doc.add(PDFCraTools.calendar(cra, Some(mission)))
+    doc.add(Calendar(cra, Some(mission)).compose)
+    doc.add(PDFCraTools.blankLine)
+    doc.add(Total(cra, Some(mission)).compose)
     doc.add(PDFCraTools.blankLine)
     doc.add(Signature.signatures)
   }
@@ -74,47 +85,51 @@ object PDFCraTools extends PDFTableTools with PDFTools with PDFFont {
     super.pageHeader(§)
   }
 
-  def calendar(cra: JCra, mission: Option[JMission] = None): PdfPTable = Calendar(cra, mission).compose
-
-
   lazy val signatures = Signature.signatures
 
 }
 
-case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTableTools {
+case class Total(cra: JCra, mission: Option[JMission] = None) extends PDFTableTools {
 
   val days = mission match {
-    case Some(m) => JDay.find(cra.id, cra.userId, cra.year, cra.month, m.id)
-    case None => JDay.find(cra.id, cra.userId, cra.year, cra.month, false)
+    case Some(m) => JDay.find(cra.id, cra.userId, cra.year, cra.month, m.id).toList
+    case None => JDay.find(cra.id, cra.userId, cra.year, cra.month, false).toList
   }
 
-  private val total = {
-    val cells = mission match {
+  def compose: PdfPTable = {
+    val cells: List[PdfPCell] = mission match {
       case Some(m) => {
-        val label = new Phrase("Total : ", tableHeaderFont)
-        val total = new Phrase(totalForMission.toString(), tableHeaderFont)
-        List(noBorderCell(label), noBorderCell(total))
+        noBorderCell(s"Total : ${totalForMission.toString()}", boldUnderlineFont) :: Nil
       }
       case None => {
-        List(defaultCell(new Phrase("test")))
+        totalForEmployee.flatMap {
+          t =>
+            val missionType: MissionType = MissionType.valueOf(t._1)
+            val color = MissionTypeColor.by(missionType)
+            val title: PdfPCell = noBorderCell(missionType.label, boldUnderlineFont)
+            val value: PdfPCell = noBorderCell(t._2.toString, frontColor = color.frontColor, backgroundColor = color.backgroundColor)
+            title :: value :: Nil
+        }.toList :+ noBorderCell("Nb jours ouvrés", boldUnderlineFont) :+ noBorderCell(TimeUtils.nbWorkingDaysInMonth(cra.year, cra.month).toString)
       }
     }
     val table = new PdfPTable(cells.size)
-    table.getDefaultCell.setBorder(NO_BORDER)
+    table.setHorizontalAlignment(LEFT)
+    table.setWidthPercentage(100f)
+    //table.getDefaultCell.setBorder(NO_BORDER)
     cells.foreach(table.addCell(_))
-
     table
   }
 
   private lazy val totalForMission: BigDecimal = {
 
-    def totalHalfDay(halfDay: JHalfDay): BigDecimal = {
+    def totalHalfDay(halfDay: JHalfDay) = {
       if (halfDay == null) Zero
       else {
-        if (halfDay.missionIds().contains(mission.get.id)) {
+        if (!halfDay.missionIds().contains(mission.get.id)) Zero
+        else {
           if (halfDay.isSpecial) ???
-          else BigDecimal("0.5")
-        } else Zero
+          else ZeroPointFive
+        }
       }
     }
 
@@ -127,19 +142,28 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
     }
   }
 
-  private lazy val totalForEmployee = {
+  private lazy val totalForEmployee: SortedMap[String, BigDecimal] = {
 
-    val halDays = days.asScala
-      .map(day => List(day.morning, day.afternoon))
-      .toList
-      .flatten
-      .filter(hd => hd.missionId != null)
-    val missionIds: util.Collection[ObjectId] = halDays.map(_.missionIds()).toList.flatten.asJava
+    val halDays: List[JHalfDay] = days
+      .filter(d => d != null && !d.missionIds.isEmpty)
+      .flatMap(day => List(day.morning, day.afternoon))
 
-    val missions = JMission.codeAndMissionType(new ImmutableList.Builder[ObjectId]().addAll(missionIds).build)
-    val c: Map[String, BigDecimal] = halDays
-      .groupBy(hd => missions.get(hd.missionId).missionType)
+    val missionIds = halDays.flatMap(hds => hds.missionIds()).toList
+
+    val missions = JMission.codeAndMissionType(missionIds)
+
+    implicit val ordering: Ordering[MissionType] = Ordering.fromLessThan(_.ordinal > _.ordinal)
+    TreeMap(halDays.groupBy(hd => missions.get(hd.missionId).missionType).toList: _*)
       .mapValues(hds => ZeroPointFive * hds.size)
+
+  }
+}
+
+case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTableTools {
+
+  val days = mission match {
+    case Some(m) => JDay.find(cra.id, cra.userId, cra.year, cra.month, m.id).toList
+    case None => JDay.find(cra.id, cra.userId, cra.year, cra.month, false).toList
   }
 
   def compose(): PdfPTable = {
@@ -147,16 +171,14 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
     table.setWidthPercentage(100f)
     table.getDefaultCell.setBorder(NO_BORDER)
 
-    val first = TimeUtils.firstDayOfMonth(cra.year, cra.month)
+    val first = TimeUtils.firstDateOfMonth(cra.year, cra.month)
     val last = TimeUtils.lastDateOfMonth(first)
-    implicit val toOrderingDay: Ordering[JDay] = Ordering.fromLessThan(_.date isBefore _.date)
     val weeks = TreeMap(days.groupBy(day => day.date.getWeekOfWeekyear).toList: _*)
 
+    implicit val toOrderingDay: Ordering[JDay] = Ordering.fromLessThan(_.date isBefore _.date)
     for (dayCell <- weeks.flatMap(week => toWeek(first, last, TreeSet(week._2.sortBy(day => day): _*)))) {
       table.addCell(dayCell)
     }
-    table.completeRow()
-    table.addCell(total)
     table.completeRow()
     table
   }
@@ -186,7 +208,8 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
     val cell = new PdfPCell()
     cell.setHorizontalAlignment(CENTER)
     cell.setBorder(NO_BORDER)
-    cell.addElement(new Phrase(day.date.toString("EEE dd"), boldFont))
+    val text = s"${day.date.toString("EEE dd")} ${if (TimeUtils.isDayOff(day.date)) ("(Férié)") else ("")}".trim
+    cell.addElement(new Phrase(text, boldFont))
     cell
   }
 
@@ -202,8 +225,8 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
     cell
   }
 
-  private def toHalfDay(halfDay: JHalfDay) = {
-    val cell = new PdfPCell(new Phrase(halfDayContent(halfDay), normal))
+  private def toHalfDay(halfDay: JHalfDay): PdfPCell = {
+    val cell = halfDayContent(halfDay)
     cell.setHorizontalAlignment(CENTER)
     cell.setBorderColor(BaseColor.GRAY)
     cell
@@ -211,20 +234,24 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
 
   private def halfDayContent(halfDay: JHalfDay) = {
     if (halfDay != null) {
-      if (halfDay.isSpecial) "SPECIAL"
+      if (halfDay.isSpecial) noBorderCell("SPECIAL", normal)
       else {
         mission match {
-          case Some(m) => "0,5"
-          case None => JMission.fetch(halfDay.missionId).label
+          case Some(m) => noBorderCell("0,5", normal)
+          case None => {
+            val mission: JMission = JMission.fetch(halfDay.missionId)
+            val colors = MissionTypeColor.by(MissionType.valueOf(mission.missionType))
+            noBorderCell(mission.label, normal, colors.frontColor, colors.backgroundColor)
+          }
         }
       }
-    } else " "
+    } else noBorderCell(dummyCellContent)
   }
 
 
 }
 
-private object Signature extends PDFTableTools with PDFFont {
+private object Signature extends PDFTableTools {
   lazy val signatures = {
     val table = new PdfPTable(3)
     table.setWidthPercentage(100f)
@@ -252,4 +279,71 @@ private object Signature extends PDFTableTools with PDFFont {
   }
 
 
+}
+
+
+case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableTools {
+  private lazy val claims = JClaim.synthesis(cra.userId, cra.year, cra.month)
+  private lazy val _synthesis: JMap[String, JMap[ClaimType, String]] = JClaimUtils.synthesis(cra.year, cra.month, claims)
+  private lazy val weeks = _synthesis.keySet()
+  private lazy val nbWeeks = weeks.size()
+
+  lazy val title = new Phrase("Note de Frais", headerFontBold)
+
+  def synthesis() = {
+    val table = new PdfPTable(nbWeeks + 1)
+    table.setWidthPercentage(100f)
+    table.setHeaderRows(1)
+    // Header
+    table.addCell(headerCell("Semaine"))
+    weeks.foreach(w => table.addCell(headerCell(w)))
+    // Body
+    val body: JEnumMap[ClaimType, JList[String]] = new java.util.EnumMap[ClaimType, JList[String]](classOf[ClaimType])
+    _synthesis.keySet() foreach {
+      week => {
+        for (claimKey: (ClaimType, String) <- _synthesis.get(week)) {
+          if (!body.containsKey(claimKey._1)) {
+            body.put(claimKey._1, new JArrayList[String]())
+          }
+          body.get(claimKey._1).add(claimKey._2)
+        }
+      }
+    }
+
+    body.foreach {
+      line =>
+        table.addCell(headerCell(line._1.label.capitalize))
+        line._2.foreach {
+          amount =>
+            if ("0".equals(amount)) table.addCell(bodyCell(dummyCellContent, CENTER))
+            else table.addCell(bodyCell(amount, CENTER))
+        }
+    }
+    table
+  }
+
+  def details() = {
+    val table = new PdfPTable(5)
+    table.setWidthPercentage(100f)
+    table.setHeaderRows(1)
+    table.addCell(headerCell("Date"))
+    table.addCell(headerCell("Mission"))
+    table.addCell(headerCell("Type"))
+    table.addCell(headerCell("Montant"))
+    table.addCell(headerCell("Commentaire"))
+
+    implicit val toOrderingDay: Ordering[JClaim] = Ordering.fromLessThan(_.date isBefore _.date)
+    //claims.sortWith((c1, c2) => ClaimType.valueOf(c1.claimType).ordinal() > ClaimType.valueOf(c2.claimType).ordinal())
+    claims.sortBy(c => c)
+      .foreach {
+      c =>
+        table.addCell(bodyCell(`dd/MM/yyyy`.print(c.date), LEFT))
+        table.addCell(bodyCell(JMission.codeAndMissionType(c.missionId).label, LEFT))
+        table.addCell(bodyCell(ClaimType.valueOf(c.claimType).label.capitalize, LEFT))
+        table.addCell(bodyCell(c.amount.toPlainString, RIGHT))
+        table.addCell(bodyCell(c.comment, LEFT))
+    }
+    table
+
+  }
 }

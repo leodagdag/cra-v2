@@ -169,12 +169,16 @@ public class JClaim extends Model implements MongoModel {
 			                            .asList());
 	}
 
-	public static ImmutableList<JClaim> synthesis(final String userId, final Integer year, final Integer month) {
-		return ImmutableList.copyOf(q()
-			                            .field("userId").equal(ObjectId.massageToObjectId(userId))
-			                            .field("year").equal(year)
-			                            .field("month").equal(month)
-			                            .asList());
+	public static List<JClaim> synthesis(final String userId, final Integer year, final Integer month) {
+		return synthesis(ObjectId.massageToObjectId(userId), year, month);
+	}
+
+	public static List<JClaim> synthesis(final ObjectId userId, final Integer year, final Integer month) {
+		return q()
+			       .field("userId").equal(ObjectId.massageToObjectId(userId))
+			       .field("year").equal(year)
+			       .field("month").equal(month)
+			       .asList();
 	}
 
 	public static void computeMissionAllowance(final ObjectId userId, final JDay day) {

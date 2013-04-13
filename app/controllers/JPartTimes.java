@@ -1,7 +1,6 @@
 package controllers;
 
 import caches.ResponseCache;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import dto.PartTimeDTO;
 import models.JCra;
@@ -10,7 +9,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
-import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
@@ -34,7 +32,7 @@ public class JPartTimes extends Controller {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateForm createForm = form.get();
-		final ImmutableList<JPartTime> pts = createForm.to();
+		final List<JPartTime> pts = createForm.to();
 		JPartTime.deactivateAll(pts.get(0).userId);
 		for(JPartTime pt : pts) {
 			JCra.unapplyPartTime(pt);
@@ -84,7 +82,7 @@ public class JPartTimes extends Controller {
 			if(startDate == null) {
 				errors.add(new ValidationError("startDate", "Le date de début est requise."));
 			} else {
-				if( new DateTime(startDate).isBefore(TimeUtils.firstDayOfMonth(DateTime.now()))){
+				if(new DateTime(startDate).isBefore(TimeUtils.firstDateOfMonth(DateTime.now()))) {
 					errors.add(new ValidationError("startDate", "Le temps partiel ne peut pas commencer dans le passé."));
 				}
 				if(endDate != null && new DateTime(endDate).isBefore(new DateTime(startDate))) {
@@ -100,7 +98,7 @@ public class JPartTimes extends Controller {
 			return errors.isEmpty() ? null : errors;
 		}
 
-		public ImmutableList<JPartTime> to() {
+		public List<JPartTime> to() {
 			final List<JPartTime> pts = Lists.newArrayListWithCapacity(daysOfWeek.size());
 			for(PartTimeWeekDay wd : daysOfWeek) {
 				final JPartTime pt = new JPartTime(userId, TimeUtils.toNextDayOfWeek(new DateTime(startDate), wd.dayOfWeek), frequency);
@@ -111,7 +109,7 @@ public class JPartTimes extends Controller {
 				pt.momentOfDay = wd.momentOfDay;
 				pts.add(pt);
 			}
-			return ImmutableList.copyOf(pts);
+			return pts;
 		}
 	}
 }

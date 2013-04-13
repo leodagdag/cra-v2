@@ -2,14 +2,16 @@ package controllers;
 
 import caches.ResponseCache;
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import constants.MissionAllowanceType;
 import constants.MomentOfDay;
 import dto.DayDTO;
 import exceptions.IllegalDayOperation;
 import models.*;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
@@ -37,12 +39,12 @@ public class JDays extends Controller {
 
 		JDay day = JDay.find(idCra, dt);
 		final List<ObjectId> missionsIds = Lists.newArrayList();
-		if (day == null) {
+		if(day == null) {
 			day = new JDay(dt);
 		} else {
 			missionsIds.addAll(day.missionIds());
 		}
-		final ImmutableMap<ObjectId, JMission> jMissions = JMission.codeAndMissionType(ImmutableList.copyOf(missionsIds));
+		final Map<ObjectId, JMission> jMissions = JMission.codeAndMissionType(missionsIds);
 		return ok(toJson(DayDTO.of(day, jMissions, dt.getYear(), dt.getMonthOfYear())));
 	}
 
@@ -50,7 +52,7 @@ public class JDays extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result create() {
 		final Form<CreateForm> form = Form.form(CreateForm.class).bind(request().body().asJson());
-		if (form.hasErrors()) {
+		if(form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
 		final CreateForm createForm = form.get();
@@ -64,7 +66,7 @@ public class JDays extends Controller {
 			final List<JDay> days = JDay.createDays(cra.id, createForm.days());
 			JClaim.computeMissionAllowance(userId, days);
 			return created("Journée(s) sauvegardée(s)");
-		} catch (IllegalDayOperation e) {
+		} catch(IllegalDayOperation e) {
 			return badRequest(toJson(e));
 		}
 	}
@@ -75,13 +77,13 @@ public class JDays extends Controller {
 		final ObjectId idCra = ObjectId.massageToObjectId(craId);
 
 		final JHalfDay deleteHalfDay = JDay.findHalfDay(idCra, dt, momentOfDay);
-		if (JMission.isAbsenceMission(deleteHalfDay.missionId)) {
+		if(JMission.isAbsenceMission(deleteHalfDay.missionId)) {
 			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
 		}
 		final JDay day = JDay.deleteHalfDay(idCra, dt, momentOfDay);
 
 		// Day empty
-		if (day.morning == null && day.afternoon == null) {
+		if(day.morning == null && day.afternoon == null) {
 			return remove(craId, date);
 		}
 		JClaim.computeMissionAllowance(day.userId, day);
@@ -93,8 +95,8 @@ public class JDays extends Controller {
 		final ObjectId idCra = ObjectId.massageToObjectId(craId);
 
 		final JDay day = JDay.find(idCra, dt);
-		if ((day.morning != null && JMission.isAbsenceMission(day.morning.missionId))
-			    || (day.afternoon != null && JMission.isAbsenceMission(day.afternoon.missionId))) {
+		if((day.morning != null && JMission.isAbsenceMission(day.morning.missionId))
+			   || (day.afternoon != null && JMission.isAbsenceMission(day.afternoon.missionId))) {
 			return badRequest(toJson("Vous ne pouvez pas supprimer une absence."));
 		}
 		JDay.delete(craId, date);
@@ -112,22 +114,22 @@ public class JDays extends Controller {
 		public CreateDayForm day;
 
 		public List<ValidationError> validate() {
-            final List<ValidationError> errors = Lists.newArrayList();
-            if(day != null){
-                final Map<ObjectId, JMission> missions = Maps.newHashMap();
-                final boolean activeVehicleExists = JVehicle.active(userId) != null;
-                for(ObjectId missionId: day.missionIds()){
-                    if(!missions.containsKey(missionId)){
-                        missions.put(missionId, JMission.fetch(missionId));
-                    }
-                    final JMission mission = missions.get(missionId);
-                    if(MissionAllowanceType.REAL.name().equals(mission.allowanceType) & !activeVehicleExists){
-                        errors.add(new ValidationError("global", String.format("Vous ne pouvez pas choisir cette mission [%s] (véhicule requis).", mission.label)));
-                    }
-                }
-            }
+			final List<ValidationError> errors = Lists.newArrayList();
+			if(day != null) {
+				final Map<ObjectId, JMission> missions = Maps.newHashMap();
+				final boolean activeVehicleExists = JVehicle.active(userId) != null;
+				for(ObjectId missionId : day.missionIds()) {
+					if(!missions.containsKey(missionId)) {
+						missions.put(missionId, JMission.fetch(missionId));
+					}
+					final JMission mission = missions.get(missionId);
+					if(MissionAllowanceType.REAL.name().equals(mission.allowanceType) & !activeVehicleExists) {
+						errors.add(new ValidationError("global", String.format("Vous ne pouvez pas choisir cette mission [%s] (véhicule requis).", mission.label)));
+					}
+				}
+			}
 
-            return errors.isEmpty() ? null : errors;
+			return errors.isEmpty() ? null : errors;
 		}
 
 		public List<JDay> days() {
@@ -153,23 +155,23 @@ public class JDays extends Controller {
 		public CreateHalfDayForm afternoon;
 		public String comment;
 
-        public Set<ObjectId> missionIds() {
-            final Set<ObjectId> result = Sets.newHashSet();
-            if (morning != null) {
-                result.addAll(morning.missionIds());
-            }
-            if (afternoon != null) {
-                result.addAll(afternoon.missionIds());
-            }
-            return result;
-        }
+		public Set<ObjectId> missionIds() {
+			final Set<ObjectId> result = Sets.newHashSet();
+			if(morning != null) {
+				result.addAll(morning.missionIds());
+			}
+			if(afternoon != null) {
+				result.addAll(afternoon.missionIds());
+			}
+			return result;
+		}
 
 		public JHalfDay morning() {
-			if (this.morning == null) {
+			if(this.morning == null) {
 				return null;
 			}
 			final JHalfDay hd = new JHalfDay();
-			if (this.morning.missionId == null) {
+			if(this.morning.missionId == null) {
 				hd.periods.addAll(this.morning.periods());
 			} else {
 				hd.missionId = ObjectId.massageToObjectId(this.morning.missionId);
@@ -178,11 +180,11 @@ public class JDays extends Controller {
 		}
 
 		public JHalfDay afternoon() {
-			if (this.afternoon == null) {
+			if(this.afternoon == null) {
 				return null;
 			}
 			final JHalfDay hd = new JHalfDay();
-			if (this.afternoon.missionId == null) {
+			if(this.afternoon.missionId == null) {
 				hd.periods.addAll(this.afternoon.periods());
 			} else {
 				hd.missionId = ObjectId.massageToObjectId(this.afternoon.missionId);
@@ -197,19 +199,19 @@ public class JDays extends Controller {
 		public ObjectId missionId;
 		public List<CreatePeriodForm> periods;
 
-        public Set<ObjectId> missionIds() {
-            if (CollectionUtils.isNotEmpty(periods)) {
-                return Sets.newHashSet(Collections2.transform(periods, new Function<CreatePeriodForm, ObjectId>() {
-                    @Nullable
-                    @Override
-                    public ObjectId apply(@Nullable final CreatePeriodForm p) {
-                        return p.missionId;
-                    }
-                }));
-            } else {
-                return Sets.newHashSet(missionId);
-            }
-        }
+		public Set<ObjectId> missionIds() {
+			if(CollectionUtils.isNotEmpty(periods)) {
+				return Sets.newHashSet(Collections2.transform(periods, new Function<CreatePeriodForm, ObjectId>() {
+					@Nullable
+					@Override
+					public ObjectId apply(@Nullable final CreatePeriodForm p) {
+						return p.missionId;
+					}
+				}));
+			} else {
+				return Sets.newHashSet(missionId);
+			}
+		}
 
 		public List<JPeriod> periods() {
 			return Lists.newArrayList(Collections2.transform(periods, new Function<CreatePeriodForm, JPeriod>() {

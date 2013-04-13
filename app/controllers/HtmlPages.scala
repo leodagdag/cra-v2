@@ -7,7 +7,7 @@ import play.api.mvc.{Action, Controller}
  */
 object HtmlPages extends Controller {
 
-	def unsupportedBrowser = Action {
-		Ok(views.html.layout.unsupportedBrowser())
-	}
+  def unsupportedBrowser = Action {
+    Ok(views.html.layout.unsupportedBrowser())
+  }
 }
