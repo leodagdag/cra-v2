@@ -1,16 +1,16 @@
 package export
 
-import models.{JUser, JMission, JAbsence}
-import com.itextpdf.text.{Element, Paragraph, PageSize, Document}
 import com.itextpdf.text.pdf.PdfPTable
+import com.itextpdf.text.{Element, Paragraph, PageSize, Document}
+import models.{JUser, JMission, JAbsence}
 import org.bson.types.ObjectId
-import utils.business.AbsenceUtils
 import scala.collection.JavaConverters._
+import utils.business.AbsenceUtils
 
 /**
  * @author f.patin
  */
-object PDFAbsence extends PDFComposer[List[JAbsence]]  {
+object PDFAbsence extends PDFComposer[List[JAbsence]] {
 
   override protected def document(): Document = new Document(PageSize.A4)
 
@@ -18,7 +18,7 @@ object PDFAbsence extends PDFComposer[List[JAbsence]]  {
     // Header
     doc.add(PDFAbsenceTools.pageHeader(absences.head.userId))
     // Body
-    val body = new PdfPTable(5)
+    val body = new PdfPTable(4)
     body.setWidthPercentage(100f)
     // Body Header
     PDFAbsenceTools.setTableHeader(body)
@@ -57,8 +57,7 @@ object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
   def setTableHeader(table: PdfPTable) {
     table.setHeaderRows(1)
     table.addCell(headerCell("Motif"))
-    table.addCell(headerCell("Du"))
-    table.addCell(headerCell("Au"))
+    table.addCell(headerCell("Période"))
     table.addCell(headerCell("Nb jours ouvrés"))
     table.addCell(headerCell("Commentaire"))
   }
@@ -67,8 +66,7 @@ object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
     val mission = missions.find(_.id == absence.missionId)
     val description = mission.map(_.label).getOrElse(s"Erreur (id:${absence.missionId.toString})")
     table.addCell(bodyCell(description, Element.ALIGN_LEFT))
-    table.addCell(bodyCell(`dd/MM/yyyy`.print(absence.startDate), Element.ALIGN_CENTER))
-    table.addCell(bodyCell(`dd/MM/yyyy`.print(AbsenceUtils.getHumanEndDate(absence)), Element.ALIGN_CENTER))
+    table.addCell(bodyCell(period(absence), Element.ALIGN_CENTER))
     table.addCell(bodyCell(absence.nbDays.toString, Element.ALIGN_CENTER))
     table.addCell(bodyCell(absence.comment, Element.ALIGN_LEFT))
   }
@@ -78,8 +76,30 @@ object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
   }
 
   def setTableFooter(table: PdfPTable, nbDays: BigDecimal) {
-    table.addCell(footerCell("Total", Element.ALIGN_RIGHT, BOTTOM_LEFT, 3))
+    table.addCell(footerCell("Total", Element.ALIGN_RIGHT, BOTTOM_LEFT, 2))
     table.addCell(footerCell(nbDays.toString(), Element.ALIGN_CENTER))
     table.addCell(footerCell("jours(s) ouvré(s)", Element.ALIGN_LEFT, BOTTOM_RIGHT))
+  }
+
+  private def period(absence: JAbsence) = {
+    val start = absence.startDate
+    val end = absence.endDate
+    val sb = new StringBuilder
+    if (start.withTimeAtStartOfDay().isEqual(end.withTimeAtStartOfDay())) {
+      // Same Day
+      sb.append(s"le ${`dd/MM/yyyy`.print(start)}")
+      if (!start.isEqual(end)) {
+        if (start.getHourOfDay == 0) sb.append(" matin")
+        else sb.append(" après-midi")
+      }
+    } else {
+      sb.append("du ")
+        .append(`dd/MM/yyyy`.print(start))
+      if (start.getHourOfDay != 0) sb.append(" après-midi")
+      sb.append(" au ")
+        .append(`dd/MM/yyyy`.print(end))
+      if (end.getHourOfDay == 12) sb.append(" matin")
+    }
+    sb.toString()
   }
 }
