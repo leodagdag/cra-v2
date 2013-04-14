@@ -10,7 +10,13 @@ import constants.MissionAllowanceType;
 import constants.MomentOfDay;
 import dto.DayDTO;
 import exceptions.IllegalDayOperation;
-import models.*;
+import models.JClaim;
+import models.JCra;
+import models.JDay;
+import models.JHalfDay;
+import models.JMission;
+import models.JPeriod;
+import models.JVehicle;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -118,15 +124,22 @@ public class JDays extends Controller {
 			if(day != null) {
 				final Map<ObjectId, JMission> missions = Maps.newHashMap();
 				final boolean activeVehicleExists = JVehicle.active(userId) != null;
-				for(ObjectId missionId : day.missionIds()) {
-					if(!missions.containsKey(missionId)) {
-						missions.put(missionId, JMission.fetch(missionId));
-					}
-					final JMission mission = missions.get(missionId);
-					if(MissionAllowanceType.REAL.name().equals(mission.allowanceType) & !activeVehicleExists) {
-						errors.add(new ValidationError("global", String.format("Vous ne pouvez pas choisir cette mission [%s] (véhicule requis).", mission.label)));
+				final Set<ObjectId> missionIds = day.missionIds();
+				if(missionIds.isEmpty()) {
+					errors.add(new ValidationError("global", "Vous devez saisir au moins une mission."));
+				} else {
+					for(ObjectId missionId : missionIds) {
+						if(!missions.containsKey(missionId)) {
+							missions.put(missionId, JMission.fetch(missionId));
+						}
+						final JMission mission = missions.get(missionId);
+						if(MissionAllowanceType.REAL.name().equals(mission.allowanceType) & !activeVehicleExists) {
+							errors.add(new ValidationError("global", String.format("Vous ne pouvez pas choisir cette mission [%s] (véhicule requis).", mission.label)));
+						}
 					}
 				}
+			} else {
+				errors.add(new ValidationError("global", "Vous devez saisir au moins une mission."));
 			}
 
 			return errors.isEmpty() ? null : errors;
@@ -140,8 +153,10 @@ public class JDays extends Controller {
 					JDay d = new JDay(date);
 					d.craId = craId;
 					d.userId = userId;
-					d.morning = day.morning();
-					d.afternoon = day.afternoon();
+					if(day != null) {
+						d.morning = day.morning();
+						d.afternoon = day.afternoon();
+					}
 					d.comment = day.comment;
 					return d;
 				}

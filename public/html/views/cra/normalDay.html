@@ -1,6 +1,11 @@
 <div class="row-fluid" data-ng-controller="NormalDayCtrl">
 	<div class="span3 offset4">
 		<form class="well well-small" data-ng-submit="localSave()">
+			<div data-ng-class="{'control-group error': errors.global}">
+					<span class="help-block" data-ng-repeat="err in errors.global">
+						<em>{{err}}</em>
+					</span>
+			</div>
 			<fieldset>
 				<label for="morning">Matin</label>
 
@@ -16,11 +21,7 @@
 
 				<textarea class="input-block-level" id="comment" rows="3" data-ng-model="form.comment"></textarea>
 
-				<div data-ng-class="{'control-group error': errors.global}">
-					<span class="help-block" data-ng-repeat="err in errors.global">
-						<em>{{err}}</em>
-					</span>
-				</div>
+
 				<div class="form-actions pull-right">
 					<button type="submit" class="btn btn-primary">Sauvegarder</button>
 					<button type="button" class="btn" data-ng-click="back()">Annuler</button>
