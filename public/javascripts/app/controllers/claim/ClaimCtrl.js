@@ -12,7 +12,6 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		};
 
 		$scope.profile = profile.data;
-		$scope.form = {};
 		$scope.errors = {};
 
 		/* Form */

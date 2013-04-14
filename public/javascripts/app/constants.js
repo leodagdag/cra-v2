@@ -33,8 +33,7 @@ app.constant('YearsConst', [
 		{code: 'TAXI', label: 'Taxi'},
 		{code: 'PARKING', label: 'Parking'},
 		{code: 'TOLL', label: 'Péage'},
-		{code: 'RENT_CAR', label: 'Location de voiture'},
-		{code: 'TOTAL', label: 'Total'}
+		{code: 'RENT_CAR', label: 'Location de voiture'}
 	])
 	.constant('CarBrandConst', [
 		{code: 'ALFA_ROMEO', label: 'Alfa Romeo'},
