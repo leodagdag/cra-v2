@@ -59,7 +59,6 @@ public class JAbsences extends Controller {
 		// Suppression de l'absence concernée
 		final JAbsence absence = JAbsence.delete(id);
 		if(absence.fileId != null) {
-
 			// supprimer le fichier
 			DbFile.remove(absence.fileId);
 			// récupérer toutes les absences de ce fichier SAUF celle concerné
@@ -68,11 +67,11 @@ public class JAbsences extends Controller {
 				// Créer nouveau fichier et l'affecter à celle restante
 				PDF.createAbsenceData(remainAbsences);
 			}
+			// Envoi de l'annulation sans stockage du fichier
+			final JUser user = JUser.account(userId);
+			final File file = PDF.createCancelAbsenceFile(absence, user);
+			MailerAbsence.sendCancelAbsence(user, file);
 		}
-		// Envoi de l'annulation sans stockage du fichier
-		final JUser user = JUser.account(userId);
-		final File file = PDF.createCancelAbsenceFile(absence, user);
-		MailerAbsence.sendCancelAbsence(user, file);
 		JDay.deleteAbsenceDays(absence);
 		return ok(toJson(AbsenceDTO.of(absence)));
 	}
@@ -125,7 +124,6 @@ public class JAbsences extends Controller {
 		public Long endDate;
 		public Boolean endAfternoon;
 		public String comment;
-
 
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
