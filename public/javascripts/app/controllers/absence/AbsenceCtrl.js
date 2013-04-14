@@ -3,8 +3,8 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		$scope.profile = profile.data;
 
 		$scope.subSections = {
-			'day': 'public/html/views/absence/day.html',
-			'period': 'public/html/views/absence/period.html'
+			'day': 'assets/html/views/absence/day.html',
+			'period': 'assets/html/views/absence/period.html'
 		};
 		$scope.activeSubSection = {
 			name: $routeParams.subSection || null,

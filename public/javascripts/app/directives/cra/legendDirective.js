@@ -4,7 +4,7 @@ angular.module('craLegendDirective', [])
 		return {
 			restrict: 'EA',
 			replace: false,
-			templateUrl: 'public/html/templates/cra/legend.html',
+			templateUrl: 'assets/html/templates/cra/legend.html',
 			link: function(scope, element, attrs) {
 				var isOpen = false,
 					btn = angular.element(element.find('button')),

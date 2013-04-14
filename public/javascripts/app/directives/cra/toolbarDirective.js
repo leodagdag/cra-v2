@@ -4,6 +4,6 @@ angular.module('craToolbarDirective', [])
 		return {
 			restrict: 'EA',
 			replace: false,
-			templateUrl: 'public/html/templates/cra/toolbar.html'
+			templateUrl: 'assets/html/templates/cra/toolbar.html'
 		};
 	});

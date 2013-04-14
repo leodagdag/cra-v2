@@ -3,8 +3,8 @@ app.controller('DayCtrl', ['$scope', '$rootScope', '$http', '$log', '$location',
 		$scope.profile = profile.data;
 
 		$scope.subSections = {
-			'normal': 'public/html/views/cra/normalDay.html',
-			'special': 'public/html/views/cra/specialDay.html'
+			'normal': 'assets/html/views/cra/normalDay.html',
+			'special': 'assets/html/views/cra/specialDay.html'
 		};
 		$scope.activeSubSection = {
 			name: $routeParams.subSection || null,

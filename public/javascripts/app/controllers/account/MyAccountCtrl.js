@@ -2,10 +2,10 @@ app.controller('MyAccountCtrl', ['$rootScope', '$scope', '$http', '$log', '$loca
 	function MyAccountCtrl($rootScope, $scope, $http, $log, $location, $routeParams, profile) {
 		$scope.profile = profile.data;
 		$scope.subSections = {
-			'general': 'public/html/views/my-account/general.html',
-			'vehicle': 'public/html/views/my-account/vehicle.html',
-			'affected-missions': 'public/html/views/my-account/affected-missions.html',
-			'part-time': 'public/html/views/my-account/part-time.html'
+			'general': 'assets/html/views/my-account/general.html',
+			'vehicle': 'assets/html/views/my-account/vehicle.html',
+			'affected-missions': 'assets/html/views/my-account/affected-missions.html',
+			'part-time': 'assets/html/views/my-account/part-time.html'
 		};
 
 		$scope.activeSubSection = {
