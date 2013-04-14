@@ -27,7 +27,7 @@ var OCTOBER = NumberInt(10);
 var NOVEMBER = NumberInt(11);
 var DECEMBER = NumberInt(12);
 
-var _2013_JANUARY_1 =   new Date(YEAR_2012, JANUARY_JS, ONE);
+var _2013_JANUARY_1 =   new Date(YEAR_2013, JANUARY_JS, ONE);
 
 /**
  * Clean Database
@@ -50,7 +50,7 @@ db.fs.chunks.drop();
  * Parameter
  */
 db.Parameter.insert({
-	_startDate: new Date(YEAR, JANUARY_JS, ONE),
+	_startDate: new Date(YEAR_2012, JANUARY_JS, ONE),
 	active: true,
 	_car: {
 		0: '0.1',
@@ -69,7 +69,7 @@ db.Parameter.insert({
  * Customer Genesis
  */
 db.Customer.insert({code: '_G_', name: 'Genesis', isGenesis: true });
-
+var genesis = db.Customer.findOne({isGenesis: true});
 /**
  * Missions Genesis
  */
