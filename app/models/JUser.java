@@ -3,7 +3,11 @@ package models;
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
-import com.github.jmkgreen.morphia.annotations.*;
+import com.github.jmkgreen.morphia.annotations.Embedded;
+import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.annotations.Id;
+import com.github.jmkgreen.morphia.annotations.Index;
+import com.github.jmkgreen.morphia.annotations.Indexes;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -74,6 +78,10 @@ public class JUser implements Subject {
 					        && (affectedMission.endDate == null || affectedMission.endDate.isAfter(endDate)));
 			}
 		}));
+	}
+
+	private static UpdateOperations<JUser> ops() {
+		return MorphiaPlugin.ds().createUpdateOperations(JUser.class);
 	}
 
 	public static Boolean checkAuthentication(final String username, final String password) {
@@ -161,13 +169,20 @@ public class JUser implements Subject {
 	}
 
 	public static JUser update(final JUser user) {
+		boolean removeManager = false;
+		if(user.managerId == null) {
+			removeManager = true;
+		}
 		MorphiaPlugin.ds().merge(user, WriteConcern.ACKNOWLEDGED);
+		if(removeManager) {
+			final UpdateOperations<JUser> ops = ops().unset("managerId");
+			MorphiaPlugin.ds().update(queryToFindMe(user.id), ops, false, WriteConcern.ACKNOWLEDGED);
+		}
 		return user;
 	}
 
 	public static void password(final String username, final String newPassword) {
-		final UpdateOperations<JUser> ops = MorphiaPlugin.ds().createUpdateOperations(JUser.class)
-			                                    .set("password", MD5.apply(newPassword));
+		final UpdateOperations<JUser> ops = ops().set("password", MD5.apply(newPassword));
 		MorphiaPlugin.ds().update(queryToFindMe(username), ops, false, WriteConcern.ACKNOWLEDGED);
 	}
 
