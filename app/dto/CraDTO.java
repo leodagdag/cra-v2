@@ -24,6 +24,7 @@ public class CraDTO {
 	public Integer month;
 	public String comment;
 	public Boolean isValidated;
+	public Long sentDate;
 	public List<WeekDTO> weeks = Lists.newArrayList();
 
 	@SuppressWarnings({"unused"})
@@ -37,6 +38,9 @@ public class CraDTO {
 		this.month = cra.month;
 		this.comment = cra.comment;
 		this.isValidated = cra.isValidated;
+		if(cra.sentDate != null){
+			this.sentDate = cra.sentDate.getMillis();
+		}
 		this.weeks.addAll(WeekDTO.of(days, missions, cra.year, cra.month));
 	}
 

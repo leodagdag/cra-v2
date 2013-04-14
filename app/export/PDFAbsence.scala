@@ -67,8 +67,8 @@ object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
     val mission = missions.find(_.id == absence.missionId)
     val description = mission.map(_.label).getOrElse(s"Erreur (id:${absence.missionId.toString})")
     table.addCell(bodyCell(description, Element.ALIGN_LEFT))
-    table.addCell(bodyCell(absence.startDate.toString("dd/MM/YYYY"), Element.ALIGN_CENTER))
-    table.addCell(bodyCell(AbsenceUtils.getHumanEndDate(absence).toString("dd/MM/YYYY"), Element.ALIGN_CENTER))
+    table.addCell(bodyCell(`dd/MM/yyyy`.print(absence.startDate), Element.ALIGN_CENTER))
+    table.addCell(bodyCell(`dd/MM/yyyy`.print(AbsenceUtils.getHumanEndDate(absence)), Element.ALIGN_CENTER))
     table.addCell(bodyCell(absence.nbDays.toString, Element.ALIGN_CENTER))
     table.addCell(bodyCell(absence.comment, Element.ALIGN_LEFT))
   }

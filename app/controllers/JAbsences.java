@@ -112,7 +112,7 @@ public class JAbsences extends Controller {
 	}
 
 	public static Result exportFile(final String id) {
-		return ok(PDF.getAbsenceData(JAbsence.fetch(id))).as("application/pdf");
+		return ok(PDF.getAbsenceData(JAbsence.fetch(id))._2).as("application/pdf");
 	}
 
 	public static class CreateAbsenceForm {

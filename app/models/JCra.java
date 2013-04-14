@@ -2,6 +2,9 @@ package models;
 
 import com.github.jmkgreen.morphia.annotations.Entity;
 import com.github.jmkgreen.morphia.annotations.Id;
+import com.github.jmkgreen.morphia.annotations.PostLoad;
+import com.github.jmkgreen.morphia.annotations.PrePersist;
+import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -13,6 +16,7 @@ import org.joda.time.DateTime;
 import play.libs.F;
 import utils.time.JTimeUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +33,10 @@ public class JCra extends Model {
 	public String comment;
 	public Boolean isValidated = Boolean.FALSE;
 	public Boolean partTimeApplied = Boolean.FALSE;
+	@Transient
+	public DateTime sentDate;
+	public ObjectId fileId;
+	private Date _sentDate;
 
 	public JCra() {
 	}
@@ -43,7 +51,7 @@ public class JCra extends Model {
 		return MorphiaPlugin.ds().createQuery(JCra.class);
 	}
 
-	private static UpdateOperations<JCra> uop() {
+	private static UpdateOperations<JCra> ops() {
 		return MorphiaPlugin.ds().createUpdateOperations(JCra.class);
 	}
 
@@ -80,6 +88,27 @@ public class JCra extends Model {
 		return cra;
 	}
 
+	private static JCra create(final ObjectId userId, final Integer year, final Integer month) {
+		JCra cra = new JCra(userId, year, month);
+		return applyPartTime(cra.<JCra>insert());
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(sentDate != null) {
+			_sentDate = sentDate.toDate();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_sentDate != null) {
+			sentDate = new DateTime(_sentDate.getTime());
+		}
+	}
+
 	public static JCra getOrCreate(final ObjectId userId, final Integer year, final Integer month) {
 		final JCra cra = find(userId, year, month);
 		if(cra == null) {
@@ -97,18 +126,9 @@ public class JCra extends Model {
 		}
 	}
 
-	private static JCra create(final ObjectId userId, final Integer year, final Integer month) {
-		JCra cra = new JCra(userId, year, month);
-		return applyPartTime(cra.<JCra>insert());
-	}
-
 	public static JCra find(final ObjectId userId, final Integer year, final Integer month) {
 		return queryByUserYearMonth(userId, year, month)
 			       .get();
-	}
-
-	public static void delete(final ObjectId id) {
-		MorphiaPlugin.ds().delete(queryToFindMe(id), WriteConcern.ACKNOWLEDGED);
 	}
 
 	public static void delete(final ObjectId userId, final Integer year, final Integer month) {
@@ -124,10 +144,24 @@ public class JCra extends Model {
 				.field("year").lessThanOrEq(partTime.endDate.getYear())
 				.field("month").lessThanOrEq(partTime.endDate.getMonthOfYear());
 		}
-		MorphiaPlugin.ds().update(q, uop().set("partTimeApplied", false), false, WriteConcern.ACKNOWLEDGED);
+		MorphiaPlugin.ds().update(q, ops().set("partTimeApplied", false), false, WriteConcern.ACKNOWLEDGED);
 	}
 
 	public static JCra fetch(final String id) {
 		return queryToFindMe(ObjectId.massageToObjectId(id)).get();
+	}
+
+	public static ObjectId updateFileId(final ObjectId id, final ObjectId fileId) {
+		final UpdateOperations<JCra> ops = ops().set("fileId", fileId);
+		final Query<JCra> q = queryToFindMe(id);
+		MorphiaPlugin.ds().update(q, ops, false, WriteConcern.ACKNOWLEDGED);
+		return fileId;
+	}
+
+	public static DateTime updateSentDate(final ObjectId id, final DateTime date) {
+		final UpdateOperations<JCra> ops = ops().set("_sentDate", date.toDate());
+		final Query<JCra> q = queryToFindMe(id);
+		MorphiaPlugin.ds().update(q, ops, false, WriteConcern.ACKNOWLEDGED);
+		return date;
 	}
 }

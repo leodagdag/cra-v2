@@ -1,4 +1,5 @@
 import com.itextpdf.text.{Element, Rectangle}
+import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter, DateTimeFormatterBuilder}
 
 /**
@@ -26,5 +27,9 @@ package object export {
   val dummyCellContent = " "
 
   val `dd/MM/yyyy`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy")
+  val `EEE dd` = DateTimeFormat.forPattern("EEE dd")
+  val `yyyy-MM-dd_HH-mm-ss` = DateTimeFormat.forPattern("yyyy-MM-dd_HH-mm-ss")
+  val `MMMM yyyy` = DateTimeFormat.forPattern("MMMM yyyy")
 
+  implicit val toOrderingDay: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
 }

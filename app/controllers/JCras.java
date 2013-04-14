@@ -6,7 +6,15 @@ import caches.ResponseCache;
 import com.google.common.collect.Lists;
 import constants.ClaimType;
 import dto.CraDTO;
-import models.*;
+import export.PDF;
+import mail.CraBody;
+import mail.MailerCra;
+import models.DbFile;
+import models.JClaim;
+import models.JCra;
+import models.JDay;
+import models.JMission;
+import models.JUser;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.libs.F;
@@ -17,10 +25,9 @@ import security.JSecurityRoles;
 import utils.business.JClaimUtils;
 import utils.time.TimeUtils;
 
-import java.util.EnumMap;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static play.libs.Json.toJson;
 
@@ -28,6 +35,24 @@ import static play.libs.Json.toJson;
  * @author f.patin
  */
 public class JCras extends Controller {
+
+	private static String title(final String craId, final F.Option<String> missionId) {
+		final JCra cra = JCra.fetch(craId);
+		final JUser user = JUser.account(cra.userId);
+		final DateTime dt = TimeUtils.firstDateOfMonth(cra.year, cra.month);
+		final StringBuilder title = new StringBuilder()
+			                            .append(user.trigramme)
+			                            .append("_")
+			                            .append(dt.toString("yyyy_MMMM").toLowerCase());
+		if(missionId.isDefined()) {
+			final JMission mission = JMission.codeAndMissionType(ObjectId.massageToObjectId(missionId.get()));
+			title.append("_")
+				.append(mission.label)
+				.append(".pdf");
+		}
+		return title.toString().replaceAll("[/ ()]", "");
+
+	}
 
 	@Restrict(value = {@Group(JSecurityRoles.role_employee), @Group(JSecurityRoles.role_production), @Group(JSecurityRoles.role_admin)}, handler = JDeadboltHandler.class)
 	@ResponseCache.NoCacheResponse
@@ -58,26 +83,28 @@ public class JCras extends Controller {
 		return redirect(routes.JExports.exportByEmployee(craId, title(craId, new F.None<String>())));
 	}
 
-	private static String title(final String craId, final F.Option<String> missionId) {
-		final JCra cra = JCra.fetch(craId);
-		final JUser user = JUser.account(cra.userId);
-		final DateTime dt = TimeUtils.firstDateOfMonth(cra.year, cra.month);
-		final StringBuilder title = new StringBuilder()
-			                            .append(user.trigramme)
-			                            .append("_")
-			                            .append(dt.toString("yyyy_MMMM").toLowerCase());
-		if(missionId.isDefined()) {
-			final JMission mission = JMission.codeAndMissionType(ObjectId.massageToObjectId(missionId.get()));
-			title.append("_")
-				.append(mission.label);
-		}
-		return title.toString().replaceAll("[/ ()]", "");
-
-	}
-
 	@ResponseCache.NoCacheResponse
 	public static Result exportByMission(final String craId, final String missionId) {
 		return redirect(routes.JExports.exportByMission(craId, missionId, title(craId, new F.Some<>(missionId))));
+	}
+
+	@ResponseCache.NoCacheResponse
+	public static Result send(final String craId) {
+		final JCra cra = JCra.fetch(craId);
+		if(cra.fileId != null) {
+			DbFile.remove(cra.fileId);
+		}
+		final JUser user = JUser.identity(cra.userId);
+		final File file = PDF.createEmployeeCraFile(cra, user);
+		final DateTime date = MailerCra.send(cra, user, file, CraBody.cra(cra, user));
+		JCra.updateSentDate(cra.id, date);
+		return ok(toJson(date.getMillis()));
+	}
+
+	@ResponseCache.NoCacheResponse
+	public static Result sent(final String craId) {
+		final JCra cra = JCra.fetch(craId);
+		return ok(DbFile.fetch(cra.fileId)._2).as("application/pdf");
 	}
 
 }

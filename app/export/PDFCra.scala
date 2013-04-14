@@ -208,7 +208,7 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
     val cell = new PdfPCell()
     cell.setHorizontalAlignment(CENTER)
     cell.setBorder(NO_BORDER)
-    val text = s"${day.date.toString("EEE dd")} ${if (TimeUtils.isDayOff(day.date)) ("(Férié)") else ("")}".trim
+    val text = s"${`EEE dd`.print(day.date)} ${if (TimeUtils.isDayOff(day.date)) ("(Férié)") else ("")}".trim
     cell.addElement(new Phrase(text, boldFont))
     cell
   }
@@ -332,9 +332,8 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
     table.addCell(headerCell("Montant"))
     table.addCell(headerCell("Commentaire"))
 
-    implicit val toOrderingDay: Ordering[JClaim] = Ordering.fromLessThan(_.date isBefore _.date)
-    //claims.sortWith((c1, c2) => ClaimType.valueOf(c1.claimType).ordinal() > ClaimType.valueOf(c2.claimType).ordinal())
-    claims.sortBy(c => c)
+
+    claims.sortBy(c => c.date)
       .foreach {
       c =>
         table.addCell(bodyCell(`dd/MM/yyyy`.print(c.date), LEFT))

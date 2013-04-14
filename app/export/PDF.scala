@@ -1,47 +1,69 @@
 package export
 
 import java.io.File
-import java.util.UUID
 import models._
 import org.apache.commons.io.FileUtils
+import org.bson.types.ObjectId
+import org.joda.time.DateTime
+import play.libs.F
 import scala.collection.JavaConverters._
+import utils.time.TimeUtils
 
 /**
  * @author f.patin
  */
 object PDF {
 
+  // Absence
+
+  def getAbsenceData(absence: JAbsence) = DbFile.fetch(absence.fileId)
+
+  def createAbsenceData(jAbsences: java.util.List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = createAbsenceData(jAbsences.asScala.toList)
+
+  def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFAbsence.apply, newAbsenceFile)
+
+  def createAbsenceFile(absence: JAbsence, user: JUser): File = createAbsenceFile(List(absence), user)
+
+  def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, PDF.getOrCreateAbsenceData, newAbsenceFile)
+
+  private def getOrCreateAbsenceData(absences: List[JAbsence]) = {
+    if (absences.head.fileId == null) createAbsenceData(absences)._2
+    else DbFile.fetch(absences.head.fileId)._2
+  }
+
+  private def createAbsenceData(absences: List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = {
+    val data = PDFAbsence(absences)
+    val fileId = DbFile.save(data)
+    JAbsence.updateFileId(absences.map(_.id).asJava, fileId)
+    F.Tuple(fileId, data)
+  }
+
+  // Cra
   def getEmployeeCraData(cra: JCra): Array[Byte] = PDFEmployeeCra.apply(cra)
 
   def getMissionCraData(cra: JCra, mission: JMission): Array[Byte] = PDFMissionCra.apply((cra, mission))
 
-  def getAbsenceData(absence: JAbsence): Array[Byte] = DbFile.fetch(absence.fileId)
+  def createEmployeeCraFile(cra: JCra, user: JUser): File = toFile[JCra](user, cra, createEmployeeCraData, newCraFile)
 
-  def createAbsenceData(jAbsences: java.util.List[JAbsence]): Array[Byte] = createAbsenceData(jAbsences.asScala.toList)
-
-  def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFAbsence.apply)
-
-  def createAbsenceFile(absence: JAbsence, user: JUser): File = createAbsenceFile(List(absence), user)
-
-  def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, PDF.getOrCreateAbsenceData)
-
-  private def getOrCreateAbsenceData(absences: List[JAbsence]): Array[Byte] = {
-    if (absences.head.fileId == null) createAbsenceData(absences)
-    else DbFile.fetch(absences.head.fileId)
-  }
-
-  private def createAbsenceData(absences: List[JAbsence]): Array[Byte] = {
-    val data = PDFAbsence(absences)
+  private def createEmployeeCraData(cra: JCra) = {
+    val data: Array[Byte] = PDFEmployeeCra(cra)
     val fileId = DbFile.save(data)
-    JAbsence.updateFileId(absences.map(_.id).asJava, fileId)
+    JCra.updateFileId(cra.id, fileId)
     data
   }
 
-  private def toFile[T](user: JUser, obj: T, f: (T) => Array[Byte]) = {
-    val file = newFile(user)
+
+  private def toFile[T](user: JUser, obj: T, f: (T) => Array[Byte], newFile: (JUser, T) => File) = {
+    val file = newFile(user, obj)
     FileUtils.writeByteArrayToFile(file, f(obj))
     file
   }
 
-  private def newFile(user: JUser) = new File(s"tmp/absence_${user.lastName}_${user.firstName}_${UUID.randomUUID().toString}.pdf".replace(' ', '_'))
+  private def newAbsenceFile[T](user: JUser, obj: T): File =
+    new File(s"tmp/absence_${user.lastName}_${user.firstName}_${`yyyy-MM-dd_HH-mm-ss`.print(DateTime.now)}.pdf".replace(' ', '_'))
+
+  private def newCraFile(user: JUser, cra: JCra) = {
+    val date = `MMMM yyyy`.print(TimeUtils.firstDateOfMonth(cra.year, cra.month))
+    new File(s"tmp/cra_${user.lastName}_${user.firstName}_${date.capitalize}.pdf".replace(' ', '_'))
+  }
 }

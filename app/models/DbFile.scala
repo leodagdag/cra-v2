@@ -3,6 +3,7 @@ package models
 import java.io.ByteArrayOutputStream
 import leodagdag.play2morphia.MorphiaPlugin
 import org.bson.types.ObjectId
+import play.libs.F
 
 
 /**
@@ -10,10 +11,10 @@ import org.bson.types.ObjectId
  */
 object DbFile {
 
-  def fetch(id: ObjectId): Array[Byte] = {
+  def fetch(id: ObjectId): F.Tuple[ObjectId,Array[Byte]] = {
     val out = new ByteArrayOutputStream()
     MorphiaPlugin.gridFs().findOne(id).writeTo(out)
-    out.toByteArray
+    F.Tuple(id, out.toByteArray)
   }
 
   def save(b: Array[Byte], ct: String = "application/pdf"): ObjectId = {

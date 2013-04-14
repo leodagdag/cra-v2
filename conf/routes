@@ -28,6 +28,8 @@ DELETE  /absences/:userId/:id                                       controllers.
 
 # Day
 # ~~~~
+GET		/cra/send/:craId											controllers.JCras.send(craId: String)
+GET		/cra/sent/:craId											controllers.JCras.sent(craId: String)
 GET     /cra/claims/synthesis/:userId/:year/:month                  controllers.JCras.claimSynthesis(userId: String, year: java.lang.Integer, month: java.lang.Integer)
 DELETE  /cra/:id/day/:date                                          controllers.JDays.remove(id: String, date: Long)
 DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.JDays.removeHalfDay(id: String, date: Long, momentOfDay:String)

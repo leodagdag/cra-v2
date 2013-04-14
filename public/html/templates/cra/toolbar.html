@@ -4,8 +4,8 @@
 			<button class="btn btn-small" title="Mois précédent" data-ng-click="previous()"><</button>
 			<button class="btn btn-small" title="Mois suivant" data-ng-click="next()">></button>
 		</div>
-		<button class="btn btn-small btn-success" data-ng-show="!cra.isValidated && cra.id" data-ng-click="validate()">Valider</button>
-		<button class="btn btn-small btn-danger" data-ng-show="cra.isValidated" data-ng-click="invalidate()">Invalider</button>
+		<!--<button class="btn btn-small btn-success" data-ng-show="!cra.isValidated && cra.id" data-ng-click="validate()">Valider</button>
+		<button class="btn btn-small btn-danger" data-ng-show="cra.isValidated" data-ng-click="invalidate()">Invalider</button>-->
 		<button disabled="disabled" class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}"><i class="icon-comment"></i> Commentaire</button>
 		<button class="btn btn-small" data-ng-click="claimSynthesis()"><i class="icon-money"></i> Frais</button>
 		<div class="btn-group">
@@ -21,9 +21,11 @@
                 </li>
 			</ul>
 		</div>
-		<div class="pull-right well well-small form-inline">
-			<select data-ng-init="criterias.selected.year=criterias.years[criterias.selected.year.code - 1]" data-ng-model="criterias.selected.year" data-ng-options="y.label for y in criterias.years" required="required"></select>
-			<select data-ng-init="criterias.selected.month=criterias.months[criterias.selected.month.code - 1]" data-ng-model="criterias.selected.month" data-ng-options="m.label for m in criterias.months" required="required"></select>
+		<button class="btn btn-small" data-ng-click="send()"><i class="icon-envelope"></i> Envoyer</button>
+		<span class="label label-success" data-ng-show="cra.sentDate">Dernier envoi le {{cra.sentDate | date:'dd/MM/yyyy à HH:mm:ss'}} <a href="" class="black" data-ng-click="sent()">voir</a></span>
+		<div class="pull-right well well-small form-inline span4">
+			<select class="span3" data-ng-init="criterias.selected.year=criterias.years[criterias.selected.year.code - 1]" data-ng-model="criterias.selected.year" data-ng-options="y.label for y in criterias.years" required="required"></select>
+			<select class="span4"  data-ng-init="criterias.selected.month=criterias.months[criterias.selected.month.code - 1]" data-ng-model="criterias.selected.month" data-ng-options="m.label for m in criterias.months" required="required"></select>
 			<select data-ng-show="criterias.showEmployees">
 				<option selected="selected">employee</option>
 			</select>
