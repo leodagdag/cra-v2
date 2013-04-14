@@ -82,22 +82,20 @@ public class JAbsences extends Controller {
 		final AbsenceType at = AbsenceType.of(absenceType);
 		if(year == 0) {
 			absences.addAll(JAbsence.fetch(userId, at));
-		} else {
-			if(month == 0) {
-				switch(at) {
-					case CP:
-						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
-						break;
-					case RTT:
-						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER));
-						break;
-					default:
-						absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year + 1, DateTimeConstants.MAY));
-						break;
-				}
-			} else {
-				absences.addAll(JAbsence.fetch(userId, at, year, month, year, month));
+		} else if(month == 0) {
+			switch(at) {
+				case CP:
+					absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
+					break;
+				case RTT:
+					absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER));
+					break;
+				default:
+					absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year + 1, DateTimeConstants.MAY));
+					break;
 			}
+		} else {
+			absences.addAll(JAbsence.fetch(userId, at, year, month, year, month));
 		}
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}

@@ -20,9 +20,9 @@ object Batches extends BaseController {
       val userIds = JAbsence.usersToSend.asScala.toList
       userIds.foreach {
         userId =>
-          JAbsence.byUserToSent(userId).asScala.toList
-            .groupBy(a => (a.startDate.getYear, a.startDate.getMonthOfYear))
-            .foreach {
+          val a = JAbsence.byUserToSent(userId).asScala.toList
+          val b =   a.groupBy(a => (a.startDate.getYear, a.startDate.getMonthOfYear))
+            b.foreach {
             abs =>
               val user = JUser.account(userId)
               val file = PDF.createAbsenceFile(abs._2, user)

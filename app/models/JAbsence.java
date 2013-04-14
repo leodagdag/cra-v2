@@ -42,13 +42,10 @@ public class JAbsence extends Model implements MongoModel {
 	public BigDecimal nbDays;
 	public String comment;
 	@Transient
-	public DateTime creationDate;
-	@Transient
 	public DateTime sentDate;
 	private Date _startDate;
 	private Date _endDate;
 	private String _nbDays;
-	private Date _creationDate = DateTime.now().toDate();
 	private Date _sentDate;
 
 	@SuppressWarnings({"unused"})
@@ -101,9 +98,6 @@ public class JAbsence extends Model implements MongoModel {
 		if(_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
 		}
-		if(_creationDate != null) {
-			creationDate = new DateTime(_creationDate.getTime());
-		}
 		if(_sentDate != null) {
 			sentDate = new DateTime(_sentDate.getTime());
 		}
@@ -149,16 +143,16 @@ public class JAbsence extends Model implements MongoModel {
 
 
 		if(startYear != null && startMonth != null && endYear != null && endMonth != null) {
-			final DateTime startFirstDay = TimeUtils.firstDateOfMonth(startYear, startMonth);
-			final DateTime endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth);
+			final Date startFirstDay = TimeUtils.firstDateOfMonth(startYear, startMonth).toDate();
+			final Date  endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth).toDate();
 			q.or(
 				    q.and(
-					         q.criteria("_startDate").greaterThanOrEq(startFirstDay.toDate()),
-					         q.criteria("_startDate").lessThanOrEq(endFirstDay.toDate())
+					         q.criteria("_startDate").greaterThanOrEq(startFirstDay),
+					         q.criteria("_startDate").lessThan(endFirstDay)
 				    ),
 				    q.and(
-					         q.criteria("_endDate").greaterThanOrEq(startFirstDay.toDate()),
-					         q.criteria("_endDate").lessThanOrEq(endFirstDay.toDate())
+					         q.criteria("_endDate").greaterThan(startFirstDay),
+					         q.criteria("_endDate").lessThanOrEq(endFirstDay)
 				    )
 			);
 		}
