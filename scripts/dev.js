@@ -31,7 +31,6 @@ var genesis = db.Customer.findOne({isGenesis: true});
 var genesisMissions = db.Mission.find({customerId: genesis._id});
 
 
-
 /**
  * Cleanning
  */
@@ -124,15 +123,15 @@ db.User.insert({username: 'bart', password: '9UFGo/yCqxflJlaVsj9kaw==', role: 'e
 
 
 db.User.find({role: 'employee'})
-	.map(function(user) {
-		genesisMissions.forEach(function(mission){
-			user.affectedMissions.push({_startDate: mission._startDate, _endDate: mission._endDate, missionId: mission._id})
+	.forEach(function (user) {
+		db.Mission.find({customerId: genesis._id}).forEach(function (mission) {
+			var endDate = (mission._endDate) ? mission._endDate : null;
+			if (user.affectedMissions) {
+				user.affectedMissions.push({_startDate: mission._startDate, _endDate: endDate, missionId: mission._id})
+			}
 		});
-		return user;
-	}).forEach(function(user) {
 		db.User.save(user)
 	});
-
 /*
  * Vehicle
  */
@@ -147,4 +146,4 @@ db.Vehicle.insert({
 	active: true
 });
 
-printjson(bart._id);
+printjson(bart);
