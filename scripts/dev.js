@@ -146,4 +146,4 @@ db.Vehicle.insert({
 	active: true
 });
 
-printjson(bart);
+// printjson(bart);

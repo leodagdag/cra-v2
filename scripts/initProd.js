@@ -33,6 +33,7 @@ var _2013_JANUARY_1 =   new Date(YEAR_2013, JANUARY_JS, ONE);
  * Clean Database
  */
 db.Absence.drop();
+db.AbsenceDay.drop();
 db.Claim.drop();
 db.Cra.drop();
 db.Customer.drop();

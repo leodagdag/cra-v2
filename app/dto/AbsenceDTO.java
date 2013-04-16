@@ -7,7 +7,6 @@ import models.JAbsence;
 import models.JMission;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import utils.business.AbsenceUtils;
 import utils.serializer.ObjectIdSerializer;
 
 import javax.annotation.Nullable;
@@ -28,11 +27,14 @@ public class AbsenceDTO {
 	public ObjectId missionId;
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId fileId;
-	public String code;
-	public String description;
+	public String missionCode;
+	public String missionLabel;
 	public Long startDate;
+	public Boolean startMorning;
 	public Long endDate;
+	public Boolean endAfternoon;
 	public BigDecimal nbDays;
+	public String label;
 	public String comment;
 	public Long sentDate;
 
@@ -45,14 +47,17 @@ public class AbsenceDTO {
 		this.userId = absence.userId;
 		this.missionId = absence.missionId;
 		if(mission != null) {
-			this.code = mission.code;
-			this.description = mission.description;
+			this.missionCode = mission.code;
+			this.missionLabel = mission.label;
 		}
 		this.fileId = absence.fileId;
 		this.startDate = absence.startDate.getMillis();
-		this.endDate = AbsenceUtils.getHumanEndDate(absence).getMillis();
+		this.startMorning = absence.startMorning;
+		this.endDate = absence.endDate.getMillis();
+		this.endAfternoon = absence.endAfternoon;
 		this.nbDays = absence.nbDays;
 		this.comment = absence.comment;
+		this.label = absence.label();
 		this.sentDate = absence.sentDate != null ? absence.sentDate.getMillis() : null;
 	}
 

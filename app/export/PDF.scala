@@ -6,7 +6,9 @@ import org.apache.commons.io.FileUtils
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import play.libs.F
-import scala.collection.JavaConverters._
+import scala.collection.convert.WrapAsJava._
+import scala.collection.convert.WrapAsScala._
+import utils._
 import utils.time.TimeUtils
 
 /**
@@ -18,7 +20,7 @@ object PDF {
 
   def getAbsenceData(absence: JAbsence) = DbFile.fetch(absence.fileId)
 
-  def createAbsenceData(jAbsences: java.util.List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = createAbsenceData(jAbsences.asScala.toList)
+  def createAbsenceData(jAbsences: java.util.List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = createAbsenceData(jAbsences.toList)
 
   def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFAbsence.apply, newAbsenceFile)
 
@@ -34,7 +36,7 @@ object PDF {
   private def createAbsenceData(absences: List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = {
     val data = PDFAbsence(absences)
     val fileId = DbFile.save(data)
-    JAbsence.updateFileId(absences.map(_.id).asJava, fileId)
+    JAbsence.updateFileId(absences.map(_.id), fileId)
     F.Tuple(fileId, data)
   }
 

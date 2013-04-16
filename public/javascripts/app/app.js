@@ -29,7 +29,7 @@ angular.module('httpInterceptorServiceProvider', [])
 
 var app = angular.module('app', ['ngResource', 'httpInterceptorServiceProvider',
 	'bDatepicker', 'craLegendDirective', 'craToolbarDirective',
-	'absencePeriodFilter', 'dayOfMonthFilter', 'dayOfWeekFilter', 'momentOfDayFilter', 'monthOfYearFilter', 'capitalizeFilter', 'localTimeFilter', 'kilometerFilter', 'vehicleTypeFilter', 'vehiclePowerFilter', 'vehicleBrandFilter', 'typeOfClaimFilter']);
+	'dayOfMonthFilter', 'dayOfWeekFilter', 'momentOfDayFilter', 'monthOfYearFilter', 'capitalizeFilter', 'localTimeFilter', 'kilometerFilter', 'vehicleTypeFilter', 'vehiclePowerFilter', 'vehicleBrandFilter', 'typeOfClaimFilter']);
 
 
 /* based on https://github.com/bleporini/angular-authent */

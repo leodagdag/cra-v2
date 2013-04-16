@@ -43,7 +43,7 @@ public class JAbsences extends Controller {
 		}
 		final CreateAbsenceForm createAbsenceForm = form.get();
 		try {
-			final List<JAbsence> absences = createAbsenceForm.to();
+			final List<JAbsence> absences = createAbsenceForm.toAbsences();
 			for(JAbsence abs : absences) {
 				final JAbsence absence = JAbsence.create(abs);
 				JDay.addAbsenceDays(absence);
@@ -79,23 +79,23 @@ public class JAbsences extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result history(final String userId, final String absenceType, final Integer year, final Integer month) {
 		final List<JAbsence> absences = Lists.newArrayList();
-		final AbsenceType at = AbsenceType.of(absenceType);
+		final AbsenceType absType = AbsenceType.of(absenceType);
 		if(year == 0) {
-			absences.addAll(JAbsence.fetch(userId, at));
+			absences.addAll(JAbsence.fetch(userId, absType));
 		} else if(month == 0) {
-			switch(at) {
+			switch(absType) {
 				case CP:
-					absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
+					absences.addAll(JAbsence.fetch(userId, absType, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
 					break;
 				case RTT:
-					absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER));
+					absences.addAll(JAbsence.fetch(userId, absType, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER));
 					break;
 				default:
-					absences.addAll(JAbsence.fetch(userId, at, year, DateTimeConstants.JANUARY, year + 1, DateTimeConstants.MAY));
+					absences.addAll(JAbsence.fetch(userId, absType, year, DateTimeConstants.JANUARY, year + 1, DateTimeConstants.MAY));
 					break;
 			}
 		} else {
-			absences.addAll(JAbsence.fetch(userId, at, year, month, year, month));
+			absences.addAll(JAbsence.fetch(userId, absType, year, month, year, month));
 		}
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
@@ -131,8 +131,8 @@ public class JAbsences extends Controller {
 			if(Boolean.TRUE.equals(day)) {
 				if(startDate == null) {
 					errors.add(new ValidationError("date", "La date est requise."));
-				} else if(new DateTime(startDate).isBefore(DateTime.now().withDayOfMonth(1))) {
-					errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une absence précédant le mois en cours."));
+				} else if(new DateTime(startDate).isBefore(TimeUtils.firstDateOfMonth(DateTime.now()))) {
+					errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une absence à une date précédant le mois en cours."));
 				}
 				if(!Boolean.TRUE.equals(startMorning) && !Boolean.TRUE.equals(endAfternoon)) {
 					errors.add(new ValidationError("limits", "Vous devez sélectionner au moins une demi-journée."));
@@ -161,47 +161,61 @@ public class JAbsences extends Controller {
 			return errors.isEmpty() ? null : errors;
 		}
 
-		public List<JAbsence> to() {
+		public List<JAbsence> toAbsences() {
 
-			final Collection<F.Tuple<Integer, Integer>> yearMonths = TimeUtils.getMonthYear(new DateTime(this.startDate), new DateTime(this.endDate));
-			final List<JAbsence> absences = Lists.newArrayListWithCapacity(yearMonths.size());
-			for(F.Tuple<Integer, Integer> yearMonth : yearMonths) {
-				final Integer year = yearMonth._1;
-				final Integer month = yearMonth._2;
+			final DateTime startDate = new DateTime(this.startDate).withTimeAtStartOfDay();
+			final DateTime endDate = new DateTime(this.endDate).withTimeAtStartOfDay();
+			final int startYear = startDate.getYear();
+			final int startMonth = startDate.getMonthOfYear();
+			final int endYear = endDate.getYear();
+			final int endMonth = endDate.getMonthOfYear();
 
+
+			final ObjectId userId = JUser.id(this.username);
+			if(startYear == endYear && startMonth == endMonth) { // Only in one month
 				final JAbsence absence = new JAbsence();
-				absence.userId = JUser.id(this.username);
-				absence.missionId = ObjectId.massageToObjectId(this.missionId);
+				absence.userId = userId;
+				absence.missionId = this.missionId;
 				absence.comment = this.comment;
+				absence.startDate = startDate;
+				absence.startMorning = this.startMorning;
+				absence.endDate = endDate;
+				absence.endAfternoon = this.endAfternoon;
+				return Lists.newArrayList(absence);
+			} else {
+				final Collection<F.Tuple<Integer, Integer>> yearMonths = TimeUtils.getYearMonth(startDate, endDate);
+				final List<JAbsence> absences = Lists.newArrayListWithCapacity(yearMonths.size());
+				for(F.Tuple<Integer, Integer> yearMonth : yearMonths) {
+					final Integer year = yearMonth._1;
+					final Integer month = yearMonth._2;
 
-				final DateTime startDate = Boolean.TRUE.equals(startMorning) ? TimeUtils.nextWorkingDay(new DateTime(this.startDate)).withTimeAtStartOfDay() : TimeUtils.nextWorkingDay(new DateTime(this.startDate)).withTime(12, 0, 0, 0);
-				final int startYear = startDate.getYear();
-				final int startMonth = startDate.getMonthOfYear();
-				final DateTime endDate = Boolean.TRUE.equals(endAfternoon) ? TimeUtils.previousWorkingDay(new DateTime(this.endDate)).plusDays(1).withTimeAtStartOfDay() : TimeUtils.previousWorkingDay(new DateTime(this.endDate)).withTime(12, 0, 0, 0);
+					final JAbsence absence = new JAbsence();
+					absence.userId = userId;
+					absence.missionId = this.missionId;
+					absence.comment = this.comment;
 
-				final int endYear = endDate.getYear();
-				final int endMonth = endDate.getMonthOfYear();
-				if(startYear == endYear && startMonth == endMonth) {
-					// Same Month
-
-					absence.startDate = startDate;
-					absence.endDate = endDate;
-				} else {
 					if(startYear == year && startMonth == month) { // first absence...
 						absence.startDate = startDate;
-						absence.endDate = TimeUtils.previousWorkingDay(TimeUtils.lastDateOfMonth(startDate)).withTimeAtStartOfDay().plusDays(1);
+						absence.startMorning = this.startMorning;
+						absence.endDate = TimeUtils.lastDateOfMonth(TimeUtils.lastDateOfMonth(startDate));
+						absence.endAfternoon = true;
 					} else if(endYear == year && endMonth == month) { // ...last absence...
-						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDateOfMonth(endDate)).withTimeAtStartOfDay();
+						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDateOfMonth(endDate));
+						absence.startMorning = true;
 						absence.endDate = endDate;
+						absence.endAfternoon = this.endAfternoon;
 					} else { // ...and other
 						absence.startDate = TimeUtils.nextWorkingDay(TimeUtils.firstDateOfMonth(year, month));
-						absence.endDate = TimeUtils.previousWorkingDay(TimeUtils.lastDateOfMonth(year, month)).plusDays(1);
+						absence.startMorning = true;
+						absence.endDate = TimeUtils.previousWorkingDay(TimeUtils.lastDateOfMonth(year, month));
+						absence.endAfternoon = true;
 					}
+					absences.add(absence);
 				}
-				absences.add(absence);
-
+				return absences;
 			}
-			return absences;
+
+
 		}
 	}
 }

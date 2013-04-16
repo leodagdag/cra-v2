@@ -1,13 +1,12 @@
 package utils.time
 
 import JodaUtils.dateTimeOrdering
-import java.util
 import java.util.Date
+import java.util.{List => JList, Collection => JCollection}
 import org.joda.time._
 import play.libs.F
-import play.libs.F.Tuple
-import scala.collection.JavaConverters._
-
+import scala.collection.convert.WrapAsJava._
+import scala.collection.convert.WrapAsScala._
 
 /**
  * @author f.patin
@@ -17,7 +16,7 @@ object TimeUtils {
   val startDay = LocalTime.fromMillisOfDay(0)
   val endDay = new LocalTime(23, 59, 59)
 
-  def dateTime2Date(dts: java.util.List[DateTime]): java.util.List[Date] = dts.asScala.map(_.toDate).asJava
+  def dateTime2Date(dts: JList[DateTime]): JList[Date] = dts.map(_.toDate)
 
   def getMondayOfDate(firstDay: DateTime): DateTime = firstDay.minusDays(firstDay.getDayOfWeek - DateTimeConstants.MONDAY)
 
@@ -43,7 +42,7 @@ object TimeUtils {
 
   def getEaster(year: Integer): DateTime = DaysOff.getEaster(year)
 
-  def getWeeks(year: Integer, month: Integer): java.util.List[Integer] = {
+  def getWeeks(year: Integer, month: Integer): JList[Integer] = {
     def add(curr: DateTime, xs: List[Integer]): List[Integer] = {
       if (curr.getMonthOfYear != month) {
         xs
@@ -51,7 +50,7 @@ object TimeUtils {
         add(curr.plusWeeks(1), curr.getWeekOfWeekyear :: xs)
       }
     }
-    add(firstDateOfMonth(year, month), List.empty[Integer]).asJava
+    add(firstDateOfMonth(year, month), List.empty[Integer])
   }
 
   def firstDateOfMonth(dt: DateTime): DateTime = firstDateOfMonth(dt.getYear, dt.getMonthOfYear)
@@ -77,9 +76,9 @@ object TimeUtils {
       .size
 
 
-  def getDaysOfMonth(year: Integer, month: Integer, extended: Boolean = false): util.List[DateTime] = {
+  def getDaysOfMonth(year: Integer, month: Integer, extended: Boolean = false): JList[DateTime] = {
     val current = dateRange(firstDateOfMonth(year, month), lastDateOfMonth(year, month), Period.days(1))
-    val result = extended match {
+    extended match {
       case false => current.toList.sorted
       case true => {
         val firstDay = firstDateOfMonth(year, month)
@@ -92,7 +91,6 @@ object TimeUtils {
           .sorted
       }
     }
-    result.asJava
   }
 
   def dateRange(from: DateTime, to: DateTime, step: Period): Iterator[DateTime] = Iterator.iterate(from)(_.plus(step)).takeWhile(!_.isAfter(to))
@@ -133,15 +131,16 @@ object TimeUtils {
     subtract(date.minusDays(0))
   }
 
-  def getMonthYear(dts: java.util.List[DateTime]): util.Collection[Tuple[Integer, Integer]] = {
-    val a: Set[(Int, Int)] = dts.asScala.map(dt => (dt.getYear, dt.getMonthOfYear)).toSet
-    a.map(k => F.Tuple(int2Integer(k._1), int2Integer(k._2))).asJavaCollection
+  def getYearMonth(dts: java.util.List[DateTime]): JCollection[F.Tuple[Integer, Integer]] = {
+    dts.map(dt => (dt.getYear, dt.getMonthOfYear))
+      .toSet
+      .map((k: (Int, Int)) => F.Tuple(int2Integer(k._1), int2Integer(k._2)))
   }
 
 
-  def getMonthYear(start: DateTime, end: DateTime): util.Collection[Tuple[Integer, Integer]] = {
+  def getYearMonth(start: DateTime, end: DateTime): JCollection[F.Tuple[Integer, Integer]] = {
     dateRange(firstDateOfMonth(start), lastDateOfMonth(end), Period.months(1))
       .map(dt => F.Tuple(int2Integer(dt.getYear), int2Integer(dt.getMonthOfYear)))
-      .toList.asJavaCollection
+      .toList
   }
 }

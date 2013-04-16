@@ -220,7 +220,7 @@ public class JDay extends Model implements MongoModel {
 	}
 
 	public static List<JDay> addAbsenceDays(final JAbsence absence) {
-		final Map<DateTime, F.Tuple<Boolean, Boolean>> dates = AbsenceUtils.extractDays(absence.startDate, absence.endDate);
+		final Map<DateTime, F.Tuple<Boolean, Boolean>> dates = AbsenceUtils.extractDays(absence);
 		final List<JDay> result = Lists.newArrayList();
 		JCra cra = null;
 
@@ -237,10 +237,10 @@ public class JDay extends Model implements MongoModel {
 				day.userId = absence.userId;
 			}
 			day.comment = absence.comment;
-			if(dates.get(dt)._1.equals(Boolean.TRUE)) {
+			if(Boolean.TRUE.equals(dates.get(dt)._1)) {
 				day.morning = new JHalfDay(absence.missionId);
 			}
-			if(dates.get(dt)._2.equals(Boolean.TRUE)) {
+			if(Boolean.TRUE.equals(dates.get(dt)._2)) {
 				day.afternoon = new JHalfDay(absence.missionId);
 			}
 			result.add(day.<JDay>insert());
@@ -257,7 +257,7 @@ public class JDay extends Model implements MongoModel {
 	}
 
 	public static void deleteAbsenceDays(final JAbsence absence) {
-		final Map<DateTime, F.Tuple<Boolean, Boolean>> dates = AbsenceUtils.extractDays(absence.startDate, absence.endDate);
+		final Map<DateTime, F.Tuple<Boolean, Boolean>> dates = AbsenceUtils.extractDays(absence);
 		final ObjectId userId = absence.userId;
 
 		final Set<F.Tuple<Integer, Integer>> yearMonth = Sets.newHashSet();

@@ -1,54 +1,54 @@
 package utils.business
 
-import models.JAbsence
+import java.lang.Boolean.FALSE
+import java.lang.Boolean.TRUE
+import java.util.{List => JList, Map => JMap}
+import models.{JAbsenceDay, JAbsence}
 import org.joda.time.{Period, LocalTime, DateTime}
 import play.libs.F
-import scala.collection.JavaConverters._
+import play.libs.F.Tuple
+import scala.collection.convert.WrapAsJava
+import scala.collection.convert.WrapAsJava._
+import scala.collection.convert.WrapAsScala._
 import utils.time.TimeUtils
-
+import utils._
 /**
  * @author f.patin
  */
 object AbsenceUtils {
 
-  def halfDays(start: DateTime, end: DateTime): java.util.List[DateTime] = {
-    _halfDays(start, end).asJava
+  private def _extractDays(absence: JAbsence): List[DateTime] = {
+    TimeUtils.dateRange(absence.startDate, absence.endDate, Period.days(1)).toList
+      .filter(dt => TimeUtils.isNotDayOffAndNotWeekEnd(dt))
   }
 
-  private def _halfDays(start: DateTime, end: DateTime): List[DateTime] = {
-    def add(dt: DateTime, xs: List[DateTime]): List[DateTime] = {
-      if (dt.isAfter(end) || dt.isEqual(end)) {
-        xs
-      } else if (TimeUtils.isDayOffOrWeekEnd(dt)) {
-        add(dt.plusHours(12), xs)
+  def extractDays(absence: JAbsence): JMap[DateTime, F.Tuple[java.lang.Boolean, java.lang.Boolean]] = {
+
+    def toTuple(dt: DateTime): F.Tuple[java.lang.Boolean, java.lang.Boolean] = {
+      if (dt.isEqual(absence.startDate) && !dt.isEqual(absence.endDate)) // First day
+        if (absence.startMorning) F.Tuple(TRUE, TRUE)
+        else F.Tuple(FALSE, TRUE)
+      else if (!dt.isEqual(absence.startDate) && dt.isEqual(absence.endDate)) // Last day
+        if (absence.endAfternoon) F.Tuple(TRUE, TRUE)
+        else F.Tuple(TRUE, FALSE)
+      else F.Tuple(TRUE, TRUE) // Other day
+    }
+
+    WrapAsJava.mapAsJavaMap {
+      if (absence.startDate.isEqual(absence.endDate)) {
+        // Only One Day
+        val tuple = if (absence.startMorning && absence.endAfternoon)
+          F.Tuple(TRUE, TRUE)
+        else if (absence.startMorning)
+          F.Tuple(TRUE, FALSE)
+        else F.Tuple(FALSE, TRUE)
+        Map(absence.startDate -> tuple)
       } else {
-        add(dt.plusHours(12), xs :+ dt)
+        _extractDays(absence)
+          .map(dt => (dt, toTuple(dt)))
+          .toMap
       }
     }
-    add(start, List.empty[DateTime])
-  }
-
-  def nbDaysBetween(start: DateTime, end: DateTime): java.math.BigDecimal = (BigDecimal(_halfDays(start, end).size) / 2).bigDecimal
-
-  def extractDays(start: DateTime, end: DateTime): java.util.Map[DateTime, play.libs.F.Tuple[java.lang.Boolean, java.lang.Boolean]] = {
-
-    def toTuple(xs: List[DateTime]): F.Tuple[java.lang.Boolean, java.lang.Boolean] = {
-      xs.size match {
-        case 0 => F.Tuple(java.lang.Boolean.TRUE, java.lang.Boolean.FALSE)
-        case 2 => F.Tuple(java.lang.Boolean.TRUE, java.lang.Boolean.TRUE)
-        case _ => {
-          if (xs.head.toLocalTime.isEqual(LocalTime.MIDNIGHT)) {
-            F.Tuple(java.lang.Boolean.TRUE, java.lang.Boolean.FALSE)
-          } else {
-            F.Tuple(java.lang.Boolean.FALSE, java.lang.Boolean.TRUE)
-          }
-        }
-      }
-    }
-    _halfDays(start, end)
-      .groupBy(hd => hd.withTimeAtStartOfDay())
-      .map(k => (k._1, toTuple(k._2)))
-      .asJava
   }
 
   def containsOnlyWeekEndOrDayOff(start: DateTime, end: DateTime): java.lang.Boolean = {
@@ -74,5 +74,41 @@ object AbsenceUtils {
       TimeUtils.previousWorkingDay(absence.endDate.minusDays(1))
   }
 
+  def extractAbsenceDays(absence: JAbsence): JList[JAbsenceDay] = {
+    extractDays(absence)
+      .flatMap {
+      (elem: (DateTime, Tuple[java.lang.Boolean, java.lang.Boolean])) =>
+        if (elem._2._1 && elem._2._2)
+          JAbsenceDay.newMorning(absence, elem._1) :: JAbsenceDay.newAfternoon(absence, elem._1) :: Nil
+        else if (elem._2._1)
+          JAbsenceDay.newMorning(absence, elem._1) :: Nil
+        else if (elem._2._2)
+          JAbsenceDay.newAfternoon(absence, elem._1) :: Nil
+        else
+          Nil
+    }
+      .toList
+  }
 
+
+  def label(absence: JAbsence) = {
+    val start = absence.startDate
+    val end = absence.endDate
+    val sb = new StringBuilder
+    if (start.isEqual(end)) {
+      // Same Day
+      sb.append(s"le ${`dd/MM/yyyy`.print(start)}")
+      if (absence.startMorning && absence.endAfternoon) sb.append("")
+      else if (absence.startMorning) sb.append(" matin")
+      else sb.append(" après-midi")
+    } else {
+      sb.append("du ")
+        .append(`dd/MM/yyyy`.print(start))
+      if (!absence.startMorning) sb.append(" après-midi")
+      sb.append(" au ")
+        .append(`dd/MM/yyyy`.print(end))
+      if (!absence.endAfternoon) sb.append(" matin")
+    }
+    sb.toString()
+  }
 }

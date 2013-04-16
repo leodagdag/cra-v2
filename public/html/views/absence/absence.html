@@ -47,7 +47,7 @@
 				<div class="span12 scrollable">
 					<div class="row-fluid table-line" data-ng-repeat="absence in history">
 						<div class="span10">
-							<span>{{absence.code}} {{absence | absencePeriod }} => {{absence.nbDays}} jour(s)</span>
+							<span>{{absence.missionLabel}} {{absence.label}} => {{absence.nbDays}} jour(s)</span>
 							<i data-ng-class="{'icon-comment': true, 'icon-comment-alt': false}"></i>
 						</div>
 						<div class="span2">

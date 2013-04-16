@@ -1,6 +1,10 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.*;
+import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.annotations.Id;
+import com.github.jmkgreen.morphia.annotations.PostLoad;
+import com.github.jmkgreen.morphia.annotations.PrePersist;
+import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -23,6 +27,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import static constants.Util.TWO;
+
 /**
  * @author f.patin
  */
@@ -36,8 +42,10 @@ public class JAbsence extends Model implements MongoModel {
 	public ObjectId fileId;
 	@Transient
 	public DateTime startDate;
+	public boolean startMorning;
 	@Transient
 	public DateTime endDate;
+	public boolean endAfternoon;
 	@Transient
 	public BigDecimal nbDays;
 	public String comment;
@@ -82,9 +90,7 @@ public class JAbsence extends Model implements MongoModel {
 		if(sentDate != null) {
 			_sentDate = sentDate.toDate();
 		}
-		if(nbDays == null) {
-			_nbDays = AbsenceUtils.nbDaysBetween(startDate, endDate).toPlainString();
-		} else {
+		if(nbDays != null) {
 			_nbDays = nbDays.toPlainString();
 		}
 	}
@@ -107,31 +113,23 @@ public class JAbsence extends Model implements MongoModel {
 	}
 
 	public static JAbsence delete(final String id) {
-		return MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
+		final JAbsence absence = MorphiaPlugin.ds().findAndDelete(queryToFindMe(ObjectId.massageToObjectId(id)));
+		JAbsenceDay.delete(absence);
+		return absence;
 	}
 
 	public static JAbsence create(final JAbsence absence) throws AbsenceAlreadyExistException {
-		final Query<JAbsence> dateQuery = q();
-		final Date start = absence.startDate.toDate();
-		final Date end = absence.endDate.toDate();
-		dateQuery.or(
-			            dateQuery.and(
-				                         dateQuery.criteria("_startDate").greaterThanOrEq(start),
-				                         dateQuery.criteria("_startDate").lessThan(end)
-			            ),
-			            dateQuery.and(
-				                         dateQuery.criteria("_endDate").greaterThan(start),
-				                         dateQuery.criteria("_endDate").lessThanOrEq(end)
-			            ),
-			            dateQuery.and(
-				                         dateQuery.criteria("_startDate").lessThanOrEq(start),
-				                         dateQuery.criteria("_endDate").greaterThanOrEq(end)
-			            )
-		);
-		if(dateQuery.countAll() > 0) {
+
+		final List<JAbsenceDay> absenceDays = AbsenceUtils.extractAbsenceDays(absence);
+
+		if(JAbsenceDay.exist(absenceDays)) {
 			throw new AbsenceAlreadyExistException(absence);
 		}
-		return absence.insert();
+		absence.nbDays = new BigDecimal(absenceDays.size()).divide(TWO);
+		absence.insert();
+		JAbsenceDay.save(absence, absenceDays);
+
+		return absence;
 	}
 
 	public static List<JAbsence> fetch(final String userId, final AbsenceType absenceType) {
@@ -143,8 +141,8 @@ public class JAbsence extends Model implements MongoModel {
 
 
 		if(startYear != null && startMonth != null && endYear != null && endMonth != null) {
-			final Date startFirstDay = TimeUtils.firstDateOfMonth(startYear, startMonth).toDate();
-			final Date  endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth).toDate();
+			final Date startFirstDay = TimeUtils.firstDateOfMonth(startYear, startMonth).withTimeAtStartOfDay().toDate();
+			final Date endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth).withTimeAtStartOfDay().toDate();
 			q.or(
 				    q.and(
 					         q.criteria("_startDate").greaterThanOrEq(startFirstDay),
@@ -218,6 +216,10 @@ public class JAbsence extends Model implements MongoModel {
 			       .field("fileId").equal(fileId)
 			       .order("missionId,_startDate")
 			       .asList();
+	}
+
+	public String label() {
+		return AbsenceUtils.label(this);
 	}
 
 	@Override
