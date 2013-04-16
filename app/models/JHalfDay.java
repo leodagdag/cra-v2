@@ -6,12 +6,16 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import constants.MissionType;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+
+import static constants.Util.THREE_POINT_SEVEN;
 
 /**
  * @author f.patin
@@ -20,19 +24,18 @@ import java.util.Set;
 public class JHalfDay {
 
 	public ObjectId missionId;
-
 	public List<JPeriod> periods = Lists.newArrayList();
-
-	@JsonProperty("isSpecial")
-	public Boolean isSpecial() {
-		return !Iterables.isEmpty(periods);
-	}
 
 	public JHalfDay() {
 	}
 
 	public JHalfDay(final ObjectId missionId) {
 		this.missionId = missionId;
+	}
+
+	@JsonProperty("isSpecial")
+	public Boolean isSpecial() {
+		return !Iterables.isEmpty(periods);
 	}
 
 	public Set<ObjectId> missionIds() {
@@ -49,4 +52,16 @@ public class JHalfDay {
 		}
 	}
 
+	public BigDecimal inGenesisHour() {
+		if(this.isSpecial()) {
+			return BigDecimal.ZERO;
+		} else {
+			final JMission mission = JMission.codeAndMissionType(this.missionId);
+			if(MissionType.customer.name().equals(mission.missionType)) {
+				return THREE_POINT_SEVEN;
+			} else {
+				return BigDecimal.ZERO;
+			}
+		}
+	}
 }

@@ -138,18 +138,14 @@ public class JMission {
 			       .field(Mapper.ID_KEY).in(ids)
 			       .field("missionType").in(MissionType.craMissionType)
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
+				   .order("- _startDate")
 			       .disableValidation()
 			       .asList();
 	}
 
 	public static List<JMission> getAbsencesMissions() {
-		return getAbsencesMissions(null);
-	}
-
-	public static List<JMission> getAbsencesMissions(final AbsenceType absenceType) {
-		final List<String> absenceTypes = newAbsenceTypesList(absenceType);
 		return MorphiaPlugin.ds().createQuery(JMission.class)
-			       .field("absenceType").in(absenceTypes)
+			       .field("absenceType").exists()
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
 			       .disableValidation()
 			       .asList();

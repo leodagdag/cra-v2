@@ -29,6 +29,7 @@ import utils.time.TimeUtils;
 import utils.transformer.Transformer;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -390,6 +391,11 @@ public class JDay extends Model implements MongoModel {
 		return year != date.getYear() || month != date.getMonthOfYear();
 	}
 
+	public BigDecimal inGenesisHour(){
+		final BigDecimal morning = this.morning != null ? this.morning.inGenesisHour(): BigDecimal.ZERO;
+		final BigDecimal afternoon = this.afternoon != null ? this.afternoon.inGenesisHour() : BigDecimal.ZERO;
+		return morning.add(afternoon);
+	}
 	@Override
 	public ObjectId id() {
 		return id;

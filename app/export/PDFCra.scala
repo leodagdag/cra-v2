@@ -1,7 +1,6 @@
 package export
 
 
-import com.itextpdf.text.pdf.draw.LineSeparator
 import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
 import com.itextpdf.text.{BaseColor, Phrase, Paragraph, PageSize, Document}
 import constants.{ClaimType, MissionTypeColor, MissionType}
@@ -13,9 +12,10 @@ import scala.Some
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 import scala.collection.immutable.{SortedMap, TreeSet, TreeMap, List}
+import utils._
 import utils.business.JClaimUtils
 import utils.time.TimeUtils
-import utils._
+
 /**
  * @author f.patin
  */
@@ -37,7 +37,7 @@ object PDFEmployeeCra extends PDFCra[JCra] {
     doc.add(Total(cra).compose)
     doc.add(PDFCraTools.blankLine)
     // Claims
-    doc.add(new LineSeparator())
+    doc.newPage()
     val claims = Claims(cra)
     doc.add(claims.title)
     doc.add(claims.synthesis())
@@ -77,9 +77,10 @@ object PDFCraTools extends PDFTableTools with PDFTools with PDFFont {
         blankLine,
         phraseln(phrase("Collaborateur : ", headerFont), phrase(s"${user.fullName()}", headerFontBold)),
         blankLine,
-        phraseln(phrase("Période : ", headerFont), phrase(new DateTime(year, month, 1, 0, 0).toString("MMMM YYYY").capitalize, headerFontBold)),
+        phraseln(phrase("Période : ", headerFont), phrase(`MMMM yyyy`.print(TimeUtils.firstDateOfMonth(DateTime.now)).capitalize, headerFontBold)),
         blankLine,
-        mission.map(m => phraseln(phrase("Mission : ", headerFont), phrase(s"${m.label}", headerFontBold))).getOrElse(new Phrase(""))
+        mission.map(m => phraseln(phrase("Mission : ", headerFont), phrase(s"${m.label}", headerFontBold), blankLine)).getOrElse(new Phrase(dummyContent)),
+        phraseln(phrase("Généré le : ", headerFont), phrase(s"${`dd/MM/yyyy à HH:mm:ss`.print(DateTime.now)}", headerFont))
       )
     )
     super.pageHeader(§)
@@ -241,11 +242,15 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
           case None => {
             val mission: JMission = JMission.fetch(halfDay.missionId)
             val colors = MissionTypeColor.by(MissionType.valueOf(mission.missionType))
-            noBorderCell(mission.label, normal, colors.frontColor, colors.backgroundColor)
+            val halfDayHours = halfDay.inGenesisHour()
+            val hours = if (halfDayHours.compareTo(ZERO) > 0) {
+              s" / ${halfDay.inGenesisHour()}"
+            } else ""
+            noBorderCell(mission.label + hours, normal, colors.frontColor, colors.backgroundColor)
           }
         }
       }
-    } else noBorderCell(dummyCellContent)
+    } else noBorderCell(dummyContent)
   }
 
 
@@ -315,7 +320,7 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
         table.addCell(headerCell(line._1.label.capitalize))
         line._2.foreach {
           amount =>
-            if ("0".equals(amount)) table.addCell(bodyCell(dummyCellContent, CENTER))
+            if ("0".equals(amount)) table.addCell(bodyCell(dummyContent, CENTER))
             else table.addCell(bodyCell(amount, CENTER))
         }
     }

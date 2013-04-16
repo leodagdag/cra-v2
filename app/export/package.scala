@@ -20,11 +20,13 @@ package object export {
   val NO_BORDER: Border = Rectangle.NO_BORDER
   val TOP: Border = Rectangle.TOP
 
-
-  val Zero = BigDecimal(java.math.BigDecimal.ZERO)
+  val ZERO = java.math.BigDecimal.ZERO
+  val Zero = BigDecimal(ZERO)
   val ZeroPointFive = BigDecimal("0.5")
 
-  val dummyCellContent = " "
+  val dummyContent = " "
+
+  val `3,7` = "3,7"
 
   implicit val toOrderingDay: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
 }

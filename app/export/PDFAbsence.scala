@@ -4,6 +4,7 @@ import com.itextpdf.text.pdf.PdfPTable
 import com.itextpdf.text.{Element, Paragraph, PageSize, Document}
 import models.{JUser, JMission, JAbsence}
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 import utils._
@@ -43,12 +44,12 @@ object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
     val § = new Paragraph()
     val user = JUser.identity(userId)
     §.addAll(
-      phraseln(
+      List(
         phraseln(title, titleFont),
         blankLine,
-        phraseln(
-          phrase("Collaborateur : ", headerFont), phrase(s"${user.fullName()}", headerFontBold)
-        ),
+        phraseln(phrase("Collaborateur : ", headerFont), phrase(s"${user.fullName()}", headerFontBold)),
+        blankLine,
+        phraseln(phrase("Généré le : ", headerFont), phrase(s"${`dd/MM/yyyy à HH:mm:ss`.print(DateTime.now)}", headerFontBold)),
         blankLine
       )
     )
