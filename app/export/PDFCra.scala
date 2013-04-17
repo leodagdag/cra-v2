@@ -2,7 +2,7 @@ package export
 
 
 import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
-import com.itextpdf.text.{BaseColor, Phrase, Paragraph, PageSize, Document}
+import com.itextpdf.text.{Element, BaseColor, Phrase, Paragraph, PageSize, Document}
 import constants.{ClaimType, MissionTypeColor, MissionType}
 import java.util.{Map => JMap, EnumMap => JEnumMap, List => JList, ArrayList => JArrayList}
 import models.{JClaim, JHalfDay, JDay, JUser, JMission, JCra}
@@ -54,7 +54,7 @@ object PDFMissionCra extends PDFCra[(JCra, JMission)] {
     // Header
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month, Some(mission)))
     // Page
-    doc.add(Calendar(cra, Some(mission)).compose)
+    doc.add(Calendar(cra, Some(mission)).compose())
     doc.add(PDFCraTools.blankLine)
     doc.add(Total(cra, Some(mission)).compose)
     doc.add(PDFCraTools.blankLine)
@@ -108,7 +108,7 @@ case class Total(cra: JCra, mission: Option[JMission] = None) extends PDFTableTo
             val missionType: MissionType = MissionType.valueOf(t._1)
             val color = MissionTypeColor.by(missionType)
             val title: PdfPCell = noBorderCell(missionType.label, boldUnderlineFont)
-            val value: PdfPCell = noBorderCell(t._2.toString, frontColor = color.frontColor, backgroundColor = color.backgroundColor)
+            val value: PdfPCell = noBorderCell(t._2.toString(), frontColor = color.frontColor, backgroundColor = color.backgroundColor)
             title :: value :: Nil
         }.toList :+ noBorderCell("Nb jours ouvrés", boldUnderlineFont) :+ noBorderCell(TimeUtils.nbWorkingDaysInMonth(cra.year, cra.month).toString)
       }
@@ -116,7 +116,6 @@ case class Total(cra: JCra, mission: Option[JMission] = None) extends PDFTableTo
     val table = new PdfPTable(cells.size)
     table.setHorizontalAlignment(LEFT)
     table.setWidthPercentage(100f)
-    //table.getDefaultCell.setBorder(NO_BORDER)
     cells.foreach(table.addCell(_))
     table
   }
@@ -215,38 +214,51 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
   }
 
   private def morning(day: JDay) = {
-    val cell = toHalfDay(day.morning)
+    val cell = halfDay(day.morning)
     cell.setBorder(LEFT_TOP_RIGHT)
     cell
   }
 
   private def afternoon(day: JDay) = {
-    val cell = toHalfDay(day.afternoon)
+    val cell = halfDay(day.afternoon)
     cell.setBorder(RIGHT_BOTTOM_LEFT)
     cell
   }
 
-  private def toHalfDay(halfDay: JHalfDay): PdfPCell = {
+  private def halfDay(halfDay: JHalfDay): PdfPCell = {
     val cell = halfDayContent(halfDay)
     cell.setHorizontalAlignment(CENTER)
     cell.setBorderColor(BaseColor.GRAY)
     cell
   }
 
-  private def halfDayContent(halfDay: JHalfDay) = {
+  private def halfDayContent(halfDay: JHalfDay): PdfPCell = {
     if (halfDay != null) {
       if (halfDay.isSpecial) noBorderCell("SPECIAL", normal)
       else {
         mission match {
           case Some(m) => noBorderCell("0,5", normal)
           case None => {
-            val mission: JMission = JMission.fetch(halfDay.missionId)
-            val colors = MissionTypeColor.by(MissionType.valueOf(mission.missionType))
-            val halfDayHours = halfDay.inGenesisHour()
-            val hours = if (halfDayHours.compareTo(ZERO) > 0) {
-              s" / ${halfDay.inGenesisHour()}"
-            } else ""
-            noBorderCell(mission.label + hours, normal, colors.frontColor, colors.backgroundColor)
+            val mission = JMission.fetch(halfDay.missionId)
+            val missionType = MissionType.valueOf(mission.missionType)
+            val colors = MissionTypeColor.by(missionType)
+            val label = if (MissionType.customer.equals(missionType)) mission.label
+            else mission.code
+            val hour = if (MissionType.customer.equals(missionType)) halfDay.inGenesisHour().toPlainString
+            else dummyContent
+            val table = new PdfPTable(2)
+            val arr = Array(80f, 20f)
+            table.setWidths(arr)
+            table.setWidthPercentage(100f)
+            if (MissionType.customer.equals(missionType)) {
+              table.addCell(noBorderCell(label, frontColor = colors.frontColor, backgroundColor = colors.backgroundColor, hAlign = Element.ALIGN_CENTER))
+              table.addCell(noBorderCell(hour))
+            } else {
+              val cell = noBorderCell(label, frontColor = colors.frontColor, backgroundColor = colors.backgroundColor, hAlign = Element.ALIGN_CENTER)
+              cell.setColspan(2)
+              table.addCell(cell)
+            }
+            noBorderCell(table)
           }
         }
       }

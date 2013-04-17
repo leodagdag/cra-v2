@@ -6,12 +6,7 @@
 	background: linear-gradient(top left, @from, @to);
 }
 
-@customerBC: #00008b;
-@preSaleBC: green;
-@internalWorkBC: yellow;
-@holidayBC: red;
-@notPaidBC: pink;
-@specialBC: orange;
+
 
 .calendar {
 	.toolbar {
@@ -53,27 +48,27 @@
 				background-color: #f5f5f5;
 				&.customer {
 					background-color: @customerBC;
-					color: #ffffff;
+					color: @customerFC;
 				}
 				&.pre_sale {
 					background-color: @preSaleBC;
-					color: #ffffff;
+					color: @preSaleFC;
 				}
 				&.internal_work {
 					background-color: @internalWorkBC;
-					color: #000000;
+					color: @internalWorkFC;
 				}
 				&.holiday {
 					background-color: @holidayBC;
-					color: #ffffff;
+					color: @holidayFC;
 				}
 				&.not_paid {
 					background-color: @notPaidBC;
-					color: #000000;
+					color: @notPaidFC;
 				}
 				&.special {
 					background-color: @specialBC;
-					color: #000000;
+					color: @specialFC;
 				}
 				td {
 					text-align: center;

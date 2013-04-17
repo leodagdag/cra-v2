@@ -6,7 +6,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import constants.MissionAllowanceType;
 import constants.MomentOfDay;
 import dto.DayDTO;
 import exceptions.IllegalDayOperation;
@@ -122,20 +121,24 @@ public class JDays extends Controller {
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
 			if(day != null) {
-				final Map<ObjectId, JMission> missions = Maps.newHashMap();
-				final boolean activeVehicleExists = JVehicle.active(userId) != null;
+
 				final Set<ObjectId> missionIds = day.missionIds();
 				if(missionIds.isEmpty()) {
 					errors.add(new ValidationError("global", "Vous devez saisir au moins une mission."));
 				} else {
+
+					final Map<ObjectId, JMission> missions = Maps.newHashMap();
+					final boolean activeVehicleExists = JVehicle.active(userId) != null;
 					for(ObjectId missionId : missionIds) {
 						if(!missions.containsKey(missionId)) {
 							missions.put(missionId, JMission.fetch(missionId));
 						}
 						final JMission mission = missions.get(missionId);
+						/* #104
 						if(MissionAllowanceType.REAL.name().equals(mission.allowanceType) & !activeVehicleExists) {
 							errors.add(new ValidationError("global", String.format("Vous ne pouvez pas choisir cette mission [%s] (véhicule requis).", mission.label)));
 						}
+						*/
 					}
 				}
 			} else {

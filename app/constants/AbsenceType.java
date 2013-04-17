@@ -14,7 +14,8 @@ import java.util.List;
 public enum AbsenceType {
 	ALL,
 	CP,
-	RTT;
+	RTT,
+	OTHER;
 
 	public static List<String> asString(final List<AbsenceType> absenceType) {
 		List<AbsenceType> criterias = Lists.newArrayList();

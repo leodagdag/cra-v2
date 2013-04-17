@@ -110,7 +110,8 @@ app.constant('YearsConst', [
 	.constant('AbsenceTypeConst', [
 		{code: 'all', label: 'Tout'},
 		{code: 'cp', label: 'CP'},
-		{code: 'rtt', label: 'RTT'}
+		{code: 'rtt', label: 'RTT'},
+		{code: 'other', label: 'Autres'}
 	]);
 
 

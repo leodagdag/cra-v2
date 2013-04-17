@@ -162,16 +162,25 @@ trait PDFTableTools extends PDFFont {
     cell
   }
 
-  protected def noBorderCell(phrase: String, font: Font = normal, frontColor: BaseColor = BaseColor.BLACK, backgroundColor: BaseColor = BaseColor.WHITE) = {
+  protected def noBorderCell(phrase: String, font: Font = normal, frontColor: BaseColor = BaseColor.BLACK, backgroundColor: BaseColor = BaseColor.WHITE, hAlign: Int = Element.ALIGN_LEFT, vAlign: Int = Element.ALIGN_MIDDLE) = {
     val f = new Font(font)
     f.setColor(frontColor)
 
     val cell = new PdfPCell(new Phrase(phrase, f))
-    cell.setHorizontalAlignment(Element.ALIGN_LEFT)
+    cell.setHorizontalAlignment(hAlign)
+    cell.setVerticalAlignment(vAlign)
     cell.setBorder(NO_BORDER)
     cell.setBackgroundColor(backgroundColor)
     cell
   }
+  protected def noBorderCell(table: PdfPTable) = {
+    val cell = new PdfPCell(table)
+    cell.setHorizontalAlignment(Element.ALIGN_LEFT)
+    cell.setVerticalAlignment(Element.ALIGN_MIDDLE)
+    cell.setBorder(NO_BORDER)
+    cell
+  }
+
 }
 
 trait PDFComposer[T] {

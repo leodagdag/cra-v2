@@ -76,13 +76,14 @@ public class JClaim extends Model implements MongoModel {
 	}
 
 	private static void addMissionAllowance(final List<JDay> days) {
-		final Set<JClaim> claims = Sets.newHashSet();
+		final JVehicle vehicle = JVehicle.active(days.get(0).userId);
+		final List<JClaim> claims = Lists.newArrayList();
 		for(final JDay day : days) {
 			claims.addAll(Collections2.transform(day.missionIds(), new Function<ObjectId, JClaim>() {
 				@Nullable
 				@Override
 				public JClaim apply(@Nullable final ObjectId missionId) {
-					return JMission.isClaimable(missionId) ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance() : null;
+					return JMission.isClaimable(missionId) && vehicle != null ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance(vehicle) : null;
 				}
 			}));
 		}
@@ -90,8 +91,7 @@ public class JClaim extends Model implements MongoModel {
 		MorphiaPlugin.ds().save(claims, WriteConcern.ACKNOWLEDGED);
 	}
 
-	private JClaim computeMissionAllowance() {
-		final JVehicle vehicle = JVehicle.active(this.userId);
+	private JClaim computeMissionAllowance(final JVehicle vehicle) {
 		final JMission mission = JMission.fetch(this.missionId);
 		switch(MissionAllowanceType.valueOf(mission.allowanceType)) {
 			case ZONE:

@@ -68,6 +68,10 @@ public class JMission {
 		return q().field(Mapper.ID_KEY).equal(id);
 	}
 
+	private static List<String> newAbsenceTypesList(final AbsenceType absenceType) {
+		return AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
+	}
+
 	@SuppressWarnings({"unused"})
 	@PrePersist
 	private void prePersist() {
@@ -132,13 +136,12 @@ public class JMission {
 			       .asList();
 	}
 
-
 	public static List<JMission> craMissions(final List<ObjectId> ids) {
 		return MorphiaPlugin.ds().createQuery(JMission.class)
 			       .field(Mapper.ID_KEY).in(ids)
 			       .field("missionType").in(MissionType.craMissionType)
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
-				   .order("- _startDate")
+			       .order("- _startDate")
 			       .disableValidation()
 			       .asList();
 	}
@@ -149,10 +152,6 @@ public class JMission {
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
 			       .disableValidation()
 			       .asList();
-	}
-
-	private static List<String> newAbsenceTypesList(final AbsenceType absenceType) {
-		return AbsenceType.asString(absenceType == null ? new ArrayList<AbsenceType>() : Lists.newArrayList(absenceType));
 	}
 
 	public static List<ObjectId> getAbsencesMissionIds() {
@@ -195,8 +194,11 @@ public class JMission {
 			                                   .field("missionType").equal(MissionType.holiday.name())) > 0;
 	}
 
-	public static Boolean isClaimable(final ObjectId missionId) {
-		return Boolean.TRUE.equals(queryToFindMe(missionId).get().isClaimable);
+	public static Boolean isClaimable(final ObjectId id) {
+		final Query<JMission> q = queryToFindMe(id)
+			                          .retrievedFields(true, "isClaimable")
+			                          .disableValidation();
+		return Boolean.TRUE.equals(q.get().isClaimable);
 	}
 
 
