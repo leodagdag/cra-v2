@@ -56,16 +56,16 @@ db.Parameter.insert({
 	_startDate: new Date(YEAR_2012, JANUARY_JS, ONE),
 	active: true,
 	_car: {
-		0: '0.1',
-		5: '5.5',
-		8: '8.8',
-		11: '11'
+		0: '0.33',
+		5: '0.4',
+		8: '0.43',
+		11: '0.44'
 	},
 	_motorcycle: {
-		"0": "1.1",
-		"501": "5.01"
+		"0": "0.3",
+		"501": "0.39"
 	},
-	_zoneAmount: '4.70'
+	_zoneAmount: '4.7'
 });
 
 /**
