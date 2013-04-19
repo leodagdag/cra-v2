@@ -7,7 +7,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 import constants.ClaimType;
@@ -20,7 +19,10 @@ import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author f.patin
@@ -83,7 +85,7 @@ public class JClaim extends Model implements MongoModel {
 				@Nullable
 				@Override
 				public JClaim apply(@Nullable final ObjectId missionId) {
-					return JMission.isClaimable(missionId) && vehicle != null ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance(vehicle) : null;
+					return JMission.isClaimable(missionId) ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance(vehicle) : null;
 				}
 			}));
 		}
@@ -98,8 +100,10 @@ public class JClaim extends Model implements MongoModel {
 				this.amount = JParameter.zoneAmount(date);
 				return this;
 			case REAL:
-				final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);
-				this.amount = mission.distance.multiply(coefficient);
+				if(vehicle != null) {
+					final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);
+					this.amount = mission.distance.multiply(coefficient);
+				}
 				return this;
 			case NONE:
 			default:

@@ -6,7 +6,7 @@
 		</div>
 		<!--<button class="btn btn-small btn-success" data-ng-show="!cra.isValidated && cra.id" data-ng-click="validate()">Valider</button>
 		<button class="btn btn-small btn-danger" data-ng-show="cra.isValidated" data-ng-click="invalidate()">Invalider</button>-->
-		<button disabled="disabled" class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}"><i class="icon-comment"></i> Commentaire</button>
+		<button class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}" data-ng-click="setComment()"><i class="icon-comment"></i> Commentaire</button>
 		<button class="btn btn-small" data-ng-click="claimSynthesis()"><i class="icon-money"></i> Frais</button>
 		<div class="btn-group">
 			<a class="btn btn-small dropdown-toggle disable" data-toggle="dropdown" href="#">

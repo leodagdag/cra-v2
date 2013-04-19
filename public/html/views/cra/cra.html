@@ -31,8 +31,7 @@
 										<td colspan="2" class="head" data-ng-class="{saturday: day.isSaturday, sunday: day.isSunday, dayOff: day.isDayOff, pastOrFuture : day.inPastOrFuture}">
 											<input type="checkbox" class="pull-left" data-ng-show="!day.inPastOrFuture" value="selectedDays[dIndex].date" data-ng-model="selectedDays[dIndex].checked" data-ng-checked="selectedDays[dIndex].checked">
 											<span>{{day.date | dayOfMonth}}</span>
-											<i class="icon-comment" data-ng-show="day.comment"></i>
-											<i class="icon-comment-alt" data-ng-show="!day.comment"></i>
+											<i class="icon-comment" data-ng-show="day.comment" title="{{day.comment}}"></i>
 											<i class="icon-trash pull-right" data-ng-show="isDayDeletable(day)" data-ng-click="removeDay(wIndex, day.date, $index)"></i>
 										</td>
 									</tr>

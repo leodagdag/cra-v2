@@ -23,6 +23,7 @@ object JsRouter extends Controller {
           JCras.exportByMission,
           JCras.send,
           JCras.sent,
+          JCras.setComment,
 
           JDays.fetch,
           JDays.create,

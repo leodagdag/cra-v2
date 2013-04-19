@@ -83,7 +83,7 @@ db.Mission.insert({customerId: genesis._id, code: 'RTTS', label: 'RTT Salarié',
 db.Mission.insert({customerId: genesis._id, code: 'AE', label: 'Absence exceptionnelle', allowanceType: 'NONE', missionType: 'holiday', absenceType: 'OTHER', _startDate: _2010_JANUARY_1});
 db.Mission.insert({customerId: genesis._id, code: 'CSS', label: 'Congé sans solde', allowanceType: 'NONE', missionType: 'holiday', absenceType: 'OTHER', _startDate: _2010_JANUARY_1});
 db.Mission.insert({customerId: genesis._id, code: 'TI', label: 'Travaux internes', allowanceType: 'NONE', missionType: 'internal_work', isClaimable: true, _startDate: _2010_JANUARY_1});
-db.Mission.insert({customerId: genesis._id, code: 'F', label: 'Formation', allowanceType: 'NONE', missionType: 'internal_work', isClaimable: true, _startDate: _2010_JANUARY_1});
+db.Mission.insert({customerId: genesis._id, code: 'F', label: 'Formation', allowanceType: 'ZONE', missionType: 'internal_work', isClaimable: true, _startDate: _2010_JANUARY_1});
 db.Mission.insert({customerId: genesis._id, code: 'IC', label: 'Inter-contrat', allowanceType: 'NONE', missionType: 'internal_work', isClaimable: false, _startDate: _2010_JANUARY_1});
 db.Mission.insert({customerId: genesis._id, code: 'TP', label: 'Temps partiel', allowanceType: 'NONE', missionType: 'not_paid', _startDate: _2010_JANUARY_1});
 db.Mission.insert({customerId: genesis._id, code: 'MM', label: 'Maladie/Maternité', allowanceType: 'NONE', missionType: 'not_paid', _startDate: _2010_JANUARY_1});

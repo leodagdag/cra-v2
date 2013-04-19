@@ -74,7 +74,7 @@ object Authentication extends BaseController {
             (profile: Option[Profile]) => Ok(Json.toJson(profile.get)(fromProfile))
           }
             .recover {
-            case e: Throwable => InternalServerError(JsString(s"exception ${e.getMessage}"))
+            case e: Exception => InternalServerError(JsString(s"exception ${e.getMessage}"))
           }
         }
     }

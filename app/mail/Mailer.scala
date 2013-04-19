@@ -35,9 +35,14 @@ trait Email {
     this
   }
 
-  def addCc(address: String) = {
-    underlying.addCc(address, "", "UTF-8")
-    this
+  def addCc(address: Option[String]) = {
+    address match{
+      case Some(addr) => {
+        underlying.addCc(addr, "", "UTF-8")
+        this
+      }
+      case _ => this
+    }
   }
 
   def addCc(address: String, name: String) = {
@@ -139,7 +144,9 @@ trait Mailer[T] {
   protected lazy val toAbsence = current.configuration.getString("email.absence").getOrElse(throw new RuntimeException("email.sender needs to be set in application.conf in order to send Absence Email"))
   protected lazy val toActivite = current.configuration.getString("email.cra").getOrElse(throw new RuntimeException("email.sender needs to be set in application.conf in order to send Activité Email"))
 
-  protected def address(user: JUser) = s"${user.fullName} <${user.email}>"
+  protected def address(user: JUser) =
+    if (user != null) Some(s"${user.fullName} <${user.email}>")
+    else None
 
 
   protected def attachment(file: File): EmailAttachment = {

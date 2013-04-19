@@ -80,7 +80,7 @@ object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
   def setTableFooter(table: PdfPTable, nbDays: BigDecimal) {
     table.addCell(footerCell("Total", Element.ALIGN_RIGHT, BOTTOM_LEFT, 2))
     table.addCell(footerCell(nbDays.toString(), Element.ALIGN_CENTER))
-    table.addCell(footerCell("jours(s) ouvré(s)", Element.ALIGN_LEFT, BOTTOM_RIGHT))
+    table.addCell(footerCell("jour(s) ouvré(s)", Element.ALIGN_LEFT, BOTTOM_RIGHT))
   }
 
 

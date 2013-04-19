@@ -19,9 +19,7 @@
 		.day { // table
 			&.pastOrFuture {
 				opacity: 0.5;
-				.icon-comment, .icon-comment-alt {
-					cursor: default;
-				}
+
 			}
 			border-top: 1px solid #d3d3d3;
 			border-left: 1px solid #d3d3d3;
@@ -40,7 +38,7 @@
 					.backgroundColorMixin(gray, fade(gray, 50%));
 				}
 				&.dayOff {
-					.backgroundColorMixin(fade(red, 50%), red);
+					.backgroundColorMixin(red, fade(red, 50%));
 				}
 			}
 			.halfday { // tr
@@ -85,6 +83,9 @@
 		}
 		.icon-trash {
 			color: red;
+		}
+		.icon-comment, .icon-comment-alt {
+			cursor: default;
 		}
 		.icon-comment {
 			color: #2f96b4;

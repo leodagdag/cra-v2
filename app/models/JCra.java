@@ -1,16 +1,13 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.mongodb.WriteConcern;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.libs.F;
@@ -57,6 +54,10 @@ public class JCra extends Model {
 
 	private static Query<JCra> queryToFindMe(final ObjectId id) {
 		return MorphiaPlugin.ds().createQuery(JCra.class).field(Mapper.ID_KEY).equal(id);
+	}
+
+	private static Query<JCra> queryToFindMe(final String id) {
+		return MorphiaPlugin.ds().createQuery(JCra.class).field(Mapper.ID_KEY).equal(ObjectId.massageToObjectId(id));
 	}
 
 	private static Query<JCra> queryByUserId(final ObjectId userId) {
@@ -163,5 +164,18 @@ public class JCra extends Model {
 		final Query<JCra> q = queryToFindMe(id);
 		MorphiaPlugin.ds().update(q, ops, false, WriteConcern.ACKNOWLEDGED);
 		return date;
+	}
+
+	public static String comment(final String id, final String comment) {
+		final Query<JCra> q = queryToFindMe(id);
+		final String c = StringUtils.trimToNull(comment);
+		if(c == null) {
+			final UpdateOperations<JCra> ops = ops().unset("comment");
+			MorphiaPlugin.ds().update(q, ops, false, WriteConcern.ACKNOWLEDGED);
+		} else {
+			final UpdateOperations<JCra> ops = ops().set("comment", c);
+			MorphiaPlugin.ds().update(q, ops, false, WriteConcern.ACKNOWLEDGED);
+		}
+		return c;
 	}
 }

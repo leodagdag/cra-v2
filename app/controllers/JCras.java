@@ -9,14 +9,10 @@ import dto.CraDTO;
 import export.PDF;
 import mail.CraBody;
 import mail.MailerCra;
-import models.DbFile;
-import models.JClaim;
-import models.JCra;
-import models.JDay;
-import models.JMission;
-import models.JUser;
+import models.*;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import play.data.Form;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -105,6 +101,12 @@ public class JCras extends Controller {
 	public static Result sent(final String craId) {
 		final JCra cra = JCra.fetch(craId);
 		return ok(DbFile.fetch(cra.fileId)._2).as("application/pdf");
+	}
+
+	public static Result setComment(final String id) {
+		final Form<String> form = Form.form(String.class).bind(request().body().asJson());
+		final String result = JCra.comment(id, form.data().get("comment"));
+		return result == null ? created() : created(result);
 	}
 
 }
