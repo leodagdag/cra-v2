@@ -25,7 +25,7 @@
 								<a data-ng-href="#/absence/day"><span>Demande d'absence</span></a>
 							</li>
 							<li  data-ng-class="{'active' : isNav('claim')}">
-								<a data-ng-href="#/claim">Note de frais</a>
+								<a data-ng-href="#/claim">Frais</a>
 							</li>
 							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
 								<li  data-ng-class="{'active' : isNav('remuneration')}">
