@@ -32,10 +32,16 @@ object PDFEmployeeCra extends PDFCra[JCra] {
     // Header
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month))
     // Page
+    // Calendar
     doc.add(Calendar(cra).compose())
     doc.add(PDFCraTools.blankLine)
     doc.add(Total(cra).compose)
     doc.add(PDFCraTools.blankLine)
+    // Comment
+    if (cra.comment != null) {
+      doc.add(Comment(cra).compose())
+      doc.add(PDFCraTools.blankLine)
+    }
     // Claims
     doc.newPage()
     val claims = Claims(cra)
@@ -147,6 +153,7 @@ case class Total(cra: JCra, mission: Option[JMission] = None) extends PDFTableTo
     val halDays: List[JHalfDay] = days
       .filter(d => d != null && !d.missionIds.isEmpty)
       .flatMap(day => List(day.morning, day.afternoon))
+      .filter(hd => hd != null)
 
     val missionIds = halDays.flatMap(hds => hds.missionIds()).toList
 
@@ -298,7 +305,6 @@ private object Signature extends PDFTableTools {
 
 }
 
-
 case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableTools {
   private lazy val claims = JClaim.synthesis(cra.userId, cra.year, cra.month)
   private lazy val _synthesis: JMap[String, JMap[ClaimType, String]] = JClaimUtils.synthesis(cra.year, cra.month, claims)
@@ -361,5 +367,29 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
     }
     table
 
+  }
+}
+
+case class Comment(cra: JCra) extends PDFTableTools with PDFFont {
+
+  lazy val days = JDay.find(cra.id, cra.userId, cra.year, cra.month, false).toList
+
+  def compose() = {
+
+    val table = new PdfPTable(2)
+    table.setHorizontalAlignment(Element.ALIGN_LEFT)
+    if(cra.comment != null){
+      table.addCell(noBorderCell("Commentaire (mensuel)",boldUnderlineFont, vAlign = Element.ALIGN_TOP))
+      table.addCell(noBorderCell(cra.comment, vAlign = Element.ALIGN_TOP))
+    }
+
+    days.foreach {
+      d =>
+        if (d.comment != null) {
+          table.addCell(noBorderCell(s"Commentaire du ${`dd/MM/yyyy`.print(d.date)}", boldUnderlineFont))
+          table.addCell(noBorderCell(d.comment, vAlign = Element.ALIGN_TOP))
+        }
+    }
+    table
   }
 }
