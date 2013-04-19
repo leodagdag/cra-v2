@@ -46,9 +46,11 @@
 			<div class="row-fluid">
 				<div class="span12 scrollable">
 					<div class="row-fluid table-line" data-ng-repeat="absence in history">
-						<div class="span10">
+						<div class="span9">
 							<span>{{absence.missionLabel}} {{absence.label}} => {{absence.nbDays}} jour(s)</span>
-							<i data-ng-class="{'icon-comment': true, 'icon-comment-alt': false}"></i>
+						</div>
+						<div class="span1">
+							<i data-ng-show="absence.comment" class="icon-comment" title="{{absence.comment}}"></i>
 						</div>
 						<div class="span2">
 							<button class="btn btn-mini" data-ng-hide="absence.sentDate" data-ng-click="send(absence.id)"><i class="icon-envelope"></i></button>

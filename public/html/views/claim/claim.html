@@ -3,7 +3,7 @@
 		<div class="span4 offset1" data-ng-init="loadRefs()">
 			<form class="form-horizontal well well-small" data-ng-submit="save()">
 				<div class="control-group" data-ng-class="{'error': errors.missionId}">
-					<label class="control-label" for="missionId">Mission <i class="icon-mandatory"></i></label>
+					<label class="control-label" for="missionId">Activité <i class="icon-mandatory"></i></label>
 
 					<div class="controls">
 						<select class="input-medium" name="missionId" id="missionId" required="required" data-ng-model="form.missionId" data-ng-options="m.id as m.label for m in missions">
@@ -83,7 +83,7 @@
 				</div>
 				<div class="control-group">
 					<div class="controls pull-right">
-						<button type="submit" class="btn btn-primary" id="btnValidate" name="btnValidate">Valider</button>
+						<button type="submit" class="btn btn-primary" id="btnValidate" name="btnValidate">Sauvegarder</button>
 						<input type="reset" class="btn" id="btnReset" value="Effacer">
 					</div>
 				</div>
@@ -120,7 +120,7 @@
 							<span data-ng-show="claim.kilometerAmount">Déplacement : {{claim.kilometer | kilometer}} ({{claim.journey}}) <strong>{{claim.kilometerAmount | currency}}</strong></span>
 						</div>
 						<div class="span1">
-							<i data-ng-class="{'icon-comment': true, 'icon-comment-alt': false}"></i>
+							<i data-ng-show="claim.comment" class="icon-comment" title="{{claim.comment}}"></i>
 						</div>
 						<div class="span1">
 							<button class="btn btn-danger btn-mini" data-ng-click="remove(claim.id)"><i class="icon-trash"></i></button>
