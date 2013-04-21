@@ -42,8 +42,8 @@ object PDFEmployeeCra extends PDFCra[JCra] {
       doc.add(Comment(cra).compose())
       doc.add(PDFCraTools.blankLine)
     }
-    // Claims
     doc.newPage()
+    // Claims
     val claims = Claims(cra)
     doc.add(claims.title)
     doc.add(claims.synthesis())
@@ -67,6 +67,16 @@ object PDFMissionCra extends PDFCra[(JCra, JMission)] {
     doc.add(Signature.signatures)
   }
 
+}
+
+object PDFProductionCra extends PDFCra[JCra] {
+
+  override protected def document(): Document = new Document(PageSize.A4)
+
+  def content(doc: Document, cra: JCra) {
+    doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month))
+
+  }
 }
 
 object PDFCraTools extends PDFTableTools with PDFTools with PDFFont {
@@ -271,10 +281,40 @@ case class Calendar(cra: JCra, mission: Option[JMission] = None) extends PDFTabl
       }
     } else noBorderCell(dummyContent)
   }
-
-
 }
 
+
+case class ProductionCalendar(cra: JCra, mission: Option[JMission]) {
+
+  val days: List[JDay] = mission match {
+    case Some(m) => JDay.find(cra.id, cra.userId, cra.year, cra.month, m.id).toList
+    case None => JDay.find(cra.id, cra.userId, cra.year, cra.month, false).toList
+  }
+
+
+
+
+  def compose() = {
+    implicit val toOrderingDay: Ordering[JDay] = Ordering.fromLessThan(_.date isBefore _.date)
+
+    val table = new PdfPTable(8)
+    val weeks: TreeMap[(Integer, Integer), List[JDay]] = TreeMap(days.groupBy(d => (d.year, d.week)).toList: _*)
+
+    for(week <- weeks; day: JDay <- week._2.sortBy(day => day))
+    yield table.addCell(toCell(day))
+
+
+    def toCell(day: JDay) = {
+      val table = new PdfPTable(1)
+      val cell = new PdfPCell()
+      cell
+    }
+
+    table.completeRow()
+    table
+  }
+
+}
 private object Signature extends PDFTableTools {
   lazy val signatures = {
     val table = new PdfPTable(3)
