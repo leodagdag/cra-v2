@@ -94,7 +94,6 @@
 				<div class="span7">
 					Filtre
 					<select class="span3" data-ng-model="filter.year" data-ng-change="filterChange()">
-						<option value="2012">2012</option>
 						<option value="2013">2013</option>
 						<option value="2014">2014</option>
 					</select>
@@ -115,15 +114,15 @@
 				<div class="span12 scrollable">
 					<div class="row-fluid table-line" data-ng-repeat="claim in history">
 						<div class="span10">
-							<span>Mission : {{claim.mission.label}} le {{claim.date | date}}</span><br>
-							<span data-ng-show="claim.amount">Frais : {{claim.label | capitalize}} <strong>{{claim.amount | currency}}</strong></span>
-							<span data-ng-show="claim.kilometerAmount">Déplacement : {{claim.kilometer | kilometer}} ({{claim.journey}}) <strong>{{claim.kilometerAmount | currency}}</strong></span>
+							<span>Mission : {{claim.mission.label}} le {{claim.date | date}}</span>
+							<span data-ng-show="claim.amount"> <strong>|</strong> Frais : {{claim.label | capitalize}} <strong>{{claim.amount | currency}}</strong></span>
+							<span data-ng-show="claim.kilometerAmount"> <strong>|</strong> Déplacement : {{claim.kilometer | kilometer}} ({{claim.journey}}) <strong>{{claim.kilometerAmount | currency}}</strong></span>
 						</div>
 						<div class="span1">
-							<i data-ng-show="claim.comment" class="icon-comment" title="{{claim.comment}}"></i>
+							<i data-ng-show="c.comment" class="icon-comment" title="{{c.comment}}"></i>
 						</div>
 						<div class="span1">
-							<button class="btn btn-danger btn-mini" data-ng-click="remove(claim.id)"><i class="icon-trash"></i></button>
+							<button class="btn btn-danger btn-mini" data-ng-click="remove(c.id)"><i class="icon-trash"></i></button>
 						</div>
 					</div>
 				</div>

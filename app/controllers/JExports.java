@@ -1,6 +1,6 @@
 package controllers;
 
-import caches.ResponseCache;
+import http.ResponseCache;
 import export.PDF;
 import models.JCra;
 import models.JMission;

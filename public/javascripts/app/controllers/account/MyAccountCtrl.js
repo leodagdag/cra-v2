@@ -1,5 +1,6 @@
 app.controller('MyAccountCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'profile',
 	function MyAccountCtrl($rootScope, $scope, $http, $log, $location, $routeParams, profile) {
+		'use strict';
 		$scope.profile = profile.data;
 		$scope.subSections = {
 			'general': 'assets/html/views/my-account/general.html',
@@ -16,11 +17,12 @@ app.controller('MyAccountCtrl', ['$rootScope', '$scope', '$http', '$log', '$loca
 			$scope.activeSubSection.name = name;
 			$scope.activeSubSection.page = $scope.subSections[name];
 			$location.path('/my-account/' + name);
-		}
+		};
 	}]);
 
 app.controller('MyAccountGeneralCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', 'AccountRes', 'ManagerRes',
 	function MyAccountGeneralCtrl($rootScope, $scope, $http, $log, $location, AccountResource, ManagerResource) {
+		'use strict';
 		$scope.managers = ManagerResource.query();
 		$scope.account = AccountResource.get({id: $scope.profile.id});
 		$scope.errors = {
@@ -42,11 +44,12 @@ app.controller('MyAccountGeneralCtrl', ['$rootScope', '$scope', '$http', '$log',
 						$scope.errors[key] = err.join('<br>');
 					});
 				});
-		}
+		};
 	}]);
 
 app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
 	function MyAccountPasswordCtrl($scope, $http, $log, $location) {
+		'use strict';
 		$scope.form = {
 			oldPassword: null,
 			newPassword: null,
@@ -68,20 +71,20 @@ app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
 				data: $scope.form
 			})
 				.success(function(data, status, headers, config) {
-					$location.url("/")
+					$location.url("/");
 				})
 				.error(function(errors, status, headers, config) {
 					$log.log('errors', errors);
 					_(errors).forEach(function(err, key) {
 						$scope.errors[key] = err.join('<br>');
 					});
-				})
-		}
+				});
+		};
 
 
 	}]);
 
 app.controller('MyAccountAffectedMissionsCtrl', ['$scope', '$http', '$log', '$location',
 	function MyAccountAffectedMissionsCtrl($scope, $http, $log, $location) {
-
+		'use strict';
 	}]);

@@ -1,5 +1,6 @@
 app.controller('NormalDayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
 	function NormalDayCtrl($scope, $http, $log, $location, $routeParams) {
+		'use strict';
 		var NormalForm = function(day) {
 			return {
 				morning: {
@@ -16,5 +17,5 @@ app.controller('NormalDayCtrl', ['$scope', '$http', '$log', '$location', '$route
 
 		$scope.localSave = function() {
 			$scope.save($scope.form);
-		}
+		};
 	}]);

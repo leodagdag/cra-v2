@@ -3,6 +3,6 @@ angular.module('vehicleTypeFilter', [])
 		'use strict';
 		return function(vehicleType) {
 			return vehicleType === 'car' ? 'voiture' : 'moto';
-		}
+		};
 	});
 

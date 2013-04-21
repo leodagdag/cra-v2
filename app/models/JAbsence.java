@@ -1,10 +1,6 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.PostLoad;
-import com.github.jmkgreen.morphia.annotations.PrePersist;
-import com.github.jmkgreen.morphia.annotations.Transient;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -19,6 +15,7 @@ import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import utils.business.AbsenceUtils;
 import utils.time.TimeUtils;
 
@@ -69,13 +66,30 @@ public class JAbsence extends Model implements MongoModel {
 	}
 
 	private static Query<JAbsence> queryToFindMe(final ObjectId id) {
-		return q()
-			       .field(Mapper.ID_KEY).equal(id);
+		return q().field(Mapper.ID_KEY).equal(id);
 	}
 
-	private static Query<JAbsence> queryToFindMeByUser(final ObjectId id) {
-		return q()
-			       .field("userId").equal(id);
+	private static Query<JAbsence> queryToFindMeByUser(final String id) {
+		return q().field("userId").equal(ObjectId.massageToObjectId(id));
+	}
+
+	private static Query<JAbsence> queryByDate(final String userId, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth) {
+		final Query<JAbsence> q = queryToFindMeByUser(userId);
+		if(startYear != null && startMonth != null && endYear != null && endMonth != null) {
+			final Date startFirstDay = TimeUtils.firstDateOfMonth(startYear, startMonth).withTimeAtStartOfDay().toDate();
+			final Date endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth).withTimeAtStartOfDay().toDate();
+			q.or(
+				    q.and(
+					         q.criteria("_startDate").greaterThanOrEq(startFirstDay),
+					         q.criteria("_startDate").lessThan(endFirstDay)
+				    ),
+				    q.and(
+					         q.criteria("_endDate").greaterThan(startFirstDay),
+					         q.criteria("_endDate").lessThanOrEq(endFirstDay)
+				    )
+			);
+		}
+		return q;
 	}
 
 	@SuppressWarnings({"unused"})
@@ -132,33 +146,39 @@ public class JAbsence extends Model implements MongoModel {
 		return absence;
 	}
 
-	public static List<JAbsence> fetch(final String userId, final AbsenceType absenceType) {
-		return fetch(userId, absenceType, null, null, null, null);
+	public static List<JAbsence> fetchALL(final String userId, final Integer year, final Integer month) {
+		final List<JAbsence> result = Lists.newArrayList();
+		result.addAll(fetchCP(userId, year, month));
+		result.addAll(fetchRTT(userId, year, month));
+		result.addAll(fetchOTHER(userId, year, month));
+		return result;
 	}
 
-	public static List<JAbsence> fetch(final String userId, final AbsenceType absenceType, final Integer startYear, final Integer startMonth, final Integer endYear, final Integer endMonth) {
-		final Query<JAbsence> q = queryToFindMeByUser(ObjectId.massageToObjectId(userId));
+	public static List<JAbsence> fetchCP(final String userId, final Integer year, final Integer month) {
+		return fetchQuery(userId, AbsenceType.CP, year, month, year, DateTimeConstants.JUNE, year+1, DateTimeConstants.MAY)
+			       .asList();
+	}
 
+	public static List<JAbsence> fetchRTT(final String userId, final Integer year, final Integer month) {
+		return fetchQuery(userId, AbsenceType.RTT, year, month, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER)
+			       .asList();
+	}
 
-		if(startYear != null && startMonth != null && endYear != null && endMonth != null) {
-			final Date startFirstDay = TimeUtils.firstDateOfMonth(startYear, startMonth).withTimeAtStartOfDay().toDate();
-			final Date endFirstDay = TimeUtils.lastDateOfMonth(endYear, endMonth).withTimeAtStartOfDay().toDate();
-			q.or(
-				    q.and(
-					         q.criteria("_startDate").greaterThanOrEq(startFirstDay),
-					         q.criteria("_startDate").lessThan(endFirstDay)
-				    ),
-				    q.and(
-					         q.criteria("_endDate").greaterThan(startFirstDay),
-					         q.criteria("_endDate").lessThanOrEq(endFirstDay)
-				    )
-			);
+	public static List<JAbsence> fetchOTHER(final String userId, final Integer year, final Integer month) {
+		return fetchQuery(userId, AbsenceType.OTHER, year, month, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER)
+			       .asList();
+	}
+
+	private static Query<JAbsence> fetchQuery(final String userId, final AbsenceType absenceType, final Integer year, final Integer month, final Integer defaultStartYear, final Integer defaultStartMonth, final Integer defaultEndYear, final Integer defaultEndMonth){
+		final Query<JAbsence> q;
+		if(year == 0) {
+			q = queryToFindMeByUser(userId);
+		} else if(month == 0) {
+			q = queryByDate(userId, defaultStartYear, defaultStartMonth, defaultEndYear, defaultEndMonth);
+		} else {
+			q = queryByDate(userId, year, month, year, month);
 		}
-
-		if(!AbsenceType.ALL.equals(absenceType)) {
-			q.field("missionId").in(JMission.getAbsencesMissionIds(absenceType));
-		}
-		return q.asList();
+		return q.field("missionId").in(JMission.getAbsencesMissionIds(absenceType));
 	}
 
 	public static JAbsence fetch(final String id) {

@@ -1,4 +1,4 @@
-package caches;
+package http;
 
 import org.joda.time.DateTime;
 import play.mvc.Action;

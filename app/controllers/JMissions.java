@@ -1,6 +1,6 @@
 package controllers;
 
-import caches.ResponseCache;
+import http.ResponseCache;
 import dto.MissionDTO;
 import models.JMission;
 import models.JUser;

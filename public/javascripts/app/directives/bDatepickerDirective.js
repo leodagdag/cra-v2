@@ -1,5 +1,6 @@
 angular.module('bDatepicker', [])
 	.directive('bDatepicker', function() {
+		'use strict';
 		return {
 			require: '?ngModel',
 			restrict: 'A',
@@ -11,11 +12,12 @@ angular.module('bDatepicker', [])
 						return ngModelCtrl.$setViewValue(moment(ev.date).format("DD/MM/YYYY"));
 					});
 				};
-				if(ngModelCtrl != null) {
+				if(ngModelCtrl !== null) {
 					originalRender = ngModelCtrl.$render;
 					ngModelCtrl.$render = function() {
 						originalRender();
-						return element.datepicker.date = ngModelCtrl.$viewValue;
+						element.datepicker.date = ngModelCtrl.$viewValue;
+						return element.datepicker.date;
 					};
 				}
 				return attrs.$observe('bDatepicker', function(value) {

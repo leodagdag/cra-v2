@@ -1,5 +1,6 @@
 app.controller('DayAbsenceCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
 	function DayAbsenceCtrl($scope, $http, $log, $location, $routeParams) {
+		'use strict';
 		$scope.localSave = function() {
 			var day = {
 				day: true,

@@ -1,11 +1,11 @@
 package controllers;
 
-import caches.ResponseCache;
 import com.google.common.collect.Lists;
 import constants.AbsenceType;
 import dto.AbsenceDTO;
 import exceptions.AbsenceAlreadyExistException;
 import export.PDF;
+import http.ResponseCache;
 import mail.MailerAbsence;
 import models.DbFile;
 import models.JAbsence;
@@ -80,23 +80,18 @@ public class JAbsences extends Controller {
 	public static Result history(final String userId, final String absenceType, final Integer year, final Integer month) {
 		final List<JAbsence> absences = Lists.newArrayList();
 		final AbsenceType absType = AbsenceType.of(absenceType);
-		if(year == 0) {
-			absences.addAll(JAbsence.fetch(userId, absType));
-		} else if(month == 0) {
-			switch(absType) {
-				case CP:
-					absences.addAll(JAbsence.fetch(userId, absType, year, DateTimeConstants.JUNE, year + 1, DateTimeConstants.MAY));
-					break;
-				case RTT:
-					absences.addAll(JAbsence.fetch(userId, absType, year, DateTimeConstants.JANUARY, year, DateTimeConstants.DECEMBER));
-					break;
-				default:
-					absences.addAll(JAbsence.fetch(userId, absType, year, DateTimeConstants.JANUARY, year + 1, DateTimeConstants.MAY));
-					break;
-			}
-		} else {
-			absences.addAll(JAbsence.fetch(userId, absType, year, month, year, month));
+
+		switch(absType) {
+			case CP:
+				absences.addAll(JAbsence.fetchCP(userId, year, month));
+			case RTT:
+				absences.addAll(JAbsence.fetchRTT(userId, year, month));
+			case OTHER:
+				absences.addAll(JAbsence.fetchOTHER(userId, year, month));
+			default:
+				absences.addAll(JAbsence.fetchALL(userId, year, month));
 		}
+
 		return ok(toJson(AbsenceDTO.of(absences)));
 	}
 

@@ -14,6 +14,6 @@ angular.module('momentOfDayFilter', [])
 				default:
 					return "j'sais pas ;)";
 			}
-		}
+		};
 	});
 

@@ -1,5 +1,6 @@
 app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
 	function SpecialDayCtrl($scope, $http, $log, $location, $routeParams) {
+		'use strict';
 		var noon = moment().hours(12).minutes(0).seconds(0).milliseconds(0);
 		var PeriodForm = function() {
 			return {
@@ -11,32 +12,33 @@ app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$rout
 		};
 
 		var Period = function(p) {
+			var startTime, endTime;
 			if(p.startTime && p.endTime) {
 				var start = _.isNumber(p.startTime) ? moment(p.startTime) : moment(p.startTime, 'HH:mm'),
-					startTime = moment(noon).hours(start.hours()).minutes(start.minutes()).valueOf(),
-					end = _.isNumber(p.endTime) ? moment(p.endTime) : moment(p.endTime, 'HH:mm'),
-					endTime = moment(noon).hours(end.hours()).minutes(end.minutes()).valueOf();
+					end = _.isNumber(p.endTime) ? moment(p.endTime) : moment(p.endTime, 'HH:mm');
+				startTime = moment(noon).hours(start.hours()).minutes(start.minutes()).valueOf();
+				endTime = moment(noon).hours(end.hours()).minutes(end.minutes()).valueOf();
 			}
 			return {
 				missionId: p.missionId,
 				periodType: p.periodType,
-				startTime: startTime || null,
-				endTime: endTime || null
-			}
+				startTime: startTime,
+				endTime: endTime
+			};
 		};
 
 		var SpecialDay = function() {
 			return {
 				morning: null,
 				afternoon: null
-			}
+			};
 		};
 
 		var extractPeriods = function(halfday) {
 			if(halfday && halfday.periods) {
 				return _(halfday.periods)
 					.map(function(p) {
-						return new Period(p)
+						return new Period(p);
 					}).valueOf();
 			}
 			return [];
@@ -82,16 +84,16 @@ app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$rout
 					if(!this[halfDay]) {
 						this[halfDay] = {
 							periods: []
-						}
+						};
 					} else if(!this[halfDay].periods) {
 						this[halfDay].periods = [];
 					}
-					this[halfDay].periods.push(_.pick(p, 'missionId', 'startTime', 'endTime'))
+					this[halfDay].periods.push(_.pick(p, 'missionId', 'startTime', 'endTime'));
 				}
 				else {
 					this[p.periodType] = {
 						missionId: p.missionId
-					}
+					};
 				}
 			}, day);
 			$scope.save(day);

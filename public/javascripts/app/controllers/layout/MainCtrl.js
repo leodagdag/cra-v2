@@ -1,15 +1,17 @@
 app.controller('MainCtrl', ['$scope', '$rootScope', '$http', '$log', '$location',
 	function MainCtrl($scope, $rootScope, $http, $log, $location) {
+		"use strict";
 		$rootScope.onSuccess = function (msg) {
 			$rootScope.$broadcast('event:success', msg);
-		}
+		};
 		$rootScope.onError = function (msg) {
 			$rootScope.$broadcast('event:error', msg);
-		}
+		};
 	}]);
 
 app.controller('AlertCtrl', ['$scope', '$rootScope', '$timeout', '$log',
 	function AlertCtrl($scope, $rootScope, $timeout, $log) {
+		"use strict";
 		$rootScope.errors = [];
 		$rootScope.successes = [];
 
@@ -22,7 +24,7 @@ app.controller('AlertCtrl', ['$scope', '$rootScope', '$timeout', '$log',
 		var close = function (list, ts) {
 			$rootScope[list] = _($rootScope[list])
 				.filter(function (alert) {
-					return alert.ts != ts
+					return alert.ts !== ts;
 				})
 				.valueOf();
 		};
@@ -43,7 +45,7 @@ app.controller('AlertCtrl', ['$scope', '$rootScope', '$timeout', '$log',
 				ts: now
 			});
 			$timeout(function () {
-				closeError(now)
+				closeError(now);
 			}, 5000, true);
 		});
 

@@ -3,7 +3,5 @@ angular.module('vehicleBrandFilter', [])
 		'use strict';
 		return function(brand) {
 			return _.str.humanize(brand);
-		}
-
+		};
 	});
-

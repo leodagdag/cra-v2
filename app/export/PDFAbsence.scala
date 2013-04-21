@@ -1,24 +1,27 @@
 package export
 
 import com.itextpdf.text.pdf.PdfPTable
-import com.itextpdf.text.{Element, Paragraph, PageSize, Document}
+import com.itextpdf.text._
 import models.{JUser, JMission, JAbsence}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
-import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
+import scala.collection.convert.WrapAsJava._
 import utils._
+import scala.List
 
 /**
  * @author f.patin
  */
-object PDFAbsence extends PDFComposer[List[JAbsence]] {
+abstract class PDFAbsence extends PDFComposer[List[JAbsence]] {
 
   override protected def document(): Document = new Document(PageSize.A4)
 
+  val title: Phrase
+
   def content(doc: Document, absences: List[JAbsence]) {
     // Header
-    doc.add(PDFAbsenceTools.pageHeader(absences.head.userId))
+    doc.add(PDFAbsenceTools.pageHeader(absences.head.userId, title))
     // Body
     val body = new PdfPTable(4)
     body.setWidthPercentage(100f)
@@ -33,19 +36,26 @@ object PDFAbsence extends PDFComposer[List[JAbsence]] {
   }
 }
 
+object PDFAbsence extends PDFAbsence with PDFTools  with PDFFont{
+  val title = phrase("Demande de congés",titleFont)
+}
+
+object PDFCancelAbsence extends PDFAbsence  with PDFTools  with PDFFont{
+  val title = phrase("Annulation de congés",redTitleFont)
+}
 
 object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
 
   private lazy val missions = JMission.getAbsencesMissions
 
-  private val title = "Demande de congés"
-
-  def pageHeader(userId: ObjectId): PdfPTable = {
+  def pageHeader(userId: ObjectId, title: Phrase): PdfPTable = {
     val § = new Paragraph()
     val user = JUser.identity(userId)
+
+
     §.addAll(
       List(
-        phraseln(title, titleFont),
+        phraseln(title),
         blankLine,
         phraseln(phrase("Collaborateur : ", headerFont), phrase(s"${user.fullName()}", headerFontBold)),
         blankLine,

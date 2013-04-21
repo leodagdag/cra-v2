@@ -1,5 +1,6 @@
 app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CarBrandConst', 'MotorcycleBrandConst', 'VehicleCarPowerConst', 'VehicleMotorcyclePowerConst', 'YearsConst', 'MonthsConst',
 	function VehicleCtrl($rootScope, $scope, $http, $log, $location, $routeParams, CarBrandConst, MotorcycleBrandConst, VehicleCarPowerConst, VehicleMotorcyclePowerConst, YearsConst, MonthsConst) {
+		'use strict';
 		$scope._ = _;
 		var Vehicle = function(form) {
 			this.userId = $scope.profile.id;
@@ -81,7 +82,7 @@ app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		};
 
 		$scope.deactivate = function(id) {
-			if(confirm('Êtes-vous sûr de vouloir désactiver votre véhicule ?')) {
+			if(window.confirm('Êtes-vous sûr de vouloir désactiver votre véhicule ?')) {
 				var route = jsRoutes.controllers.JVehicles.deactivate();
 				$http({
 					'method': route.method,

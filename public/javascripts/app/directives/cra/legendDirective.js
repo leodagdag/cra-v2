@@ -18,8 +18,8 @@ angular.module('craLegendDirective', [])
 
 				function toggle() {
 					isOpen = !isOpen;
-					text.removeClass(isOpen ? 'hide' : 'show');
-					text.addClass(isOpen ? 'show' : 'hide')
+					text.removeClass(isOpen ? 'hide' : 'show')
+						.addClass(isOpen ? 'show' : 'hide');
 				}
 			}
 		};

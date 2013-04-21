@@ -17,7 +17,9 @@ angular.module('dayOfWeekFilter', [])
 					return 'samedi';
 				case 7:
 					return 'dimanche';
+				default :
+					return "j'sais pas ;)";
 			}
-		}
+		};
 	});
 

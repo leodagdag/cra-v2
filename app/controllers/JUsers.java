@@ -1,6 +1,6 @@
 package controllers;
 
-import caches.ResponseCache;
+import http.ResponseCache;
 import dto.EmployeeDTO;
 import dto.ManagerDTO;
 import models.JUser;

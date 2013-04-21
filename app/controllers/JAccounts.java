@@ -1,6 +1,6 @@
 package controllers;
 
-import caches.ResponseCache;
+import http.ResponseCache;
 import com.google.common.collect.Lists;
 import dto.AccountDTO;
 import models.JUser;

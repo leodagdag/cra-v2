@@ -114,6 +114,12 @@ trait PDFFont {
     f.setSize(15f)
     f
   }
+
+  val redTitleFont: Font = {
+    val f = new Font(titleFont)
+    f.setColor(BaseColor.RED)
+    f
+  }
   val headerFont: Font = {
     val f = new Font(baseFont)
     f.setSize(12f)
@@ -187,7 +193,7 @@ trait PDFComposer[T] {
 
   protected def document(): Document
 
-  def apply(obj: T): Array[Byte] = {
+  def generate(obj: T): Array[Byte] = {
     compose(obj, content)
   }
 

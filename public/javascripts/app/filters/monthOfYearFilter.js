@@ -3,6 +3,6 @@ angular.module('monthOfYearFilter', [])
 		'use strict';
 		return function(month) {
 			return (month) ? moment(month.toString(), "M").format("MMMM") : "";
-		}
+		};
 	});
 

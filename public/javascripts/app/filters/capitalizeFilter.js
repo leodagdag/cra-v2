@@ -3,6 +3,6 @@ angular.module('capitalizeFilter', [])
 		'use strict';
 		return function(input) {
 			return (input) ? _.str.capitalize(input.toLowerCase()) : "";
-		}
+		};
 	});
 

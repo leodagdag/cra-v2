@@ -1,6 +1,6 @@
 package controllers;
 
-import caches.ResponseCache;
+import http.ResponseCache;
 import com.google.common.collect.Lists;
 import dto.VehicleDTO;
 import models.JVehicle;

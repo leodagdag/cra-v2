@@ -1,7 +1,6 @@
-'use strict';
-
 angular.module('httpInterceptorServiceProvider', [])
 	.config(['$httpProvider', function($httpProvider) {
+		'use strict';
 		$httpProvider.responseInterceptors.push(function($q, $rootScope, $log) {
 			function success(response) {
 				return response;
@@ -35,10 +34,11 @@ var app = angular.module('app', ['ngResource', 'httpInterceptorServiceProvider',
 /* based on https://github.com/bleporini/angular-authent */
 app.directive('authenticator', ['$location', '$window',
 	function($location, $window) {
+		'use strict';
 		return function(scope, elem, attrs) {
 			scope.$on('event:auth-loginRequired', function() {
 				$window.location.href = "/logout";
-			})
+			});
 		};
 	}]);
 

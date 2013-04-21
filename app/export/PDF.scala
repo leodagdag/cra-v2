@@ -22,7 +22,7 @@ object PDF {
 
   def createAbsenceData(jAbsences: java.util.List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = createAbsenceData(jAbsences.toList)
 
-  def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFAbsence.apply, newAbsenceFile)
+  def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFCancelAbsence.generate, newAbsenceFile)
 
   def createAbsenceFile(absence: JAbsence, user: JUser): File = createAbsenceFile(List(absence), user)
 
@@ -34,21 +34,21 @@ object PDF {
   }
 
   private def createAbsenceData(absences: List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = {
-    val data = PDFAbsence(absences)
+    val data = PDFAbsence.generate(absences)
     val fileId = DbFile.save(data)
     JAbsence.updateFileId(absences.map(_.id), fileId)
     F.Tuple(fileId, data)
   }
 
   // Cra
-  def getEmployeeCraData(cra: JCra): Array[Byte] = PDFEmployeeCra.apply(cra)
+  def getEmployeeCraData(cra: JCra): Array[Byte] = PDFEmployeeCra.generate(cra)
 
-  def getMissionCraData(cra: JCra, mission: JMission): Array[Byte] = PDFMissionCra.apply((cra, mission))
+  def getMissionCraData(cra: JCra, mission: JMission): Array[Byte] = PDFMissionCra.generate((cra, mission))
 
   def createEmployeeCraFile(cra: JCra, user: JUser): File = toFile[JCra](user, cra, createEmployeeCraData, newCraFile)
 
   private def createEmployeeCraData(cra: JCra) = {
-    val data: Array[Byte] = PDFEmployeeCra(cra)
+    val data: Array[Byte] = PDFEmployeeCra.generate(cra)
     val fileId = DbFile.save(data)
     JCra.updateFileId(cra.id, fileId)
     data

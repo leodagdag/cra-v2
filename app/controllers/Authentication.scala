@@ -9,6 +9,7 @@ import play.api.mvc.{Action, Security, Results}
 import scala.Some
 import security.{Profile, MyDeadboltHandler, Auth}
 import utils.MD5
+import http.CacheControl
 
 /**
  * @author f.patin
@@ -29,7 +30,11 @@ object Authentication extends BaseController {
   def authenticate = Action {
     implicit request =>
       authenticateForm.bindFromRequest.fold(
-        withErrors => BadRequest("KO"),
+        withErrors => {
+          Results.Redirect(routes.Authentication.login())
+            .withSession(request.session - Security.username)
+            .flashing(("errormsg" -> "Utilisateur ou mot de passe incorrect"))
+        },
         form => {
           Async {
             Auth.checkAuthentication((form._1, MD5(form._2))).map {
@@ -71,7 +76,7 @@ object Authentication extends BaseController {
         Async {
           Profile(request.session.get("username").get)
             .map {
-            (profile: Option[Profile]) => Ok(Json.toJson(profile.get)(fromProfile))
+            profile  => Ok(Json.toJson(profile.get)(fromProfile)).withHeaders(profile.get.eTag, CacheControl.maxAgeO)
           }
             .recover {
             case e: Exception => InternalServerError(JsString(s"exception ${e.getMessage}"))

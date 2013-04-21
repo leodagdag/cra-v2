@@ -1,5 +1,6 @@
 app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
 	function PartTimeNewCtrl($rootScope, $scope, $http, $log, $location) {
+		'use strict';
 		$scope._ = _;
 		/* Form */
 		var PartTime = function(form) {
@@ -82,7 +83,7 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 		};
 
 		$scope.deactivate = function(id) {
-			if(confirm('Êtes-vous sûr de vouloir désactiver votre temps partiel ?')) {
+			if(window.confirm('Êtes-vous sûr de vouloir désactiver votre temps partiel ?')) {
 				var route = jsRoutes.controllers.JPartTimes.deactivate();
 				$http({
 					method: route.method,

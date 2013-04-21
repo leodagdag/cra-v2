@@ -13,11 +13,16 @@
 						<fieldset>
 							<legend>Genesis - CRA</legend>
 							<input type="hidden" name="redirect" value="@flash.get("redirect").map(url => url)">
-							<label class="control-label" for="username">Utilisateur</label>
-							<input type="text" class="span7" name="username" id="username" required="required">
-							<label class="control-label" for="password">Mot de passe</label>
-							<input type="password" class="span7" name="password" id="password" required="required">
-							<span class="label label-important">@flash.get("errormsg").map(errormsg => errormsg)</span>
+							<label class="control-label" for="username">Utilisateur <i class="icon-mandatory"></i></label>
+							<div class="input-append">
+								<input type="text" class="span7" name="username" id="username" required="required">
+								<span class="add-on">@@genesis-groupe.com</span>
+							</div>
+							<label class="control-label" for="password">Mot de passe <i class="icon-mandatory"></i></label>
+							<input type="password" class="span5" name="password" id="password" required="required">
+							<div class="control-group error">
+								<span class="help-block"><em>@flash.get("errormsg").map(errormsg => errormsg)</em></span>
+							</div>
 							<div class="form-actions">
 								<button type="submit" class="btn btn-primary pull-right">Connexion</button>
 							</div>

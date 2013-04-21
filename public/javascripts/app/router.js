@@ -1,5 +1,6 @@
 app.factory('Profile', ['$http', '$log',
 	function($http, $log) {
+		'use strict';
 		var route = jsRoutes.controllers.Authentication.profile();
 		return $http({
 			method: route.method,
@@ -9,7 +10,7 @@ app.factory('Profile', ['$http', '$log',
 
 app.config(['$routeProvider',
 	function($routeProvider) {
-
+		'use strict';
 		$routeProvider
 			.when('/cra/:username/:year/:month', {
 				templateUrl: 'assets/html/views/cra/cra.html',
@@ -78,7 +79,5 @@ app.config(['$routeProvider',
 				templateUrl: 'assets/html/views/changeLog.html',
 				controller: 'MainCtrl'
 			});
-
-
 	}
 ]);

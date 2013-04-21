@@ -1,5 +1,6 @@
 app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', '$window', 'profile', 'AbsenceTypeConst', 'MonthsConst',
 	function AbsenceCtrl($rootScope, $scope, $http, $log, $location, $routeParams, $window, profile, AbsenceTypeConst, MonthsConst) {
+		'use strict';
 		$scope.profile = profile.data;
 
 		$scope.subSections = {
@@ -59,7 +60,7 @@ app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$locati
 		};
 
 		$scope.remove = function(id) {
-			if(confirm("Êtes vous sur de vouloir supprimer cette absence ?")) {
+			if($window.confirm("Êtes vous sur de vouloir supprimer cette absence ?")) {
 				var route = jsRoutes.controllers.JAbsences.remove($scope.profile.id, id);
 				$http({
 					method: route.method,

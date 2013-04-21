@@ -1,5 +1,6 @@
 app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', 'ClaimTypeConst', 'MonthsConst', 'profile',
 	function ClaimCtrl($scope, $rootScope, $http, $log, $location, ClaimTypeConst, MonthsConst, profile) {
+		'use strict';
 		var Claim = function(userId, form) {
 			this.userId = userId;
 			this.missionId = form.missionId;
@@ -8,7 +9,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 			this.amount = form.amount;
 			this.kilometer = form.kilometer;
 			this.journey = form.journey;
-			this.comment = form.comment
+			this.comment = form.comment;
 		};
 
 		$scope.profile = profile.data;
@@ -58,7 +59,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		};
 
 		$scope.remove = function(id) {
-			if(confirm("Êtes vous sur de vouloir supprimer cette note de frais ?")) {
+			if(window.confirm("Êtes vous sur de vouloir supprimer cette note de frais ?")) {
 				var route = jsRoutes.controllers.JClaims.remove(id);
 				$http({
 					'method': route.method,

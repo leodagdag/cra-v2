@@ -5,15 +5,15 @@ angular.module('vehiclePowerFilter', [])
 			switch(vehicleType) {
 				case 'car':
 					return power + ' cv';
-					break;
 				case 'motorcycle':
 					switch(power) {
 						case 0:
-							return 'De 0 à 500 cm²'
+							return 'De 0 à 500 cm²';
 						case 501:
-							return 'Plus de 500 cm²'
+							return 'Plus de 500 cm²';
 					}
 			}
-		}
+			return null;
+		};
 	});
 

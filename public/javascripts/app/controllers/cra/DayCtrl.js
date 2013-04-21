@@ -1,5 +1,6 @@
 app.controller('DayCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', '$routeParams', 'profile',
 	function DayCtrl($scope, $rootScope, $http, $log, $location, $routeParams, profile) {
+		'use strict';
 		$scope.profile = profile.data;
 
 		$scope.subSections = {
@@ -102,7 +103,7 @@ app.controller('DayCtrl', ['$scope', '$rootScope', '$http', '$log', '$location',
 				.error(function(errors, status, headers, config) {
 					_(errors).forEach(function(err, key) {
 						if(_.isArray($scope.errors[key])) {
-							$scope.errors[key] = _($scope.errors[key]).push(err).flatten().valueOf()
+							$scope.errors[key] = _($scope.errors[key]).push(err).flatten().valueOf();
 						} else {
 							$scope.errors[key] = err;
 						}
