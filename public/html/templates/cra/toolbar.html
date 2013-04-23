@@ -1,31 +1,31 @@
 <div class="span12">
 	<nav>
-		<div class="btn-group">
-			<button class="btn btn-small" title="Mois précédent" data-ng-click="previous()"><</button>
-			<button class="btn btn-small" title="Mois suivant" data-ng-click="next()">></button>
+		<div class="span8">
+			<button class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}" data-ng-click="setComment()"><i class="icon-comment"></i> Commentaire</button>
+			<button class="btn btn-small" data-ng-click="claimSynthesis()"><i class="icon-money"></i> Frais</button>
+			<div class="btn-group">
+				<a class="btn btn-small dropdown-toggle disable" data-toggle="dropdown" href="#">
+					<i class="icon-print"></i> Imprimer
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="" data-ng-click="exportByEmployee(m.id)">Complet</a></li>
+					<li class="divider" data-ng-show="missionsOfCra.length > 0"></li>
+					<li data-ng-repeat="m in missionsOfCra">
+						<a href="" data-ng-click="exportByMission(m.id)">{{m.label}}</a>
+					</li>
+				</ul>
+			</div>
+			<button class="btn btn-small" data-ng-click="send()"><i class="icon-envelope"></i> Envoyer</button>
+			<span class="label label-success" data-ng-show="cra.sentDate">Dernier envoi le {{cra.sentDate | date:'dd/MM/yyyy à HH:mm:ss'}} <a href="" class="black" data-ng-click="sent()">voir</a></span>
 		</div>
-		<!--<button class="btn btn-small btn-success" data-ng-show="!cra.isValidated && cra.id" data-ng-click="validate()">Valider</button>
-		<button class="btn btn-small btn-danger" data-ng-show="cra.isValidated" data-ng-click="invalidate()">Invalider</button>-->
-		<button class="btn btn-small" data-ng-class="{'btn-info' : cra.comment}" data-ng-click="setComment()"><i class="icon-comment"></i> Commentaire</button>
-		<button class="btn btn-small" data-ng-click="claimSynthesis()"><i class="icon-money"></i> Frais</button>
-		<div class="btn-group">
-			<a class="btn btn-small dropdown-toggle disable" data-toggle="dropdown" href="#">
-				<i class="icon-print"></i> Imprimer
-				<span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu">
-				<li><a href="" data-ng-click="exportByEmployee(m.id)">Complet</a></li>
-                <li class="divider" data-ng-show="missionsOfCra.length > 0"></li>
-                <li data-ng-repeat="m in missionsOfCra">
-                    <a href="" data-ng-click="exportByMission(m.id)">{{m.label}}</a>
-                </li>
-			</ul>
-		</div>
-		<button class="btn btn-small" data-ng-click="send()"><i class="icon-envelope"></i> Envoyer</button>
-		<span class="label label-success" data-ng-show="cra.sentDate">Dernier envoi le {{cra.sentDate | date:'dd/MM/yyyy à HH:mm:ss'}} <a href="" class="black" data-ng-click="sent()">voir</a></span>
 		<div class="pull-right well well-small form-inline span4">
+			<div class="btn-group">
+				<button class="btn btn-small" title="Mois précédent" data-ng-click="previous()"><</button>
+				<button class="btn btn-small" title="Mois suivant" data-ng-click="next()">></button>
+			</div>
 			<select class="span3" data-ng-init="criterias.selected.year=criterias.years[criterias.selected.year.code - 1]" data-ng-model="criterias.selected.year" data-ng-options="y.label for y in criterias.years" required="required"></select>
-			<select class="span4"  data-ng-init="criterias.selected.month=criterias.months[criterias.selected.month.code - 1]" data-ng-model="criterias.selected.month" data-ng-options="m.label for m in criterias.months" required="required"></select>
+			<select class="span4" data-ng-init="criterias.selected.month=criterias.months[criterias.selected.month.code - 1]" data-ng-model="criterias.selected.month" data-ng-options="m.label for m in criterias.months" required="required"></select>
 			<select data-ng-show="criterias.showEmployees">
 				<option selected="selected">employee</option>
 			</select>

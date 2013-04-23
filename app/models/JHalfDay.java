@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import constants.MissionType;
+import constants.MomentOfDay;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -25,11 +26,16 @@ public class JHalfDay {
 
 	public ObjectId missionId;
 	public List<JPeriod> periods = Lists.newArrayList();
+	public Integer momentOfDay = MomentOfDay.morning.index;
 
 	public JHalfDay() {
 	}
+	public JHalfDay(final MomentOfDay momentOfDay) {
+		this.momentOfDay = momentOfDay.index;
+	}
 
-	public JHalfDay(final ObjectId missionId) {
+	public JHalfDay(final MomentOfDay momentOfDay,final ObjectId missionId) {
+		this.momentOfDay = momentOfDay.index;
 		this.missionId = missionId;
 	}
 

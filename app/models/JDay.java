@@ -75,6 +75,38 @@ public class JDay extends Model implements MongoModel {
 		this.year = date.getYear();
 	}
 
+	private static Query<JDay> q() {
+		return MorphiaPlugin.ds().createQuery(JDay.class);
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(date != null) {
+			_date = date.toDate();
+			year = date.getYear();
+			month = date.getMonthOfYear();
+			week = date.getWeekOfWeekyear();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_date != null) {
+			date = new DateTime(_date.getTime());
+			if(year == null) {
+				year = date.getYear();
+			}
+			if(month == null) {
+				month = date.getMonthOfYear();
+			}
+			if(week == null) {
+				week = date.getWeekOfWeekyear();
+			}
+		}
+	}
+
 	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final ObjectId missionId) {
 		return Lists.newArrayList(Collections2.transform(find(craId, userId, year, month, false), new Function<JDay, JDay>() {
 			@Nullable
@@ -153,26 +185,15 @@ public class JDay extends Model implements MongoModel {
 		return days;
 	}
 
-	private static Query<JDay> q() {
-		return MorphiaPlugin.ds().createQuery(JDay.class);
-	}
-
-	public Set<ObjectId> missionIds() {
-		final Set<ObjectId> result = Sets.newHashSet();
-		if(morning != null) {
-			result.addAll(morning.missionIds());
-		}
-		if(afternoon != null) {
-			result.addAll(afternoon.missionIds());
-		}
-		return result;
-	}
-
 	public static List<JDay> find(final ObjectId userId, final Set<DateTime> dateTimes) {
 		return q()
 			       .field("userId").equal(userId)
 			       .field("_date").in(Transformer.fromDateTimes(dateTimes))
 			       .asList();
+	}
+
+	public static List<JDay> fetch(final JCra cra) {
+		return q().field("craId").equal(cra.id).order("_date").asList();
 	}
 
 	public static JHalfDay findHalfDay(final ObjectId craId, final DateTime dateTime, final MomentOfDay momentOfDay) {
@@ -239,10 +260,10 @@ public class JDay extends Model implements MongoModel {
 			}
 			day.comment = absence.comment;
 			if(Boolean.TRUE.equals(dates.get(dt)._1)) {
-				day.morning = new JHalfDay(absence.missionId);
+				day.morning = new JHalfDay(MomentOfDay.morning,absence.missionId);
 			}
 			if(Boolean.TRUE.equals(dates.get(dt)._2)) {
-				day.afternoon = new JHalfDay(absence.missionId);
+				day.afternoon = new JHalfDay(MomentOfDay.afternoon,absence.missionId);
 			}
 			result.add(day.<JDay>insert());
 		}
@@ -317,11 +338,11 @@ public class JDay extends Model implements MongoModel {
 		}
 		boolean toSave = false;
 		if(day.morning == null && Boolean.TRUE.equals(morning)) {
-			day.morning = new JHalfDay(partTimeId);
+			day.morning = new JHalfDay(MomentOfDay.morning, partTimeId);
 			toSave = true;
 		}
 		if(day.afternoon == null && Boolean.TRUE.equals(afternoon)) {
-			day.afternoon = new JHalfDay(partTimeId);
+			day.afternoon = new JHalfDay(MomentOfDay.afternoon, partTimeId);
 			toSave = true;
 		}
 
@@ -347,32 +368,24 @@ public class JDay extends Model implements MongoModel {
 		return MorphiaPlugin.ds().findAndModify(q, uop, false, false);
 	}
 
-	@SuppressWarnings({"unused"})
-	@PrePersist
-	private void prePersist() {
-		if(date != null) {
-			_date = date.toDate();
-			year = date.getYear();
-			month = date.getMonthOfYear();
-			week = date.getWeekOfWeekyear();
+	public static List<JMission> extractMissions(final ObjectId craId) {
+		final List<JDay> days = q().field("craId").equal(craId).asList();
+		final Set<ObjectId> missionIds = Sets.newHashSet();
+		for(JDay day : days) {
+			missionIds.addAll(day.missionIds());
 		}
+		return JMission.fetch(missionIds);
 	}
 
-	@SuppressWarnings({"unused"})
-	@PostLoad
-	private void postLoad() {
-		if(_date != null) {
-			date = new DateTime(_date.getTime());
-			if(year == null) {
-				year = date.getYear();
-			}
-			if(month == null) {
-				month = date.getMonthOfYear();
-			}
-			if(week == null) {
-				week = date.getWeekOfWeekyear();
-			}
+	public Set<ObjectId> missionIds() {
+		final Set<ObjectId> result = Sets.newHashSet();
+		if(morning != null) {
+			result.addAll(morning.missionIds());
 		}
+		if(afternoon != null) {
+			result.addAll(afternoon.missionIds());
+		}
+		return result;
 	}
 
 	public Boolean isSaturday() {
@@ -391,13 +404,15 @@ public class JDay extends Model implements MongoModel {
 		return year != date.getYear() || month != date.getMonthOfYear();
 	}
 
-	public BigDecimal inGenesisHour(){
-		final BigDecimal morning = this.morning != null ? this.morning.inGenesisHour(): BigDecimal.ZERO;
+	public BigDecimal inGenesisHour() {
+		final BigDecimal morning = this.morning != null ? this.morning.inGenesisHour() : BigDecimal.ZERO;
 		final BigDecimal afternoon = this.afternoon != null ? this.afternoon.inGenesisHour() : BigDecimal.ZERO;
 		return morning.add(afternoon);
 	}
+
 	@Override
 	public ObjectId id() {
 		return id;
 	}
+
 }

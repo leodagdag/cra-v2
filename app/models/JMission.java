@@ -24,10 +24,7 @@ import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author f.patin
@@ -187,6 +184,10 @@ public class JMission {
 
 	public static JMission fetch(final ObjectId id) {
 		return queryToFindMe(id).get();
+	}
+
+	public static List<JMission> fetch(final Collection<ObjectId> ids) {
+		return q().field(Mapper.ID_KEY).in(ids).asList();
 	}
 
 	public static Boolean isAbsenceMission(final ObjectId missionId) {

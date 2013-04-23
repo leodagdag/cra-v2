@@ -12,6 +12,7 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.libs.F;
 import utils.time.JTimeUtils;
+import utils.time.TimeUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -76,7 +77,9 @@ public class JCra extends Model {
 
 			if(!partTimes.isEmpty()) {
 				for(JPartTime partTime : partTimes) {
-					final List<F.Tuple3<DateTime, Boolean, Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, partTime.endDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
+					final DateTime lastDayOfMonth = TimeUtils.lastDateOfMonth(cra.year, cra.month);
+					final DateTime endDate = lastDayOfMonth.isAfter(partTime.endDate) ? partTime.endDate : lastDayOfMonth;
+					final List<F.Tuple3<DateTime, Boolean, Boolean>> dates = JTimeUtils.extractDatesInYearMonth(cra.year, cra.month, partTime.startDate, endDate, partTime.dayOfWeek, partTime.momentOfDay, partTime.frequency);
 					for(F.Tuple3<DateTime, Boolean, Boolean> d : dates) {
 						JDay.addPartTime(cra.id, cra.userId, d._1, d._2, d._3);
 					}

@@ -35,15 +35,14 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 		$scope.form = new Form();
 
 		$scope.toggleDay = function(dayId, momentOfDay) {
+			$scope.form.daysOfWeek = _($scope.form.daysOfWeek)
+				.reject(function(item) {
+					return item.dayOfWeek === this.valueOf();
+				}, dayId)
+				.valueOf();
 			if(momentOfDay) {
 				var weekDay = {"dayOfWeek": dayId, "momentOfDay": momentOfDay.moment};
 				$scope.form.daysOfWeek.push(weekDay);
-			} else {
-				$scope.form.daysOfWeek = _($scope.form.daysOfWeek)
-					.reject(function(item) {
-						return item.dayOfWeek === this.valueOf();
-					}, dayId)
-					.valueOf();
 			}
 		};
 

@@ -28,5 +28,5 @@ package object export {
 
   val `3,7` = "3,7"
 
-  implicit val toOrderingDay: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
+
 }

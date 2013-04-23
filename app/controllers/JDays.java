@@ -188,7 +188,7 @@ public class JDays extends Controller {
 			if(this.morning == null) {
 				return null;
 			}
-			final JHalfDay hd = new JHalfDay();
+			final JHalfDay hd = new JHalfDay(MomentOfDay.morning);
 			if(this.morning.missionId == null) {
 				hd.periods.addAll(this.morning.periods());
 			} else {
@@ -201,7 +201,7 @@ public class JDays extends Controller {
 			if(this.afternoon == null) {
 				return null;
 			}
-			final JHalfDay hd = new JHalfDay();
+			final JHalfDay hd = new JHalfDay(MomentOfDay.afternoon);
 			if(this.afternoon.missionId == null) {
 				hd.periods.addAll(this.afternoon.periods());
 			} else {

@@ -164,7 +164,7 @@ trait PDFTableTools extends PDFFont {
   protected def colspanCell(colspan: Int) = {
     val cell = new PdfPCell(new Phrase(" "))
     cell.setColspan(colspan)
-    cell.setBorder(NO_BORDER)
+    cell.setBorder(Rectangle.NO_BORDER)
     cell
   }
 
@@ -175,7 +175,7 @@ trait PDFTableTools extends PDFFont {
     val cell = new PdfPCell(new Phrase(phrase, f))
     cell.setHorizontalAlignment(hAlign)
     cell.setVerticalAlignment(vAlign)
-    cell.setBorder(NO_BORDER)
+    cell.setBorder(Rectangle.NO_BORDER)
     cell.setBackgroundColor(backgroundColor)
     cell
   }
@@ -183,7 +183,7 @@ trait PDFTableTools extends PDFFont {
     val cell = new PdfPCell(table)
     cell.setHorizontalAlignment(Element.ALIGN_LEFT)
     cell.setVerticalAlignment(Element.ALIGN_MIDDLE)
-    cell.setBorder(NO_BORDER)
+    cell.setBorder(Rectangle.NO_BORDER)
     cell
   }
 
