@@ -1,23 +1,22 @@
 package constants;
 
 import com.itextpdf.text.BaseColor;
+import play.libs.F;
 
 /**
  * @author f.patin
  */
 public enum MissionTypeColor {
-	customer(BaseColor.BLUE, BaseColor.WHITE),
-	pre_sale(new BaseColor(0,128,0), BaseColor.WHITE),
-	holiday(BaseColor.RED, BaseColor.WHITE),
-	not_paid(new BaseColor(180,18,238), BaseColor.WHITE),
-	internal_work(new BaseColor(165,34,0), BaseColor.WHITE);
-	public final BaseColor frontColor;
-	public final BaseColor backgroundColor;
+	customer(F.Tuple(BaseColor.WHITE, BaseColor.BLUE)),
+	pre_sale(F.Tuple(BaseColor.WHITE, new BaseColor(0,128,0))),
+	holiday(F.Tuple(BaseColor.WHITE, BaseColor.RED)),
+	not_paid(F.Tuple(BaseColor.WHITE, new BaseColor(180,18,238))),
+	internal_work(F.Tuple(BaseColor.WHITE, new BaseColor(165,34,0)));
 
+	public final F.Tuple<BaseColor,BaseColor> colors;
 
-	MissionTypeColor(final BaseColor frontColor, final BaseColor backgroundColor) {
-		this.frontColor = frontColor;
-		this.backgroundColor = backgroundColor;
+	MissionTypeColor(final F.Tuple<BaseColor,BaseColor> colors) {
+		this.colors = colors;
 	}
 
 	public static MissionTypeColor by(final MissionType missionType) {

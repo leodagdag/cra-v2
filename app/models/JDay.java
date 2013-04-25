@@ -62,53 +62,26 @@ public class JDay extends Model implements MongoModel {
 	public String comment;
 	private Date _date;
 
-	public JDay(final Long date) {
-		this.date = new DateTime(date);
+	public JDay() {
 	}
 
-	public JDay() {
+	public JDay(final Long date) {
+		this(new DateTime(date));
 	}
 
 	public JDay(final DateTime date) {
 		this.date = date;
 		this.month = date.getMonthOfYear();
 		this.year = date.getYear();
+		this.week = date.getWeekOfWeekyear();
 	}
 
 	private static Query<JDay> q() {
 		return MorphiaPlugin.ds().createQuery(JDay.class);
 	}
 
-	@SuppressWarnings({"unused"})
-	@PrePersist
-	private void prePersist() {
-		if(date != null) {
-			_date = date.toDate();
-			year = date.getYear();
-			month = date.getMonthOfYear();
-			week = date.getWeekOfWeekyear();
-		}
-	}
-
-	@SuppressWarnings({"unused"})
-	@PostLoad
-	private void postLoad() {
-		if(_date != null) {
-			date = new DateTime(_date.getTime());
-			if(year == null) {
-				year = date.getYear();
-			}
-			if(month == null) {
-				month = date.getMonthOfYear();
-			}
-			if(week == null) {
-				week = date.getWeekOfWeekyear();
-			}
-		}
-	}
-
-	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final ObjectId missionId) {
-		return Lists.newArrayList(Collections2.transform(find(craId, userId, year, month, false), new Function<JDay, JDay>() {
+	private static List<JDay> filterByMission(final List<JDay> days, final ObjectId missionId) {
+		return Lists.newArrayList(Collections2.transform(days, new Function<JDay, JDay>() {
 			@Nullable
 			@Override
 			public JDay apply(@Nullable final JDay day) {
@@ -144,6 +117,38 @@ public class JDay extends Model implements MongoModel {
 				return day;
 			}
 		}));
+	}
+
+	@SuppressWarnings({"unused"})
+	@PrePersist
+	private void prePersist() {
+		if(date != null) {
+			_date = date.toDate();
+			year = date.getYear();
+			month = date.getMonthOfYear();
+			week = date.getWeekOfWeekyear();
+		}
+	}
+
+	@SuppressWarnings({"unused"})
+	@PostLoad
+	private void postLoad() {
+		if(_date != null) {
+			date = new DateTime(_date.getTime());
+			if(year == null) {
+				year = date.getYear();
+			}
+			if(month == null) {
+				month = date.getMonthOfYear();
+			}
+			if(week == null) {
+				week = date.getWeekOfWeekyear();
+			}
+		}
+	}
+
+	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final ObjectId missionId) {
+		return filterByMission(find(craId, userId, year, month, false), missionId);
 	}
 
 	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final Boolean withPastAndFuture) {
@@ -193,7 +198,13 @@ public class JDay extends Model implements MongoModel {
 	}
 
 	public static List<JDay> fetch(final JCra cra) {
-		return q().field("craId").equal(cra.id).order("_date").asList();
+		return q()
+			       .field("craId").equal(cra.id)
+			       .order("_date").asList();
+	}
+
+	public static List<JDay> fetch(final JCra cra, final JMission mission) {
+		return filterByMission(fetch(cra), mission.id);
 	}
 
 	public static JHalfDay findHalfDay(final ObjectId craId, final DateTime dateTime, final MomentOfDay momentOfDay) {
@@ -260,10 +271,10 @@ public class JDay extends Model implements MongoModel {
 			}
 			day.comment = absence.comment;
 			if(Boolean.TRUE.equals(dates.get(dt)._1)) {
-				day.morning = new JHalfDay(MomentOfDay.morning,absence.missionId);
+				day.morning = new JHalfDay(MomentOfDay.morning, absence.missionId);
 			}
 			if(Boolean.TRUE.equals(dates.get(dt)._2)) {
-				day.afternoon = new JHalfDay(MomentOfDay.afternoon,absence.missionId);
+				day.afternoon = new JHalfDay(MomentOfDay.afternoon, absence.missionId);
 			}
 			result.add(day.<JDay>insert());
 		}

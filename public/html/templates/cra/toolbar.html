@@ -17,7 +17,7 @@
 				</ul>
 			</div>
 			<button class="btn btn-small" data-ng-click="send()"><i class="icon-envelope"></i> Envoyer</button>
-			<span class="label label-success" data-ng-show="cra.sentDate">Dernier envoi le {{cra.sentDate | date:'dd/MM/yyyy à HH:mm:ss'}} <a href="" class="black" data-ng-click="sent()">voir</a></span>
+			<span class="label label-info" data-ng-show="cra.sentDate">Dernier envoi le {{cra.sentDate | date:'dd/MM/yyyy à HH:mm:ss'}} <a href="" class="orange" data-ng-click="sent()">(voir)</a></span>
 		</div>
 		<div class="pull-right well well-small form-inline span4">
 			<div class="btn-group">

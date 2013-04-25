@@ -78,6 +78,22 @@ app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '
 		$scope.exportByMission = function(id) {
 			$window.open(jsRoutes.controllers.JCras.exportByMission($scope.cra.id, id).url);
 		};
+
+		$scope.send = function() {
+			var route = jsRoutes.controllers.JCras.send($scope.cra.id);
+			$http({
+				method: route.method,
+				url: route.url
+			})
+				.success(function(sentDate, status, headers, config) {
+					$scope.cra.sentDate = moment(_.parseInt(sentDate)).valueOf();
+				});
+		};
+
+		$scope.sent = function() {
+			$window.open(jsRoutes.controllers.JCras.sent($scope.cra.id).url);
+		};
+
 		$scope.getClass = function(halfday) {
 			if(!halfday) {
 				return "";
@@ -138,20 +154,7 @@ app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '
 		};
 
 
-		$scope.send = function() {
-			var route = jsRoutes.controllers.JCras.send($scope.cra.id);
-			$http({
-				method: route.method,
-				url: route.url
-			})
-				.success(function(sentDate, status, headers, config) {
-					$scope.cra.sentDate = moment(_.parseInt(sentDate)).valueOf();
-				});
-		};
 
-		$scope.sent = function() {
-			$window.open(jsRoutes.controllers.JCras.sent($scope.cra.id).url);
-		};
 
 		$scope.openDay = function(dIndex) {
 			var selectedDate = moment($scope.selectedDays[dIndex].date);

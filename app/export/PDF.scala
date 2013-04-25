@@ -45,10 +45,10 @@ object PDF {
 
   def getMissionCraData(cra: JCra, mission: JMission): Array[Byte] = PDFMissionCra.generate((cra, mission))
 
-  def createEmployeeCraFile(cra: JCra, user: JUser): File = toFile[JCra](user, cra, createEmployeeCraData, newCraFile)
+  def createProductionCraFile(cra: JCra, user: JUser): File = toFile[JCra](user, cra, createProductionCraData, newCraFile)
 
-  private def createEmployeeCraData(cra: JCra) = {
-    val data: Array[Byte] = PDFEmployeeCra.generate(cra)
+  private def createProductionCraData(cra: JCra) = {
+    val data: Array[Byte] = PDFProductionCra.generate(cra)
     val fileId = DbFile.save(data)
     JCra.updateFileId(cra.id, fileId)
     data

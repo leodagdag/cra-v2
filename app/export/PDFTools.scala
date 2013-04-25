@@ -24,7 +24,8 @@ trait PDFTools {
   }
 
   def phrase(phrase: String, font: Font): Phrase = {
-    new Phrase(phrase, font)
+    val p = new Phrase(phrase, font)
+    p
   }
 
   def phraseln(p: String, font: Font): Phrase = {
@@ -186,30 +187,5 @@ trait PDFTableTools extends PDFFont {
     cell.setBorder(Rectangle.NO_BORDER)
     cell
   }
-
-}
-
-trait PDFComposer[T] {
-
-  protected def document(): Document
-
-  def generate(obj: T): Array[Byte] = {
-    compose(obj, content)
-  }
-
-  def compose(cra: T, f: (Document, T) => Unit): Array[Byte] = {
-    val doc = document()
-    val os = new ByteArrayOutputStream()
-    PdfWriter.getInstance(doc, os)
-    doc.open()
-    doc.addCreationDate()
-
-    f(doc, cra)
-
-    doc.close()
-    os.toByteArray
-  }
-
-  def content(doc: Document, obj: T)
 }
 

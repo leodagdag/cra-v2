@@ -63,11 +63,7 @@ public class JHalfDay {
 			return BigDecimal.ZERO;
 		} else {
 			final JMission mission = JMission.codeAndMissionType(this.missionId);
-			if(MissionType.customer.name().equals(mission.missionType)) {
-				return THREE_POINT_SEVEN;
-			} else {
-				return BigDecimal.ZERO;
-			}
+			return MissionType.valueOf(mission.missionType).genesisHour;
 		}
 	}
 }

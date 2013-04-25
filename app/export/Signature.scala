@@ -15,7 +15,6 @@ object Signature extends PDFTableTools {
     table.addCell(customerSignature)
     table.addCell(employeeSignature)
     table.addCell(genesisSignature)
-    (0 to 2).foreach(i => table.addCell(_3colsCell))
     table
   }
 

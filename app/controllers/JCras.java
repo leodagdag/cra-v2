@@ -91,7 +91,7 @@ public class JCras extends Controller {
 			DbFile.remove(cra.fileId);
 		}
 		final JUser user = JUser.identity(cra.userId);
-		final File file = PDF.createEmployeeCraFile(cra, user);
+		final File file = PDF.createProductionCraFile(cra, user);
 		final DateTime date = MailerCra.send(cra, user, file, CraBody.cra(cra, user));
 		JCra.updateSentDate(cra.id, date);
 		return ok(toJson(date.getMillis()));

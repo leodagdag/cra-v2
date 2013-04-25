@@ -1,19 +1,18 @@
 package export
 
 
-import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
-import com.itextpdf.text.{Element, BaseColor, Phrase, Paragraph, PageSize, Document}
-import constants.{ClaimType, MissionTypeColor, MissionType}
+import com.itextpdf.text.pdf.PdfPTable
+import com.itextpdf.text.{Phrase, Paragraph, PageSize, Document}
+import constants.MissionType
 import java.util.{Map => JMap, EnumMap => JEnumMap, List => JList, ArrayList => JArrayList}
-import models.{JClaim, JHalfDay, JDay, JUser, JMission, JCra}
+import models.{JDay, JUser, JMission, JCra}
 import org.bson.types.ObjectId
-import org.joda.time.{DateTimeConstants, DateTime}
+import org.joda.time.DateTime
 import scala.Some
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
-import scala.collection.immutable.{SortedMap, TreeSet, TreeMap, List}
+import scala.collection.immutable.List
 import utils._
-import utils.business.JClaimUtils
 import utils.time.TimeUtils
 
 /**
@@ -26,14 +25,13 @@ abstract class PDFCra[T]() extends PDFComposer[T] {
 
 object PDFEmployeeCra extends PDFCra[JCra] {
 
-  def content(doc: Document, cra: JCra) {
+  protected def content(doc: Document, cra: JCra) {
     // Header
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month))
     // Page
     // Calendar
     doc.add(EmployeeCalendar(cra).compose())
-    doc.add(PDFCraTools.blankLine)
-    doc.add(Total(cra).compose)
+    doc.add(OldTotal(cra).compose)
     doc.add(PDFCraTools.blankLine)
     // Comment
     if (cra.comment != null) {
@@ -52,16 +50,14 @@ object PDFEmployeeCra extends PDFCra[JCra] {
 
 object PDFMissionCra extends PDFCra[(JCra, JMission)] {
 
-  def content(doc: Document, obj: (JCra, JMission)) {
+  protected def content(doc: Document, obj: (JCra, JMission)) {
     val cra = obj._1
     val mission = obj._2
     // Header
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month, Some(mission)))
     // Page
     doc.add(MissionCalendar(cra, mission).compose())
-    doc.add(PDFCraTools.blankLine)
-    doc.add(Total(cra, Some(mission)).compose)
-    doc.add(PDFCraTools.blankLine)
+    doc.add(OldTotal(cra, Some(mission)).compose)
     doc.add(Signature.signatures)
   }
 
@@ -71,10 +67,23 @@ object PDFProductionCra extends PDFCra[JCra] {
 
   override protected def document(): Document = new Document(PageSize.A4)
 
-  def content(doc: Document, cra: JCra) {
+  protected def content(doc: Document, cra: JCra) {
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month))
-    //val days = JDay.find()
-    //doc.add(ProductionCalendar(cra).compose)
+    val days = JDay.fetch(cra).toList
+    val a: List[ObjectId] = days
+      .flatMap(_.missionIds())
+      .toSet
+      .toList
+    val missions = a.map(id => JMission.fetch(id))
+      .filter(m => MissionType.valueOf(m.missionType).equals(MissionType.customer))
+      .toList
+
+    missions.foreach {
+      m =>
+        doc.add(ProductionCalendar(cra, m).compose())
+        doc.add(OldTotal(cra, Some(m)).compose)
+        doc.newPage()
+    }
   }
 }
 
@@ -85,7 +94,6 @@ object PDFCraTools extends PDFTableTools with PDFTools with PDFFont {
   def pageHeader(userId: ObjectId, year: Int, month: Int, mission: Option[JMission] = None): PdfPTable = {
     val § = new Paragraph()
     val user = JUser.identity(userId)
-
     §.addAll(
       List(
         phraseln(title, titleFont),
