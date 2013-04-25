@@ -31,7 +31,7 @@ object PDFEmployeeCra extends PDFCra[JCra] {
     // Page
     // Calendar
     doc.add(EmployeeCalendar(cra).compose())
-    doc.add(OldTotal(cra).compose)
+    doc.add(EmployeeTotal(cra).compose())
     doc.add(PDFCraTools.blankLine)
     // Comment
     if (cra.comment != null) {
@@ -57,7 +57,7 @@ object PDFMissionCra extends PDFCra[(JCra, JMission)] {
     doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month, Some(mission)))
     // Page
     doc.add(MissionCalendar(cra, mission).compose())
-    doc.add(OldTotal(cra, Some(mission)).compose)
+    doc.add(MissionTotal(cra, mission).compose())
     doc.add(Signature.signatures)
   }
 
@@ -81,7 +81,7 @@ object PDFProductionCra extends PDFCra[JCra] {
     missions.foreach {
       m =>
         doc.add(ProductionCalendar(cra, m).compose())
-        doc.add(OldTotal(cra, Some(m)).compose)
+        doc.add(ProductionTotal(cra, m).compose)
         doc.newPage()
     }
   }

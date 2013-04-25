@@ -1,6 +1,6 @@
 package export
 
-import models.{JHalfDay, JDay, JMission, JCra}
+import models.{JCustomer, JHalfDay, JDay, JMission, JCra}
 import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
 import utils.time.TimeUtils
 import org.joda.time.Period
@@ -19,8 +19,10 @@ import play.libs.F
 trait Calendar {
 
   private val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
+  private val titleFont: Font = new Font(Font.FontFamily.HELVETICA, 12f, Font.BOLD)
   private val dayOffHeaderColor = F.Tuple(BaseColor.RED, BaseColor.WHITE)
   private val saturdayOrSundayHeaderColor = F.Tuple(BaseColor.GRAY, BaseColor.WHITE)
+  private val blackOnWhite = F.Tuple(BaseColor.BLACK, BaseColor.WHITE)
 
   protected val cra: JCra
   protected val table: PdfPTable = newCalendarTable(8)
@@ -75,6 +77,8 @@ trait Calendar {
     table
   }
 
+  protected def title: Option[String] = None
+
   protected def toHalfDay(halfDay: JHalfDay): PdfPCell
 
   protected def newEmptyHalfDayCell = newCell(dummyContent)
@@ -85,6 +89,15 @@ trait Calendar {
     table.getDefaultCell.setPadding(0f)
     table.getDefaultCell.setBorder(Rectangle.BOX)
     table.setSpacingAfter(5f)
+
+    title match {
+      case Some(t) => {
+        val c = newCell(t, font = titleFont, hAlign = Element.ALIGN_LEFT, maxLength = None)
+        c.setColspan(numColumns)
+        table.addCell(c)
+      }
+      case _ =>
+    }
     table
   }
 
@@ -92,8 +105,8 @@ trait Calendar {
     val table = newTable(1)
 
     val title = if (day.date.getMonthOfYear != month) newCell(dummyContent)
-    else if (TimeUtils.isDayOff(day.date)) newCell(`EEE dd`.print(day.date), Rectangle.BOTTOM, Some(dayOffHeaderColor))
-    else if (TimeUtils.isSaturdayOrSunday(day.date)) newCell(`EEE dd`.print(day.date), Rectangle.BOTTOM, Some(saturdayOrSundayHeaderColor))
+    else if (TimeUtils.isDayOff(day.date)) newCell(`EEE dd`.print(day.date), Rectangle.BOTTOM, dayOffHeaderColor)
+    else if (TimeUtils.isSaturdayOrSunday(day.date)) newCell(`EEE dd`.print(day.date), Rectangle.BOTTOM, saturdayOrSundayHeaderColor)
     else newCell(`EEE dd`.print(day.date), Rectangle.BOTTOM)
 
     table.addCell(title)
@@ -108,17 +121,23 @@ trait Calendar {
     table
   }
 
-  protected def newCell(text: String, border: Int = Rectangle.NO_BORDER, colors: Option[F.Tuple[BaseColor, BaseColor]] = None) = {
-    val font = new Font(baseFont)
-    font.setColor(colors.map(_._1).getOrElse(BaseColor.BLACK))
+  protected def newCell(text: String, border: Int = Rectangle.NO_BORDER, colors: F.Tuple[BaseColor, BaseColor] = blackOnWhite, font: Font = baseFont, hAlign: Int = Element.ALIGN_CENTER, maxLength: Option[Int] = Some(12)) = {
+    val f = new Font(font)
+    f.setColor(colors._1)
 
-    val phrase = if (text.length > 10) new Phrase(text.substring(0, 9), font)
-    else new Phrase(text, font)
+    val phrase = maxLength match {
+      case Some(x) => {
+        if (text.length > x) new Phrase(text.substring(0, (x - 1)), f)
+        else new Phrase(text, f)
+      }
+      case None => new Phrase(text, f)
+    }
+
 
     val cell = new PdfPCell(phrase)
     cell.setBorder(border)
-    cell.setHorizontalAlignment(Element.ALIGN_CENTER)
-    cell.setBackgroundColor(colors.map(_._2).getOrElse(BaseColor.WHITE))
+    cell.setHorizontalAlignment(hAlign)
+    cell.setBackgroundColor(colors._2)
     cell.setPaddingBottom(5f)
     cell
   }
@@ -132,18 +151,20 @@ case class EmployeeCalendar(cra: JCra) extends Calendar {
       case hd if hd.isSpecial => ???
       case hd => {
         missions.get(hd.missionId) match {
+          case None => ???
           case Some(m) => {
             val missionType = MissionType.valueOf(m.missionType)
-            val colors = Some(MissionTypeColor.by(missionType).colors)
+            val colors = MissionTypeColor.by(missionType).colors
 
             if (MissionType.customer.equals(missionType)) newCell(m.code, colors = colors)
             else newCell(m.code, colors = colors)
           }
-          case None => ???
+
         }
       }
     }
   }
+
 }
 
 case class ProductionCalendar(cra: JCra, currentMission: JMission) extends Calendar {
@@ -157,18 +178,18 @@ case class ProductionCalendar(cra: JCra, currentMission: JMission) extends Calen
           case None => ???
           case Some(m) => {
             val missionType: MissionType = MissionType.valueOf(m.missionType)
-            val colors = Some(MissionTypeColor.by(missionType).colors)
+            val colors = MissionTypeColor.by(missionType).colors
 
-            if (currentMission.id.equals(hd.missionId))
-              newCell(missionType.genesisHour.toPlainString, colors = colors)
-            else if (MissionType.customer.equals(missionType))
-              newCell("AC", colors = colors)
+            if (currentMission.id.equals(hd.missionId)) newCell(missionType.genesisHour.toPlainString, colors = colors)
+            else if (MissionType.customer.equals(missionType)) newCell("AC", colors = colors)
             else newCell(m.code, colors = colors)
           }
         }
       }
     }
   }
+
+  override protected def title = Some(s"Mission : ${currentMission.code} - Client : ${JCustomer.fetch(currentMission.customerId).name}")
 }
 
 case class MissionCalendar(cra: JCra, currentMission: JMission) extends Calendar {
