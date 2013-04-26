@@ -9,6 +9,8 @@ import java.math.{BigDecimal => JBigDecimal}
  */
 package object utils {
   val `dd/MM/yyyy`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy")
+  val `dd/MM`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM")
+  val `dd`: DateTimeFormatter = DateTimeFormat.forPattern("dd")
   val `EEE dd` = DateTimeFormat.forPattern("EEE dd").withLocale(Locale.FRANCE)
   val `yyyy-MM-dd_HH-mm-ss` = DateTimeFormat.forPattern("yyyy-MM-dd_HH-mm-ss")
   val `MMMM yyyy` = DateTimeFormat.forPattern("MMMM yyyy")

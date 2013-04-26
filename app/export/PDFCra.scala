@@ -78,10 +78,17 @@ object PDFProductionCra extends PDFCra[JCra] {
     missions.foreach {
       m =>
         doc.add(ProductionCalendar(cra, m).compose())
-        doc.add(ProductionTotalCra(cra, m).compose)
+        doc.add(ProductionTotalCra(cra, m).compose())
         doc.add(Comment(cra).compose())
+        doc.add(ProductionTotalClaim(cra,m).compose())
         doc.newPage()
+
     }
+    val claims = Claims(cra)
+    doc.add(claims.title)
+    doc.add(claims.synthesis())
+    doc.add(claims.details())
+    doc.newPage()
   }
 }
 

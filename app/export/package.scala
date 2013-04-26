@@ -1,4 +1,6 @@
 import com.itextpdf.text.{Element, Rectangle}
+import java.text.NumberFormat
+import java.util.Locale
 import org.joda.time.DateTime
 
 
@@ -28,5 +30,6 @@ package object export {
 
   val `3,7` = "3,7"
 
+  def toCurrency(bd: BigDecimal) = NumberFormat.getCurrencyInstance(Locale.FRANCE).format(bd)
 
 }

@@ -16,13 +16,12 @@ import play.libs.F
 /**
  * @author f.patin
  */
-trait Calendar {
+trait Calendar  extends TableTools {
 
-  private val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
+
   private val titleFont: Font = new Font(Font.FontFamily.HELVETICA, 12f, Font.BOLD)
   private val dayOffHeaderColor = F.Tuple(BaseColor.RED, BaseColor.WHITE)
   private val saturdayOrSundayHeaderColor = F.Tuple(BaseColor.GRAY, BaseColor.WHITE)
-  private val blackOnWhite = F.Tuple(BaseColor.BLACK, BaseColor.WHITE)
 
   protected val cra: JCra
   protected val table: PdfPTable = newCalendarTable(8)
@@ -85,7 +84,6 @@ trait Calendar {
 
   protected def newCalendarTable(numColumns: Int) = {
     val table = newTable(numColumns)
-    table.setWidthPercentage(100f)
     table.getDefaultCell.setPadding(0f)
     table.getDefaultCell.setBorder(Rectangle.BOX)
     table.setSpacingAfter(10f)
@@ -111,35 +109,6 @@ trait Calendar {
 
     table.addCell(title)
     table
-  }
-
-  private def newTable(numColumns: Int): PdfPTable = {
-    val table = new PdfPTable(numColumns)
-    table.getDefaultCell.setVerticalAlignment(Element.ALIGN_MIDDLE)
-    table.getDefaultCell.setHorizontalAlignment(Element.ALIGN_CENTER)
-    table.getDefaultCell.setBorder(Rectangle.NO_BORDER)
-    table
-  }
-
-  protected def newCell(text: String, border: Int = Rectangle.NO_BORDER, colors: F.Tuple[BaseColor, BaseColor] = blackOnWhite, font: Font = baseFont, hAlign: Int = Element.ALIGN_CENTER, maxLength: Option[Int] = Some(12)) = {
-    val f = new Font(font)
-    f.setColor(colors._1)
-
-    val phrase = maxLength match {
-      case Some(x) => {
-        if (text.length > x) new Phrase(text.substring(0, (x - 1)), f)
-        else new Phrase(text, f)
-      }
-      case None => new Phrase(text, f)
-    }
-
-
-    val cell = new PdfPCell(phrase)
-    cell.setBorder(border)
-    cell.setHorizontalAlignment(hAlign)
-    cell.setBackgroundColor(colors._2)
-    cell.setPaddingBottom(5f)
-    cell
   }
 }
 
@@ -189,7 +158,7 @@ case class ProductionCalendar(cra: JCra, currentMission: JMission) extends Calen
     }
   }
 
-  override protected def title = Some(s"Mission : ${currentMission.code} - Client : ${JCustomer.fetch(currentMission.customerId).name}")
+  override protected def title = Some(s"Mission : ${currentMission.code} - Client : ${JCustomer.fetch(currentMission.customerId).name} - Période : ${`MMMM yyyy`.print(TimeUtils.firstDateOfMonth(cra.year, cra.month)).capitalize}")
 }
 
 case class MissionCalendar(cra: JCra, currentMission: JMission) extends Calendar {

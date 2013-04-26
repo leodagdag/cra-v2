@@ -8,7 +8,6 @@ import com.itextpdf.text.Phrase
 import com.itextpdf.text.pdf.PdfPTable
 import utils._
 
-import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 
 /**
@@ -21,12 +20,13 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
   private lazy val weeks = _synthesis.keySet()
   private lazy val nbWeeks = weeks.size()
 
-  lazy val title = new Phrase("Note de Frais", headerFontBold)
+  lazy val title = new Phrase("Frais", headerFontBold)
 
   def synthesis() = {
     val table = new PdfPTable(nbWeeks + 1)
     table.setWidthPercentage(100f)
     table.setHeaderRows(1)
+    table.setSpacingAfter(10f)
     // Header
     table.addCell(headerCell("Semaine"))
     weeks.foreach(w => table.addCell(headerCell(w)))
@@ -49,7 +49,7 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
         line._2.foreach {
           amount =>
             if ("0".equals(amount)) table.addCell(bodyCell(dummyContent, CENTER))
-            else table.addCell(bodyCell(amount, CENTER))
+            else table.addCell(bodyCell(toCurrency(BigDecimal(amount)), CENTER))
         }
     }
     table
@@ -66,13 +66,15 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
     table.addCell(headerCell("Commentaire"))
 
 
-    claims.sortBy(c => c.date)
+    claims
+      .filterNot(c => ClaimType.valueOf(c.claimType).equals(ClaimType.FIXED_FEE) || ClaimType.valueOf(c.claimType).equals(ClaimType.ZONE_FEE))
+      .sortBy(c => c.date)
       .foreach {
       c =>
         table.addCell(bodyCell(`dd/MM/yyyy`.print(c.date), LEFT))
         table.addCell(bodyCell(JMission.codeAndMissionType(c.missionId).label, LEFT))
         table.addCell(bodyCell(ClaimType.valueOf(c.claimType).label.capitalize, LEFT))
-        table.addCell(bodyCell(c.amount.toPlainString, RIGHT))
+        table.addCell(bodyCell(toCurrency(c.amount), RIGHT))
         table.addCell(bodyCell(c.comment, LEFT))
     }
     table
