@@ -88,7 +88,7 @@ trait Calendar {
     table.setWidthPercentage(100f)
     table.getDefaultCell.setPadding(0f)
     table.getDefaultCell.setBorder(Rectangle.BOX)
-    table.setSpacingAfter(5f)
+    table.setSpacingAfter(10f)
 
     title match {
       case Some(t) => {

@@ -7,6 +7,7 @@ import com.github.jmkgreen.morphia.annotations.Transient;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -18,11 +19,13 @@ public class JAffectedMission {
 	@Transient
 	public DateTime startDate;
 	private Date _startDate;
-
 	@Transient
 	public DateTime endDate;
 	private Date _endDate;
 	public ObjectId missionId;
+	public String allowanceType;
+	public BigDecimal feeAmount;
+	public String _feeAmount;
 
 	@SuppressWarnings({"unused"})
 	@PrePersist
@@ -32,6 +35,9 @@ public class JAffectedMission {
 		}
 		if(endDate != null) {
 			_endDate = endDate.toDate();
+		}
+		if(feeAmount != null){
+			_feeAmount = feeAmount.toPlainString();
 		}
 	}
 
@@ -43,6 +49,9 @@ public class JAffectedMission {
 		}
 		if(_endDate != null) {
 			endDate = new DateTime(_endDate.getTime());
+		}
+		if(_feeAmount != null){
+			feeAmount = new BigDecimal(_feeAmount);
 		}
 	}
 }

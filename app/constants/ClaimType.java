@@ -8,8 +8,9 @@ public enum ClaimType {
 	TOLL("péage"),
 	PARKING("parking"),
 	RENT_CAR("location de voiture"),
-	JOURNEY("déplacement"),
-	MISSION_ALLOWANCE("indemnité de mission"),
+	JOURNEY("frais kilométrique"),
+	FIXED_FEE("forfait fixe"),
+	ZONE_FEE("forfait de zone"),
 	TOTAL("total");
 	public String label;
 

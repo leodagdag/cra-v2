@@ -18,6 +18,7 @@ case class Comment(cra: JCra) extends PDFTableTools with PDFFont {
 
     val table = new PdfPTable(2)
     table.setHorizontalAlignment(Element.ALIGN_LEFT)
+    table.setSpacingAfter(10f)
     if(cra.comment != null){
       table.addCell(noBorderCell("Commentaire (mensuel)",boldUnderlineFont, vAlign = Element.ALIGN_TOP))
       table.addCell(noBorderCell(cra.comment, vAlign = Element.ALIGN_TOP))

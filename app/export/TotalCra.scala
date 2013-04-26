@@ -13,7 +13,7 @@ import utils.time.TimeUtils
 /**
  * @author f.patin
  */
-trait Total {
+trait TotalCra {
   private val blackOnWhite = F.Tuple(BaseColor.BLACK, BaseColor.WHITE)
   private val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
 
@@ -43,6 +43,7 @@ trait Total {
   def compose(): PdfPTable = {
     val cells = total
     val table = newTable(cells.size)
+    table.setSpacingAfter(10f)
     cells.foreach(table.addCell(_))
     table
   }
@@ -50,7 +51,7 @@ trait Total {
   protected def total: List[PdfPCell]
 }
 
-case class MissionTotal(cra: JCra, currentMission: JMission) extends Total {
+case class MissionTotalCra(cra: JCra, currentMission: JMission) extends TotalCra {
 
   private def totalHalfDay(halfDay: JHalfDay) = {
     if (halfDay == null) Zero
@@ -75,7 +76,7 @@ case class MissionTotal(cra: JCra, currentMission: JMission) extends Total {
   }
 }
 
-trait GenesisTotal extends Total {
+trait GenesisTotal extends TotalCra {
   val cra: JCra
   private val nbWorkingDays: Int = TimeUtils.nbWorkingDaysInMonth(cra.year, cra.month)
 
@@ -97,7 +98,7 @@ trait GenesisTotal extends Total {
   protected def totalHalfDay(halfDay: JHalfDay): (MissionType, BigDecimal)
 }
 
-case class EmployeeTotal(cra: JCra) extends GenesisTotal {
+case class EmployeeTotalCra(cra: JCra) extends GenesisTotal {
 
   protected def totalHalfDay(halfDay: JHalfDay): (MissionType, BigDecimal) = {
     halfDay match {
@@ -108,7 +109,7 @@ case class EmployeeTotal(cra: JCra) extends GenesisTotal {
   }
 }
 
-case class ProductionTotal(cra: JCra, currentMission: JMission) extends GenesisTotal {
+case class ProductionTotalCra(cra: JCra, currentMission: JMission) extends GenesisTotal {
 
   protected def totalHalfDay(halfDay: JHalfDay): (MissionType, BigDecimal) = {
     halfDay match {

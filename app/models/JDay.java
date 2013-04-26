@@ -44,6 +44,13 @@ import java.util.*;
 })
 public class JDay extends Model implements MongoModel {
 
+	public static final Comparator<JDay> BY_DATE = new Comparator<JDay>() {
+		@Override
+		public int compare(final JDay day1, final JDay day2) {
+			return day1.date.compareTo(day2.date);
+		}
+	};
+
 	public static final String COLLECTION_NAME = "Day";
 	@Id
 	public ObjectId id;

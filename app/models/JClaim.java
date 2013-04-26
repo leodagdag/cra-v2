@@ -4,8 +4,10 @@ import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
@@ -58,10 +60,9 @@ public class JClaim extends Model implements MongoModel {
 	public JClaim() {
 	}
 
-	public JClaim(final ObjectId userId, final DateTime date, final ClaimType claimType, final ObjectId missionId) {
+	public JClaim(final ObjectId userId, final DateTime date, final ObjectId missionId) {
 		this.userId = userId;
 		this.date = date;
-		this.claimType = claimType.name();
 		this.missionId = missionId;
 	}
 
@@ -78,14 +79,15 @@ public class JClaim extends Model implements MongoModel {
 	}
 
 	private static void addMissionAllowance(final List<JDay> days) {
-		final JVehicle vehicle = JVehicle.active(days.get(0).userId);
+		Collections.sort(days, JDay.BY_DATE);
+		final List<JAffectedMission> affectedMissions = JUser.affectedMissions(days.get(0).userId, days.get(0).date, days.get(days.size() - 1).date);
 		final List<JClaim> claims = Lists.newArrayList();
 		for(final JDay day : days) {
 			claims.addAll(Collections2.transform(day.missionIds(), new Function<ObjectId, JClaim>() {
 				@Nullable
 				@Override
 				public JClaim apply(@Nullable final ObjectId missionId) {
-					return JMission.isClaimable(missionId) ? new JClaim(day.userId, day.date, ClaimType.MISSION_ALLOWANCE, missionId).computeMissionAllowance(vehicle) : null;
+					return JMission.isClaimable(missionId) ? new JClaim(day.userId, day.date, missionId).computeMissionAllowance(affectedMissions) : null;
 				}
 			}));
 		}
@@ -93,17 +95,23 @@ public class JClaim extends Model implements MongoModel {
 		MorphiaPlugin.ds().save(claims, WriteConcern.ACKNOWLEDGED);
 	}
 
-	private JClaim computeMissionAllowance(final JVehicle vehicle) {
+	private JClaim computeMissionAllowance(final List<JAffectedMission> affectedMissions) {
 		final JMission mission = JMission.fetch(this.missionId);
+		final ObjectId missionId = this.missionId;
+		final JAffectedMission affectedMission = Iterables.find(affectedMissions, new Predicate<JAffectedMission>() {
+			@Override
+			public boolean apply(@Nullable final JAffectedMission affectedMission) {
+				return missionId.equals(affectedMission.missionId);
+			}
+		});
 		switch(MissionAllowanceType.valueOf(mission.allowanceType)) {
 			case ZONE:
+				this.claimType = ClaimType.ZONE_FEE.name();
 				this.amount = JParameter.zoneAmount(date);
 				return this;
-			case REAL:
-				if(vehicle != null) {
-					final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);
-					this.amount = mission.distance.multiply(coefficient);
-				}
+			case FIXED:
+				this.claimType = ClaimType.FIXED_FEE.name();
+				this.amount = affectedMission.feeAmount;
 				return this;
 			case NONE:
 			default:
@@ -215,8 +223,11 @@ public class JClaim extends Model implements MongoModel {
 		});
 		final Query<JClaim> q = q()
 			                        .field("userId").equal(userId)
-			                        .field("_date").in(dates)
-			                        .field("claimType").equal(ClaimType.MISSION_ALLOWANCE.name());
+			                        .field("_date").in(dates);
+		q.or(
+			    q.criteria("claimType").equal(ClaimType.FIXED_FEE.name()),
+			    q.criteria("claimType").equal(ClaimType.ZONE_FEE.name())
+		);
 		return delete(q);
 	}
 

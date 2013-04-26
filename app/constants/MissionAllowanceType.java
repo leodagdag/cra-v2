@@ -4,7 +4,7 @@ package constants;
  * @author f.patin
  */
 public enum MissionAllowanceType {
-	REAL,
+	FIXED,
 	ZONE,
 	NONE
 }

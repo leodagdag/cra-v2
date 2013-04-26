@@ -3,11 +3,7 @@ package models;
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
-import com.github.jmkgreen.morphia.annotations.Embedded;
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
-import com.github.jmkgreen.morphia.annotations.Index;
-import com.github.jmkgreen.morphia.annotations.Indexes;
+import com.github.jmkgreen.morphia.annotations.*;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -153,6 +149,15 @@ public class JUser implements Subject {
 		return Lists.newArrayList(Collections2.transform(filterByDates(affectedMissions, startDate, endDate), getId));
 	}
 
+	public static List<JAffectedMission> affectedMissions(final ObjectId userId, final DateTime startDate, final DateTime endDate) {
+		final Query<JUser> q = queryToFindMe(userId)
+			                       .retrievedFields(true, "affectedMissions")
+			                       .disableValidation();
+		return filterByDates(q.get().affectedMissions,
+			                    startDate,
+			                    endDate);
+	}
+
 	public static List<JUser> all() {
 		return q()
 			       .retrievedFields(Boolean.FALSE, "affectedMissions")
@@ -216,4 +221,6 @@ public class JUser implements Subject {
 	public String getIdentifier() {
 		return username;
 	}
+
+
 }

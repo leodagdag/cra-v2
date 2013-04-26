@@ -1,3 +1,4 @@
+/* globals NumberInt,db*/
 var ONE = NumberInt(1);
 var YEAR_2010 = NumberInt(2010);
 var YEAR_2012 = NumberInt(2013);

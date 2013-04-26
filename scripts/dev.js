@@ -1,3 +1,4 @@
+/* globals NumberInt,db*/
 var ONE = NumberInt(1);
 var YEAR = NumberInt(2013);
 var JANUARY_JS = NumberInt(0);
@@ -51,64 +52,19 @@ var customer3 = db.Customer.findOne({code: 'CODE_C_3'});
 /**
  * Mission
  */
-db.Mission.insert({customerId: customer1._id, code: 'C1_M1 (REAL)', label: "Cli 1 Mis 1 (réel)", description: 'Description de la mission...', allowanceType: 'REAL', _distance: '43', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, JANUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
+db.Mission.insert({customerId: customer1._id, code: 'C1_M1 (FIXED)', label: "Cli 1 Mis 1 (Fixe)", description: 'Description de la mission...', allowanceType: 'FIXED', _distance: '43', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, JANUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
 db.Mission.insert({customerId: customer1._id, code: 'C1_M2 (ZONE)', label: "Cli 1 Mis 2 (Zone)", description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, DECEMBER_JS, NumberInt(31))});
-db.Mission.insert({customerId: customer2._id, code: 'C2_M1 (REAL)', label: "Cli 2 Mis 1 (Réel)", description: 'Description de la mission...', allowanceType: 'REAL', _distance: '72', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
+db.Mission.insert({customerId: customer2._id, code: 'C2_M1 (FIXED)', label: "Cli 2 Mis 1 (Fixe)", description: 'Description de la mission...', allowanceType: 'FIXED', _distance: '72', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, FEBRUARY_JS, ONE), _endDate: new Date(YEAR, APRIL_JS, NumberInt(30))});
 db.Mission.insert({customerId: customer3._id, code: 'C3_M1 (ZONE)', label: "Cli 3 Mis 1 (Zone)", description: 'Description de la mission...', allowanceType: 'ZONE', missionType: 'customer', isClaimable: true, _startDate: new Date(YEAR, MARCH_JS, ONE), _endDate: new Date(YEAR, NOVEMBER_JS, NumberInt(30))});
-var mission1_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1 (REAL)'});
-var mission2_customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2 (ZONE)'});
-var mission1_customer2 = db.Mission.findOne({customerId: customer2._id, code: 'C2_M1 (REAL)'});
-var mission1_customer3 = db.Mission.findOne({customerId: customer3._id, code: 'C3_M1 (ZONE)'});
+var mission1Customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M1 (FIXED)'});
+var mission2Customer1 = db.Mission.findOne({customerId: customer1._id, code: 'C1_M2 (ZONE)'});
+var mission1Customer2 = db.Mission.findOne({customerId: customer2._id, code: 'C2_M1 (FIXED)'});
+var mission1Customer3 = db.Mission.findOne({customerId: customer3._id, code: 'C3_M1 (ZONE)'});
 
 /*
  * User
  */
 db.User.insert({username: 'lisa', password: '7RT0pNfs3bba6OVJADALHg==', role: 'admin', firstName: 'lisa', lastName: 'Simpson', trigramme: 'LSN', email: 'lisa@simpson.com'});
-db.User.insert({username: 'bart-tpl1', password: 'UPqEsTqdRcMBOzNzAu/+3A==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Pleins 1', trigramme: 'BSN', email: 'bart@simpson.com',
-	affectedMissions: [
-		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
-		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id}
-	]});
-db.User.insert({username: 'bart-tpl2', password: 'ivRfEpsPVrTmmYMZp3R2jw==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Pleins 2', trigramme: 'BSN', email: 'bart@simpson.com',
-	affectedMissions: [
-		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
-		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id}
-	]});
-db.User.insert({username: 'bart-tpa1', password: '2rB/O7F/etPodCrKvO1AWg==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Partiel 1', trigramme: 'BSN', email: 'bart@simpson.com',
-	affectedMissions: [
-		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
-		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id}
-	]});
-db.User.insert({username: 'bart-tpa2', password: 'VP93vlWN1p2qcLVYq/hvXw==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Partiel 2', trigramme: 'BSN', email: 'bart@simpson.com',
-	affectedMissions: [
-		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
-		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id}
-	]});
-db.User.insert({username: 'moe', password: 'fzMzTUwvbdb/xwGUTOwvHA==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak', trigramme: 'MSK', email: 'moe@szyslak.com',
-	affectedMissions: [
-		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
-		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id}
-	]});
-db.User.insert({username: 'moe-tpl1', password: 'lBfPWQj8f3NeGIa3B5+SWw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Pleins 1', trigramme: 'MSK', email: 'moe@szyslak.com',
-	affectedMissions: [
-		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
-		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id}
-	]});
-db.User.insert({username: 'moe-tpl2', password: 'GRB47IMDzwrCDZkunDMRXw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Pleins 2', trigramme: 'MSK', email: 'moe@szyslak.com',
-	affectedMissions: [
-		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
-		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id}
-	]});
-db.User.insert({username: 'moe-tpa1', password: 'tn6Qc/dtRaO9Iye32h4UOw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Partiel 1', trigramme: 'MSK', email: 'moe@szyslak.com',
-	affectedMissions: [
-		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
-		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id}
-	]});
-db.User.insert({username: 'moe-tpa2', password: 'pcUHwGQpyWBqwVQhh6c5Pg==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Partiel 2', trigramme: 'MSK', email: 'moe@szyslak.com',
-	affectedMissions: [
-		{_startDate: mission1_customer2._startDate, _endDate: mission1_customer2._endDate, missionId: mission1_customer2._id},
-		{_startDate: mission1_customer3._startDate, _endDate: mission1_customer3._endDate, missionId: mission1_customer3._id},
-	]});
 db.User.insert({username: 'seymour', password: '/mQGPJqqQBru0Shwi1/MeQ==', role: 'employee', firstName: 'Seymour', lastName: 'Skinner', trigramme: 'SSR', email: 'seymour@skinner.com', isManager: true});
 db.User.insert({username: 'marge', password: '9FC56hi/fYLa0SL3KcCTXw==', role: 'production', firstName: 'marge', lastName: 'Simpson', trigramme: 'MSN', email: 'marge@simpson.com'});
 db.User.insert({username: 'ned', password: '9o2q0Ymy//0LjKteNuydlg==', role: 'employee', firstName: 'Ned', lastName: 'Flanders', trigramme: 'NFS',
@@ -117,20 +73,68 @@ var ned = db.User.findOne({username: 'ned'});
 db.User.insert({username: 'bart', password: '9UFGo/yCqxflJlaVsj9kaw==', role: 'employee', firstName: 'bart', lastName: 'Simpson', trigramme: 'BSN', email: 'bart@simpson.com',
 	'managerId': ned._id,
 	affectedMissions: [
-		{_startDate: mission1_customer1._startDate, _endDate: mission1_customer1._endDate, missionId: mission1_customer1._id},
-		{_startDate: mission2_customer1._startDate, _endDate: mission2_customer1._endDate, missionId: mission2_customer1._id}
+		{_startDate: mission1Customer1._startDate, _endDate: mission1Customer1._endDate,allowanceType:'FIXED',_feeAmount:"42", missionId: mission1Customer1._id},
+		{_startDate: mission2Customer1._startDate, _endDate: mission2Customer1._endDate, allowanceType:'ZONE',missionId: mission2Customer1._id}
 	]});
+db.User.insert({username: 'bart-tpl1', password: 'UPqEsTqdRcMBOzNzAu/+3A==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Pleins 1', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1Customer1._startDate, _endDate: mission1Customer1._endDate, allowanceType:'FIXED',_feeAmount:"42",missionId: mission1Customer1._id},
+		{_startDate: mission2Customer1._startDate, _endDate: mission2Customer1._endDate, allowanceType:'ZONE',missionId: mission2Customer1._id}
+	]});
+db.User.insert({username: 'bart-tpl2', password: 'ivRfEpsPVrTmmYMZp3R2jw==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Pleins 2', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1Customer1._startDate, _endDate: mission1Customer1._endDate, allowanceType:'FIXED',_feeAmount:"42",missionId: mission1Customer1._id},
+		{_startDate: mission2Customer1._startDate, _endDate: mission2Customer1._endDate, allowanceType:'ZONE',missionId: mission2Customer1._id}
+	]});
+db.User.insert({username: 'bart-tpa1', password: '2rB/O7F/etPodCrKvO1AWg==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Partiel 1', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1Customer1._startDate, _endDate: mission1Customer1._endDate, allowanceType:'FIXED',_feeAmount:"42",missionId: mission1Customer1._id},
+		{_startDate: mission2Customer1._startDate, _endDate: mission2Customer1._endDate, allowanceType:'ZONE',missionId: mission2Customer1._id}
+	]});
+db.User.insert({username: 'bart-tpa2', password: 'VP93vlWN1p2qcLVYq/hvXw==', role: 'employee', firstName: 'bart', lastName: 'Simpson Temps Partiel 2', trigramme: 'BSN', email: 'bart@simpson.com',
+	affectedMissions: [
+		{_startDate: mission1Customer1._startDate, _endDate: mission1Customer1._endDate, allowanceType:'FIXED',_feeAmount:"42",missionId: mission1Customer1._id},
+		{_startDate: mission2Customer1._startDate, _endDate: mission2Customer1._endDate, allowanceType:'ZONE',missionId: mission2Customer1._id}
+	]});
+db.User.insert({username: 'moe', password: 'fzMzTUwvbdb/xwGUTOwvHA==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1Customer2._startDate, _endDate: mission1Customer2._endDate, allowanceType:'FIXED',_feeAmount:"63",missionId: mission1Customer2._id},
+		{_startDate: mission1Customer3._startDate, _endDate: mission1Customer3._endDate, allowanceType:'ZONE',missionId: mission1Customer3._id}
+	]});
+db.User.insert({username: 'moe-tpl1', password: 'lBfPWQj8f3NeGIa3B5+SWw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Pleins 1', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1Customer2._startDate, _endDate: mission1Customer2._endDate, allowanceType:'FIXED',_feeAmount:"63",missionId: mission1Customer2._id},
+		{_startDate: mission1Customer3._startDate, _endDate: mission1Customer3._endDate, allowanceType:'ZONE',missionId: mission1Customer3._id}
+	]});
+db.User.insert({username: 'moe-tpl2', password: 'GRB47IMDzwrCDZkunDMRXw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Pleins 2', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1Customer2._startDate, _endDate: mission1Customer2._endDate, allowanceType:'FIXED',_feeAmount:"63",missionId: mission1Customer2._id},
+		{_startDate: mission1Customer3._startDate, _endDate: mission1Customer3._endDate, allowanceType:'ZONE',missionId: mission1Customer3._id}
+	]});
+db.User.insert({username: 'moe-tpa1', password: 'tn6Qc/dtRaO9Iye32h4UOw==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Partiel 1', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1Customer2._startDate, _endDate: mission1Customer2._endDate, allowanceType:'FIXED',_feeAmount:"63",missionId: mission1Customer2._id},
+		{_startDate: mission1Customer3._startDate, _endDate: mission1Customer3._endDate, allowanceType:'ZONE',missionId: mission1Customer3._id}
+	]});
+db.User.insert({username: 'moe-tpa2', password: 'pcUHwGQpyWBqwVQhh6c5Pg==', role: 'employee', firstName: 'Moe', lastName: 'Szyslak Temps Partiel 2', trigramme: 'MSK', email: 'moe@szyslak.com',
+	affectedMissions: [
+		{_startDate: mission1Customer2._startDate, _endDate: mission1Customer2._endDate,allowanceType:'FIXED',_feeAmount:"63", missionId: mission1Customer2._id},
+		{_startDate: mission1Customer3._startDate, _endDate: mission1Customer3._endDate, allowanceType:'ZONE',missionId: mission1Customer3._id}
+	]});
+
+
 
 
 db.User.find({role: 'employee'})
 	.forEach(function (user) {
+		"use strict";
 		db.Mission.find({customerId: genesis._id}).forEach(function (mission) {
 			var endDate = (mission._endDate) ? mission._endDate : null;
 			if (user.affectedMissions) {
-				user.affectedMissions.push({_startDate: mission._startDate, _endDate: endDate, missionId: mission._id})
+				user.affectedMissions.push({_startDate: mission._startDate, _endDate: endDate, missionId: mission._id});
 			}
 		});
-		db.User.save(user)
+		db.User.save(user);
 	});
 /*
  * Vehicle
