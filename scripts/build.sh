@@ -1,6 +1,11 @@
 #!/bin/bash
 clear
 echo "--> Build release"
+
+if [ !-e"$HOME/build" ]; then
+	mkdir $HOME/build
+fi
+
 cd $HOME/build
 
 echo "--> Cleanning..."
