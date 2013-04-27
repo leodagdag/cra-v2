@@ -68,27 +68,27 @@ trait PDFTools {
 
 trait PDFFont {
 
-  protected val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
+  protected val docBaseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
 
-  val normal = baseFont
+  val normal = docBaseFont
 
   val boldFont: Font = {
-    val f = new Font(baseFont)
+    val f = new Font(docBaseFont)
     f.setStyle(Font.BOLD)
     f
   }
   val underlineFont: Font = {
-    val f = new Font(baseFont)
+    val f = new Font(docBaseFont)
     f.setStyle(Font.UNDERLINE)
     f
   }
   val boldUnderlineFont: Font = {
-    val f = new Font(baseFont)
+    val f = new Font(docBaseFont)
     f.setStyle(Font.UNDERLINE + Font.BOLD)
     f
   }
   private val tableBaseFont: Font = {
-    val f = new Font(baseFont)
+    val f = new Font(docBaseFont)
     f
   }
 
@@ -122,7 +122,7 @@ trait PDFFont {
     f
   }
   val headerFont: Font = {
-    val f = new Font(baseFont)
+    val f = new Font(docBaseFont)
     f.setSize(12f)
     f
   }
