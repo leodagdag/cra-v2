@@ -68,7 +68,7 @@ trait PDFTools {
 
 trait PDFFont {
 
-  private val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
+  protected val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
 
   val normal = baseFont
 

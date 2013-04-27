@@ -431,6 +431,12 @@ public class JDay extends Model implements MongoModel {
 		return morning.add(afternoon);
 	}
 
+	public BigDecimal inGenesisHour(final JMission customerMission) {
+		final BigDecimal morning = this.morning != null ? this.morning.inGenesisHour(customerMission) : BigDecimal.ZERO;
+		final BigDecimal afternoon = this.afternoon != null ? this.afternoon.inGenesisHour(customerMission) : BigDecimal.ZERO;
+		return morning.add(afternoon);
+	}
+
 	@Override
 	public ObjectId id() {
 		return id;

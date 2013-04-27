@@ -6,7 +6,6 @@ import scala.collection.convert.WrapAsScala._
 import scala.collection.convert.WrapAsJava._
 import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
 import com.itextpdf.text.{BaseColor, Element}
-import constants.{MissionTypeColor, MissionType}
 import utils.time.TimeUtils
 import play.libs.F
 import constants._
@@ -32,9 +31,9 @@ trait TotalCra extends TableTools {
 
   protected def total: List[PdfPCell]
 
-  def newCell(text: String, hAlign: Int ) = super.newCell(text = text, hAlign = hAlign, maxLength = None)
+  def newCell(text: String, hAlign: Int) = super.newCell(text = text, hAlign = hAlign, maxLength = None)
 
-  def newCell(text: String, colors: F.Tuple[BaseColor, BaseColor] ) = super.newCell(text = text, colors = colors, maxLength = None)
+  def newCell(text: String, colors: F.Tuple[BaseColor, BaseColor]) = super.newCell(text = text, colors = colors, maxLength = None)
 }
 
 case class MissionTotalCra(cra: JCra, currentMission: JMission) extends TotalCra {
@@ -64,7 +63,7 @@ case class MissionTotalCra(cra: JCra, currentMission: JMission) extends TotalCra
 
 trait GenesisTotal extends TotalCra {
   val cra: JCra
-  private val nbWorkingDays: Int = TimeUtils.nbWorkingDaysInMonth(cra.year, cra.month)
+  protected val nbWorkingDays: Int = TimeUtils.nbWorkingDaysInMonth(cra.year, cra.month)
 
   protected def total: List[PdfPCell] = {
     val ds = days
@@ -79,12 +78,13 @@ trait GenesisTotal extends TotalCra {
     newCell("Total\n(en jour)", Element.ALIGN_LEFT) +: ds :+ newCell(s"Jours ouvrés\n${toDay(nbWorkingDays)}", Element.ALIGN_RIGHT)
   }
 
-  private def totalDay(day: JDay): List[(MissionType, BigDecimal)] = totalHalfDay(day.morning) :: totalHalfDay(day.afternoon) :: Nil
+  protected def totalDay(day: JDay): List[(MissionType, BigDecimal)] = totalHalfDay(day.morning) :: totalHalfDay(day.afternoon) :: Nil
 
   protected def totalHalfDay(halfDay: JHalfDay): (MissionType, BigDecimal)
 }
 
 case class EmployeeTotalCra(cra: JCra) extends GenesisTotal {
+
 
   protected def totalHalfDay(halfDay: JHalfDay): (MissionType, BigDecimal) = {
     halfDay match {
@@ -97,6 +97,23 @@ case class EmployeeTotalCra(cra: JCra) extends GenesisTotal {
 
 case class ProductionTotalCra(cra: JCra, currentMission: JMission) extends GenesisTotal {
 
+  override protected def total: List[PdfPCell] = {
+    val ds = days
+      .flatMap(totalDay(_))
+      .filterNot(tuple => tuple._1.equals(MissionType.none) || tuple._1.equals(MissionType.other_customer))
+      .groupBy(_._1.exportMissionType)
+      .map(x => x._1 -> x._2.size * 0.5)
+      .toList
+      .sortBy(_._1)
+    val workingHour = ds
+      .filterNot(_._1.eq(ExportMissionType.absence))
+      .foldLeft(Zero)((acc, curr) => acc + (curr._2)) * 2 * ThreePointSeven
+
+    val cs = ds.map(x => newCell(s"${x._1.label.capitalize}\n${toDay(x._2)}", MissionTypeColor.by(x._1).colors))
+
+    newCell("Total", Element.ALIGN_LEFT) +: cs :+ newCell(s"Heures travaillées\n${toHour(workingHour)}", Element.ALIGN_RIGHT) :+ newCell(s"Jours ouvrés\n${toDay(nbWorkingDays)}", Element.ALIGN_RIGHT)
+  }
+
   protected def totalHalfDay(halfDay: JHalfDay): (MissionType, BigDecimal) = {
     halfDay match {
       case null => (MissionType.none, ZeroPointFive)
@@ -106,7 +123,7 @@ case class ProductionTotalCra(cra: JCra, currentMission: JMission) extends Genes
         val missionType = MissionType.valueOf(mission.missionType)
 
         if (currentMission.id.equals(hd.missionId)) MissionType.customer -> ZeroPointFive
-        else if (missionType.equals(MissionType.customer)) MissionType.other_customer -> ZeroPointFive
+        else if (missionType.equals(MissionType.customer)) MissionType.other_customer -> Zero
         else missionType -> ZeroPointFive
       }
     }

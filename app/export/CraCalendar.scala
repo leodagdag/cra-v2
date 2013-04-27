@@ -140,6 +140,17 @@ case class EmployeeCalendar(cra: JCra) extends Calendar {
 
 case class ProductionCalendar(cra: JCra, currentMission: JMission) extends Calendar {
 
+  override protected def computeTotal(week: List[JDay]): Option[PdfPTable] = {
+    val total = week.foldLeft(Zero)((acc, cur) => {
+      acc + cur.inGenesisHour(currentMission)
+    })
+    val table = newTable(1)
+    val weekNumber = week.head.date.getWeekOfWeekyear
+    table.addCell(newCell(s"Total (S$weekNumber)", Rectangle.BOTTOM))
+    table.addCell(newCell(s"${toHour(total)}"))
+    Some(table)
+  }
+
   protected def toHalfDay(halfDay: JHalfDay): PdfPCell = {
     halfDay match {
       case null => newEmptyHalfDayCell
@@ -149,7 +160,7 @@ case class ProductionCalendar(cra: JCra, currentMission: JMission) extends Calen
           case None => ???
           case Some(m) => {
             val missionType: MissionType = MissionType.valueOf(m.missionType)
-            val colors = MissionTypeColor.by(missionType).colors
+            val colors = MissionTypeColor.by(missionType.exportMissionType).colors
 
             if (currentMission.id.equals(hd.missionId)) newCell(missionType.genesisHour.toPlainString, colors = colors)
             else if (MissionType.customer.equals(missionType)) newCell("AC", colors = MissionTypeColor.other_customer.colors)

@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
-import static constants.Util.THREE_POINT_SEVEN;
-
 /**
  * @author f.patin
  */
@@ -30,11 +28,12 @@ public class JHalfDay {
 
 	public JHalfDay() {
 	}
+
 	public JHalfDay(final MomentOfDay momentOfDay) {
 		this.momentOfDay = momentOfDay.index;
 	}
 
-	public JHalfDay(final MomentOfDay momentOfDay,final ObjectId missionId) {
+	public JHalfDay(final MomentOfDay momentOfDay, final ObjectId missionId) {
 		this.momentOfDay = momentOfDay.index;
 		this.missionId = missionId;
 	}
@@ -64,6 +63,19 @@ public class JHalfDay {
 		} else {
 			final JMission mission = JMission.codeAndMissionType(this.missionId);
 			return MissionType.valueOf(mission.missionType).genesisHour;
+		}
+	}
+
+	public BigDecimal inGenesisHour(final JMission customerMission) {
+		if(this.isSpecial()) {
+			return BigDecimal.ZERO;
+		} else {
+			final JMission mission = JMission.codeAndMissionType(this.missionId);
+			if(this.missionId.equals(customerMission.id) || !MissionType.valueOf(mission.missionType).equals(MissionType.customer)) {
+				return MissionType.valueOf(mission.missionType).genesisHour;
+			} else {
+				return BigDecimal.ZERO;
+			}
 		}
 	}
 }

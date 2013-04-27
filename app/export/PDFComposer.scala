@@ -7,9 +7,8 @@ import com.itextpdf.text.pdf.PdfWriter
 /**
  * @author f.patin
  */
-trait PDFComposer[T] {
-
-  protected def document(): Document
+trait PDFComposer[T] extends BaseReportBuilder {
+protected def document(): Document
 
   def generate(obj: T): Array[Byte] = {
     compose(obj, content)
@@ -18,7 +17,8 @@ trait PDFComposer[T] {
   private def compose(cra: T, f: (Document, T) => Unit): Array[Byte] = {
     val doc = document()
     val os = new ByteArrayOutputStream()
-    PdfWriter.getInstance(doc, os)
+    val pdfWriter = PdfWriter.getInstance(doc, os)
+    pdfWriter.setPageEvent(this)
     doc.open()
     doc.addCreationDate()
 
