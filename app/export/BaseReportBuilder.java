@@ -3,6 +3,7 @@ package export;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -21,14 +22,14 @@ import java.io.InputStream;
  */
 
 public abstract class BaseReportBuilder extends PdfPageEventHelper {
-	protected BaseFont baseFont;
+	protected BaseFont baseFont = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL).getCalculatedBaseFont(false);
 	private PdfTemplate totalPages;
 	private float footerTextSize = 8f;
 	private int pageNumberAlignment = Element.ALIGN_CENTER;
 
 	public BaseReportBuilder() {
 		super();
-		baseFont = load("tahoma.ttf");
+		//baseFont = load("tahoma.ttf");
 	}
 
 	private BaseFont load(String fontname) {
