@@ -18,6 +18,7 @@ import exceptions.IllegalDayOperation;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.joda.time.DateTime;
@@ -88,7 +89,7 @@ public class JDay extends Model implements MongoModel {
 	}
 
 	private static List<JDay> filterByMission(final List<JDay> days, final ObjectId missionId) {
-		return Lists.newArrayList(Collections2.transform(days, new Function<JDay, JDay>() {
+		final List<JDay> result= Lists.newArrayList(Collections2.transform(days, new Function<JDay, JDay>() {
 			@Nullable
 			@Override
 			public JDay apply(@Nullable final JDay day) {
@@ -121,9 +122,14 @@ public class JDay extends Model implements MongoModel {
 					day.morning = null;
 					day.afternoon = null;
 				}
+				if(day.morning == null && day.afternoon == null) {
+					return null;
+				}
 				return day;
 			}
 		}));
+		result.removeAll(Collections.singletonList(null));
+		return result;
 	}
 
 	@SuppressWarnings({"unused"})
@@ -154,10 +160,6 @@ public class JDay extends Model implements MongoModel {
 		}
 	}
 
-	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final ObjectId missionId) {
-		return filterByMission(find(craId, userId, year, month, false), missionId);
-	}
-
 	public static List<JDay> find(final ObjectId craId, final ObjectId userId, final Integer year, final Integer month, final Boolean withPastAndFuture) {
 		final List<DateTime> allDates = Lists.newArrayList(TimeUtils.getDaysOfMonth(year, month, withPastAndFuture));
 		final List<JDay> days = Lists.newArrayList();
@@ -166,7 +168,8 @@ public class JDay extends Model implements MongoModel {
 				                      .field("userId").equal(userId)
 				                      .field("_date").greaterThanOrEq(allDates.get(0).toDate())
 				                      .field("_date").lessThanOrEq(allDates.get(allDates.size() - 1).toDate());
-			Logger.debug(q.toString());
+
+			Logger.trace(String.format("%s.%s %s",JDay.class.getName(),"find", q.toString()) );
 			days.addAll(q.asList());
 		} else {
 			days.addAll(Collections2.transform(allDates, new Function<DateTime, JDay>() {

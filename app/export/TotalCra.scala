@@ -5,9 +5,11 @@ import org.bson.types.ObjectId
 import scala.collection.convert.WrapAsScala._
 import scala.collection.convert.WrapAsJava._
 import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
-import com.itextpdf.text.Element
+import com.itextpdf.text.{BaseColor, Element}
 import constants.{MissionTypeColor, MissionType}
 import utils.time.TimeUtils
+import play.libs.F
+import constants._
 
 /**
  * @author f.patin
@@ -29,6 +31,10 @@ trait TotalCra extends TableTools {
   }
 
   protected def total: List[PdfPCell]
+
+  def newCell(text: String, hAlign: Int ) = super.newCell(text = text, hAlign = hAlign, maxLength = None)
+
+  def newCell(text: String, colors: F.Tuple[BaseColor, BaseColor] ) = super.newCell(text = text, colors = colors, maxLength = None)
 }
 
 case class MissionTotalCra(cra: JCra, currentMission: JMission) extends TotalCra {
@@ -68,9 +74,9 @@ trait GenesisTotal extends TotalCra {
       .map(x => x._1 -> x._2.size * 0.5)
       .toList
       .sortBy(_._1)
-      .map(x => newCell(s"${x._1.label.capitalize} : ${x._2}", colors = MissionTypeColor.by(x._1).colors))
+      .map(x => newCell(s"${x._1.label.capitalize}\n${toDay(x._2)}", MissionTypeColor.by(x._1).colors))
 
-    newCell("Total ", hAlign = Element.ALIGN_LEFT) +: ds :+ newCell(s"Total : $nbWorkingDays", hAlign = Element.ALIGN_RIGHT)
+    newCell("Total\n(en jour)", Element.ALIGN_LEFT) +: ds :+ newCell(s"Jours ouvrés\n${toDay(nbWorkingDays)}", Element.ALIGN_RIGHT)
   }
 
   private def totalDay(day: JDay): List[(MissionType, BigDecimal)] = totalHalfDay(day.morning) :: totalHalfDay(day.afternoon) :: Nil

@@ -2,12 +2,11 @@ package export
 
 import scala.collection.convert.WrapAsScala._
 import models.{JCra, JMission, JClaim}
-import constants.{MissionType, ClaimType, MissionAllowanceType}
 import com.itextpdf.text.Rectangle
 import utils.time.TimeUtils
 import utils._
-import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
-import scala.collection.immutable.Iterable
+import com.itextpdf.text.pdf.PdfPTable
+import constants._
 
 /**
  * @author f.patin
@@ -24,7 +23,7 @@ case class ProductionTotalClaim(cra: JCra, currentMission: JMission) extends Tab
     val tableByMonth = newTable(6)
     totalByMonth.foreach(tableByMonth.addCell(_))
 
-    val tableByMission = newTable(totalFeeByMission.size/2)
+    val tableByMission = newTable(totalFeeByMission.size / 2)
     totalFeeByMission.foreach(tableByMission.addCell(_))
 
     val table = newTable(1)
@@ -51,7 +50,7 @@ case class ProductionTotalClaim(cra: JCra, currentMission: JMission) extends Tab
     .map(claim => claim._1 -> claim._2.foldLeft(Zero)((acc, curr) => acc + curr.amount))
   private val totalCurrentMissionClaims = currentMissionClaims.values.foldLeft(Zero)((acc, curr) => acc + curr)
   private val totalFeeByWeek = {
-    (newCell("Semaines") +: currentMissionClaims.map(c => newCell(s"${`dd`.print(c._1)}->${`dd/MM`.print(TimeUtils.getSundayOfDate(c._1))} (${c._1.getWeekOfWeekyear})")).toList :+ newCell("Total")) ++
+    (newCell("Semaines") +: currentMissionClaims.map(c => newCell(s"${`dd`.print(c._1)}->${`dd/MM`.print(TimeUtils.getSundayOfDate(c._1))} (S${c._1.getWeekOfWeekyear})")).toList :+ newCell("Total")) ++
       (newCell(currentMissionClaimType.label.capitalize) +: currentMissionClaims.map(c => newCell(toCurrency(c._2))).toList :+ newCell(toCurrency(totalCurrentMissionClaims)))
   }
 

@@ -34,7 +34,7 @@ object PDFEmployeeCra extends PDFCra[JCra] {
     doc.add(EmployeeTotalCra(cra).compose())
     doc.add(PDFCraTools.blankLine)
     // Comment
-    doc.add(Comment(cra).compose())
+    doc.add(EmployeeComment(cra).compose())
     doc.newPage()
     // Claims
     val claims = Claims(cra)
@@ -79,8 +79,8 @@ object PDFProductionCra extends PDFCra[JCra] {
       m =>
         doc.add(ProductionCalendar(cra, m).compose())
         doc.add(ProductionTotalCra(cra, m).compose())
-        doc.add(Comment(cra).compose())
-        doc.add(ProductionTotalClaim(cra,m).compose())
+        doc.add(ProductionTotalClaim(cra, m).compose())
+        doc.add(ProductionComment(cra, m).compose())
         doc.newPage()
 
     }

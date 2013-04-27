@@ -133,11 +133,11 @@ public class JClaim extends Model implements MongoModel {
 		}
 		if(kilometer != null) {
 			_kilometer = kilometer.toPlainString();
+			computeKilometerAmount();
 		}
-		compute();
 	}
 
-	private void compute() {
+	private void computeKilometerAmount() {
 		if(this.kilometer != null) {
 			final JVehicle vehicle = JVehicle.active(this.userId);
 			final BigDecimal coefficient = JParameter.coefficient(vehicle, this.date);

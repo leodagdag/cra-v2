@@ -12,7 +12,7 @@
 				<tbody>
 					<tr data-ng-repeat="claimType in claimTypes">
 						<th>{{claimType | typeOfClaim | capitalize}}</th>
-						<td data-ng-repeat="mnt in body[claimType]"><span data-ng-show="mnt !=0">{{mnt | currency}}</span></td>
+						<td data-ng-repeat="mnt in body[claimType]"><span data-ng-show="mnt !=0">{{mnt}}</span></td>
 					</tr>
 				</tbody>
 			</table>

@@ -1,6 +1,12 @@
 package models;
 
-import com.github.jmkgreen.morphia.annotations.*;
+import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.annotations.Id;
+import com.github.jmkgreen.morphia.annotations.Index;
+import com.github.jmkgreen.morphia.annotations.Indexes;
+import com.github.jmkgreen.morphia.annotations.PostLoad;
+import com.github.jmkgreen.morphia.annotations.PrePersist;
+import com.github.jmkgreen.morphia.annotations.Transient;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.github.jmkgreen.morphia.query.UpdateOperations;
@@ -10,6 +16,7 @@ import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import utils.time.TimeUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -39,19 +46,12 @@ public class JVehicle extends Model {
 	private Date _endDate;
 	private Boolean active = Boolean.TRUE;
 
-	private static JVehicle active(final Query<JVehicle> q) {
-		return q
-			       .field("active").equal(Boolean.TRUE)
-			       .get();
-	}
-
 	private static Query<JVehicle> byUserId(final String userId) {
 		return byUserId(ObjectId.massageToObjectId(userId));
 	}
 
 	private static Query<JVehicle> byUserId(final ObjectId userId) {
-		return MorphiaPlugin.ds().createQuery(JVehicle.class)
-			       .field("userId").equal(userId);
+		return q().field("userId").equal(userId);
 	}
 
 	private static Query<JVehicle> queryToFindMe(final ObjectId id) {
@@ -60,6 +60,26 @@ public class JVehicle extends Model {
 
 	private static Query<JVehicle> q() {
 		return MorphiaPlugin.ds().createQuery(JVehicle.class);
+	}
+
+	private static UpdateOperations<JVehicle> ops() {
+		return MorphiaPlugin.ds().createUpdateOperations(JVehicle.class);
+	}
+
+	private static Query<JVehicle> existQuery(final ObjectId userId, final DateTime dt) {
+		final Query<JVehicle> q = byUserId(userId).field("active").equal(Boolean.TRUE);
+		final Date date = dt.toDate();
+		q.or(
+			    q.and(
+				         q.criteria("_startDate").lessThanOrEq(date),
+				         q.criteria("_endDate").doesNotExist()
+			    ),
+			    q.and(
+				         q.criteria("_startDate").lessThanOrEq(date),
+				         q.criteria("_endDate").greaterThanOrEq(date)
+			    )
+		);
+		return q;
 	}
 
 	@SuppressWarnings({"unused"})
@@ -85,15 +105,14 @@ public class JVehicle extends Model {
 	}
 
 	public static JVehicle save(final JVehicle vehicle) {
-		final UpdateOperations<JVehicle> disableUpdt = MorphiaPlugin.ds().createUpdateOperations(JVehicle.class)
+		final UpdateOperations<JVehicle> disableUpdt = ops()
 			                                               .set("active", false)
 			                                               .set("_endDate", vehicle.startDate.toDate());
-		final Query<JVehicle> disableQry = MorphiaPlugin.ds().createQuery(JVehicle.class)
-			                                   .field("userId").equal(vehicle.userId)
+		final Query<JVehicle> disableQry = q().field("userId").equal(vehicle.userId)
 			                                   .field("active").equal(Boolean.TRUE);
 		MorphiaPlugin.ds().update(disableQry, disableUpdt, false, WriteConcern.ACKNOWLEDGED);
 
-		final UpdateOperations<JVehicle> uop = MorphiaPlugin.ds().createUpdateOperations(JVehicle.class)
+		final UpdateOperations<JVehicle> uop = ops()
 			                                       .set("userId", vehicle.userId)
 			                                       .set("vehicleType", vehicle.vehicleType)
 			                                       .set("brand", vehicle.brand)
@@ -102,8 +121,7 @@ public class JVehicle extends Model {
 			                                       .set("_startDate", vehicle.startDate.toDate())
 			                                       .unset("_endDate")
 			                                       .set("active", Boolean.TRUE);
-		final Query<JVehicle> q = MorphiaPlugin.ds().createQuery(JVehicle.class)
-			                          .field("userId").equal(vehicle.userId)
+		final Query<JVehicle> q = q().field("userId").equal(vehicle.userId)
 			                          .field("_startDate").equal(vehicle.startDate.toDate());
 		final UpdateResults<JVehicle> result = MorphiaPlugin.ds().update(q, uop, true, WriteConcern.ACKNOWLEDGED);
 		vehicle.id = ObjectId.massageToObjectId(result.getNewId());
@@ -116,7 +134,9 @@ public class JVehicle extends Model {
 	}
 
 	public static JVehicle active(final ObjectId userId) {
-		return active(byUserId(userId));
+		return byUserId(userId)
+			       .field("active").equal(Boolean.TRUE)
+			       .get();
 	}
 
 	public static List<JVehicle> history(final String userId) {
@@ -133,20 +153,11 @@ public class JVehicle extends Model {
 	}
 
 	public static boolean exist(final ObjectId userId, final DateTime dt) {
-		final Query<JVehicle> q = q()
-			                          .field("userId").equal(userId)
-			                          .field("active").equal(Boolean.TRUE);
-		final Date date = dt.toDate();
-		q.or(
-			    q.and(
-				         q.criteria("_startDate").lessThanOrEq(date),
-				         q.criteria("_endDate").doesNotExist()
-			    ),
-			    q.and(
-				         q.criteria("_startDate").lessThanOrEq(date),
-				         q.criteria("_endDate").greaterThanOrEq(date)
-			    )
-		);
+		final Query<JVehicle> q = existQuery(userId, dt);
 		return MorphiaPlugin.ds().getCount(q) > 0;
+	}
+
+	public static JVehicle fetch(final ObjectId userId, final Integer year, final Integer month) {
+		return existQuery(userId, TimeUtils.lastDateOfMonth(year, month)).get();
 	}
 }

@@ -9,6 +9,7 @@ import scala.collection.convert.WrapAsScala._
 import scala.collection.convert.WrapAsJava._
 import utils._
 import scala.List
+import constants._
 
 /**
  * @author f.patin

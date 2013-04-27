@@ -8,13 +8,13 @@ import java.math.{BigDecimal => JBigDecimal}
  * @author f.patin
  */
 package object utils {
-  val `dd/MM/yyyy`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy")
-  val `dd/MM`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM")
-  val `dd`: DateTimeFormatter = DateTimeFormat.forPattern("dd")
+  val `dd/MM/yyyy`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy").withLocale(Locale.FRANCE)
+  val `dd/MM`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM").withLocale(Locale.FRANCE)
+  val `dd`: DateTimeFormatter = DateTimeFormat.forPattern("dd").withLocale(Locale.FRANCE)
   val `EEE dd` = DateTimeFormat.forPattern("EEE dd").withLocale(Locale.FRANCE)
   val `yyyy-MM-dd_HH-mm-ss` = DateTimeFormat.forPattern("yyyy-MM-dd_HH-mm-ss")
-  val `MMMM yyyy` = DateTimeFormat.forPattern("MMMM yyyy")
-  val `dd/MM/yyyy à HH:mm:ss` = DateTimeFormat.forPattern("yyyy/MM/dd à HH:mm:ss")
+  val `MMMM yyyy` = DateTimeFormat.forPattern("MMMM yyyy").withLocale(Locale.FRANCE)
+  val `dd/MM/yyyy à HH:mm:ss` = DateTimeFormat.forPattern("yyyy/MM/dd à HH:mm:ss").withLocale(Locale.FRANCE)
 
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
 

@@ -1,44 +1,50 @@
 package export
 
-import models.{JClaim, JMission, JCra}
+import models.{JParameter, JVehicle, JClaim, JMission, JCra}
 import java.util.{ArrayList => JArrayList, List => JList, EnumMap => JEnumMap, Map => JMap}
 import constants.ClaimType
 import utils.business.JClaimUtils
-import com.itextpdf.text.Phrase
+import com.itextpdf.text.{Rectangle, Phrase}
 import com.itextpdf.text.pdf.PdfPTable
 import utils._
 
 import scala.collection.convert.WrapAsScala._
+import scala._
+import utils.time.TimeUtils
 
 /**
  * @author f.patin
  */
 
 case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableTools {
-  private lazy val claims = JClaim.synthesis(cra.userId, cra.year, cra.month)
-  private lazy val _synthesis: JMap[String, JMap[ClaimType, String]] = JClaimUtils.synthesis(cra.year, cra.month, claims)
-  private lazy val weeks = _synthesis.keySet()
-  private lazy val nbWeeks = weeks.size()
+  private val claims = JClaim.synthesis(cra.userId, cra.year, cra.month)
+  private val _synthesis: JMap[String, JMap[ClaimType, String]] = JClaimUtils.synthesis(cra.year, cra.month, claims)
+  private val weeks = _synthesis.keySet()
+  private val nbWeeks = weeks.size()
 
-  lazy val title = new Phrase("Frais", headerFontBold)
+  val title = new Phrase("Frais", headerFontBold)
 
-  def synthesis() = {
+  def synthesis(): PdfPTable = {
+
     val table = new PdfPTable(nbWeeks + 1)
     table.setWidthPercentage(100f)
     table.setHeaderRows(1)
     table.setSpacingAfter(10f)
     // Header
     table.addCell(headerCell("Semaine"))
-    weeks.foreach(w => table.addCell(headerCell(w)))
+    weeks.foreach(w => table.addCell(headerCell(s"$w")))
     // Body
-    val body: JEnumMap[ClaimType, JList[String]] = new java.util.EnumMap[ClaimType, JList[String]](classOf[ClaimType])
+    val body: JEnumMap[ClaimType, JList[String]] = new JEnumMap[ClaimType, JList[String]](classOf[ClaimType])
     _synthesis.keySet() foreach {
       week => {
         for (claimKey: (ClaimType, String) <- _synthesis.get(week)) {
           if (!body.containsKey(claimKey._1)) {
             body.put(claimKey._1, new JArrayList[String]())
           }
-          body.get(claimKey._1).add(claimKey._2)
+          body.get(claimKey._1).add {
+            if (claimKey._2.contains('/')) claimKey._2.replace('/', '\n')
+            else claimKey._2
+          }
         }
       }
     }
@@ -46,13 +52,16 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
     body.foreach {
       line =>
         table.addCell(headerCell(line._1.label.capitalize))
-        line._2.foreach {
-          amount =>
-            if ("0".equals(amount)) table.addCell(bodyCell(dummyContent, CENTER))
-            else table.addCell(bodyCell(toCurrency(BigDecimal(amount)), CENTER))
-        }
+        line._2.foreach(amount => table.addCell(bodyCell(amount, CENTER)))
     }
-    table
+
+    val result = new PdfPTable(1)
+    result.getDefaultCell.setBorder(Rectangle.NO_BORDER)
+    result.setWidthPercentage(100f)
+    params.foreach(result.addCell(_))
+    result.addCell(table)
+    result
+
   }
 
   def details() = {
@@ -71,14 +80,39 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
       .sortBy(c => c.date)
       .foreach {
       c =>
-        table.addCell(bodyCell(`dd/MM/yyyy`.print(c.date), LEFT))
+        val claimType = ClaimType.valueOf(c.claimType)
+        val claimAmount = if (claimType.equals(ClaimType.JOURNEY)) s"${toCurrency(c.kilometerAmount)} (${toKm(c.kilometer)})"
+        else toCurrency(c.amount)
+        val label = if (claimType.equals(ClaimType.JOURNEY)) s"${claimType.label.capitalize}\n(${c.journey})"
+        else claimType.label.capitalize
+        table.addCell(bodyCell(s"${`dd/MM/yyyy`.print(c.date)} (S${c.date.getWeekOfWeekyear})", LEFT))
         table.addCell(bodyCell(JMission.codeAndMissionType(c.missionId).label, LEFT))
-        table.addCell(bodyCell(ClaimType.valueOf(c.claimType).label.capitalize, LEFT))
-        table.addCell(bodyCell(toCurrency(c.amount), RIGHT))
+        table.addCell(bodyCell(label, LEFT))
+        table.addCell(bodyCell(claimAmount, RIGHT))
         table.addCell(bodyCell(c.comment, LEFT))
     }
     table
 
+  }
+
+  def params = {
+    val vehicle = JVehicle.fetch(cra.userId, cra.year, cra.month)
+    if (vehicle == null) None
+    else {
+      val date = TimeUtils.lastDateOfMonth(cra.year, cra.month)
+      val coeff = JParameter.coefficient(vehicle, date)
+
+      val table = new PdfPTable(5)
+      table.setWidthPercentage(100f)
+      table.getDefaultCell.setBorder(Rectangle.NO_BORDER)
+
+      table.addCell(headerCell("Véhicule"))
+      table.addCell(bodyCell(s"Cylindre / CV fiscaux : ${vehicle.power.toString}", LEFT))
+      table.addCell(bodyCell(s"Tarifs kms : ${toEuroByKm(coeff)}", LEFT))
+      table.addCell(headerCell("Forfait de zone"))
+      table.addCell(bodyCell(toCurrency(JParameter.zoneAmount(date)), CENTER))
+      Some(table)
+    }
   }
 }
 

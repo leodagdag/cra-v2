@@ -6,17 +6,17 @@ import utils.time.TimeUtils
 import org.joda.time.Period
 import scala.collection.immutable.{List, TreeMap, TreeSet}
 import utils._
-import com.itextpdf.text.{BaseColor, Rectangle, Font, Element, Phrase}
-import constants.{MissionTypeColor, MissionType}
+import com.itextpdf.text.{BaseColor, Rectangle, Font, Element}
 import scala.collection.convert.WrapAsScala._
 import scala.collection.convert.WrapAsJava._
 import org.bson.types.ObjectId
 import play.libs.F
+import constants._
 
 /**
  * @author f.patin
  */
-trait Calendar  extends TableTools {
+trait Calendar extends TableTools {
 
 
   private val titleFont: Font = new Font(Font.FontFamily.HELVETICA, 12f, Font.BOLD)
@@ -62,7 +62,9 @@ trait Calendar  extends TableTools {
       acc + cur.inGenesisHour()
     })
     val table = newTable(1)
-    table.addCell(newCell(total.toString()))
+    val weekNumber = week.head.date.getWeekOfWeekyear
+    table.addCell(newCell(s"Total (S$weekNumber)", Rectangle.BOTTOM))
+    table.addCell(newCell(s"${toHour(total)}"))
     Some(table)
   }
 
@@ -150,7 +152,7 @@ case class ProductionCalendar(cra: JCra, currentMission: JMission) extends Calen
             val colors = MissionTypeColor.by(missionType).colors
 
             if (currentMission.id.equals(hd.missionId)) newCell(missionType.genesisHour.toPlainString, colors = colors)
-            else if (MissionType.customer.equals(missionType)) newCell("AC", colors = colors)
+            else if (MissionType.customer.equals(missionType)) newCell("AC", colors = MissionTypeColor.other_customer.colors)
             else newCell(m.code, colors = colors)
           }
         }

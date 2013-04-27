@@ -9,7 +9,7 @@ import play.libs.F
  */
 trait TableTools {
   private val blackOnWhite = F.Tuple(BaseColor.BLACK, BaseColor.WHITE)
-  private val baseFont: Font = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL)
+
 
    protected def newTable(numColumns: Int, spaceAfter: Float = 0f) = {
     val table = new PdfPTable(numColumns)
@@ -20,7 +20,7 @@ trait TableTools {
     table
   }
 
-  protected  def newCell(text: String, border: Int = Rectangle.NO_BORDER, colors: F.Tuple[BaseColor, BaseColor] = blackOnWhite, font: Font = baseFont, hAlign: Int = Element.ALIGN_CENTER, maxLength: Option[Int] = Some(12)) = {
+  protected  def newCell(text: String, border: Int = Rectangle.NO_BORDER, colors: F.Tuple[BaseColor, BaseColor] = blackOnWhite, font: Font = FontTools.baseFont, hAlign: Int = Element.ALIGN_CENTER, maxLength: Option[Int] = Some(12)) = {
     val f = new Font(font)
     f.setColor(colors._1)
 
