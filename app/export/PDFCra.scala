@@ -26,8 +26,11 @@ abstract class PDFCra[T]() extends PDFComposer[T] {
 object PDFEmployeeCra extends PDFCra[JCra] {
 
   protected def content(doc: Document, cra: JCra) {
+    this.cra = cra
+    this.user = JUser.account(cra.userId)
+
     // Header
-    doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month))
+    doc.add(PDFCraTools.pageHeader(cra.userId))
     // Page
     // Calendar
     doc.add(EmployeeCalendar(cra).compose())
@@ -50,8 +53,10 @@ object PDFMissionCra extends PDFCra[(JCra, JMission)] {
   protected def content(doc: Document, obj: (JCra, JMission)) {
     val cra = obj._1
     val mission = obj._2
+    this.cra = cra
+    this.user = JUser.account(cra.userId)
     // Header
-    doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month, Some(mission)))
+    doc.add(PDFCraTools.pageHeader(cra.userId, Some(mission)))
     // Page
     doc.add(MissionCalendar(cra, mission).compose())
     doc.add(MissionTotalCra(cra, mission).compose())
@@ -65,7 +70,10 @@ object PDFProductionCra extends PDFCra[JCra] {
   override protected def document(): Document = new Document(PageSize.A4)
 
   protected def content(doc: Document, cra: JCra) {
-    doc.add(PDFCraTools.pageHeader(cra.userId, cra.year, cra.month))
+    this.cra = cra
+    this.user = JUser.account(cra.userId)
+
+    doc.add(PDFCraTools.pageHeader(cra.userId))
     val days = JDay.fetch(cra).toList
     val a: List[ObjectId] = days
       .flatMap(_.missionIds())
@@ -96,7 +104,7 @@ object PDFCraTools extends PDFTableTools with PDFTools with PDFFont {
 
   private val title = "Rapport d'Activité"
 
-  def pageHeader(userId: ObjectId, year: Int, month: Int, mission: Option[JMission] = None): PdfPTable = {
+  def pageHeader(userId: ObjectId, mission: Option[JMission] = None): PdfPTable = {
     val § = new Paragraph()
     val user = JUser.identity(userId)
     §.addAll(
@@ -107,8 +115,7 @@ object PDFCraTools extends PDFTableTools with PDFTools with PDFFont {
         blankLine,
         phraseln(phrase("Période : ", headerFont), phrase(`MMMM yyyy`.print(TimeUtils.firstDateOfMonth(DateTime.now)).capitalize, headerFontBold)),
         blankLine,
-        mission.map(m => phraseln(phrase("Mission : ", headerFont), phrase(s"${m.label}", headerFontBold), blankLine)).getOrElse(new Phrase(dummyContent)),
-        phraseln(phrase("Généré le : ", headerFont), phrase(s"${`dd/MM/yyyy à HH:mm:ss`.print(DateTime.now)}", headerFont))
+        mission.map(m => phraseln(phrase("Mission : ", headerFont), phrase(s"${m.label}", headerFontBold), blankLine)).getOrElse(new Phrase(dummyContent))
       )
     )
     super.pageHeader(§)

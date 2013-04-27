@@ -11,11 +11,24 @@
     }
 ) { extension =>
     @* jQuery *@
+	<!--[if lte IE 8]>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery@extension"></script>
-    @* JS router *@
+	<![endif]-->
+	<!--[if gte IE 9]>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery@extension"></script>
+	<![endif]-->
+	<!--[if !IE]><!-->
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery@extension"></script>
+	<!--<![endif]-->
+	@* JS router *@
     <script type="text/javascript" src="@routes.JsRouter.javascriptRoutes"></script>
     @* lodash *@
+	<!--[if lte IE 9]>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.compat@extension"></script>
+	<![endif]-->
+	<!--[if !IE]><!-->
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash@extension"></script>
+	<!--<![endif]-->
     @* underscore string *@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
     @* moment *@

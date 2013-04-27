@@ -38,11 +38,11 @@ abstract class PDFAbsence extends PDFComposer[List[JAbsence]] {
 }
 
 object PDFAbsence extends PDFAbsence with PDFTools  with PDFFont{
-  val title = phrase("Demande de congés",titleFont)
+  val title = phrase("Demande d'absence",titleFont)
 }
 
 object PDFCancelAbsence extends PDFAbsence  with PDFTools  with PDFFont{
-  val title = phrase("Annulation de congés",redTitleFont)
+  val title = phrase("Annulation d'absence'",redTitleFont)
 }
 
 object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
@@ -58,10 +58,7 @@ object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {
       List(
         phraseln(title),
         blankLine,
-        phraseln(phrase("Collaborateur : ", headerFont), phrase(s"${user.fullName()}", headerFontBold)),
-        blankLine,
-        phraseln(phrase("Généré le : ", headerFont), phrase(s"${`dd/MM/yyyy à HH:mm:ss`.print(DateTime.now)}", headerFontBold)),
-        blankLine
+        phraseln(phrase("Collaborateur : ", headerFont), phrase(s"${user.fullName()}", headerFontBold))
       )
     )
     super.pageHeader(§)

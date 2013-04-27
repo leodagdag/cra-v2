@@ -23,6 +23,7 @@ import utils.time.TimeUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static play.libs.Json.toJson;
@@ -39,7 +40,7 @@ public class JCras extends Controller {
 		final StringBuilder title = new StringBuilder()
 			                            .append(user.trigramme)
 			                            .append("_")
-			                            .append(dt.toString("yyyy_MMMM").toLowerCase());
+			                            .append(dt.toString("yyyy_MMMM", Locale.FRANCE).toLowerCase());
 		if(missionId.isDefined()) {
 			final JMission mission = JMission.codeAndMissionType(ObjectId.massageToObjectId(missionId.get()));
 			title.append("_")
