@@ -10,6 +10,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import play.Logger;
 import play.api.Play;
 
 import java.io.ByteArrayOutputStream;
@@ -62,6 +63,7 @@ public abstract class BaseReportBuilder extends PdfPageEventHelper {
 
 	@Override
 	public void onEndPage(PdfWriter writer, Document document) {
+		Logger.debug(BaseReportBuilder.class.getName() + "document = " + document + "-writer = " + writer + "-baseFont=" + baseFont);
 		PdfContentByte cb = writer.getDirectContent();
 		cb.saveState();
 		String text = String.format("Page %s of ", writer.getPageNumber());
