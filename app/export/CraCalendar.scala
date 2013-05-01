@@ -45,7 +45,7 @@ trait Calendar extends TableTools {
     val cells = weeks.map {
       week => {
         val weekDays = toDays(week._2)
-        computeTotal(week._2) match {
+        computeTotalWeek(week._2) match {
           case None => weekDays
           case Some(t) => weekDays :+ t
         }
@@ -57,7 +57,7 @@ trait Calendar extends TableTools {
   }
 
 
-  protected def computeTotal(week: List[JDay]): Option[PdfPTable] = {
+  protected def computeTotalWeek(week: List[JDay]): Option[PdfPTable] = {
     val total = week.foldLeft(Zero)((acc, cur) => {
       acc + cur.inGenesisHour()
     })
@@ -140,9 +140,9 @@ case class EmployeeCalendar(cra: JCra) extends Calendar {
 
 case class ProductionCalendar(cra: JCra, currentMission: JMission) extends Calendar {
 
-  override protected def computeTotal(week: List[JDay]): Option[PdfPTable] = {
+  override protected def computeTotalWeek(week: List[JDay]): Option[PdfPTable] = {
     val total = week.foldLeft(Zero)((acc, cur) => {
-      acc + cur.inGenesisHour(currentMission)
+      acc + cur.inGenesisHour()
     })
     val table = newTable(1)
     val weekNumber = week.head.date.getWeekOfWeekyear
@@ -178,7 +178,7 @@ case class MissionCalendar(cra: JCra, currentMission: JMission) extends Calendar
 
   override protected val table = newCalendarTable(7)
 
-  override protected def computeTotal(week: List[JDay]): Option[PdfPTable] = None
+  override protected def computeTotalWeek(week: List[JDay]): Option[PdfPTable] = None
 
   protected def toHalfDay(halfDay: JHalfDay): PdfPCell = {
     halfDay match {

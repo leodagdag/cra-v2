@@ -2,10 +2,10 @@ package export
 
 import models.{JParameter, JVehicle, JClaim, JMission, JCra}
 import java.util.{ArrayList => JArrayList, List => JList, EnumMap => JEnumMap, Map => JMap}
-import constants.ClaimType
+import constants.{MissionType, Zero, ClaimType}
 import utils.business.JClaimUtils
 import com.itextpdf.text.{Rectangle, Phrase}
-import com.itextpdf.text.pdf.PdfPTable
+import com.itextpdf.text.pdf.{PdfPCell, PdfPTable}
 import utils._
 
 import scala.collection.convert.WrapAsScala._
@@ -64,7 +64,7 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
 
   }
 
-  def details() = {
+  def details(): PdfPTable = {
     val table = new PdfPTable(5)
     table.setWidthPercentage(100f)
     table.setHeaderRows(1)
@@ -113,6 +113,31 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
       table.addCell(bodyCell(toCurrency(JParameter.zoneAmount(date)), CENTER))
       Some(table)
     }
+  }
+
+  def filterByCustomerMissionType: ((JMission, BigDecimal)) => Boolean = c => MissionType.valueOf(c._1.missionType).equals(MissionType.customer)
+
+  def totalByCustomerMission(): PdfPTable = {
+    val claimsByMission = claims.toList
+    .groupBy(_.missionId)
+    .map(c => JMission.codeAndMissionType(c._1) -> c._2.foldLeft(Zero)((acc, curr) => acc + curr.amount))
+    val claimsByCustomerMission = claimsByMission
+      .filter(filterByCustomerMissionType)
+      .toList
+    val totalGenesisMission = claimsByMission
+      .filterNot(filterByCustomerMissionType)
+      .values.foldLeft(Zero)((acc, curr) => acc + curr)
+    val totalMonth = claims
+      .foldLeft(Zero)((acc, curr) => acc + curr.amount)
+
+    val cells: List[PdfPCell] =   ((claimsByCustomerMission.map(c => headerCell(c._1.code)) :+ headerCell("Genesis")) :+ headerCell("Mois")) ++
+        ((claimsByCustomerMission.map(c => bodyCell(toCurrency(c._2), RIGHT)) :+ bodyCell(toCurrency(totalGenesisMission), RIGHT)) :+ bodyCell(toCurrency(totalMonth), RIGHT))
+
+    val table = new PdfPTable(cells.size / 2)
+    table.setWidthPercentage(100f)
+    table.getDefaultCell.setBorder(Rectangle.NO_BORDER)
+    cells.foreach(table.addCell(_))
+    table
   }
 }
 

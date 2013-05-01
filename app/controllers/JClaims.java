@@ -85,7 +85,6 @@ public class JClaims extends Controller {
 
 		public List<ValidationError> validate() {
 			boolean dateValid = true;
-			boolean journeyPresent = false;
 			final List<ValidationError> errors = Lists.newArrayList();
 			if(this.missionId == null) {
 				errors.add(new ValidationError("missionId", "La mission est requise."));
@@ -93,10 +92,10 @@ public class JClaims extends Controller {
 			if(this.date == null) {
 				errors.add(new ValidationError("date", "La date est requise."));
 				dateValid = false;
-			} else if(new DateTime(this.date).isBefore(TimeUtils.firstDateOfMonth(DateTime.now()))) {
+			}/* else if(new DateTime(this.date).isBefore(TimeUtils.firstDateOfMonth(DateTime.now()))) {
 				errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une note de frais précédant le mois en cours."));
 				dateValid = false;
-			}
+			}*/
 			if(StringUtils.isBlank(this.claimType) && StringUtils.isBlank(this.amount) && StringUtils.isBlank(this.kilometer) && StringUtils.isBlank(this.journey)) {
 				errors.add(new ValidationError("global", "Vous devez saisir au moins un frais ou un déplacement."));
 			} else {

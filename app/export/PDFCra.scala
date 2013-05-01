@@ -73,7 +73,7 @@ object PDFProductionCra extends PDFCra[JCra] {
     this.cra = cra
     this.user = JUser.account(cra.userId)
 
-    doc.add(PDFCraTools.pageHeader(cra.userId))
+
     val days = JDay.fetch(cra).toList
     val a: List[ObjectId] = days
       .flatMap(_.missionIds())
@@ -85,6 +85,7 @@ object PDFProductionCra extends PDFCra[JCra] {
 
     missions.foreach {
       m =>
+        doc.add(PDFCraTools.pageHeader(cra.userId))
         doc.add(ProductionCalendar(cra, m).compose())
         doc.add(ProductionTotalCra(cra, m).compose())
         doc.add(ProductionTotalClaim(cra, m).compose())
@@ -96,6 +97,7 @@ object PDFProductionCra extends PDFCra[JCra] {
     doc.add(claims.title)
     doc.add(claims.synthesis())
     doc.add(claims.details())
+    doc.add(claims.totalByCustomerMission())
     doc.newPage()
   }
 }
