@@ -1,0 +1,22 @@
+{
+	"bitwise": true,
+	"camelcase": true,
+	"curly": true,
+	"eqeqeq": true,
+	"forin": true,
+	"noarg": true,
+	"noempty": true,
+	"nonew": true,
+	"regexp": true,
+	"undef": true,
+	"strict": true,
+	"browser": true,
+	"globals": {
+		"angular": false,
+		"app": false,
+		"_": false,
+		"moment": false,
+		"moment()": false,
+		"jsRoutes": false
+	}
+}

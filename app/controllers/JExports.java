@@ -2,6 +2,8 @@ package controllers;
 
 import http.ResponseCache;
 import export.PDF;
+import models.DbFile;
+import models.JAbsence;
 import models.JCra;
 import models.JMission;
 import org.bson.types.ObjectId;
@@ -23,4 +25,13 @@ public class JExports extends Controller {
 		return ok(PDF.getMissionCraData(JCra.fetch(id), JMission.fetch(ObjectId.massageToObjectId(idMission)))).as("application/pdf");
 	}
 
+	@ResponseCache.NoCacheResponse
+	public static Result exportForProduction(final String fileId,final String title) {
+		return ok(DbFile.fetch(ObjectId.massageToObjectId(fileId))._2).as("application/pdf");
+	}
+
+	@ResponseCache.NoCacheResponse
+	public static Result exportAbsence(final String absenceId,final String title) {
+		return ok(DbFile.fetch(JAbsence.fetch(absenceId).fileId)._2).as("application/pdf");
+	}
 }

@@ -104,7 +104,8 @@ public class JAbsences extends Controller {
 	}
 
 	public static Result exportFile(final String id) {
-		return ok(PDF.getAbsenceData(JAbsence.fetch(id))._2).as("application/pdf");
+		final String title = DbFile.fileName(JAbsence.fetch(id).fileId);
+		return redirect(routes.JExports.exportAbsence(id, title));
 	}
 
 	public static class CreateAbsenceForm {

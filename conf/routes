@@ -63,12 +63,14 @@ GET     /users                                                      controllers.
 GET     /account/:id                                                controllers.JAccounts.fetch(id: String)
 PUT     /account/password                                           controllers.JAccounts.password()
 PUT     /account                                                    controllers.JAccounts.update()
+
 # PartTime
 # ~~~~
 GET		/partTimes/:userId/active									controllers.JPartTimes.active(userId: String)
 GET		/partTimes/:userId											controllers.JPartTimes.history(userId: String)
 POST    /partTimes                                                  controllers.JPartTimes.addPartTimes()
 PUT		/partTimes/deactivate										controllers.JPartTimes.deactivate()
+
 # Vehicle
 # ~~~~
 GET		/vehicles/:userId/active									controllers.JVehicles.active(userId: String)
@@ -78,8 +80,11 @@ PUT		/vehicles/deactivate										controllers.JVehicles.deactivate()
 
 # Export
 # ~~~~
-GET		/export/cra/:craId/:missionId/:title						controllers.JExports.exportByMission(craId: String, missionId: String, title: String)
-GET		/export/cra/:craId/:title									controllers.JExports.exportByEmployee(craId: String, title: String)
+GET		/export/cra/mission/:craId/:missionId/:title				controllers.JExports.exportByMission(craId: String, missionId: String, title: String)
+GET		/export/cra/employee/:craId/:title							controllers.JExports.exportByEmployee(craId: String, title: String)
+GET		/export/cra/production/:craId/:title						controllers.JExports.exportForProduction(craId: String, title: String)
+GET		/export/absence/:absenceId/:title							controllers.JExports.exportAbsence(absenceId: String, title: String)
+
 
 # Batch
 # ~~~~

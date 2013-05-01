@@ -26,7 +26,7 @@ object PDF {
 
   def createAbsenceFile(absence: JAbsence, user: JUser): File = createAbsenceFile(List(absence), user)
 
-  def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, PDF.getOrCreateAbsenceData, newAbsenceFile)
+  def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, getOrCreateAbsenceData, newAbsenceFile)
 
   private def getOrCreateAbsenceData(absences: List[JAbsence]) = {
     if (absences.head.fileId == null) createAbsenceData(absences)._2
@@ -35,7 +35,7 @@ object PDF {
 
   private def createAbsenceData(absences: List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = {
     val data = PDFAbsence.generate(absences)
-    val fileId = DbFile.save(data)
+    val fileId = DbFile.save(data, absenceTitle(JUser.identity(absences.head.userId)))
     JAbsence.updateFileId(absences.map(_.id), fileId)
     F.Tuple(fileId, data)
   }
@@ -49,7 +49,7 @@ object PDF {
 
   private def createProductionCraData(cra: JCra) = {
     val data: Array[Byte] = PDFProductionCra.generate(cra)
-    val fileId = DbFile.save(data)
+    val fileId = DbFile.save(data, craTitle(JUser.identity(cra.userId), cra))
     JCra.updateFileId(cra.id, fileId)
     data
   }
@@ -61,11 +61,17 @@ object PDF {
     file
   }
 
-  private def newAbsenceFile[T](user: JUser, obj: T): File =
-    new File(s"tmp/absence_${user.lastName}_${user.firstName}_${`yyyy-MM-dd_HH-mm-ss`.print(DateTime.now)}.pdf".replace(' ', '_'))
+  private def newAbsenceFile[T](user: JUser, obj: T): File = new File(s"tmp/${absenceTitle(user)}")
 
-  private def newCraFile(user: JUser, cra: JCra) = {
+  private def newCraFile(user: JUser, cra: JCra) = new File(s"tmp/${craTitle(user, cra)}")
+
+  def absenceTitle(user: JUser): String = {
+    val date = `yyyy-MM-dd_HH-mm-ss`.print(DateTime.now)
+    s"Absence_${user.fullName()}_$date.pdf".replace(' ', '_')
+  }
+
+  private def craTitle(user: JUser, cra: JCra): String = {
     val date = `MMMM yyyy`.print(TimeUtils.firstDateOfMonth(cra.year, cra.month))
-    new File(s"tmp/cra_${user.lastName}_${user.firstName}_${date.capitalize}.pdf".replace(' ', '_'))
+    s"CRA_${user.fullName()}_$date.pdf".replace(' ', '_')
   }
 }

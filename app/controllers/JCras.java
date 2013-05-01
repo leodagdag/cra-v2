@@ -2,14 +2,19 @@ package controllers;
 
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
-import http.ResponseCache;
 import com.google.common.collect.Lists;
 import constants.ClaimType;
 import dto.CraDTO;
 import export.PDF;
+import http.ResponseCache;
 import mail.CraBody;
 import mail.MailerCra;
-import models.*;
+import models.DbFile;
+import models.JClaim;
+import models.JCra;
+import models.JDay;
+import models.JMission;
+import models.JUser;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import play.data.Form;
@@ -38,15 +43,17 @@ public class JCras extends Controller {
 		final JUser user = JUser.account(cra.userId);
 		final DateTime dt = TimeUtils.firstDateOfMonth(cra.year, cra.month);
 		final StringBuilder title = new StringBuilder()
-			                            .append(user.trigramme)
+			                            .append("CRA")
+			                            .append("_")
+			                            .append(user.fullName())
 			                            .append("_")
 			                            .append(dt.toString("yyyy_MMMM", Locale.FRANCE).toLowerCase());
 		if(missionId.isDefined()) {
 			final JMission mission = JMission.codeAndMissionType(ObjectId.massageToObjectId(missionId.get()));
 			title.append("_")
-				.append(mission.label)
-				.append(".pdf");
+				.append(mission.label);
 		}
+		title.append(".pdf");
 		return title.toString().replaceAll("[/ ()]", "");
 
 	}
@@ -101,7 +108,7 @@ public class JCras extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result sent(final String craId) {
 		final JCra cra = JCra.fetch(craId);
-		return ok(DbFile.fetch(cra.fileId)._2).as("application/pdf");
+		return redirect(routes.JExports.exportForProduction(cra.fileId.toString(), title(craId, new F.None<String>())));
 	}
 
 	public static Result setComment(final String id) {

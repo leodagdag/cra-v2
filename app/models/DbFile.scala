@@ -17,9 +17,14 @@ object DbFile {
     F.Tuple(id, out.toByteArray)
   }
 
-  def save(b: Array[Byte], ct: String = "application/pdf"): ObjectId = {
+  def fileName(id: ObjectId): String = {
+    MorphiaPlugin.gridFs().findOne(id).getFilename
+  }
+
+  def save(b: Array[Byte], fileName: String, ct: String = "application/pdf"): ObjectId = {
     val file = MorphiaPlugin.gridFs().createFile(b)
     file.setContentType(ct)
+    file.setFilename(fileName)
     file.save()
     ObjectId.massageToObjectId(file.getId)
   }

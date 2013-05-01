@@ -3,6 +3,7 @@
 .*
 # except for .gitignore
 !.gitignore
+!.jshintrc
 
 logs
 project/project
