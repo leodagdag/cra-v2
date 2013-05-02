@@ -11,8 +11,9 @@ println(d)
 println(d)
 
 
+
+println(s"lisa:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("genesis".getBytes("UTF-8"))))}]")
 /*
-println(s"lisa:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("lisa".getBytes("UTF-8"))))}]")
 println(s"moe:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("moe".getBytes("UTF-8"))))}]")
 println(s"ned:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("ned".getBytes("UTF-8"))))}]")
 println(s"seymour:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("seymour".getBytes("UTF-8"))))}]")
