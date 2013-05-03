@@ -12,7 +12,7 @@ package object utils {
   val `dd/MM`: DateTimeFormatter = DateTimeFormat.forPattern("dd/MM").withLocale(Locale.FRANCE)
   val `dd`: DateTimeFormatter = DateTimeFormat.forPattern("dd").withLocale(Locale.FRANCE)
   val `EEE dd` = DateTimeFormat.forPattern("EEE dd").withLocale(Locale.FRANCE)
-  val `yyyy-MM-dd_HH-mm-ss` = DateTimeFormat.forPattern("yyyy-MM-dd_HH-mm-ss")
+  val `yyyy-MM-dd_HH-mm-ss` = DateTimeFormat.forPattern("yyyy-MM-dd_HH-mm-ss").withLocale(Locale.FRANCE)
   val `MMMM yyyy` = DateTimeFormat.forPattern("MMMM yyyy").withLocale(Locale.FRANCE)
   val `dd/MM/yyyy à HH:mm:ss` = DateTimeFormat.forPattern("yyyy/MM/dd à HH:mm:ss").withLocale(Locale.FRANCE)
 

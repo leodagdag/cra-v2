@@ -5,7 +5,7 @@ import models.{JUser, JCra}
 import org.apache.commons.mail.EmailAttachment
 import org.joda.time.DateTime
 import utils.time.TimeUtils
-
+import utils._
 /**
  * @author f.patin
  */

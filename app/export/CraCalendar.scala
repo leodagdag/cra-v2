@@ -33,7 +33,7 @@ trait Calendar extends TableTools {
 
   private def completeDays(days: List[JDay]) = {
     val first = TimeUtils.getMondayOfDate(TimeUtils.firstDateOfMonth(days.head.date))
-    val last = TimeUtils.getSundayOfDate(TimeUtils.lastDateOfMonth(first))
+    val last = TimeUtils.getSundayOfDate(TimeUtils.lastDateOfMonth(days.head.date))
     TimeUtils.dateRange(first, last, Period.days(1)).map {
       dt =>
         val day = days.find(d => d.date.isEqual(dt))

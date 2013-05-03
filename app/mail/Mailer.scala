@@ -14,63 +14,52 @@ import play.api.Play.current
 trait Email {
 
   protected val underlying = new HtmlEmail()
+  underlying.setCharset("UTF-8")
 
-  def from(fromAddress: String) = {
-    underlying.setFrom(fromAddress, "", "UTF-8")
-    this
-  }
+  def from(fromAddress: String): Email = from(fromAddress, "")
 
-  def from(fromAddress: String, fromName: String) = {
+  def from(fromAddress: String, fromName: String): Email = {
     underlying.setFrom(fromAddress, fromName, "UTF-8")
     this
   }
 
-  def addTo(address: String) = {
-    underlying.addTo(address)
-    this
-  }
+  def addTo(address: String): Email = addTo(address, "")
 
-  def addTo(address: String, name: String) = {
+  def addTo(address: String, name: String): Email = {
     underlying.addTo(address, name, "UTF-8")
     this
   }
 
-  def addCc(address: Option[String]) = {
-    address match{
+  def addCc(address: Option[String]): Email = {
+    address match {
       case Some(addr) => {
         underlying.addCc(addr, "", "UTF-8")
         this
       }
-      case _ => this
+      case None => this
     }
   }
 
-  def addCc(address: String, name: String) = {
+  def addCc(address: String, name: String): Email = {
     underlying.addCc(address, name, "UTF-8")
     this
   }
 
-  def addBcc(address: String) = {
-    underlying.addBcc(address, "", "UTF-8")
-    this
-  }
+  def addBcc(address: String): Email = addBcc(address, "")
 
-  def addBcc(address: String, name: String) = {
+  def addBcc(address: String, name: String): Email = {
     underlying.addBcc(address, name, "UTF-8")
     this
   }
 
-  def setSubject(subject: String) = {
+  def setSubject(subject: String): Email = {
     underlying.setSubject(subject)
     this
   }
 
-  def attach(attachment: EmailAttachment) = {
-    underlying.attach(attachment)
-    this
-  }
+  def attach(attachment: EmailAttachment): Email = attach(attachment :: Nil)
 
-  def attach(xs: List[EmailAttachment]) = {
+  def attach(xs: List[EmailAttachment]): Email = {
     xs.foreach(underlying.attach(_))
     this
   }

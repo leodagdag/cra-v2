@@ -2,6 +2,7 @@ package mail
 
 import models.{JAbsence, JCra, JUser}
 import utils.time.TimeUtils
+import utils._
 
 /**
  * @author f.patin
