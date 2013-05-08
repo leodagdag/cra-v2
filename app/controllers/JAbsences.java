@@ -84,10 +84,13 @@ public class JAbsences extends Controller {
 		switch(absType) {
 			case CP:
 				absences.addAll(JAbsence.fetchCP(userId, year, month));
+				break;
 			case RTT:
 				absences.addAll(JAbsence.fetchRTT(userId, year, month));
+				break;
 			case OTHER:
 				absences.addAll(JAbsence.fetchOTHER(userId, year, month));
+				break;
 			default:
 				absences.addAll(JAbsence.fetchALL(userId, year, month));
 		}

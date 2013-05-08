@@ -1,5 +1,5 @@
 app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$location',
-	function PartTimeNewCtrl($rootScope, $scope, $http, $log, $location) {
+	function($rootScope, $scope, $http, $log, $location) {
 		'use strict';
 		$scope._ = _;
 		/* Form */

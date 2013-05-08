@@ -1,5 +1,5 @@
 app.controller('ClaimSynthesisCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', '$routeParams', 'MonthsConst', 'profile',
-	function ClaimSynthesisCtrl($scope, $rootScope, $http, $log, $location, $routeParams, MonthsConst, profile) {
+	function($scope, $rootScope, $http, $log, $location, $routeParams, MonthsConst, profile) {
 		'use strict';
 		$scope.profile = profile.data;
 		$scope._ = _;

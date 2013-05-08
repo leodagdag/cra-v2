@@ -1,5 +1,5 @@
 app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CraYearsConst', 'MonthsConst', 'RolesConst', 'profile',
-	function CraCtrl($window, $rootScope, $scope, $http, $log, $location, $routeParams, CraYearsConst, MonthsConst, RolesConst, profile) {
+	function($window, $rootScope, $scope, $http, $log, $location, $routeParams, CraYearsConst, MonthsConst, RolesConst, profile) {
 		'use strict';
 		$scope.profile = profile.data;
 		/* Toolbar */
@@ -152,8 +152,6 @@ app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '
 					});
 			}
 		};
-
-
 
 
 		$scope.openDay = function(dIndex) {

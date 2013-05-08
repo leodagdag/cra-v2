@@ -1,5 +1,5 @@
 app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', 'ClaimTypeConst', 'MonthsConst', 'profile',
-	function ClaimCtrl($scope, $rootScope, $http, $log, $location, ClaimTypeConst, MonthsConst, profile) {
+	function($scope, $rootScope, $http, $log, $location, ClaimTypeConst, MonthsConst, profile) {
 		'use strict';
 		var Claim = function(userId, form) {
 			this.userId = userId;

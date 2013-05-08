@@ -1,5 +1,5 @@
 app.controller('MyAccountCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'profile',
-	function MyAccountCtrl($rootScope, $scope, $http, $log, $location, $routeParams, profile) {
+	function($rootScope, $scope, $http, $log, $location, $routeParams, profile) {
 		'use strict';
 		$scope.profile = profile.data;
 		$scope.subSections = {
@@ -21,7 +21,7 @@ app.controller('MyAccountCtrl', ['$rootScope', '$scope', '$http', '$log', '$loca
 	}]);
 
 app.controller('MyAccountGeneralCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', 'AccountRes', 'ManagerRes',
-	function MyAccountGeneralCtrl($rootScope, $scope, $http, $log, $location, AccountResource, ManagerResource) {
+	function($rootScope, $scope, $http, $log, $location, AccountResource, ManagerResource) {
 		'use strict';
 		$scope.managers = ManagerResource.query();
 		$scope.account = AccountResource.get({id: $scope.profile.id});
@@ -48,7 +48,7 @@ app.controller('MyAccountGeneralCtrl', ['$rootScope', '$scope', '$http', '$log',
 	}]);
 
 app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
-	function MyAccountPasswordCtrl($scope, $http, $log, $location) {
+	function($scope, $http, $log, $location) {
 		'use strict';
 		$scope.form = {
 			oldPassword: null,
@@ -85,6 +85,6 @@ app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
 	}]);
 
 app.controller('MyAccountAffectedMissionsCtrl', ['$scope', '$http', '$log', '$location',
-	function MyAccountAffectedMissionsCtrl($scope, $http, $log, $location) {
+	function($scope, $http, $log, $location) {
 		'use strict';
 	}]);

@@ -42,7 +42,7 @@ object PDFAbsence extends PDFAbsence with PDFTools  with PDFFont{
 }
 
 object PDFCancelAbsence extends PDFAbsence  with PDFTools  with PDFFont{
-  val title = phrase("Annulation d'absence'",redTitleFont)
+  val title = phrase("Annulation d'absence",redTitleFont)
 }
 
 object PDFAbsenceTools extends PDFTableTools with PDFTools with PDFFont {

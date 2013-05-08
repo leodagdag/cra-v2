@@ -1,5 +1,5 @@
 app.controller('VehicleCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', 'CarBrandConst', 'MotorcycleBrandConst', 'VehicleCarPowerConst', 'VehicleMotorcyclePowerConst', 'YearsConst', 'MonthsConst',
-	function VehicleCtrl($rootScope, $scope, $http, $log, $location, $routeParams, CarBrandConst, MotorcycleBrandConst, VehicleCarPowerConst, VehicleMotorcyclePowerConst, YearsConst, MonthsConst) {
+	function($rootScope, $scope, $http, $log, $location, $routeParams, CarBrandConst, MotorcycleBrandConst, VehicleCarPowerConst, VehicleMotorcyclePowerConst, YearsConst, MonthsConst) {
 		'use strict';
 		$scope._ = _;
 		var Vehicle = function(form) {

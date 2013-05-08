@@ -1,5 +1,5 @@
 app.controller('SpecialDayCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
-	function SpecialDayCtrl($scope, $http, $log, $location, $routeParams) {
+	function($scope, $http, $log, $location, $routeParams) {
 		'use strict';
 		var noon = moment().hours(12).minutes(0).seconds(0).milliseconds(0);
 		var PeriodForm = function() {

@@ -1,5 +1,5 @@
 app.controller('MainCtrl', ['$scope', '$rootScope', '$http', '$log', '$location',
-	function MainCtrl($scope, $rootScope, $http, $log, $location) {
+	function($scope, $rootScope, $http, $log, $location) {
 		"use strict";
 		$rootScope.onSuccess = function (msg) {
 			$rootScope.$broadcast('event:success', msg);
@@ -10,7 +10,7 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$http', '$log', '$location'
 	}]);
 
 app.controller('AlertCtrl', ['$scope', '$rootScope', '$timeout', '$log',
-	function AlertCtrl($scope, $rootScope, $timeout, $log) {
+	function($scope, $rootScope, $timeout, $log) {
 		"use strict";
 		$rootScope.errors = [];
 		$rootScope.successes = [];

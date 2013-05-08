@@ -1,5 +1,5 @@
 app.controller('DayCtrl', ['$scope', '$rootScope', '$http', '$log', '$location', '$routeParams', 'profile',
-	function DayCtrl($scope, $rootScope, $http, $log, $location, $routeParams, profile) {
+	function($scope, $rootScope, $http, $log, $location, $routeParams, profile) {
 		'use strict';
 		$scope.profile = profile.data;
 

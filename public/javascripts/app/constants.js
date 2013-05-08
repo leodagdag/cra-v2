@@ -30,10 +30,21 @@ app.constant('YearsConst', [
 		'ADMIN': 'admin'
 	})
 	.constant('ClaimTypeConst', [
-		{code: 'TAXI', label: 'Taxi'},
-		{code: 'PARKING', label: 'Parking'},
+		{code: 'FUEL', label: 'Carburant'},
 		{code: 'TOLL', label: 'Péage'},
-		{code: 'RENT_CAR', label: 'Location de voiture'}
+		{code: 'PARKING', label: 'Parking'},
+		{code: 'PUBLIC_TRANSPORT', label: 'Métro, bus'},
+		{code: 'TRAIN_PLANE', label: 'Train, avion'},
+		{code: 'TAXI', label: 'Taxi'},
+		{code: 'RENT_CAR', label: 'Location de voiture'},
+		{code: 'BREAKFAST', label: 'Petit déjeuner'},
+		{code: 'LUNCH', label: 'Déjeuner'},
+		{code: 'DINER', label: 'Diner'},
+		{code: 'HOSTEL', label: 'Hotels'},
+		{code: 'INVITATION', label: 'Invitations'},
+		{code: 'CONSUMPTION', label: 'Consommations'},
+		{code: 'PHONE', label: 'Tél, poste'},
+		{code: 'MISCELLANEOUS', label: 'Divers'}
 	])
 	.constant('CarBrandConst', [
 		{code: 'ALFA_ROMEO', label: 'Alfa Romeo'},

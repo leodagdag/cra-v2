@@ -1,5 +1,5 @@
 app.controller('PeriodAbsenceCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
-	function PeriodAbsenceCtrl($scope, $http, $log, $location, $routeParams) {
+	function($scope, $http, $log, $location, $routeParams) {
 		'use strict';
 		$scope.localSave = function() {
 			var period = {

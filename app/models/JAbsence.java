@@ -16,6 +16,7 @@ import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import play.Logger;
 import utils.business.AbsenceUtils;
 import utils.time.TimeUtils;
 
@@ -178,7 +179,9 @@ public class JAbsence extends Model implements MongoModel {
 		} else {
 			q = queryByDate(userId, year, month, year, month);
 		}
-		return q.field("missionId").in(JMission.getAbsencesMissionIds(absenceType));
+		q.field("missionId").in(JMission.getAbsencesMissionIds(absenceType));
+		Logger.trace(String.format("%s.%s Query %s",JAbsence.class.getName(),"fetchQuery", q.toString()) );
+		return q;
 	}
 
 	public static JAbsence fetch(final String id) {

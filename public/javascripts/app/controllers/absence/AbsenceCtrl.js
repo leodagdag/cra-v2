@@ -1,5 +1,5 @@
 app.controller('AbsenceCtrl', ['$rootScope', '$scope', '$http', '$log', '$location', '$routeParams', '$window', 'profile', 'AbsenceTypeConst', 'MonthsConst',
-	function AbsenceCtrl($rootScope, $scope, $http, $log, $location, $routeParams, $window, profile, AbsenceTypeConst, MonthsConst) {
+	function($rootScope, $scope, $http, $log, $location, $routeParams, $window, profile, AbsenceTypeConst, MonthsConst) {
 		'use strict';
 		$scope.profile = profile.data;
 
