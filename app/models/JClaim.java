@@ -96,15 +96,15 @@ public class JClaim extends Model implements MongoModel {
 	}
 
 	private JClaim computeMissionAllowance(final List<JAffectedMission> affectedMissions) {
-		final JMission mission = JMission.fetch(this.missionId);
-		final ObjectId missionId = this.missionId;
+		//final JMission mission = JMission.fetch(this.missionId);
+		//final ObjectId missionId = this.missionId;
 		final JAffectedMission affectedMission = Iterables.find(affectedMissions, new Predicate<JAffectedMission>() {
 			@Override
 			public boolean apply(@Nullable final JAffectedMission affectedMission) {
 				return missionId.equals(affectedMission.missionId);
 			}
 		});
-		switch(MissionAllowanceType.valueOf(mission.allowanceType)) {
+		switch(MissionAllowanceType.valueOf(affectedMission.allowanceType)) {
 			case ZONE:
 				this.claimType = ClaimType.ZONE_FEE.name();
 				this.amount = JParameter.zoneAmount(date);

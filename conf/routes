@@ -85,6 +85,11 @@ GET		/export/cra/employee/:craId/:title							controllers.JExports.exportByEmplo
 GET		/export/cra/production/:craId/:title						controllers.JExports.exportForProduction(craId: String, title: String)
 GET		/export/absence/:absenceId/:title							controllers.JExports.exportAbsence(absenceId: String, title: String)
 
+# Imports
+# ~~~~
+POST	/import/users												controllers.Imports.users()
+POST	/import/customers											controllers.Imports.customers()
+POST	/import/missions											controllers.Imports.missions()
 
 # Batch
 # ~~~~

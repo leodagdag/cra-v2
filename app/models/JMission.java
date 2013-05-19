@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import constants.AbsenceType;
 import constants.GenesisMissionCode;
 import constants.MissionType;
+import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
@@ -24,18 +25,22 @@ import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author f.patin
  */
 @Entity("Mission")
 @Indexes({
-	         @Index(value = "code", unique = true),
+	         @Index(value = "code, customerId", unique = true),
 	         @Index("customerId"),
 	         @Index("_startDate, _endDate")
 })
-public class JMission {
+public class JMission extends Model {
 
 	@Id
 	public ObjectId id;
@@ -44,7 +49,7 @@ public class JMission {
 	public String label;
 	public String description;
 	public String missionType;
-	public String absenceType;
+	//public String absenceType;
 	public String allowanceType;
 	public Boolean isClaimable;
 	@Transient
@@ -117,8 +122,7 @@ public class JMission {
 	}
 
 	public static JMission codeAndMissionType(final ObjectId missionId) {
-		return MorphiaPlugin.ds().createQuery(JMission.class)
-			       .field(Mapper.ID_KEY).equal(missionId)
+		return queryToFindMe(missionId)
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label", "missionType")
 			       .disableValidation()
 			       .get();
@@ -144,7 +148,7 @@ public class JMission {
 	}
 
 	public static List<JMission> getAbsencesMissions() {
-		return MorphiaPlugin.ds().createQuery(JMission.class)
+		return q()
 			       .field("absenceType").exists()
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
 			       .disableValidation()
@@ -157,7 +161,7 @@ public class JMission {
 
 	public static List<ObjectId> getAbsencesMissionIds(final AbsenceType absenceType) {
 		final List<String> absenceTypes = newAbsenceTypesList(absenceType);
-		final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
+		final List<JMission> missions = q()
 			                                .field("absenceType").in(absenceTypes)
 			                                .retrievedFields(true, Mapper.ID_KEY)
 			                                .disableValidation()
@@ -173,7 +177,7 @@ public class JMission {
 	}
 
 	public static ObjectId getPartTimeId() {
-		return MorphiaPlugin.ds().createQuery(JMission.class)
+		return q()
 			       .field("customerId").equal(JCustomer.genesis().id)
 			       .field("code").equal(GenesisMissionCode.TP)
 			       .retrievedFields(true, Mapper.ID_KEY)
@@ -202,5 +206,14 @@ public class JMission {
 		return Boolean.TRUE.equals(q.get().isClaimable);
 	}
 
+	public static boolean exist(final ObjectId customerId, final String code) {
+		return MorphiaPlugin.ds().getCount(q()
+			                                   .field("customerId").equal(customerId)
+			                                   .field("code").equal(code)) > 0;
+	}
 
+	public static List<JMission> genesisMission(){
+		final JCustomer genesis = JCustomer.genesis();
+		return q().field("customerId").equal(genesis.id).asList();
+	}
 }
