@@ -112,7 +112,6 @@ public class JUser extends Model implements Subject {
 			       .retrievedFields(Boolean.FALSE, "role", "username", "password", "isManager")
 			       .disableValidation()
 			       .get();
-
 	}
 
 	public static JUser account(final String id) {
@@ -216,6 +215,10 @@ public class JUser extends Model implements Subject {
 		user.insert();
 		JUser.password(user.username, AppConfig.defaultPassword());
 		return user;
+	}
+
+	public static JUser fetch(final ObjectId id) {
+		return queryToFindMe(id).get();
 	}
 
 	public String fullName() {

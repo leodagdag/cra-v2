@@ -22,11 +22,11 @@ object PDF {
 
   def createAbsenceData(jAbsences: java.util.List[JAbsence]): F.Tuple[ObjectId, Array[Byte]] = createAbsenceData(jAbsences.toList)
 
-  def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFCancelAbsence.generate, newAbsenceFile)
+  def createCancelAbsenceFile(absence: JAbsence, user: JUser): File = toFile[List[JAbsence]](user, List(absence), PDFCancelAbsence.generate, newCancelAbsenceFile)
 
   def createAbsenceFile(absence: JAbsence, user: JUser): File = createAbsenceFile(List(absence), user)
 
-  def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, getOrCreateAbsenceData, newAbsenceFile)
+  def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, getOrCreateAbsenceData, newAskAbsenceFile)
 
   private def getOrCreateAbsenceData(absences: List[JAbsence]) = {
     if (absences.head.fileId == null) createAbsenceData(absences)._2
@@ -61,13 +61,15 @@ object PDF {
     file
   }
 
-  private def newAbsenceFile[T](user: JUser, obj: T): File = new File(s"tmp/${absenceTitle(user)}")
+  private def newCancelAbsenceFile[T](user: JUser, obj: T): File = new File(s"tmp/${absenceTitle(user, false)}")
+
+  private def newAskAbsenceFile[T](user: JUser, obj: T): File = new File(s"tmp/${absenceTitle(user)}")
 
   private def newCraFile(user: JUser, cra: JCra) = new File(s"tmp/${craTitle(user, cra)}")
 
-  def absenceTitle(user: JUser): String = {
+  def absenceTitle(user: JUser, create: Boolean = true): String = {
     val date = `yyyy-MM-dd_HH-mm-ss`.print(DateTime.now)
-    s"Absence_${user.fullName()}_$date.pdf".replace(' ', '_')
+    s"${if(create){"Demande"}else{"Annulation"}}_Absence_${user.fullName()}_$date.pdf".replace(' ', '_')
   }
 
   private def craTitle(user: JUser, cra: JCra): String = {

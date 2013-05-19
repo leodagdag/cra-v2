@@ -3,11 +3,12 @@ package export
 import com.itextpdf.text.Rectangle
 import com.itextpdf.text.pdf.PdfPTable
 import constants._
-import models.{JCra, JMission, JClaim}
+import models.{JAffectedMission, JUser, JCra, JMission, JClaim}
 import scala.collection.convert.WrapAsScala._
 import scala.collection.immutable.TreeMap
 import utils._
 import utils.time.TimeUtils
+import scala.collection.mutable
 
 /**
  * @author f.patin
@@ -15,6 +16,7 @@ import utils.time.TimeUtils
 case class ProductionTotalClaim(cra: JCra, currentMission: JMission) extends TableTools {
 
   def compose(): PdfPTable = {
+
 
     val cs = totalFeeByWeek
     val tableByWeek = newTable(cs.size / 2)
@@ -33,11 +35,15 @@ case class ProductionTotalClaim(cra: JCra, currentMission: JMission) extends Tab
     table
   }
 
+  val user = JUser.fetch(cra.userId)
+
   protected def newTable(numColumns: Int) = super.newTable(numColumns, 5f)
 
   private def newCell(text: String) = super.newCell(text, border = Rectangle.BOX, maxLength = None)
 
-  private val currentMissionClaimType: ClaimType = MissionAllowanceType.valueOf(currentMission.allowanceType).claimType
+  private val currentMissionClaimType: ClaimType = MissionAllowanceType.valueOf {
+    user.affectedMissions.filter(_.missionId.equals(currentMission.id)).head.allowanceType
+  }.claimType
 
   private val claims: List[JClaim] = JClaim.synthesis(cra.userId, cra.year, cra.month).toList
 

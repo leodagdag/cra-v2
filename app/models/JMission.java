@@ -49,8 +49,8 @@ public class JMission extends Model {
 	public String label;
 	public String description;
 	public String missionType;
-	//public String absenceType;
-	public String allowanceType;
+	public String absenceType;
+	//public String allowanceType;
 	public Boolean isClaimable;
 	@Transient
 	public DateTime startDate;
