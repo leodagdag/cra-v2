@@ -77,8 +77,8 @@ public class JUser extends Model implements Subject {
 		return Lists.newArrayList(Collections2.filter(xs, new Predicate<JAffectedMission>() {
 			@Override
 			public boolean apply(@Nullable final JAffectedMission affectedMission) {
-				return ((affectedMission.startDate == null || affectedMission.startDate.isBefore(startDate))
-					        && (affectedMission.endDate == null || affectedMission.endDate.isAfter(endDate)));
+				return ((affectedMission.startDate == null || affectedMission.startDate.isBefore(startDate) || affectedMission.startDate.isEqual(startDate))
+					        && (affectedMission.endDate == null || affectedMission.endDate.isAfter(endDate) || affectedMission.endDate.isEqual(endDate)));
 			}
 		}));
 	}
