@@ -4,12 +4,15 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{text, optional, tuple, nonEmptyText}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, JsString, __}
+import play.api.libs.json._
 import play.api.mvc.{Action, Security, Results}
-import scala.Some
 import security.{Profile, MyDeadboltHandler, Auth}
 import utils.MD5
 import http.CacheControl
+import reactivemongo.bson.BSONObjectID
+import play.modules.reactivemongo.json.BSONFormats._
+import play.api.libs.json.JsString
+import scala.Some
 
 /**
  * @author f.patin
@@ -64,8 +67,11 @@ object Authentication extends BaseController {
       Results.Redirect(routes.Authentication.login()).withSession(request.session - Security.username)
   }
 
-  val fromProfile = (
-    (__ \ "id").write[String] and
+
+
+
+  val fromProfile: OWrites[Profile] = (
+    (__ \ "id").writeNullable[String] and
       (__ \ "username").write[String] and
       (__ \ "role").write[String]
     )(unlift(Profile.unapply))
@@ -76,7 +82,7 @@ object Authentication extends BaseController {
         Async {
           Profile(request.session.get("username").get)
             .map {
-            profile  => Ok(Json.toJson(profile.get)(fromProfile)).withHeaders(profile.get.eTag, CacheControl.maxAgeO)
+            profile => Ok(Json.toJson(profile.get)(fromProfile)).withHeaders(profile.get.eTag, CacheControl.maxAgeO)
           }
             .recover {
             case e: Exception => InternalServerError(JsString(s"exception ${e.getMessage}"))

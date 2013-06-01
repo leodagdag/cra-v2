@@ -14,9 +14,6 @@ object JsRouter extends Controller {
         Routes.javascriptRouter("jsRoutes")(
           Authentication.profile,
 
-          Cras.invalidate,
-          Cras.validate,
-
           JCras.fetch,
           JCras.claimSynthesis,
           JCras.exportByEmployee,

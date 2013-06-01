@@ -21,7 +21,6 @@ object ApplicationBuild extends Build {
     // security
     "be.objectify" %% "deadbolt-java" % "2.1-RC1",
     // email
-    //"com.typesafe" %% "play-plugins-mailer" % "2.1.0",
     "org.apache.commons" % "commons-email" % "1.3.1",
     // PDF
     "com.itextpdf" % "itextpdf" % "5.4.0",
@@ -29,7 +28,7 @@ object ApplicationBuild extends Build {
     // security
     "be.objectify" %% "deadbolt-scala" % "2.1-RC1",
     // MongoDB
-    "org.reactivemongo" %% "play2-reactivemongo" % "0.8",
+    "org.reactivemongo" %% "play2-reactivemongo" % "0.9",
     // Common collections
     "commons-collections" % "commons-collections" % "3.2.1"
   )

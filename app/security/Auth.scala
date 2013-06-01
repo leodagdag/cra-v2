@@ -1,18 +1,15 @@
 package security
 
 import be.objectify.deadbolt.core.models.{Subject, Permission}
-import play.libs.Scala
-import reactivemongo.api.QueryBuilder
-import reactivemongo.bson.handlers.DefaultBSONHandlers.{DefaultBSONDocumentWriter, DefaultBSONReaderHandler}
-import reactivemongo.bson.handlers.{BSONWriter, BSONReader}
-import reactivemongo.bson.{BSONInteger, BSONString, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDocumentWriter, BSONDocumentReader, BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
-import concurrent.Future
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.api.Play.current
-import play.api.http.HeaderNames
 import http.Etag
-
+import java.util.{List => JList}
+import scala.collection.convert.WrapAsJava._
+import reactivemongo.api.collections.default.BSONCollection
+import scala.concurrent.Future
 
 /**
  * @author f.patin
@@ -20,94 +17,77 @@ import http.Etag
 case class Auth(id: Option[BSONObjectID],
                 username: String,
                 role: String) extends Subject {
-  def getRoles: java.util.List[SecurityRole] = Scala.asJava(List(SecurityRole(role)))
+  def getRoles: JList[SecurityRole] = List(SecurityRole(role))
 
-  def getPermissions: java.util.List[_ <: Permission] = ???
+  def getPermissions: JList[_ <: Permission] = ???
 
   def getIdentifier: String = username
+
 }
 
 object Auth {
 
-  private val db = ReactiveMongoPlugin.db.collection("User")
-
-  implicit object AuthBSONReader extends BSONReader[Auth] {
-    def fromBSON(document: BSONDocument): Auth = {
-      val doc = document.toTraversable
+  implicit object AuthBSONReader extends BSONDocumentReader[Auth] {
+    def read(doc: BSONDocument): Auth =
       Auth(
         doc.getAs[BSONObjectID]("_id"),
-        doc.getAs[BSONString]("username").get.value,
-        doc.getAs[BSONString]("role").get.value
-      )
-    }
+        doc.getAs[String]("username").get,
+        doc.getAs[String]("role").get)
   }
 
-
-  implicit object AuthBSONWriter extends BSONWriter[Auth] {
-    def toBSON(auth: Auth) = {
+  implicit object AuthBSONWriter extends BSONDocumentWriter[Auth] {
+    def write(auth: Auth): BSONDocument =
       BSONDocument(
         "_id" -> auth.id.getOrElse(BSONObjectID.generate),
-        "username" -> BSONString(auth.username),
-        "role" -> BSONString(auth.role)
-      )
-    }
+        "title" -> auth.username,
+        "content" -> auth.role)
   }
+
+  def collection = ReactiveMongoPlugin.db.collection[BSONCollection]("User")
 
   def checkAuthentication(auth: (String, String)): Future[Option[Auth]] = {
-    val s = BSONDocument(
-      "username" -> BSONString(auth._1),
-      "password" -> BSONString(auth._2)
+
+    val query = BSONDocument(
+      "username" -> auth._1,
+      "password" -> auth._2
     )
-    val p = BSONDocument(
-      "_id" -> BSONInteger(1),
-      "username" -> BSONInteger(1),
-      "role" -> BSONInteger(1)
+    val projection = BSONDocument(
+      "_id" -> 1,
+      "username" -> 1,
+      "role" -> 1
     )
-    val q = QueryBuilder()
-      .query(s)
-      .projection(p)
-    db.find[Auth](q).headOption
+    collection.find(query, projection).one[Auth]
   }
 
-  def asSubject(username: String): Future[Option[Subject]] = {
-    val s = BSONDocument("username" -> new BSONString(username))
-    val q = QueryBuilder()
-      .query(s)
-    db.find[Subject](q).headOption
+  def asSubject(username: String): Future[Option[Auth]] = {
+
+    val query = BSONDocument(
+      "username" -> username
+    )
+    collection.find(query).one[Auth]
   }
 }
 
-case class Profile(id: String,
+case class Profile(id: Option[String],
                    username: String,
                    role: String) extends Etag {
 }
 
 object Profile {
 
-  private val db = ReactiveMongoPlugin.db.collection("User")
+  def collection = ReactiveMongoPlugin.db.collection[BSONCollection]("User")
 
-  object ProfileBSONReader extends BSONReader[Profile] {
-    def fromBSON(document: BSONDocument): Profile = {
-      val doc = document.toTraversable
+  implicit object ProfileBSONReader extends BSONDocumentReader[Profile] {
+    def read(doc: BSONDocument): Profile =
       Profile(
-        doc.getAs[BSONObjectID]("_id").get.stringify,
-        doc.getAs[BSONString]("username").get.value,
-        doc.getAs[BSONString]("role").get.value
+        doc.getAs[BSONObjectID]("_id").map(_.stringify),
+        doc.getAs[String]("username").get,
+        doc.getAs[String]("role").get
       )
-    }
   }
 
-  def apply(username: String) = {
-    val s = BSONDocument("username" -> BSONString(username))
-    val p = BSONDocument(
-      "_id" -> BSONInteger(1),
-      "username" -> BSONInteger(1),
-      "role" -> BSONInteger(1)
-    )
-    val query = QueryBuilder()
-      .query(s)
-      .projection(p)
-    implicit val reader = ProfileBSONReader
-    db.find[Profile](query).headOption()
+  def apply(username: String): Future[Option[Profile]] = {
+    val query = BSONDocument("username" -> username)
+    collection.find(query).one[Profile]
   }
 }

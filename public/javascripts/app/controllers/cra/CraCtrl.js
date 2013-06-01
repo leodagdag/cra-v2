@@ -115,28 +115,6 @@ app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '
 			return !inPastOrFuture && halfday && halfday.missionType !== 'holiday';
 		};
 
-		$scope.validate = function() {
-			var route = jsRoutes.controllers.Cras.validate($scope.cra.id);
-			$http({
-				method: route.method,
-				url: route.url
-			})
-				.success(function(cra, status, headers, config) {
-					$scope.cra.isValidated = true;
-				});
-		};
-
-		$scope.invalidate = function() {
-			var route = jsRoutes.controllers.Cras.invalidate($scope.cra.id);
-			$http({
-				method: route.method,
-				url: route.url
-			})
-				.success(function(cra, status, headers, config) {
-					$scope.cra.isValidated = false;
-				});
-		};
-
 		$scope.setComment = function() {
 			var title = _.str.sprintf("Veuillez sasisir un commentaire pour le CRA de %s", moment().month($scope.cra.month - 1).year($scope.cra.year).format("MMMM YYYY"));
 			var comment = $window.prompt(title, ($scope.cra.comment) ? $scope.cra.comment : "");
