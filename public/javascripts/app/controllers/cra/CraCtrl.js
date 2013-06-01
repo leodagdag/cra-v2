@@ -285,11 +285,9 @@ app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '
 				url: route.url
 			})
 				.success(function(cra, status, headers, config) {
-					$log.debug('cra', cra);
 					$scope.cra = cra;
 					$scope.selectedMonth = {name: month, checked: false};
 					$scope.missionsOfCra = extractMissionsOfCra(cra);
-					$log.debug('$scope.missionsOfCra', $scope.missionsOfCra);
 					$scope.$watch('selectedMonth.checked', function() {
 						_.forEach($scope.selectedWeeks, function(week, wIdx) {
 							week.checked = $scope.selectedMonth.checked;
@@ -313,8 +311,15 @@ app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '
 		$scope.toggleWeek = function(wIdx) {
 			var week = $scope.selectedWeeks[wIdx];
 			_.forEach($scope.selectedDays, function(day) {
-				if(day.weekNumber === week.number && !$scope.cra.weeks[wIdx].days[day.index].inPastOrFuture && !$scope.cra.weeks[wIdx].days[day.index].isDayOff && !$scope.cra.weeks[wIdx].days[day.index].isSaturday && !$scope.cra.weeks[wIdx].days[day.index].isSunday && !($scope.cra.weeks[wIdx].days[day.index].morning || $scope.cra.weeks[wIdx].days[day.index].afternoon)) {
-					day.checked = week.checked;
+				var theDay = $scope.cra.weeks[wIdx].days[day.index];
+				if(day.weekNumber === week.number && !theDay.inPastOrFuture && !theDay.isDayOff && !theDay.isSaturday && !theDay.isSunday) {
+					if(theDay.morning && theDay.morning.missionType === 'holiday' && !theDay.afternoon) {
+						day.checked = week.checked;
+					} else if(theDay.afternoon && theDay.afternoon.missionType === 'holiday' && !theDay.morning) {
+						day.checked = week.checked;
+					} else if(!theDay.morning && !theDay.afternoon) {
+						day.checked = week.checked;
+					}
 				}
 			});
 		};

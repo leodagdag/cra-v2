@@ -47,8 +47,8 @@ app.controller('PartTimeNewCtrl', ['$rootScope', '$scope', '$http', '$log', '$lo
 		};
 
 		$scope.save = function() {
+			$scope.errors = {};
 			var partTime = new PartTime($scope.form);
-			$log.debug(partTime);
 			var route = jsRoutes.controllers.JPartTimes.addPartTimes();
 			$http({
 				method: route.method,

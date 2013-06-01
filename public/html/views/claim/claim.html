@@ -119,7 +119,7 @@
 							<span data-ng-show="claim.kilometerAmount"> <strong>|</strong> Déplacement : {{claim.kilometer | kilometer}} ({{claim.journey}}) <strong>{{claim.kilometerAmount | currency}}</strong></span>
 						</div>
 						<div class="span1">
-							<i data-ng-show="c.comment" class="icon-comment" title="{{c.comment}}"></i>
+							<i data-ng-show="claim.comment" class="icon-comment" title="{{claim.comment}}"></i>
 						</div>
 						<div class="span1">
 							<button class="btn btn-danger btn-mini" data-ng-click="remove(c.id)"><i class="icon-trash"></i></button>

@@ -52,6 +52,7 @@ app.constant('YearsConst', [
 		{code: 'BMW', label: 'BMW'},
 		{code: 'CHRYSLER', label: 'Chrysler'},
 		{code: 'CITROËN', label: 'Citroën'},
+		{code: 'DACIA', label: 'Dacia'},
 		{code: 'FERRARI', label: 'Ferrari'},
 		{code: 'FIAT', label: 'Fiat'},
 		{code: 'FORD', label: 'Ford'},

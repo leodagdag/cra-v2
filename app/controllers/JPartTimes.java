@@ -86,7 +86,7 @@ public class JPartTimes extends Controller {
 					errors.add(new ValidationError("startDate", "Le temps partiel ne peut pas commencer dans le passé."));
 				}
 				if(endDate != null && new DateTime(endDate).isBefore(new DateTime(startDate))) {
-					errors.add(new ValidationError("endDate", "La date de fin doit être postérieur à la date de début."));
+					errors.add(new ValidationError("endDate", "La date de fin doit être postérieure à la date de début."));
 				}
 			}
 			if(frequency == null) {
