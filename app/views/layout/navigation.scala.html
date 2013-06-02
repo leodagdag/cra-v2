@@ -27,11 +27,6 @@
 							<li  data-ng-class="{'active' : isNav('claim')}">
 								<a data-ng-href="#/claim">Frais</a>
 							</li>
-							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
-								<li  data-ng-class="{'active' : isNav('remuneration')}">
-									<a data-ng-href="#/remuneration">Rémunération</a>
-								</li>
-							}
 						</ul>
 						<ul class="nav pull-right">
 							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
@@ -39,9 +34,9 @@
 									<a data-ng-href="#/parameter">Paramétrage</a>
 								</li>
 							}
-							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.administrator))) {
+                            @restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
 								<li  data-ng-class="{'active' : isNav('backoffice')}">
-									<a data-ng-href="#/backoffice">Backoffice</a>
+									<a data-ng-href="#/back-office">Backoffice</a>
 								</li>
 							}
 							<li data-ng-class="{'active' : isNav('my-account')}">

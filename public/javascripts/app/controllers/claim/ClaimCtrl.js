@@ -103,8 +103,7 @@ app.controller('ClaimCtrl', ['$scope', '$rootScope', '$http', '$log', '$location
 		var sort = function(list) {
 			var field = $scope.filter.sortBy.substr(1),
 				direction = $scope.filter.sortBy.substr(0, 1) === '+' ? 'asc' : 'desc',
-				result = _(list)
-					.sortBy(field);
+				result = _(list).sortBy(field);
 			if(direction === 'desc') {
 				result.reverse();
 			}

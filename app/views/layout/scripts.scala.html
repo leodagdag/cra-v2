@@ -2,8 +2,11 @@
 
 @import be.objectify.deadbolt.core.utils.TemplateUtils.as
 @import be.objectify.deadbolt.scala.views.html.{restrictOr, subjectPresent}
+@import be.objectify.deadbolt.core.utils.TemplateUtils.as
+@import be.objectify.deadbolt.scala.views.html.restrict
 @import security.SecurityRole
 @import utils.Version
+
 @defining(
     play.Play.isProd match {
         case true => ".min.js"
@@ -24,10 +27,10 @@
     <script type="text/javascript" src="@routes.JsRouter.javascriptRoutes"></script>
     @* lodash *@
 	<!--[if lte IE 9]>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.compat@extension"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash.compat@extension"></script>
 	<![endif]-->
 	<!--[if !IE]><!-->
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash@extension"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.1/lodash@extension"></script>
 	<!--<![endif]-->
     @* underscore string *@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.0/underscore.string.min.js"></script>
@@ -59,7 +62,12 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/absence/AbsenceCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/absence/DayAbsenceCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/absence/PeriodAbsenceCtrl.js")"></script>
+    @restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/back-office/BackOfficeCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/back-office/BackOfficeCustomersCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/back-office/BackOfficeMissionsCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/back-office/BackOfficeUsersCtrl.js")"></script>
+    }
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/claim/ClaimCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/cra/CraCtrl.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/app/controllers/cra/ClaimSynthesisCtrl.js")"></script>

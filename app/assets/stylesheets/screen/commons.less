@@ -1,55 +1,58 @@
 /* have to set explicit for IE8 !*/
 body {
-	padding-top: 60px;
-	position: relative;
+  padding-top: 60px;
+  position: relative;
 }
 
 /* for lower screen size */
 @media (max-width: 979px) {
-	body {
-		padding-top: 0px;
-		position: static;
-	}
+  body {
+    padding-top: 0px;
+    position: static;
+  }
 }
 
 .icon-mandatory:before {
-	content: "*";
-	color: red;
+  content: "*";
+  color: red;
 }
 
 .icon-trash, .icon-comment-alt, .icon-check, .icon-check-empty {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .nav {
-	a {
-		cursor: pointer;
-	}
+  a {
+    cursor: pointer;
+  }
 }
 
 table.middle-vertical-align {
-	td, th {
-		vertical-align: middle;
-	}
+  td, th {
+    vertical-align: middle;
+  }
 }
 
 .scrollable {
-	max-height: 400px;
-	overflow-y: scroll;
-	.table-line {
-		border-top: 1px solid #e3e3e3;
-		border-bottom: 1px solid #e3e3e3;
-		padding: 2px 0;
+  max-height: 400px;
+  &.mini {
+    max-height: 200px;
+  }
+  overflow-y: scroll;
+  .table-line {
+    border-top: 1px solid #e3e3e3;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 2px 0;
 
-	}
+  }
 }
 
 .well {
-	hr {
-		border-top-color: #E3E3E3;
-	}
+  hr {
+    border-top-color: #E3E3E3;
+  }
 }
 
 a.orange {
-	color: #FFA500;
+  color: #FFA500;
 }

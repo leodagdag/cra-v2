@@ -47,14 +47,18 @@ PUT	    /cra/:id/comment                                           	controllers.
 # ~~~~
 GET     /missions/absences                                          controllers.JMissions.absences()
 GET     /missions/claims/:username                                  controllers.JMissions.claimable(username: String)
-GET     /missions/affectedMissions/:username/:startDate/:endDate    controllers.JMissions.affectedMissions(username: String, startDate :Long, endDate: Long)
+
 GET     /missions/craMissions/:username/:startDate/:endDate    		controllers.JMissions.craMissions(username: String, startDate :Long, endDate: Long)
 
 # User
 # ~~~~
 GET     /users/employees                                            controllers.JUsers.employees()
 GET     /users/managers                                             controllers.JUsers.managers()
+GET     /users/:username/affectedMissions/:startDate/:endDate       controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)
+GET     /users/:username/affectedMissions                           controllers.JUsers.allAffectedMissions(username: String)
+GET     /users/:username                                            controllers.JUsers.one(username)
 GET     /users                                                      controllers.JUsers.all()
+
 
 # Account
 # ~~~~

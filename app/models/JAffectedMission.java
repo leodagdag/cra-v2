@@ -29,7 +29,7 @@ public class JAffectedMission {
 	public ObjectId missionId;
 	public String allowanceType;
 	public BigDecimal feeAmount;
-	public String _feeAmount;
+	private String _feeAmount;
 	private Date _startDate;
 	private Date _endDate;
 

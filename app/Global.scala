@@ -7,7 +7,7 @@ import play.api.libs.json.JsString
 import play.api.mvc.Results._
 import play.api.mvc.{Results, Result, Handler, RequestHeader}
 import play.api.{Mode, Configuration, Logger, GlobalSettings, Application}
-import security.BatchRole
+import security.{SecurityRole, BatchRole}
 
 
 /**
@@ -22,7 +22,7 @@ object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
     Logger info "Application start ..."
-    createBatchUser(app)
+    createDefaultUsers(app)
     super.onStart(app)
   }
 
@@ -67,23 +67,43 @@ object Global extends GlobalSettings {
       .getOrElse(super.onError(request, ex))
   }
 
-  private def createBatchUser(app: Application) {
+  private def createDefaultUsers(app: Application) {
     Logger.info("Check Batch user")
-    val username = app.configuration.getString("batch.username").getOrElse(throw app.configuration.reportError("batch.username", "Missing configuration Key"))
-    val password = app.configuration.getString("batch.password").getOrElse(throw app.configuration.reportError("batch.username", "Missing configuration Key"))
-    if (!JUser.exist(username)) {
-      Logger.warn("Create batch user")
+    val batchUsernameKey =  "default.users.batch.username"
+    val batchPasswordKey =  "default.users.batch.password"
+    val batchUsername = app.configuration.getString(batchUsernameKey).getOrElse(throw app.configuration.reportError(batchUsernameKey, s"Missing configuration Key: $batchUsernameKey"))
+    val batchPassword = app.configuration.getString(batchPasswordKey).getOrElse(throw app.configuration.reportError(batchPasswordKey, s"Missing configuration Key: $batchPasswordKey"))
+    if (!JUser.exist(batchUsername)) {
+      Logger.warn(s"Create $batchUsername user")
       JUser.add {
         val user = new JUser()
-        user.username = username
+        user.username = batchUsername
         user.firstName = "Batch"
         user.lastName = "System"
         user.trigramme = "°_°"
-        user.role = BatchRole.getName
+        user.role = SecurityRole.batch
         user
       }
     }
-    JUser.password(username, password)
+    JUser.password(batchUsername, batchPassword)
 
+    Logger.info("Check Admin user")
+    val adminUsernameKey =  "default.users.admin.username"
+    val adminPasswordKey =  "default.users.admin.password"
+    val adminUsername = app.configuration.getString(adminUsernameKey).getOrElse(throw app.configuration.reportError(adminUsernameKey, s"Missing configuration Key: $adminUsernameKey"))
+    val adminPassword = app.configuration.getString(adminPasswordKey).getOrElse(throw app.configuration.reportError(adminPasswordKey, s"Missing configuration Key: $adminPasswordKey"))
+    if (!JUser.exist(adminUsername)) {
+      Logger.warn(s"Create $adminUsername user")
+      JUser.add {
+        val user = new JUser()
+        user.username = adminUsername
+        user.firstName = "Admin"
+        user.lastName = "System"
+        user.trigramme = "^_^"
+        user.role = SecurityRole.administrator
+        user
+      }
+    }
+    JUser.password(adminUsername, adminPassword)
   }
 }

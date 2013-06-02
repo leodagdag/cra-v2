@@ -1,1 +1,12 @@
-<h1>Back office</h1>
+<div class="row-fluid">
+	<div class="span2">
+		<ul class="nav nav-list nav-pills nav-stacked">
+			<li data-ng-class="{active: activeSubSection.name == 'users'}"><a data-ng-click="activateSubSection('users')">Utilisateurs</a></li>
+			<li data-ng-class="{active: activeSubSection.name == 'customers'}"><a data-ng-click="activateSubSection('customers')">Clients</a></li>
+			<li data-ng-class="{active: activeSubSection.name == 'missions'}"><a data-ng-click="activateSubSection('missions')">Missions</a></li>
+		</ul>
+	</div>
+	<div class="span10">
+		<div data-ng-include src="activeSubSection.page"></div>
+	</div>
+</div>

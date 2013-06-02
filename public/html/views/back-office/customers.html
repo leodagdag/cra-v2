@@ -1,0 +1,56 @@
+<div class="row-fluid">
+	<div class="span5">
+		<form class="form-horizontal well well-small" data-ng-controller="BackOfficeCustomersCtrl" data-ng-submit="save()">
+			<fieldset>
+				<legend>{{account.firstName | capitalize}} {{account.lastName | capitalize}}</legend>
+				<div class="control-group" data-ng-class="{'error': errors.firstName}">
+					<label class="control-label" for="firstName">Prénom <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="firstName" required="required" data-ng-model="account.firstName">
+						<span class="help-block"><em>{{errors.firstName}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.lastName}">
+					<label class="control-label" for="lastName">Nom <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="lastName" required="required" data-ng-model="account.lastName">
+						<span class="help-block"><em>{{errors.lastName}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.trigramme}">
+					<label class="control-label" for="trigramme">Trigramme <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="trigramme" required="required" data-ng-model="account.trigramme">
+						<span class="help-block"><em>{{errors.trigramme}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.email}">
+					<label class="control-label" for="email">E-mail <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="email" required="required" data-ng-model="account.email">
+						<span class="help-block"><em>{{errors.email}}</em></span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="managerId">Responsable</label>
+
+					<div class="controls">
+						<select class="span10" id="managerId" data-ng-model="account.managerId" data-ng-options="manager.id as manager.firstName + ' ' + manager.lastName for manager in managers">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+				<div data-ng-class="{'control-group error': errors.global}">
+					<span class="help-block"><em>{{errors.global}}</em></span>
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>

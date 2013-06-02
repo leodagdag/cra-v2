@@ -61,10 +61,14 @@ app.config(['$routeProvider',
 				templateUrl: 'assets/html/views/parameter/parameter.html',
 				controller: 'ParameterCtrl'
 			})
-			.when('/backoffice', {
+			.when('/back-office', {
 				templateUrl: 'assets/html/views/back-office/back-office.html',
 				controller: 'BackOfficeCtrl'
 			})
+            .when('/back-office/:subSection', {
+                templateUrl: 'assets/html/views/back-office/back-office.html',
+                controller: 'BackOfficeCtrl'
+            })
 			.when('/my-account', {
 				templateUrl: 'assets/html/views/my-account/my-account.html',
 				controller: 'MyAccountCtrl',

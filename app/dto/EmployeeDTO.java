@@ -18,12 +18,15 @@ public class EmployeeDTO {
 
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId id;
+	public String username;
 	public String trigramme;
 	public String firstName;
 	public String lastName;
 	public String email;
+    @JsonSerialize(using = ObjectIdSerializer.class)
 	public ObjectId managerId;
-	public Boolean isManager = Boolean.FALSE;
+	public Boolean isManager;
+	public String role;
 
 	@SuppressWarnings({"unused"})
 	public EmployeeDTO() {
@@ -31,12 +34,14 @@ public class EmployeeDTO {
 
 	public EmployeeDTO(final JUser user) {
 		this.id = user.id;
+		this.username = user.username;
 		this.trigramme = user.trigramme;
 		this.firstName = user.firstName;
 		this.lastName = user.lastName;
 		this.email = user.email;
 		this.managerId = user.managerId;
 		this.isManager = user.isManager;
+		this.role = user.role;
 	}
 
 	public static EmployeeDTO of(final JUser user) {

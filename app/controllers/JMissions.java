@@ -30,11 +30,7 @@ public class JMissions extends Controller {
 		return ok(toJson(MissionDTO.of(missions)));
 	}
 
-	@ResponseCache.NoCacheResponse
-	public static Result affectedMissions(final String username, final Long startDate, final Long endDate) {
-		final Collection<JMission> missions = JMission.codeAndMissionType(JUser.affectedMissions(username, new DateTime(startDate), new DateTime(endDate))).values();
-		return ok(toJson(MissionDTO.of(missions)));
-	}
+
 
 	@ResponseCache.NoCacheResponse
 	public static Result craMissions(final String username, final Long startDate, final Long endDate) {

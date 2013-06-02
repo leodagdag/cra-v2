@@ -221,6 +221,10 @@ public class JUser extends Model implements Subject {
 		return queryToFindMe(id).get();
 	}
 
+    public static JUser fetch(final String username) {
+        return queryToFindMe(username).get();
+    }
+
 	public String fullName() {
 		return String.format("%s %s", StringUtils.capitalize(lastName.toLowerCase()), StringUtils.capitalize(firstName.toLowerCase()));
 	}
