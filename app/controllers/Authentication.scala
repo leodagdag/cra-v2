@@ -24,6 +24,11 @@ object Authentication extends BaseController {
       Ok(views.html.login())
   }
 
+  def logout = Action {
+    request =>
+      Results.Redirect(routes.Authentication.login()).withSession(request.session - Security.username)
+  }
+
   val authenticateForm = Form(tuple(
     "username" -> nonEmptyText,
     "password" -> nonEmptyText,
@@ -61,14 +66,6 @@ object Authentication extends BaseController {
       )
 
   }
-
-  def logout = Action {
-    request =>
-      Results.Redirect(routes.Authentication.login()).withSession(request.session - Security.username)
-  }
-
-
-
 
   val fromProfile: OWrites[Profile] = (
     (__ \ "id").writeNullable[String] and

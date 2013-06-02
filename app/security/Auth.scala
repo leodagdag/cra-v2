@@ -39,8 +39,8 @@ object Auth {
     def write(auth: Auth): BSONDocument =
       BSONDocument(
         "_id" -> auth.id.getOrElse(BSONObjectID.generate),
-        "title" -> auth.username,
-        "content" -> auth.role)
+        "username" -> auth.username,
+        "role" -> auth.role)
   }
 
   def collection = ReactiveMongoPlugin.db.collection[BSONCollection]("User")
