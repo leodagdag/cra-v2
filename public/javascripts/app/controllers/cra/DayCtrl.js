@@ -61,7 +61,6 @@ app.controller('DayCtrl', ['$scope', '$rootScope', '$http', '$log', '$location',
 					url: route.url
 				})
 					.success(function(day, status, headers, config) {
-						$log.debug('day', day);
 						$scope.day = day;
 						$scope.activateSubSection((day.isSpecial) ? 'special' : 'normal');
 

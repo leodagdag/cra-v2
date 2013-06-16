@@ -28,6 +28,7 @@ public class JAffectedMission {
 	public DateTime endDate;
 	public ObjectId missionId;
 	public String allowanceType;
+	@Transient
 	public BigDecimal feeAmount;
 	private String _feeAmount;
 	private Date _startDate;

@@ -1,5 +1,6 @@
 package models;
 
+import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.annotations.Entity;
 import com.github.jmkgreen.morphia.annotations.Id;
 import com.github.jmkgreen.morphia.annotations.Index;
@@ -14,6 +15,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mongodb.WriteConcern;
 import constants.AbsenceType;
 import constants.GenesisMissionCode;
 import constants.MissionType;
@@ -61,8 +63,12 @@ public class JMission extends Model {
 	private Date _startDate;
 	private Date _endDate;
 
+	private static Datastore ds() {
+		return MorphiaPlugin.ds();
+	}
+
 	private static Query<JMission> q() {
-		return MorphiaPlugin.ds().createQuery(JMission.class);
+		return ds().createQuery(JMission.class);
 	}
 
 	private static Query<JMission> queryToFindMe(final ObjectId id) {
@@ -103,7 +109,7 @@ public class JMission extends Model {
 
 	public static Map<ObjectId, JMission> codeAndMissionType(final List<ObjectId> missionsIds) {
 		if(CollectionUtils.isNotEmpty(missionsIds)) {
-			final List<JMission> missions = MorphiaPlugin.ds().createQuery(JMission.class)
+			final List<JMission> missions = ds().createQuery(JMission.class)
 				                                .field(Mapper.ID_KEY).in(missionsIds)
 				                                .retrievedFields(true, Mapper.ID_KEY, "code", "label", "missionType")
 				                                .disableValidation()
@@ -128,7 +134,7 @@ public class JMission extends Model {
 	}
 
 	public static List<JMission> getClaimableMissions(final List<ObjectId> ids) {
-		return MorphiaPlugin.ds().createQuery(JMission.class)
+		return ds().createQuery(JMission.class)
 			       .field(Mapper.ID_KEY).in(ids)
 			       .field("isClaimable").equal(true)
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
@@ -137,7 +143,7 @@ public class JMission extends Model {
 	}
 
 	public static List<JMission> craMissions(final List<ObjectId> ids) {
-		return MorphiaPlugin.ds().createQuery(JMission.class)
+		return ds().createQuery(JMission.class)
 			       .field(Mapper.ID_KEY).in(ids)
 			       .field("missionType").in(MissionType.craMissionType)
 			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
@@ -194,8 +200,8 @@ public class JMission extends Model {
 	}
 
 	public static Boolean isAbsenceMission(final ObjectId missionId) {
-		return MorphiaPlugin.ds().getCount(queryToFindMe(missionId)
-			                                   .field("missionType").equal(MissionType.holiday.name())) > 0;
+		return ds().getCount(queryToFindMe(missionId)
+			                     .field("missionType").equal(MissionType.holiday.name())) > 0;
 	}
 
 	public static Boolean isClaimable(final ObjectId id) {
@@ -206,13 +212,34 @@ public class JMission extends Model {
 	}
 
 	public static boolean exist(final ObjectId customerId, final String code) {
-		return MorphiaPlugin.ds().getCount(q()
-			                                   .field("customerId").equal(customerId)
-			                                   .field("code").equal(code)) > 0;
+		return ds().getCount(q()
+			                     .field("customerId").equal(customerId)
+			                     .field("code").equal(code)) > 0;
 	}
 
-	public static List<JMission> genesisMission(){
+	public static List<JMission> genesisMission() {
 		final JCustomer genesis = JCustomer.genesis();
 		return q().field("customerId").equal(genesis.id).asList();
 	}
+
+	public static List<ObjectId> genesisMissionsIds() {
+		return Lists.newArrayList(Collections2.transform(q().field("customerId").equal(JCustomer.genesis().id).asList(), new Function<JMission, ObjectId>() {
+			@Nullable
+			@Override
+			public ObjectId apply(@Nullable final JMission mission) {
+				return mission.id;
+			}
+		}));
+	}
+
+	public static List<JMission> customerMission(final ObjectId customerId) {
+		return q().field("customerId").equal(customerId).asList();
+	}
+
+	public static JMission save(final JMission mission) {
+		ds().save(mission, WriteConcern.ACKNOWLEDGED);
+		return mission;
+	}
+
+
 }

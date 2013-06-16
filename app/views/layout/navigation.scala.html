@@ -18,6 +18,7 @@
 					<a class="brand" data-ng-href="#/">Genesis</a>
 					<div class="nav-collapse collapse">
 						<ul class="nav">
+                        @restrict(handler, scala.collection.immutable.List(as(SecurityRole.employee))) {
 							<li  data-ng-class="{'active' : isNav('cra')}">
 								<a data-ng-href="#/cra">CRA</a>
 							</li>
@@ -27,23 +28,26 @@
 							<li  data-ng-class="{'active' : isNav('claim')}">
 								<a data-ng-href="#/claim">Frais</a>
 							</li>
+                        }
+                        @restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
+                            <li  data-ng-class="{'active' : isNav('parameter')}">
+                                <a data-ng-href="#/parameter">Paramétrage</a>
+                            </li>
+                        }
+                        @restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
+                            <li  data-ng-class="{'active' : isNav('backoffice')}">
+                                <a data-ng-href="#/back-office">Backoffice</a>
+                            </li>
+                        }
 						</ul>
 						<ul class="nav pull-right">
-							@restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
-								<li  data-ng-class="{'active' : isNav('parameter')}">
-									<a data-ng-href="#/parameter">Paramétrage</a>
-								</li>
-							}
-                            @restrict(handler, scala.collection.immutable.List(as(SecurityRole.production),as(SecurityRole.administrator))) {
-								<li  data-ng-class="{'active' : isNav('backoffice')}">
-									<a data-ng-href="#/back-office">Backoffice</a>
-								</li>
-							}
+                            @restrict(handler, scala.collection.immutable.List(as(SecurityRole.employee))) {
 							<li data-ng-class="{'active' : isNav('my-account')}">
 								<a data-ng-href="#/my-account" title="Mon compte">
 									<i class="icon-user"></i><span class="visible-phone">&nbsp;</span>
 								</a>
 							</li>
+                            }
 							<li>
 								<a data-ng-href="@routes.Authentication.logout()" title="Se déconnecter">
 									<i class="icon-signout"></i><span class="visible-phone">&nbsp;</span>

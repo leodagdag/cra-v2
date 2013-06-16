@@ -14,8 +14,10 @@ import com.github.jmkgreen.morphia.query.UpdateOperations;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.WriteConcern;
+import controllers.JUsers;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.apache.commons.lang3.StringUtils;
@@ -164,6 +166,21 @@ public class JUser extends Model implements Subject {
 			                    endDate);
 	}
 
+	public static List<JAffectedMission> affectedMissions(final ObjectId userId) {
+		return affectedMissions(userId, null, null);
+	}
+
+	public static List<JAffectedMission> customerAffectedMissions(final ObjectId userId) {
+		final List<ObjectId> genesisMissionIds = JMission.genesisMissionsIds();
+		return Lists.newArrayList(Collections2.filter(affectedMissions(userId, null, null), new Predicate<JAffectedMission>() {
+			@Override
+			public boolean apply(@Nullable final JAffectedMission affectedMission) {
+				return !genesisMissionIds.contains(affectedMission.missionId);
+			}
+		}));
+
+	}
+
 	public static List<JUser> all() {
 		return q()
 			       .retrievedFields(Boolean.FALSE, "affectedMissions")
@@ -174,11 +191,18 @@ public class JUser extends Model implements Subject {
 	public static List<JUser> managers() {
 		return q()
 			       .field("isManager").equal(Boolean.TRUE)
-			       .retrievedFields(true, Mapper.ID_KEY, "lastName", "firstName")
+			       .retrievedFields(false, "affectedMissions")
 			       .disableValidation()
 			       .asList();
 	}
 
+	public static List<JUser> employees() {
+		return q()
+			       .field("isManager").equal(Boolean.FALSE)
+			       .retrievedFields(false, "affectedMissions")
+			       .disableValidation()
+			       .asList();
+	}
 	public static JUser update(final JUser user) {
 		boolean removeManager = false;
 		if(user.managerId == null) {
@@ -221,9 +245,9 @@ public class JUser extends Model implements Subject {
 		return queryToFindMe(id).get();
 	}
 
-    public static JUser fetch(final String username) {
-        return queryToFindMe(username).get();
-    }
+	public static JUser fetch(final String username) {
+		return queryToFindMe(username).get();
+	}
 
 	public String fullName() {
 		return String.format("%s %s", StringUtils.capitalize(lastName.toLowerCase()), StringUtils.capitalize(firstName.toLowerCase()));
@@ -245,5 +269,23 @@ public class JUser extends Model implements Subject {
 	@JsonIgnore
 	public String getIdentifier() {
 		return username;
+	}
+
+	public static void updateAffectedMissions(final ObjectId userId, final JAffectedMission affectedMission) {
+		final JUser user = queryToFindMe(userId).get();
+		Iterables.removeIf(user.affectedMissions, new Predicate<JAffectedMission>() {
+			@Override
+			public boolean apply(@Nullable final JAffectedMission am) {
+				return am.missionId.equals(affectedMission.missionId);
+			}
+		});
+		user.affectedMissions.add(affectedMission);
+		user.update();
+	}
+
+
+	public static JUser save(final JUser user) {
+		MorphiaPlugin.ds().save(user, WriteConcern.ACKNOWLEDGED);
+		return user;
 	}
 }

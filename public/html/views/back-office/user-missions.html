@@ -1,0 +1,100 @@
+<div data-ng-controller="BackOfficeUserMissionsCtrl" data-ng-init="init()">
+	<div class="row-fluid">
+		<div class="span6">
+			Employé :
+			<select class="input-medium" required="required" data-ng-model="form.user" data-ng-change="loadAffectedMissions()" data-ng-options="user as user.username for user in users">
+				<option value=""></option>
+			</select>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span6 scrollable">
+			<div class="row-fluid table-line" data-ng-repeat="am in affectedMissions">
+				<div class="span2">
+					<span>{{am.mission.code}}</span>
+				</div>
+				<div class="span2">
+					<span>{{am.startDate | date}}</span>
+				</div>
+				<div class="span2">
+					<span>{{am.endDate | date}}</span>
+				</div>
+				<div class="span2">
+					<span>{{am.allowanceType}}</span>
+				</div>
+				<div class="span2">
+					<span>{{am.feeAmount}}</span>
+				</div>
+				<div class="span2">
+					<button class="btn btn-info btn-mini" data-ng-click="editAffectedMission(am)" title="Modifier"><i class="icon-edit"></i></button>
+					<button class="btn btn-danger btn-mini" data-ng-click="deleteMission(am.id)" title="Supprimer"><i class="icon-trash"></i></button>
+				</div>
+			</div>
+		</div>
+		<div class="span6">
+			<form class="form-horizontal well well-small slim" data-ng-submit="save()">
+				<fieldset>
+
+					<div class="control-group">
+						<label class="control-label" for="customer">Client <i class="icon-mandatory"></i></label>
+
+						<div class="controls">
+							<select class="input-medium" id="customer" required="required" data-ng-model="form.customer" data-ng-change="loadCustomerMissions()" data-ng-options="customer as customer.name for customer in customers">
+							</select>
+							<span class="help-block"><em>{{errors.customer}}</em></span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="mission">Mission <i class="icon-mandatory"></i></label>
+
+						<div class="controls">
+							<select class="input-medium" id="mission" required="required" data-ng-model="form.mission" data-ng-options="customerMission as customerMission.code for customerMission in customerMissions">
+							</select>
+							<span class="help-block"><em>{{errors.mission}}</em></span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="startDate">Date de début <i class="icon-mandatory"></i></label>
+
+						<div class="controls">
+							<input type="text" class="span5" id="startDate" required="required" data-b-datepicker data-ng-model="form.startDate">
+							<span class="help-block"><em>{{errors.startDate}}</em></span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="endDate">Date de fin</label>
+
+						<div class="controls">
+							<input type="text" class="span5" id="endDate" data-b-datepicker data-ng-model="form.endDate">
+						</div>
+					</div>
+					<div class="control-group" data-ng-class="{'error': errors.fee}">
+						<div class="controls">
+							<label class="checkbox">
+								<input type="checkbox" data-ng-model="form.feeZone" data-ng-init="form.feeZone=true"> Forfait de zone
+							</label>
+						</div>
+					</div>
+
+					<div class="control-group" data-ng-class="{'error': errors.fee}">
+						<label class="control-label" for="feeAmount">Montant forfaitaire</label>
+
+						<div class="controls">
+							<div class="input-append">
+								<input type="text" class="input-mini" id="feeAmount" data-ng-model="form.feeAmount" pattern="\d{1,4}([.]\d{0,2})?">
+								<span class="add-on">€</span>
+							</div>
+						</div>
+					</div>
+					<div data-ng-class="{'control-group error': errors.fee}">
+						<span class="help-block"><em>{{errors.fee}}</em></span>
+					</div>
+					<div class="form-actions">
+						<button type="reset" class="btn" title="Nouvelle" data-ng-click="resetMission()">Nouvelle</button>
+						<button type="submit" class="btn btn-primary" title="Sauvegarder">Sauvegarder</button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>

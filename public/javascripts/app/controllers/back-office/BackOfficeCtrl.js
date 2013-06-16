@@ -4,15 +4,16 @@ app.controller('BackOfficeCtrl', ['$scope', '$http', '$log', '$location','$route
 
         $scope.subSections = {
             'users': 'assets/html/views/back-office/users.html',
-            'customers': 'assets/html/views/back-office/customers.html',
-            'missions': 'assets/html/views/back-office/missions.html'
+            'user-missions': 'assets/html/views/back-office/user-missions.html',
+            'customers': 'assets/html/views/back-office/customers.html'
         };
 
-        $scope.activeSubSection = {
+        $scope.currentSubSection = {
             name: $routeParams.subSection || null,
             page: $scope.subSections[$routeParams.subSection] || null
         };
-        $scope.activateSubSection = function(name) {
+
+        $scope.goToSubSection = function(name) {
             $location.path('/back-office/' + name);
         };
 	}]);

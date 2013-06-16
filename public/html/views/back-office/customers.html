@@ -1,56 +1,102 @@
-<div class="row-fluid">
-	<div class="span5">
-		<form class="form-horizontal well well-small" data-ng-controller="BackOfficeCustomersCtrl" data-ng-submit="save()">
-			<fieldset>
-				<legend>{{account.firstName | capitalize}} {{account.lastName | capitalize}}</legend>
-				<div class="control-group" data-ng-class="{'error': errors.firstName}">
-					<label class="control-label" for="firstName">Prénom <i class="icon-mandatory"></i></label>
+<div data-ng-controller="BackOfficeCustomersCtrl">
+	<div class="row-fluid well well-small">
+		<div class="span6">
+			Tri
+			<select class="span3" data-ng-model="filter.sortBy" data-ng-options="s.key as s.label for s in sortBys" data-ng-change="sortByChange()">
+				<option value="code">Code</option>
+				<option value="name">Nom</option>
+			</select>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span6 scrollable mini" data-ng-init="loadCustomers()">
+			<div class="row-fluid table-line" data-ng-repeat="customer in customers">
+				<div class="span3">
+					<span>{{customer.code}}</span>
+				</div>
+				<div class="span6">
+					<span>{{customer.name}}</span>
+				</div>
+				<div class="span2">
+					<button class="btn btn-info btn-mini" data-ng-click="editCustomer(customer)" title="Modifier"><i class="icon-edit"></i></button>
+				</div>
+			</div>
+		</div>
+		<div class="span6">
+			<form class="form-horizontal well well-small slim" data-ng-submit="saveCustomer()">
+				<legend data-ng-show="customer.code || customer.name">{{customer.name}} ({{customer.code}})</legend>
+				<div class="control-group" data-ng-class="{'error': errors.code}">
+					<label class="control-label" for="customerCode">Code <i class="icon-mandatory"></i></label>
 
 					<div class="controls">
-						<input type="text" class="span10" id="firstName" required="required" data-ng-model="account.firstName">
-						<span class="help-block"><em>{{errors.firstName}}</em></span>
+						<input type="text" class="span10" id="customerCode" required="required" data-ng-model="customer.code">
+						<span class="help-block"><em>{{errors.code}}</em></span>
 					</div>
 				</div>
-				<div class="control-group" data-ng-class="{'error': errors.lastName}">
-					<label class="control-label" for="lastName">Nom <i class="icon-mandatory"></i></label>
+				<div class="control-group" data-ng-class="{'error': errors.name}">
+					<label class="control-label" for="customerName">Nom <i class="icon-mandatory"></i></label>
 
 					<div class="controls">
-						<input type="text" class="span10" id="lastName" required="required" data-ng-model="account.lastName">
-						<span class="help-block"><em>{{errors.lastName}}</em></span>
+						<input type="text" class="span10" id="customerName" required="required" data-ng-model="customer.name">
+						<span class="help-block"><em>{{errors.name}}</em></span>
 					</div>
-				</div>
-				<div class="control-group" data-ng-class="{'error': errors.trigramme}">
-					<label class="control-label" for="trigramme">Trigramme <i class="icon-mandatory"></i></label>
-
-					<div class="controls">
-						<input type="text" class="span10" id="trigramme" required="required" data-ng-model="account.trigramme">
-						<span class="help-block"><em>{{errors.trigramme}}</em></span>
-					</div>
-				</div>
-				<div class="control-group" data-ng-class="{'error': errors.email}">
-					<label class="control-label" for="email">E-mail <i class="icon-mandatory"></i></label>
-
-					<div class="controls">
-						<input type="text" class="span10" id="email" required="required" data-ng-model="account.email">
-						<span class="help-block"><em>{{errors.email}}</em></span>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="managerId">Responsable</label>
-
-					<div class="controls">
-						<select class="span10" id="managerId" data-ng-model="account.managerId" data-ng-options="manager.id as manager.firstName + ' ' + manager.lastName for manager in managers">
-							<option value=""></option>
-						</select>
-					</div>
-				</div>
-				<div data-ng-class="{'control-group error': errors.global}">
-					<span class="help-block"><em>{{errors.global}}</em></span>
 				</div>
 				<div class="form-actions">
-					<button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
+					<button type="reset" class="btn" data-ng-click="newCustomer()">Nouveau</button>
+					<button type="submit" class="btn btn-primary">Sauvegarder</button>
 				</div>
-			</fieldset>
-		</form>
+			</form>
+		</div>
+	</div>
+	<hr>
+	<div class="row-fluid">
+		<div class="span6 scrollable mini">
+			<div class="row-fluid table-line" data-ng-repeat="m in missions">
+				<div class="span4">
+					<span>{{m.code}}</span>
+				</div>
+				<div class="span4">
+					<span>{{m.label}}</span>
+				</div>
+				<div class="span4">
+					<button class="btn btn-info btn-mini" data-ng-click="editMission(m)" title="Modifier"><i class="icon-edit"></i></button>
+				</div>
+			</div>
+		</div>
+		<div class="span6">
+			<form class="form-horizontal well well-small slim" data-ng-submit="saveMission()">
+				<legend data-ng-show="mission.label || mission.code">{{mission.label}} ({{mission.code}})</legend>
+				<div class="control-group" data-ng-class="{'error': errors.missionCode}">
+					<label class="control-label" for="missionCode">Code <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="missionCode" required="required" data-ng-model="mission.code">
+						<span class="help-block"><em>{{errors.missionCode}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.missionLabel}">
+					<label class="control-label" for="missionLabel">Libellé <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<input type="text" class="span10" id="missionLabel" required="required" data-ng-model="mission.label">
+						<span class="help-block"><em>{{errors.missionLabel}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.missionDescription}">
+					<label class="control-label" for="missionDescription">Nom <i class="icon-mandatory"></i></label>
+
+					<div class="controls">
+						<textarea type="text" class="span10" id="missionDescription" rows="3" data-ng-model="mission.description"></textarea>
+						<span class="help-block"><em>{{errors.missionDescription}}</em></span>
+					</div>
+				</div>
+				<div class="form-actions">
+					<button type="reset" class="btn" data-ng-click="newMission()">Nouveau</button>
+					<button type="submit" class="btn btn-primary">Sauvegarder</button>
+				</div>
+			</form>
+		</div>
 	</div>
 </div>
+
+

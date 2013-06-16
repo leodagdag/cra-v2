@@ -47,17 +47,31 @@ PUT	    /cra/:id/comment                                           	controllers.
 # ~~~~
 GET     /missions/absences                                          controllers.JMissions.absences()
 GET     /missions/claims/:username                                  controllers.JMissions.claimable(username: String)
-
 GET     /missions/craMissions/:username/:startDate/:endDate    		controllers.JMissions.craMissions(username: String, startDate :Long, endDate: Long)
+GET     /missions/customer/:customerId                              controllers.JMissions.customerMissions(customerId: String)
+GET     /missions/:id/customer                                      controllers.JMissions.customerByMissionId(id: String)
+GET     /missions/:id                                               controllers.JMissions.fetch(id: String)
+POST    /missions                                                   controllers.JMissions.save()
+
+# Customer
+# ~~~~
+GET     /customers                                                  controllers.JCustomers.all()
+GET     /onlyCustomers                                              controllers.JCustomers.withoutGenesis()
+GET     /customers/:code                                            controllers.JCustomers.fetch(code: String)
+POST     /customers                                                 controllers.JCustomers.save()
 
 # User
 # ~~~~
 GET     /users/employees                                            controllers.JUsers.employees()
 GET     /users/managers                                             controllers.JUsers.managers()
+GET     /users/users                                                controllers.JUsers.users()
 GET     /users/:username/affectedMissions/:startDate/:endDate       controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)
 GET     /users/:username/affectedMissions                           controllers.JUsers.allAffectedMissions(username: String)
-GET     /users/:username                                            controllers.JUsers.one(username)
+GET     /users/:username/customeAffectedMissions                    controllers.JUsers.customerAffectedMissions(username: String)
+GET     /users/:username                                            controllers.JUsers.fetch(username)
 GET     /users                                                      controllers.JUsers.all()
+POST    /users/AffectedMission                                      controllers.JUsers.saveAffectedMission()
+POST    /users                                                      controllers.JUsers.save()
 
 
 # Account

@@ -180,7 +180,6 @@ public class JAbsence extends Model implements MongoModel {
 			q = queryByDate(userId, year, month, year, month);
 		}
 		q.field("missionId").in(JMission.getAbsencesMissionIds(absenceType));
-		Logger.trace(String.format("%s.%s Query %s",JAbsence.class.getName(),"fetchQuery", q.toString()) );
 		return q;
 	}
 

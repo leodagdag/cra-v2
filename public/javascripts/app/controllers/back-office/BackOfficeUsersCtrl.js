@@ -1,86 +1,100 @@
-app.controller('BackOfficeUsersCtrl', ['$scope', '$http', '$log', '$location', '$routeParams',
-    function ($scope, $http, $log, $location, $routeParams) {
-        'use strict';
+app.controller('BackOfficeUsersCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', '$rootScope',
+	function($scope, $http, $log, $location, $routeParams, $rootScope) {
+		'use strict';
 
-        $scope.sortBys = [
-            {key: '+username', label: 'Username (asc)'},
-            {key: '-username', label: 'Username (desc)'},
-            {key: '+firstName', label: 'Prénom (asc)'},
-            {key: '-firstName', label: 'Prénom (desc)'},
-            {key: '+lastName', label: 'Nom (asc)'},
-            {key: '-lastName', label: 'Nom (desc)'}
-        ];
+		$scope.sortBys = [
+			{key: '+username', label: 'Username (asc)'},
+			{key: '-username', label: 'Username (desc)'},
+			{key: '+firstName', label: 'Prénom (asc)'},
+			{key: '-firstName', label: 'Prénom (desc)'},
+			{key: '+lastName', label: 'Nom (asc)'},
+			{key: '-lastName', label: 'Nom (desc)'}
+		];
 
-        $scope.filter = {
-            'role': 'all',
-            'sortBy': $scope.sortBys[0].key
-        };
+		$scope.filter = {
+			'role': 'employee',
+			'sortBy': $scope.sortBys[0].key
+		};
 
-        $scope.filterChange = function () {
-            $scope.loadUsers();
-        };
+		$scope.filterChange = function() {
+			$scope.loadUsers();
+		};
 
-        $scope.sortByChange = function () {
-            $scope.users = sort($scope.users);
-        };
+		$scope.sortByChange = function() {
+			$scope.users = sort($scope.users);
+		};
 
-        var filter = function (users) {
+		var sort = function(list) {
+			var field = $scope.filter.sortBy.substr(1),
+				direction = $scope.filter.sortBy.substr(0, 1) === '+' ? 'asc' : 'desc',
+				result = _(list).sortBy(field);
+			if(direction === 'desc') {
+				result.reverse();
+			}
+			return result.valueOf();
+		};
 
-            switch ($scope.filter.role) {
-                case 'employee':
-                    return _(users)
-                        .filter({'isManager': false})
-                        .filter({'role': 'employee'})
-                        .valueOf();
-                    break;
-                case 'manager':
-                    return _(users)
-                        .filter({'isManager': true})
-                        .valueOf();
-                case 'other' :
-                    return _(users)
-                        .filter(function (user) {
-                            return user.role !== 'employee'
-                        })
-                        .filter({'isManager': false})
-                        .valueOf();
-                default:
-                    return users;
-            }
-        };
-        var sort = function (list) {
-            var field = $scope.filter.sortBy.substr(1),
-                direction = $scope.filter.sortBy.substr(0, 1) === '+' ? 'asc' : 'desc',
-                result = _(list).sortBy(field);
-            if (direction === 'desc') {
-                result.reverse();
-            }
-            return result.valueOf();
-        };
+		$scope.users = [];
+		$scope.user = {};
 
-        $scope.users = [];
+		$scope.loadUsers = function() {
+			var route;
+			switch($scope.filter.role) {
+				case 'employee':
+					route = jsRoutes.controllers.JUsers.employees();
+					break;
+				case 'manager':
+					route = jsRoutes.controllers.JUsers.managers();
+					break;
+				default:
+					route = jsRoutes.controllers.JUsers.users();
+			}
 
 
-        $scope.loadUsers = function () {
-            var route = jsRoutes.controllers.JUsers.all();
-            $http({
-                'method': route.method,
-                'url': route.url,
-                'cache': false
-            })
-                .success(function (users, status, headers, config) {
-                    $scope.users = sort(filter(users));
-                })
-                .error(function (error, status, headers, config) {
-                    $log.error('error', error);
-                });
-        };
+			$http({
+				'method': route.method,
+				'url': route.url,
+				'cache': false
+			})
+				.success(function(users, status, headers, config) {
+					$scope.users = sort(users);
+				})
+				.error(function(error, status, headers, config) {
+					$log.error('error', error);
+				});
+		};
 
-        $scope.edit = function (id) {
+		$scope.editUser = function(username) {
+			var route = jsRoutes.controllers.JUsers.fetch(username);
+			$http({
+				'method': route.method,
+				'url': route.url,
+				'cache': false
+			})
+				.success(function(user, status, headers, config) {
+					$scope.user = user;
+				});
 
-        };
+		};
 
-        $scope.delete = function (id) {
 
-        };
-    }]);
+		$scope.newUser = function() {
+			$scope.user = {};
+		};
+
+		$scope.saveUser = function() {
+			var route = jsRoutes.controllers.JUsers.save();
+			$http({
+				'method': route.method,
+				'url': route.url,
+				'cache': false,
+				'data': $scope.user
+			})
+				.success(function(result) {
+					$scope.user = {};
+					$rootScope.onSuccess("Utilisateur sauvegardée.");
+					$scope.loadUsers();
+				})
+		};
+
+	}]);

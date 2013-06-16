@@ -1,14 +1,19 @@
 package models;
 
+import com.github.jmkgreen.morphia.Datastore;
 import com.github.jmkgreen.morphia.annotations.Entity;
 import com.github.jmkgreen.morphia.annotations.Id;
 import com.github.jmkgreen.morphia.annotations.Index;
 import com.github.jmkgreen.morphia.annotations.Indexes;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
+import com.mongodb.WriteConcern;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
+
+import java.util.List;
+
 
 /**
  * @author f.patin
@@ -30,8 +35,12 @@ public class JCustomer extends Model {
 	public JCustomer() {
 	}
 
+	private static Datastore ds() {
+		return MorphiaPlugin.ds();
+	}
+
 	private static Query<JCustomer> q() {
-		return MorphiaPlugin.ds().createQuery(JCustomer.class);
+		return ds().createQuery(JCustomer.class);
 	}
 
 	private static Query<JCustomer> queryToFindMe(final ObjectId id) {
@@ -51,7 +60,23 @@ public class JCustomer extends Model {
 	public static JCustomer byCode(final String code) {
 		return q().field("code").equal(code).get();
 	}
+
 	public static boolean exist(final String code) {
 		return q().field("code").equal(code).countAll() > 1;
+	}
+
+	public static List<JCustomer> withoutGenesis() {
+		return q()
+			       .field("isGenesis").equal(false)
+			       .asList();
+	}
+
+	public static List<JCustomer> all() {
+		return q().asList();
+	}
+
+	public static JCustomer save(final JCustomer customer) {
+		ds().save(customer, WriteConcern.ACKNOWLEDGED);
+		return customer;
 	}
 }

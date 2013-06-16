@@ -1,110 +1,98 @@
-<div class="row-fluid" data-ng-controller="BackOfficeUsersCtrl">
-    <div class="row-fluid" data-ng-init="loadUsers()">
-        <div class="row-fluid well well-small">
-            <div class="span6">
-                Filtre
-                <select class="span3" data-ng-model="filter.role" data-ng-change="filterChange()">
-                    <option value="all">Tous</option>
-                    <option value="employee">Employés</option>
-                    <option value="manager">Manager</option>
-                    <option value="other">Autre</option>
-                </select>
-            </div>
-            <div class="span6">
-                Tri
-                <select class="span3" data-ng-model="filter.sortBy" data-ng-options="s.key as s.label for s in sortBys"
-                        data-ng-change="sortByChange()">
-                    <option value="username">Username</option>
-                    <option value="firstName">Prénom</option>
-                    <option value="lastName">Nom</option>
-                </select>
-            </div>
-        </div>
-        <div class="row-fluid">
-            <div class="span12 scrollable mini">
-                <div class="row-fluid table-line" data-ng-repeat="user in users">
-                    <div class="span3">
-                        <span>{{user.username}}</span>
-                    </div>
-                    <div class="span3">
-                        <span>{{user.firstName}}</span>
-                    </div>
-                    <div class="span3">
-                        <span>{{user.lastName}}</span>
-                    </div>
-                    <div class="span2">
-                        <span>{{user.role}}</span>
-                    </div>
-                    <div class="span1">
-                        <button class="btn btn-info btn-mini" data-ng-click="edit(user.id)"><i class="icon-edit"></i>
-                        </button>
-                        <button class="btn btn-danger btn-mini" data-ng-click="delete(user.id)"><i
-                                class="icon-trash"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span12">
-            <form class="form-horizontal well well-small" data-ng-controller="BackOfficeUsersCtrl"
-                  data-ng-submit="save()">
-                <fieldset>
-                    <legend>{{account.firstName | capitalize}} {{account.lastName | capitalize}}</legend>
-                    <div class="control-group" data-ng-class="{'error': errors.firstName}">
-                        <label class="control-label" for="firstName">Prénom <i class="icon-mandatory"></i></label>
+<div data-ng-controller="BackOfficeUsersCtrl">
+	<div class="row-fluid" data-ng-init="loadUsers()">
+		<div class="row-fluid well well-small">
+			<div class="span6">
+				Filtre
+				<select class="span3" data-ng-model="filter.role" data-ng-change="filterChange()">
+					<option value="all">Tous</option>
+					<option value="employee">Employés</option>
+					<option value="manager">Manager</option>
+				</select>
+			</div>
+			<div class="span6">
+				Tri
+				<select class="span3" data-ng-model="filter.sortBy" data-ng-options="s.key as s.label for s in sortBys" data-ng-change="sortByChange()">
+					<option value="username">Username</option>
+					<option value="firstName">Prénom</option>
+					<option value="lastName">Nom</option>
+				</select>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span10 offset1 scrollable mini">
+				<div class="row-fluid table-line" data-ng-repeat="user in users">
+					<div class="span4">
+						<span>{{user.username}}</span>
+					</div>
+					<div class="span3">
+						<span>{{user.firstName}}</span>
+					</div>
+					<div class="span3">
+						<span>{{user.lastName}}</span>
+					</div>
+					<div class="span1">
+						<span>{{user.role}}</span>
+					</div>
+					<div class="span1">
+						<button class="btn btn-info btn-mini" data-ng-click="editUser(user.username)" title="Modifier"><i class="icon-edit"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<form class="form-horizontal well well-small slim" data-ng-submit="saveUser()">
+		<legend data-ng-show="user.firstName || user.lastName">{{user.firstName | capitalize}} {{user.lastName | capitalize}}</legend>
+		<div class="row-fluid">
+			<div class="span6">
+				<div class="control-group" data-ng-class="{'error': errors.username}">
+					<label class="control-label" for="username">Username <i class="icon-mandatory"></i></label>
 
-                        <div class="controls">
-                            <input type="text" class="span10" id="firstName" required="required"
-                                   data-ng-model="account.firstName">
-                            <span class="help-block"><em>{{errors.firstName}}</em></span>
-                        </div>
-                    </div>
-                    <div class="control-group" data-ng-class="{'error': errors.lastName}">
-                        <label class="control-label" for="lastName">Nom <i class="icon-mandatory"></i></label>
+					<div class="controls">
+						<input type="text" class="span10" id="username" required="required" data-ng-model="user.username">
+						<span class="help-block"><em>{{errors.username}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.firstName}">
+					<label class="control-label" for="firstName">Prénom <i class="icon-mandatory"></i></label>
 
-                        <div class="controls">
-                            <input type="text" class="span10" id="lastName" required="required"
-                                   data-ng-model="account.lastName">
-                            <span class="help-block"><em>{{errors.lastName}}</em></span>
-                        </div>
-                    </div>
-                    <div class="control-group" data-ng-class="{'error': errors.trigramme}">
-                        <label class="control-label" for="trigramme">Trigramme <i class="icon-mandatory"></i></label>
+					<div class="controls">
+						<input type="text" class="span10" id="firstName" required="required" data-ng-model="user.firstName">
+						<span class="help-block"><em>{{errors.firstName}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.lastName}">
+					<label class="control-label" for="lastName">Nom <i class="icon-mandatory"></i></label>
 
-                        <div class="controls">
-                            <input type="text" class="span10" id="trigramme" required="required"
-                                   data-ng-model="account.trigramme">
-                            <span class="help-block"><em>{{errors.trigramme}}</em></span>
-                        </div>
-                    </div>
-                    <div class="control-group" data-ng-class="{'error': errors.email}">
-                        <label class="control-label" for="email">E-mail <i class="icon-mandatory"></i></label>
+					<div class="controls">
+						<input type="text" class="span10" id="lastName" required="required" data-ng-model="user.lastName">
+						<span class="help-block"><em>{{errors.lastName}}</em></span>
+					</div>
+				</div>
+			</div>
+			<div class="span6">
+				<div class="control-group" data-ng-class="{'error': errors.trigramme}">
+					<label class="control-label" for="trigramme">Trigramme <i class="icon-mandatory"></i></label>
 
-                        <div class="controls">
-                            <input type="text" class="span10" id="email" required="required"
-                                   data-ng-model="account.email">
-                            <span class="help-block"><em>{{errors.email}}</em></span>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="managerId">Responsable</label>
+					<div class="controls">
+						<input type="text" class="span10" id="trigramme" required="required" data-ng-model="user.trigramme">
+						<span class="help-block"><em>{{errors.trigramme}}</em></span>
+					</div>
+				</div>
+				<div class="control-group" data-ng-class="{'error': errors.email}">
+					<label class="control-label" for="email">E-mail <i class="icon-mandatory"></i></label>
 
-                        <div class="controls">
-                            <select class="span10" id="managerId" data-ng-model="account.managerId"
-                                    data-ng-options="manager.id as manager.firstName + ' ' + manager.lastName for manager in managers">
-                                <option value=""></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div data-ng-class="{'control-group error': errors.global}">
-                        <span class="help-block"><em>{{errors.global}}</em></span>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary pull-right">Sauvegarder</button>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
-    </div>
+					<div class="controls">
+						<input type="text" class="span10" id="email" required="required" data-ng-model="user.email">
+						<span class="help-block"><em>{{errors.email}}</em></span>
+					</div>
+				</div>
+				<div class="form-actions pull-right">
+					<button type="reset" class="btn" data-ng-click="newUser()">Nouveau</button>
+					<button type="submit" class="btn btn-primary">Sauvegarder</button>
+				</div>
+			</div>
+		</div>
+	</form>
 </div>
+

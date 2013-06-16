@@ -116,7 +116,7 @@ app.controller('CraCtrl', ['$window', '$rootScope', '$scope', '$http', '$log', '
 		};
 
 		$scope.setComment = function() {
-			var title = _.str.sprintf("Veuillez sasisir un commentaire pour le CRA de %s", moment().month($scope.cra.month - 1).year($scope.cra.year).format("MMMM YYYY"));
+			var title = _.str.sprintf("Veuillez saisir un commentaire pour le CRA de %s", moment().month($scope.cra.month - 1).year($scope.cra.year).format("MMMM YYYY"));
 			var comment = $window.prompt(title, ($scope.cra.comment) ? $scope.cra.comment : "");
 			if(comment !== null) {
 				var route = jsRoutes.controllers.JCras.setComment($scope.cra.id);
