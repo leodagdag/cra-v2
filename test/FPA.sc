@@ -1,3 +1,4 @@
+/*
 import org.joda.time.{Duration, DateTime}
 
 
@@ -13,7 +14,7 @@ println(d)
 
 
 println(s"fakepassword:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("fakepassword".getBytes("UTF-8"))))}]")
-/*
+
 println(s"moe:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("moe".getBytes("UTF-8"))))}]")
 println(s"ned:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("ned".getBytes("UTF-8"))))}]")
 println(s"seymour:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("seymour".getBytes("UTF-8"))))}]")
@@ -26,14 +27,15 @@ println(s"moe-tpl1:[${new String(Base64.encodeBase64(MessageDigest.getInstance("
 println(s"moe-tpl2:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("moe-tpl2".getBytes("UTF-8"))))}]")
 println(s"moe-tpa1:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("moe-tpa1".getBytes("UTF-8"))))}]")
 println(s"moe-tpa2:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("moe-tpa2".getBytes("UTF-8"))))}]")
-println("")
+println("")*/
 println(s"true && false = ${true && false}")
 println(s"true || false = ${true || false}")
 println(s"true && true = ${true && true}")
 println(s"true || true = ${true || true}")
 println(s"false && false = ${false && false}")
 println(s"false || false = ${false || false}")
-*/
+
+/*
 val now = DateTime.now()
 val time = now.withHourOfDay(23).withMinuteOfHour(30).withSecondOfMinute(0).withMillisOfSecond(0)
 val tick = new Duration(now, time)
@@ -48,4 +50,4 @@ println(s"tick.toStandardHours.getHours: ${tick.toStandardHours.getHours}")
 println(s"tick.toStandardMinutes: ${tick.toStandardMinutes}")
 println(s"tick.toStandardMinutes.getMinutes: ${tick.toStandardMinutes.getMinutes}")
 println(s"tick.toStandardSeconds: ${tick.toStandardSeconds}")
-println(s"tick.toStandardSeconds.getSeconds: ${tick.toStandardSeconds.getSeconds}")
+println(s"tick.toStandardSeconds.getSeconds: ${tick.toStandardSeconds.getSeconds}")*/

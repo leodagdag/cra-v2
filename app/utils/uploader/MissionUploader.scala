@@ -16,7 +16,7 @@ object MissionUploader extends Uploader[JMission] {
   def exist: (Array[String]) => Boolean = {
     line =>
       val customer = JCustomer.byCode(line(1))
-      JMission.exist(customer.id, line(5))
+      customer == null || JMission.exist(customer.id, line(5))
   }
 
   def importOneLine: (Array[String]) => JMission = {
