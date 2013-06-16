@@ -217,6 +217,13 @@ public class JMission extends Model {
 			                     .field("code").equal(code)) > 0;
 	}
 
+    public static JMission fetch(final ObjectId customerId, final String code) {
+        return q()
+                .field("customerId").equal(customerId)
+                .field("code").equal(code)
+                .get();
+    }
+
 	public static List<JMission> genesisMission() {
 		final JCustomer genesis = JCustomer.genesis();
 		return q().field("customerId").equal(genesis.id).asList();
