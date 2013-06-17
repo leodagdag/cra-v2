@@ -52,21 +52,23 @@ object MissionUploader extends Uploader[JMission] {
         m.description = line(4)
         m.missionType = MissionType.customer.name()
         m.isClaimable = true
-        m.startDate = DateTime.parse(line(5), `dd/MM/yyyy`)
-        if (StringUtils.isNotBlank(line(6))) m.endDate = DateTime.parse(line(6), `dd/MM/yyyy`)
         m.insert()
       }
 
 
       val affectedMission = new JAffectedMission(mission)
+      affectedMission.startDate =  DateTime.parse(line(5), `dd/MM/yyyy`)
+      if (StringUtils.isNotBlank(line(6))) affectedMission.endDate = DateTime.parse(line(6), `dd/MM/yyyy`)
       val l2 = line(2).toUpperCase
       affectedMission.allowanceType =
         if (StringUtils.isNotBlank(l2))
           if (l2.equals(MissionAllowanceType.ZONE.name())) MissionAllowanceType.ZONE.name()
-          else if (StringUtils.isNumeric(l2)) MissionAllowanceType.FIXED.name()
+          else if (StringUtils.isNumeric(l2)){
+            affectedMission.feeAmount = BigDecimal(l2).bigDecimal
+            MissionAllowanceType.FIXED.name()
+          }
           else MissionAllowanceType.NONE.name()
         else MissionAllowanceType.NONE.name()
-      if (StringUtils.isNumeric(l2)) affectedMission.feeAmount = BigDecimal(l2).bigDecimal
 
       user.affectedMissions.add(affectedMission)
       user.update()

@@ -101,6 +101,7 @@ public class JMissions extends Controller {
 			mission.label = this.label;
 			mission.description = this.description;
 			mission.missionType = MissionType.customer.name();
+			mission.isClaimable = true;
 			return mission;
 		}
 	}

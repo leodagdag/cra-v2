@@ -38,10 +38,7 @@ public class JAffectedMission {
 	}
 
 	public JAffectedMission(final JMission mission) {
-		this.startDate = mission.startDate;
-		this.endDate = mission.endDate;
 		this.missionId = mission.id;
-		this.allowanceType = MissionAllowanceType.NONE.name();
 	}
 
 	@SuppressWarnings({"unused"})
