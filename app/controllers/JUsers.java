@@ -104,7 +104,6 @@ public class JUsers extends Controller {
 		public String firstName;
 		public String lastName;
 		public String email;
-		public Boolean isManager;
 
 		public List<ValidationError> validate() {
 			final List<ValidationError> errors = Lists.newArrayList();
@@ -134,7 +133,6 @@ public class JUsers extends Controller {
 			user.firstName = this.firstName;
 			user.lastName = this.lastName;
 			user.email = this.email;
-			user.isManager = this.isManager;
 			return user;
 		}
 	}
@@ -154,6 +152,9 @@ public class JUsers extends Controller {
 			}
 			if(startDate == null) {
 				errors.add(new ValidationError("startDate", "La date de début est obligatoire."));
+			}
+			if(StringUtils.isBlank(this.feeAmount) && !Boolean.TRUE.equals(this.feeZone)){
+				errors.add(new ValidationError("fee", "Vous devez sélectionnez un type de frais."));
 			}
 			return errors.isEmpty() ? null : errors;
 		}

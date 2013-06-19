@@ -7,6 +7,7 @@ app.controller('BackOfficeUserMissionsCtrl', ['$scope', '$http', '$log', '$locat
 		$scope.users = [];
 		$scope.form = {};
 		$scope.affectedMissions = [];
+		$scope.errors = {};
 
 		var loadEmployeess = function() {
 			var route = jsRoutes.controllers.JUsers.employees();
@@ -87,6 +88,7 @@ app.controller('BackOfficeUserMissionsCtrl', ['$scope', '$http', '$log', '$locat
 		};
 
 		$scope.save = function() {
+			$scope.errors = {};
 			var route = jsRoutes.controllers.JUsers.saveAffectedMission(),
 				f = $scope.form,
 				data = {
@@ -106,6 +108,11 @@ app.controller('BackOfficeUserMissionsCtrl', ['$scope', '$http', '$log', '$locat
 				.success(function(result) {
 					$rootScope.onSuccess("Mission sauvegardée.");
 					$scope.loadAffectedMissions();
+				})
+				.error(function(errors){
+					_(errors).forEach(function(err, key) {
+						$scope.errors[key] = err.join('<br>');
+					});
 				});
 		};
 

@@ -92,7 +92,7 @@ app.controller('BackOfficeUsersCtrl', ['$scope', '$http', '$log', '$location', '
 			})
 				.success(function(result) {
 					$scope.user = {};
-					$rootScope.onSuccess("Utilisateur sauvegardée.");
+					$rootScope.onSuccess("Utilisateur sauvegardé.");
 					$scope.loadUsers();
 				})
 		};

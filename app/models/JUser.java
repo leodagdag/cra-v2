@@ -199,6 +199,7 @@ public class JUser extends Model implements Subject {
 	public static List<JUser> employees() {
 		return q()
 			       .field("isManager").equal(Boolean.FALSE)
+				   .field("role").equal(SecurityRole.employee())
 			       .retrievedFields(false, "affectedMissions")
 			       .disableValidation()
 			       .asList();
@@ -285,6 +286,9 @@ public class JUser extends Model implements Subject {
 
 
 	public static JUser save(final JUser user) {
+		if(user.id == null){
+			return JUser.create(user);
+		}
 		MorphiaPlugin.ds().save(user, WriteConcern.ACKNOWLEDGED);
 		return user;
 	}
