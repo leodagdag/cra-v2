@@ -1,6 +1,6 @@
 {
 	"name": "cra-v2",
-	"version": "2.0.41-SNAPSHOT",
+	"version": "2.0.41",
 	"src": "public/javascripts/app/**/*.js",
 	"build": {
 		"path": "buildjs/",
