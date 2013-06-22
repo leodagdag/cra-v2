@@ -100,7 +100,7 @@ trait PDFFont {
   val tableHeaderFont: Font = {
     val f = new Font(tableBaseFont)
     f.setStyle(Font.BOLD)
-    f.setSize(12f)
+    f.setSize(10f)
     f
   }
 

@@ -25,7 +25,7 @@ abstract class PDFCra[T]() extends PDFComposer[T] {
 
 object PDFEmployeeCra extends PDFCra[JCra] {
 
-  protected def content(doc: Document, cra: JCra) {
+  def content(doc: Document, cra: JCra) {
     this.cra = cra
     this.user = JUser.account(cra.userId)
 
@@ -50,7 +50,7 @@ object PDFEmployeeCra extends PDFCra[JCra] {
 
 object PDFMissionCra extends PDFCra[(JCra, JMission)] {
 
-  protected def content(doc: Document, obj: (JCra, JMission)) {
+  def content(doc: Document, obj: (JCra, JMission)) {
     val cra = obj._1
     val mission = obj._2
     this.cra = cra
@@ -69,7 +69,7 @@ object PDFProductionCra extends PDFCra[JCra] {
 
   override protected def document(): Document = new Document(PageSize.A4)
 
-  protected def content(doc: Document, cra: JCra) {
+  def content(doc: Document, cra: JCra) {
     this.cra = cra
     this.user = JUser.account(cra.userId)
 
@@ -83,23 +83,28 @@ object PDFProductionCra extends PDFCra[JCra] {
       .filter(m => MissionType.valueOf(m.missionType).equals(MissionType.customer))
       .sortBy(_.code)
       .toList
+    missions match {
+      case Nil => PDFEmployeeCra.content(doc, cra)
+      case _ => {
+        missions.foreach {
+          m =>
+            doc.add(PDFCraTools.pageHeader(cra.userId))
+            doc.add(ProductionCalendar(cra, m).compose())
+            doc.add(ProductionTotalCra(cra, m).compose())
+            doc.add(ProductionTotalClaim(cra, m).compose())
+            doc.add(ProductionComment(cra, m).compose())
+            doc.newPage()
 
-    missions.foreach {
-      m =>
-        doc.add(PDFCraTools.pageHeader(cra.userId))
-        doc.add(ProductionCalendar(cra, m).compose())
-        doc.add(ProductionTotalCra(cra, m).compose())
-        doc.add(ProductionTotalClaim(cra, m).compose())
-        doc.add(ProductionComment(cra, m).compose())
+        }
+        val claims = Claims(cra)
+        doc.add(claims.title)
+        doc.add(claims.synthesis())
+        doc.add(claims.details())
+        doc.add(claims.totalByCustomerMission())
         doc.newPage()
-
+      }
     }
-    val claims = Claims(cra)
-    doc.add(claims.title)
-    doc.add(claims.synthesis())
-    doc.add(claims.details())
-    doc.add(claims.totalByCustomerMission())
-    doc.newPage()
+
   }
 }
 

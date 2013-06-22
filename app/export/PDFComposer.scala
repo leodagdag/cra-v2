@@ -28,5 +28,5 @@ protected def document(): Document
     os.toByteArray
   }
 
-  protected def content(doc: Document, obj: T)
+  def content(doc: Document, obj: T)
 }
