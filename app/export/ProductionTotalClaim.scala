@@ -3,12 +3,11 @@ package export
 import com.itextpdf.text.Rectangle
 import com.itextpdf.text.pdf.PdfPTable
 import constants._
-import models.{JAffectedMission, JUser, JCra, JMission, JClaim}
+import models.{JUser, JCra, JMission, JClaim}
 import scala.collection.convert.WrapAsScala._
 import scala.collection.immutable.TreeMap
 import utils._
 import utils.time.TimeUtils
-import scala.collection.mutable
 
 /**
  * @author f.patin
@@ -17,21 +16,18 @@ case class ProductionTotalClaim(cra: JCra, currentMission: JMission) extends Tab
 
   def compose(): PdfPTable = {
 
-
     val cs = totalFeeByWeek
     val tableByWeek = newTable(cs.size / 2)
     cs.foreach(tableByWeek.addCell(_))
-
 
     val tableByMonth = newTable(6)
     totalByMonth.foreach(tableByMonth.addCell(_))
 
     val table = newTable(1)
     table.setHeaderRows(1)
-    table.addCell("Synthèse des frais")
+    table.addCell(s"Synthèse des frais mission (${currentMission.code})")
     table.addCell(tableByWeek)
     table.addCell(tableByMonth)
-
     table
   }
 
