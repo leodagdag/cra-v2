@@ -1,4 +1,4 @@
-/*
+
 import org.joda.time.{Duration, DateTime}
 
 
@@ -13,8 +13,8 @@ println(d)
 
 
 
-println(s"fakepassword:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("fakepassword".getBytes("UTF-8"))))}]")
-
+println(s"genesis:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("genesis".getBytes("UTF-8"))))}]")
+/*
 println(s"moe:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("moe".getBytes("UTF-8"))))}]")
 println(s"ned:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("ned".getBytes("UTF-8"))))}]")
 println(s"seymour:[${new String(Base64.encodeBase64(MessageDigest.getInstance("MD5").digest("seymour".getBytes("UTF-8"))))}]")

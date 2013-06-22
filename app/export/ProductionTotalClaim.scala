@@ -45,7 +45,7 @@ case class ProductionTotalClaim(cra: JCra, currentMission: JMission) extends Tab
     user.affectedMissions.filter(_.missionId.equals(currentMission.id)).head.allowanceType
   }.claimType
 
-  private val claims: List[JClaim] = JClaim.synthesis(cra.userId, cra.year, cra.month).toList
+  private val claims: List[JClaim] = JClaim.synthesis(cra.userId, cra.year, cra.month, currentMission.id).toList
 
   private val currentMissionClaims = TreeMap(claims
     .filter(c => ClaimType.valueOf(c.claimType).equals(currentMissionClaimType))

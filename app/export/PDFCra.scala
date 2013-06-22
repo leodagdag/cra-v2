@@ -81,6 +81,7 @@ object PDFProductionCra extends PDFCra[JCra] {
       .toList
     val missions = a.map(id => JMission.fetch(id))
       .filter(m => MissionType.valueOf(m.missionType).equals(MissionType.customer))
+      .sortBy(_.code)
       .toList
 
     missions.foreach {

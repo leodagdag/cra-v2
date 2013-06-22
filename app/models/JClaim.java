@@ -193,6 +193,15 @@ public class JClaim extends Model implements MongoModel {
 			       .asList();
 	}
 
+	public static List<JClaim> synthesis(final ObjectId userId, final Integer year, final Integer month, final ObjectId missionId) {
+		return q()
+			       .field("userId").equal(ObjectId.massageToObjectId(userId))
+			       .field("year").equal(year)
+			       .field("month").equal(month)
+			       .field("missionId").equal(missionId)
+			       .asList();
+	}
+
 	public static void computeMissionAllowance(final ObjectId userId, final JDay day) {
 		computeMissionAllowance(userId, Lists.newArrayList(day));
 	}

@@ -168,8 +168,6 @@ public class JDay extends Model implements MongoModel {
 				                      .field("userId").equal(userId)
 				                      .field("_date").greaterThanOrEq(allDates.get(0).toDate())
 				                      .field("_date").lessThanOrEq(allDates.get(allDates.size() - 1).toDate());
-
-			Logger.trace(String.format("%s.%s %s",JDay.class.getName(),"find", q.toString()) );
 			days.addAll(q.asList());
 		} else {
 			days.addAll(Collections2.transform(allDates, new Function<DateTime, JDay>() {
