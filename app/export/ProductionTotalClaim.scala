@@ -56,11 +56,10 @@ case class ProductionTotalClaim(cra: JCra, currentMission: JMission) extends Tab
       (newCell(currentMissionClaimType.label.capitalize) +: currentMissionClaims.map(c => newCell(toCurrency(c._2))).toList :+ newCell(toCurrency(totalCurrentMissionClaims)))
   }
 
-  private val realClaims = claims
-    .filterNot(c => ClaimType.valueOf(c.claimType).equals(ClaimType.FIXED_FEE) || ClaimType.valueOf(c.claimType).equals(ClaimType.ZONE_FEE))
-    .filterNot(claim => MissionType.valueOf(JMission.codeAndMissionType(claim.missionId).missionType).equals(MissionType.customer))
+  private val realClaims = claims.filterNot(c => ClaimType.FIXED_FEE.equals(ClaimType.valueOf(c.claimType)) || ClaimType.ZONE_FEE.equals(ClaimType.valueOf(c.claimType)))
+    .filter(claim => MissionType.customer.equals(MissionType.valueOf(JMission.codeAndMissionType(claim.missionId).missionType)))
     .filter(claim => claim.missionId.equals(currentMission.id))
-    .groupBy(c => TimeUtils.getMondayOfDate(c.date))
+    .groupBy(claim => TimeUtils.getMondayOfDate(claim.date))
     .map(claim => claim._1 -> claim._2.foldLeft(Zero)((acc, curr) => acc + curr.amount + curr.kilometerAmount))
 
   private val totalRealClaims = realClaims.values.foldLeft(Zero)((acc, curr) => acc + curr)

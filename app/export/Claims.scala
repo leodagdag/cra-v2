@@ -120,7 +120,7 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
   def totalByCustomerMission(): PdfPTable = {
     val claimsByMission = claims.toList
       .groupBy(_.missionId)
-      .map(c => JMission.codeAndMissionType(c._1) -> c._2.foldLeft(Zero)((acc, curr) => acc + curr.amount))
+      .map(c => JMission.codeAndMissionType(c._1) -> c._2.foldLeft(Zero)((acc, curr) => acc + curr.amount + curr.kilometerAmount))
     val claimsByCustomerMission = claimsByMission
       .filter(filterByCustomerMissionType)
       .toList
@@ -129,7 +129,7 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
       .filterNot(filterByCustomerMissionType)
       .values.foldLeft(Zero)((acc, curr) => acc + curr)
     val totalMonth = claims
-      .foldLeft(Zero)((acc, curr) => acc + curr.amount)
+      .foldLeft(Zero)((acc, curr) => acc + curr.amount + curr.kilometerAmount)
 
     val cells: List[PdfPCell] = (claimsByCustomerMission.map(c => headerCell(c._1.code)) :+ headerCell("Genesis") :+ headerCell("Mois")) ++
       (claimsByCustomerMission.map(c => bodyCell(toCurrency(c._2), RIGHT)) :+ bodyCell(toCurrency(totalGenesisMission), RIGHT) :+ bodyCell(toCurrency(totalMonth), RIGHT))
