@@ -3,6 +3,7 @@ package controllers;
 import com.google.common.collect.Lists;
 import constants.MissionAllowanceType;
 import dto.AffectedMissionDTO;
+import dto.AffectedMissionFullDTO;
 import dto.EmployeeDTO;
 import http.ResponseCache;
 import models.JAffectedMission;
@@ -62,7 +63,7 @@ public class JUsers extends Controller {
 	@ResponseCache.NoCacheResponse
 	public static Result allAffectedMissions(final String username) {
 		final List<JAffectedMission> affectedMissions = JUser.affectedMissions(JUser.id(username));
-		return ok(toJson(AffectedMissionDTO.of(affectedMissions)));
+		return ok(toJson(AffectedMissionFullDTO.of(affectedMissions)));
 	}
 
 	@ResponseCache.NoCacheResponse

@@ -13,7 +13,7 @@ app.controller('MyAccountCtrl', ['$rootScope', '$scope', '$http', '$log', '$loca
 			name: $routeParams.subSection || null,
 			page: $scope.subSections[$routeParams.subSection] || null
 		};
-		$scope.activateSubSection = function(name) {
+		$scope.goToSubSection = function(name) {
 			$location.path('/my-account/' + name);
 		};
 	}]);

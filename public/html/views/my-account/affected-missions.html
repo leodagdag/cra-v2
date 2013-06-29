@@ -1,3 +1,48 @@
-<div data-ng-controller="MyAccountAffectedMissionsCtrl">
-	<h1>Affected mission (TODO)</h1>
+<div data-ng-controller="MyAccountAffectedMissionsCtrl" data-ng-init="init()">
+	<div class="row-fluid">
+		<div class="span12 well well-small">
+			<span>Tri</span>
+			<select data-ng-model="filter.sortBy" data-ng-options="s.key as s.label for s in sortBys" data-ng-change="sortByChange()">
+			</select>
+		</div>
+	</div>
+	<div class="span11">
+		<div class="row-fluid table-line">
+			<div class="span2">
+				<span><strong>Client</strong></span>
+			</div>
+			<div class="span4">
+				<span><strong>Mission</strong></span>
+			</div>
+			<div class="span2">
+				<span><strong>Période</strong></span>
+			</div>
+			<div class="span2">
+				<span><strong>Type de forfait</strong></span>
+			</div>
+			<div class="span1">
+				<span><strong>Montant</strong></span>
+			</div>
+		</div>
+		<div class="row-fluid scrollable">
+			<div class="row-fluid table-line" data-ng-repeat="am in affectedMissions">
+				<div class="span2">
+					<span>{{am.mission.customer.name}}</span>
+				</div>
+				<div class="span4">
+					<span>{{am.mission.label}} ({{am.mission.code}})</span>
+				</div>
+				<div class="span2">
+					<span>{{am.startDate | date:'dd/MM/yyyy'}}</span>
+					<span data-ng-show="am.endDate"> -> {{am.endDate | date:'d/M/yy'}}</span>
+				</div>
+				<div class="span2">
+					<span>{{am.allowanceType | allowanceType}}</span>
+				</div>
+				<div class="span1">
+					<span>{{am.feeAmount | currency}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

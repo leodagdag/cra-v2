@@ -8,6 +8,7 @@ import com.github.jmkgreen.morphia.annotations.Indexes;
 import com.github.jmkgreen.morphia.mapping.Mapper;
 import com.github.jmkgreen.morphia.query.Query;
 import com.mongodb.WriteConcern;
+import dto.CustomerDTO;
 import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.MorphiaPlugin;
 import org.bson.types.ObjectId;
@@ -78,5 +79,9 @@ public class JCustomer extends Model {
 	public static JCustomer save(final JCustomer customer) {
 		ds().save(customer, WriteConcern.ACKNOWLEDGED);
 		return customer;
+	}
+
+	public static JCustomer byId(final ObjectId id) {
+		return queryToFindMe(id).get();
 	}
 }

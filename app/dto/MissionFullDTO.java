@@ -3,6 +3,7 @@ package dto;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import models.JCustomer;
 import models.JMission;
 import org.bson.types.ObjectId;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class MissionFullDTO extends AbstractMissionDTO {
 
 	public String description;
+	public CustomerDTO customer;
 
 	@SuppressWarnings({"unused"})
 	public MissionFullDTO() {
@@ -25,6 +27,7 @@ public class MissionFullDTO extends AbstractMissionDTO {
 	public MissionFullDTO(final JMission mission) {
 		super(mission);
 		this.description = mission.description;
+		this.customer = CustomerDTO.of(JCustomer.byId(mission.customerId));
 	}
 
 	public static MissionFullDTO of(final JMission mission) {
