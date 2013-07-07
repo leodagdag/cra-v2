@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import constants.MissionAllowanceType;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import utils.time.TimeUtils;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -39,6 +40,8 @@ public class JAffectedMission {
 
 	public JAffectedMission(final JMission mission) {
 		this.missionId = mission.id;
+		this.startDate = TimeUtils.firstDateOfMonth(DateTime.now());
+		this.allowanceType = MissionAllowanceType.NONE.name();
 	}
 
 	@SuppressWarnings({"unused"})

@@ -40,7 +40,7 @@ import java.util.Map;
 @Indexes({
 	         @Index(value = "code, customerId", unique = true),
 	         @Index("customerId"),
-	         @Index("_startDate, _endDate")
+	         @Index("_startDate")
 })
 public class JMission extends Model {
 
@@ -55,8 +55,8 @@ public class JMission extends Model {
 	public Boolean isClaimable;
 	public BigDecimal distance;
 	public String _distance;
+	@SuppressWarnings({"unused"})
 	private Date _startDate;
-	private Date _endDate;
 
 	private static Datastore ds() {
 		return MorphiaPlugin.ds();
@@ -129,9 +129,7 @@ public class JMission extends Model {
 		return ds().createQuery(JMission.class)
 			       .field(Mapper.ID_KEY).in(ids)
 			       .field("missionType").in(MissionType.craMissionType)
-			       .retrievedFields(true, Mapper.ID_KEY, "code", "label")
 			       .order("- _startDate")
-			       .disableValidation()
 			       .asList();
 	}
 

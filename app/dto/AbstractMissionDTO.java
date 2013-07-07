@@ -1,5 +1,6 @@
 package dto;
 
+import models.JCustomer;
 import models.JMission;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -14,6 +15,7 @@ public abstract class AbstractMissionDTO {
 	public ObjectId id;
 	public String code;
 	public String label;
+	public String customerName;
 
 	@SuppressWarnings({"unused"})
 	public AbstractMissionDTO() {
@@ -23,6 +25,7 @@ public abstract class AbstractMissionDTO {
 		this.id = mission.id;
 		this.code = mission.code;
 		this.label = mission.label;
+		this.customerName = JCustomer.byId(mission.customerId).name;
 	}
 
 }
