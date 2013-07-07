@@ -81,8 +81,3 @@ app.controller('MyAccountPasswordCtrl', ['$scope', '$http', '$log', '$location',
 
 
 	}]);
-
-app.controller('MyAccountAffectedMissionsCtrl', ['$scope', '$http', '$log', '$location',
-	function($scope, $http, $log, $location) {
-		'use strict';
-	}]);
