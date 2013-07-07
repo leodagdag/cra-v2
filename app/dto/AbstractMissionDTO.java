@@ -25,7 +25,9 @@ public abstract class AbstractMissionDTO {
 		this.id = mission.id;
 		this.code = mission.code;
 		this.label = mission.label;
-		this.customerName = JCustomer.byId(mission.customerId).name;
+		if(mission.customerId != null) {
+			this.customerName = JCustomer.byId(mission.customerId).name;
+		}
 	}
 
 }

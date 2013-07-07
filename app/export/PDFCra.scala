@@ -30,7 +30,7 @@ object PDFEmployeeCra extends PDFCra[JCra] {
     this.user = JUser.account(cra.userId)
 
     // Header
-    doc.add(PDFCraTools.pageHeader(cra.userId))
+    doc.add(PDFCraTools.pageHeader(cra))
     // Page
     // Calendar
     doc.add(EmployeeCalendar(cra).compose())
@@ -56,7 +56,7 @@ object PDFMissionCra extends PDFCra[(JCra, JMission)] {
     this.cra = cra
     this.user = JUser.account(cra.userId)
     // Header
-    doc.add(PDFCraTools.pageHeader(cra.userId, Some(mission)))
+    doc.add(PDFCraTools.pageHeader(cra, Some(mission)))
     // Page
     doc.add(MissionCalendar(cra, mission).compose())
     doc.add(MissionTotalCra(cra, mission).compose())
@@ -88,7 +88,7 @@ object PDFProductionCra extends PDFCra[JCra] {
       case _ => {
         missions.foreach {
           m =>
-            doc.add(PDFCraTools.pageHeader(cra.userId))
+            doc.add(PDFCraTools.pageHeader(cra))
             doc.add(ProductionCalendar(cra, m).compose())
             doc.add(ProductionTotalCra(cra, m).compose())
             doc.add(ProductionTotalClaim(cra, m).compose())
@@ -112,16 +112,16 @@ object PDFCraTools extends PDFTableTools with PDFTools with PDFFont {
 
   private val title = "Rapport d'Activité"
 
-  def pageHeader(userId: ObjectId, mission: Option[JMission] = None): PdfPTable = {
+  def pageHeader(cra: JCra, mission: Option[JMission] = None): PdfPTable = {
     val § = new Paragraph()
-    val user = JUser.identity(userId)
+    val user = JUser.identity(cra.userId)
     §.addAll(
       List(
         phraseln(title, titleFont),
         blankLine,
         phraseln(phrase("Collaborateur : ", headerFont), phrase(s"${user.fullName()}", headerFontBold)),
         blankLine,
-        phraseln(phrase("Période : ", headerFont), phrase(`MMMM yyyy`.print(TimeUtils.firstDateOfMonth(DateTime.now)).capitalize, headerFontBold)),
+        phraseln(phrase("Période : ", headerFont), phrase(`MMMM yyyy`.print(TimeUtils.firstDateOfMonth(cra.year, cra.month)).capitalize, headerFontBold)),
         blankLine,
         mission.map(m => phraseln(phrase("Mission : ", headerFont), phrase(s"${m.label}", headerFontBold), blankLine)).getOrElse(new Phrase(dummyContent))
       )

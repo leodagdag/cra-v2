@@ -25,7 +25,7 @@ import java.util.Locale;
  */
 
 public abstract class BaseReportBuilder extends PdfPageEventHelper {
-	private final DateTime generationDate = DateTime.now();
+	//private final DateTime generationDate = DateTime.now();
 	protected BaseFont baseFont = new Font(Font.FontFamily.HELVETICA, 10f, Font.NORMAL).getCalculatedBaseFont(false);
 	protected JUser user;
 	protected JCra cra;
@@ -91,7 +91,7 @@ public abstract class BaseReportBuilder extends PdfPageEventHelper {
 
 
 
-		final String leftText = "Généré le " + generationDate.toString("dd/MM/yyyy à HH:mm:ss", Locale.FRANCE);
+		final String leftText = "Généré le " + DateTime.now().toString("dd/MM/yyyy à HH:mm:ss", Locale.FRANCE);
 			cb.beginText();
 			cb.setTextMatrix(document.left(), textBase);
 
