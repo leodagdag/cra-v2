@@ -18,7 +18,7 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
 
   override def getSubject[A](request: Request[A]): Option[Subject] = (
     request.session.get("username")
-      .map(username => Await.result(Auth.asSubject(username), 5.seconds))
+      .map(username => Await.result(Auth.asSubject(username), 60.seconds))
       .getOrElse(None)
     )
 
