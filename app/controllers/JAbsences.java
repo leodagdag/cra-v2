@@ -130,8 +130,6 @@ public class JAbsences extends Controller {
 			if(Boolean.TRUE.equals(day)) {
 				if(startDate == null) {
 					errors.add(new ValidationError("date", "La date est requise."));
-				} else if(new DateTime(startDate).isBefore(TimeUtils.firstDateOfMonth(DateTime.now()))) {
-					errors.add(new ValidationError("date", "Vous ne pouvez pas saisir une absence à une date précédant le mois en cours."));
 				}
 				if(!Boolean.TRUE.equals(startMorning) && !Boolean.TRUE.equals(endAfternoon)) {
 					errors.add(new ValidationError("limits", "Vous devez sélectionner au moins une demi-journée."));
@@ -152,8 +150,6 @@ public class JAbsences extends Controller {
 				}
 				if(startDate != null && endDate != null && endDate < startDate) {
 					errors.add(new ValidationError("dates", "La date de début doit être antérieur la date de fin."));
-				} else if(new DateTime(startDate).isBefore(DateTime.now().withDayOfMonth(1))) {
-					errors.add(new ValidationError("dates", "Vous ne pouvez pas saisir une absence précédant le mois en cours."));
 				}
 
 			}

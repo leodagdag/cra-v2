@@ -88,3 +88,6 @@ db.Mission.insert({customerId: genesis._id, code: 'F', label: 'Formation', allow
 db.Mission.insert({customerId: genesis._id, code: 'IC', label: 'Inter-contrat', allowanceType: 'NONE', missionType: 'internal_work', isClaimable: false, _startDate: _2010_JANUARY_1});
 db.Mission.insert({customerId: genesis._id, code: 'TP', label: 'Temps partiel', allowanceType: 'NONE', missionType: 'not_paid', _startDate: _2010_JANUARY_1});
 db.Mission.insert({customerId: genesis._id, code: 'MM', label: 'Maladie/Maternité', allowanceType: 'NONE', missionType: 'not_paid', _startDate: _2010_JANUARY_1});
+
+
+db.Mission.insert({customerId: genesis._id, code: 'TIA', label: 'TIA pour la DUP', allowanceType: 'NONE', missionType: 'internal_work', isClaimable: true, _startDate: _2010_JANUARY_1});
