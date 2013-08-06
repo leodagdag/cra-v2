@@ -36,7 +36,11 @@ public class AffectedMissionDTO {
         }
         this.mission = MissionDTO.of(JMission.fetch(affectedMission.missionId));
         this.allowanceType = affectedMission.allowanceType;
-        this.feeAmount = affectedMission.feeAmount;
+        if (MissionAllowanceType.ZONE.name().equals(affectedMission.allowanceType)) {
+            this.feeAmount = JParameter.zoneAmount(DateTime.now());
+        } else {
+            this.feeAmount = affectedMission.feeAmount;
+        }
 
     }
 
