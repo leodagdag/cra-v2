@@ -2,7 +2,7 @@ package utils.time
 
 import JodaUtils.dateTimeOrdering
 import java.util.Date
-import java.util.{List => JList, Collection => JCollection}
+import java.util.{List => JList, Collection => JCollection, Set => JSet}
 import org.joda.time._
 import play.libs.F
 import scala.collection.convert.WrapAsJava._
@@ -42,15 +42,15 @@ object TimeUtils {
 
   def getEaster(year: Integer): DateTime = DaysOff.getEaster(year)
 
-  def getWeeks(year: Integer, month: Integer): JList[Integer] = {
-    def add(curr: DateTime, xs: List[Integer]): List[Integer] = {
+  def getWeeks(year: Integer, month: Integer): JSet[Integer] = {
+    def add(curr: DateTime, xs: Set[Integer]): Set[Integer] = {
       if (curr.getMonthOfYear != month) {
         xs
       } else {
-        add(curr.plusWeeks(1), curr.getWeekOfWeekyear :: xs)
+        add(curr.plusDays(1), xs + curr.getWeekOfWeekyear)
       }
     }
-    add(firstDateOfMonth(year, month), List.empty[Integer])
+    add(firstDateOfMonth(year, month), Set.empty[Integer])
   }
 
   def firstDateOfMonth(dt: DateTime): DateTime = firstDateOfMonth(dt.getYear, dt.getMonthOfYear)

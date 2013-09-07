@@ -15,11 +15,7 @@ import utils.time.TimeUtils;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static constants.ClaimType.*;
 
@@ -89,7 +85,7 @@ public class JClaimUtils {
 	}
 
 	public static Map<Integer, Map<ClaimType, List<JClaim>>> transform(final Integer year, final Integer month, final List<JClaim> claims) {
-		final List<Integer> weeks = TimeUtils.getWeeks(year, month);
+		final Set<Integer> weeks = TimeUtils.getWeeks(year, month);
 		final Map<Integer, Map<ClaimType, List<JClaim>>> result = Maps.newTreeMap();
 		for(Integer weekNb : weeks) {
 			result.put(weekNb, new EnumMap<ClaimType, List<JClaim>>(ClaimType.class));

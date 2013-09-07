@@ -60,6 +60,7 @@ object JsRouter extends Controller {
           JUsers.saveAffectedMission,
           JUsers.fetch,
           JUsers.save,
+          JUsers.resetPwd,
 
           JAccounts.fetch,
           JAccounts.update,

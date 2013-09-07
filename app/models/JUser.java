@@ -292,4 +292,8 @@ public class JUser extends Model implements Subject {
 		MorphiaPlugin.ds().save(user, WriteConcern.ACKNOWLEDGED);
 		return user;
 	}
+
+    public static void resetPwd(final String username){
+        JUser.password(JUser.queryToFindMe(username).get().username, AppConfig.defaultPassword());
+    }
 }

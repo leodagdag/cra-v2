@@ -82,8 +82,15 @@ public class JUsers extends Controller {
 		final UserForm userForm = form.get();
 		return created(toJson(EmployeeDTO.of(JUser.save(userForm.to()))));
 	}
+    @BodyParser.Of(BodyParser.Json.class)
+    @ResponseCache.NoCacheResponse
+    public static Result resetPwd(final String username) {
+        JUser.resetPwd(username);
+        return ok();
+    }
 
-	@BodyParser.Of(BodyParser.Json.class)
+
+    @BodyParser.Of(BodyParser.Json.class)
 	@ResponseCache.NoCacheResponse
 	public static Result saveAffectedMission() {
 		final Form<AffectedMissionForm> form = Form.form(AffectedMissionForm.class).bind(request().body().asJson());

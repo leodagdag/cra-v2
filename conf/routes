@@ -3,121 +3,122 @@
 # ~~~~
 
 # Home page
-GET     /                                                           controllers.Application.index()
+GET           /                                                            controllers.Application.index()
 
 # Authentication
 # ~~~~
-GET     /login                                                      controllers.Authentication.login()
-POST    /auth                                                       controllers.Authentication.authenticate()
-GET     /logout                                                     controllers.Authentication.logout()
-GET     /profile                                                    controllers.Authentication.profile()
+GET           /login                                                       controllers.Authentication.login()
+POST          /auth                                                        controllers.Authentication.authenticate()
+GET           /logout                                                      controllers.Authentication.logout()
+GET           /profile                                                     controllers.Authentication.profile()
 
 # Claims
 # ~~~~
-GET     /claims/:userId/:year/:month                              	controllers.JClaims.history(userId: String, year: java.lang.Integer, month: java.lang.Integer)
-POST    /claims						                                controllers.JClaims.create()
-DELETE  /claims/:id                                                 controllers.JClaims.remove(id: String)
+GET           /claims/:userId/:year/:month                                 controllers.JClaims.history(userId: String, year: java.lang.Integer, month: java.lang.Integer)
+POST          /claims                                                      controllers.JClaims.create()
+DELETE        /claims/:id                                                  controllers.JClaims.remove(id: String)
 
 # Absences
 # ~~~~
-GET		/absences/send/:id											controllers.JAbsences.send(id: String)
-GET		/absences/export/:id										controllers.JAbsences.exportFile(id: String)
-GET     /absences/:userId/history/:absenceType/:year/:month         controllers.JAbsences.history(userId: String, absenceType :String, year: Integer, month: Integer)
-POST    /absences                                                   controllers.JAbsences.create()
-DELETE  /absences/:userId/:id                                       controllers.JAbsences.remove(userId: String, id: String)
+GET           /absences/send/:id                                           controllers.JAbsences.send(id: String)
+GET           /absences/export/:id                                         controllers.JAbsences.exportFile(id: String)
+GET           /absences/:userId/history/:absenceType/:year/:month          controllers.JAbsences.history(userId: String, absenceType :String, year: Integer, month: Integer)
+POST          /absences                                                    controllers.JAbsences.create()
+DELETE        /absences/:userId/:id                                        controllers.JAbsences.remove(userId: String, id: String)
 
 # Day
 # ~~~~
-GET		/cra/send/:craId											controllers.JCras.send(craId: String)
-GET		/cra/sent/:craId											controllers.JCras.sent(craId: String)
-GET     /cra/claims/synthesis/:userId/:year/:month                  controllers.JCras.claimSynthesis(userId: String, year: java.lang.Integer, month: java.lang.Integer)
-DELETE  /cra/:id/day/:date                                          controllers.JDays.remove(id: String, date: Long)
-DELETE  /cra/:id/day/:date/:momentOfDay                             controllers.JDays.removeHalfDay(id: String, date: Long, momentOfDay:String)
-GET     /cra/:craId/day/:date                                       controllers.JDays.fetch(craId: String, date: Long)
-POST    /days/                                                      controllers.JDays.create()
+GET           /cra/send/:craId                                             controllers.JCras.send(craId: String)
+GET           /cra/sent/:craId                                             controllers.JCras.sent(craId: String)
+GET           /cra/claims/synthesis/:userId/:year/:month                   controllers.JCras.claimSynthesis(userId: String, year: java.lang.Integer, month: java.lang.Integer)
+DELETE        /cra/:id/day/:date                                           controllers.JDays.remove(id: String, date: Long)
+DELETE        /cra/:id/day/:date/:momentOfDay                              controllers.JDays.removeHalfDay(id: String, date: Long, momentOfDay:String)
+GET           /cra/:craId/day/:date                                        controllers.JDays.fetch(craId: String, date: Long)
+POST          /days/                                                       controllers.JDays.create()
 
 # Cra
 # ~~~~
-GET		/cra/export/:craId/:missionId								controllers.JCras.exportByMission(craId: String, missionId: String)
-GET		/cra/export/:craId											controllers.JCras.exportByEmployee(craId: String)
-GET     /cra/:username/:year/:month                                 controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
-PUT	    /cra/:id/comment                                           	controllers.JCras.setComment(id: String)
+GET           /cra/export/:craId/:missionId                                controllers.JCras.exportByMission(craId: String, missionId: String)
+GET           /cra/export/:craId                                           controllers.JCras.exportByEmployee(craId: String)
+GET           /cra/:username/:year/:month                                  controllers.JCras.fetch(username: String, year: java.lang.Integer, month: java.lang.Integer)
+PUT           /cra/:id/comment                                             controllers.JCras.setComment(id: String)
 
 # Mission
 # ~~~~
-GET     /missions/absences                                          controllers.JMissions.absences()
-GET     /missions/claims/:username                                  controllers.JMissions.claimable(username: String)
-GET     /missions/craMissions/:username/:startDate/:endDate    		controllers.JMissions.craMissions(username: String, startDate :Long, endDate: Long)
-GET     /missions/customer/:customerId                              controllers.JMissions.customerMissions(customerId: String)
-GET     /missions/:id/customer                                      controllers.JMissions.customerByMissionId(id: String)
-GET     /missions/:id                                               controllers.JMissions.fetch(id: String)
-POST    /missions                                                   controllers.JMissions.save()
+GET           /missions/absences                                           controllers.JMissions.absences()
+GET           /missions/claims/:username                                   controllers.JMissions.claimable(username: String)
+GET           /missions/craMissions/:username/:startDate/:endDate          controllers.JMissions.craMissions(username: String, startDate :Long, endDate: Long)
+GET           /missions/customer/:customerId                               controllers.JMissions.customerMissions(customerId: String)
+GET           /missions/:id/customer                                       controllers.JMissions.customerByMissionId(id: String)
+GET           /missions/:id                                                controllers.JMissions.fetch(id: String)
+POST          /missions                                                    controllers.JMissions.save()
 
 # Customer
 # ~~~~
-GET     /customers                                                  controllers.JCustomers.all()
-GET     /onlyCustomers                                              controllers.JCustomers.withoutGenesis()
-GET     /customers/:code                                            controllers.JCustomers.fetch(code: String)
-POST     /customers                                                 controllers.JCustomers.save()
+GET           /customers                                                   controllers.JCustomers.all()
+GET           /onlyCustomers                                               controllers.JCustomers.withoutGenesis()
+GET           /customers/:code                                             controllers.JCustomers.fetch(code: String)
+POST          /customers                                                   controllers.JCustomers.save()
 
 # User
 # ~~~~
-GET     /users/employees                                            controllers.JUsers.employees()
-GET     /users/managers                                             controllers.JUsers.managers()
-GET     /users/users                                                controllers.JUsers.users()
-GET     /users/:username/affectedMissions/:startDate/:endDate       controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)
-GET     /users/:username/affectedMissions                           controllers.JUsers.allAffectedMissions(username: String)
-GET     /users/:username/customeAffectedMissions                    controllers.JUsers.customerAffectedMissions(username: String)
-GET     /users/:username                                            controllers.JUsers.fetch(username)
-GET     /users                                                      controllers.JUsers.all()
-POST    /users/AffectedMission                                      controllers.JUsers.saveAffectedMission()
-POST    /users                                                      controllers.JUsers.save()
+GET           /users/employees                                             controllers.JUsers.employees()
+GET           /users/managers                                              controllers.JUsers.managers()
+GET           /users/users                                                 controllers.JUsers.users()
+GET           /users/:username/affectedMissions/:startDate/:endDate        controllers.JUsers.affectedMissions(username: String, startDate :Long, endDate: Long)
+GET           /users/:username/affectedMissions                            controllers.JUsers.allAffectedMissions(username: String)
+GET           /users/:username/customeAffectedMissions                     controllers.JUsers.customerAffectedMissions(username: String)
+POST          /users/:username/resetPwd                                    controllers.JUsers.resetPwd(username)
+GET           /users/:username                                             controllers.JUsers.fetch(username)
+GET           /users                                                       controllers.JUsers.all()
+POST          /users/AffectedMission                                       controllers.JUsers.saveAffectedMission()
+POST          /users                                                       controllers.JUsers.save()
 
 
 # Account
 # ~~~~
-GET     /account/:id                                                controllers.JAccounts.fetch(id: String)
-PUT     /account/password                                           controllers.JAccounts.password()
-PUT     /account                                                    controllers.JAccounts.update()
+GET           /account/:id                                                 controllers.JAccounts.fetch(id: String)
+PUT           /account/password                                            controllers.JAccounts.password()
+PUT           /account                                                     controllers.JAccounts.update()
 
 # PartTime
 # ~~~~
-GET		/partTimes/:userId/active									controllers.JPartTimes.active(userId: String)
-GET		/partTimes/:userId											controllers.JPartTimes.history(userId: String)
-POST    /partTimes                                                  controllers.JPartTimes.addPartTimes()
-PUT		/partTimes/deactivate										controllers.JPartTimes.deactivate()
+GET           /partTimes/:userId/active                                    controllers.JPartTimes.active(userId: String)
+GET           /partTimes/:userId                                           controllers.JPartTimes.history(userId: String)
+POST          /partTimes                                                   controllers.JPartTimes.addPartTimes()
+PUT           /partTimes/deactivate                                        controllers.JPartTimes.deactivate()
 
 # Vehicle
 # ~~~~
-GET		/vehicles/:userId/active									controllers.JVehicles.active(userId: String)
-GET		/vehicles/:userId											controllers.JVehicles.history(userId: String)
-POST    /vehicles/                                                  controllers.JVehicles.save()
-PUT		/vehicles/deactivate										controllers.JVehicles.deactivate()
+GET           /vehicles/:userId/active                                     controllers.JVehicles.active(userId: String)
+GET           /vehicles/:userId                                            controllers.JVehicles.history(userId: String)
+POST          /vehicles/                                                   controllers.JVehicles.save()
+PUT           /vehicles/deactivate                                         controllers.JVehicles.deactivate()
 
 # Export
 # ~~~~
-GET		/export/cra/mission/:craId/:missionId/:title				controllers.JExports.exportByMission(craId: String, missionId: String, title: String)
-GET		/export/cra/employee/:craId/:title							controllers.JExports.exportByEmployee(craId: String, title: String)
-GET		/export/cra/production/:craId/:title						controllers.JExports.exportForProduction(craId: String, title: String)
-GET		/export/absence/:absenceId/:title							controllers.JExports.exportAbsence(absenceId: String, title: String)
+GET           /export/cra/mission/:craId/:missionId/:title                 controllers.JExports.exportByMission(craId: String, missionId: String, title: String)
+GET           /export/cra/employee/:craId/:title                           controllers.JExports.exportByEmployee(craId: String, title: String)
+GET           /export/cra/production/:craId/:title                         controllers.JExports.exportForProduction(craId: String, title: String)
+GET           /export/absence/:absenceId/:title                            controllers.JExports.exportAbsence(absenceId: String, title: String)
 
 # Imports
 # ~~~~
-POST	/import/users												controllers.Imports.users()
-POST	/import/customers											controllers.Imports.customers()
-POST	/import/missions											controllers.Imports.missions()
+POST          /import/users                                                controllers.Imports.users()
+POST          /import/customers                                            controllers.Imports.customers()
+POST          /import/missions                                             controllers.Imports.missions()
 
 # Batch
 # ~~~~
-GET		/launch/absences											controllers.Batches.absence()
+GET           /launch/absences                                             controllers.Batches.absence()
 # HtmlPage
 # ~~~~
-GET     /unsupportedBrowser                                         controllers.HtmlPages.unsupportedBrowser
+GET           /unsupportedBrowser                                          controllers.HtmlPages.unsupportedBrowser
 
 # Javascript routing
 # ~~~~
-GET     /assets/javascripts/routes                                  controllers.JsRouter.javascriptRoutes()
+GET           /assets/javascripts/routes                                   controllers.JsRouter.javascriptRoutes()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                                               controllers.Assets.at(path="/public", file)
+GET           /assets/*file                                                controllers.Assets.at(path="/public", file)
 #GET     /public/*file                                               controllers.Assets.at(path="/public", file)
