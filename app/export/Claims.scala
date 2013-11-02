@@ -11,6 +11,7 @@ import utils._
 import scala.collection.convert.WrapAsScala._
 import scala._
 import utils.time.TimeUtils
+import scala.Some
 
 /**
  * @author f.patin
@@ -32,7 +33,15 @@ case class Claims(cra: JCra, mission: Option[JMission] = None) extends PDFTableT
     table.setSpacingAfter(10f)
     // Header
     table.addCell(headerCell("Semaine"))
-    weeks.foreach(w => table.addCell(headerCell(s"$w")))
+    weeks.foreach {
+      w =>
+        val content = if (w forall (Character.isDigit(_))) {
+          s"${w.toString.substring(0, 4)} - ${w.toString.substring(4)}"
+        } else {
+          w
+        }
+        table.addCell(headerCell(s"$content"))
+    }
     // Body
     val body: JEnumMap[ClaimType, JList[String]] = new JEnumMap[ClaimType, JList[String]](classOf[ClaimType])
     _synthesis.keySet() foreach {

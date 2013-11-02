@@ -29,7 +29,7 @@ trait Calendar extends TableTools {
   protected val month = cra.month
   protected val days = completeDays(JDay.fetch(cra).toList).toList
   protected val missions: Map[ObjectId, JMission] = Map(days.map(day => JMission.codeAndMissionType(day.missionIds().toList)).flatten: _*)
-  protected val weeks: TreeMap[(Integer, Integer), List[JDay]] = TreeMap(days.groupBy(day => (day.year, day.week)).toSeq: _*)
+  protected val weeks: TreeMap[(Int, Int), List[JDay]] = TreeMap(days.groupBy(day => (day.date.getWeekyear, day.date.getWeekOfWeekyear)).toSeq: _*)
 
   private def completeDays(days: List[JDay]) = {
     val first = TimeUtils.getMondayOfDate(TimeUtils.firstDateOfMonth(days.head.date))

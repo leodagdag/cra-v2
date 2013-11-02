@@ -28,7 +28,7 @@ object PDF {
 
   def createAbsenceFile(absences: List[JAbsence], user: JUser): File = toFile[List[JAbsence]](user, absences, getOrCreateAbsenceData, newAskAbsenceFile)
 
-  private def getOrCreateAbsenceData(absences: List[JAbsence]) = {
+  private def getOrCreateAbsenceData(absences: List[JAbsence]): Array[Byte] = {
     if (absences.head.fileId == null) createAbsenceData(absences)._2
     else DbFile.fetch(absences.head.fileId)._2
   }

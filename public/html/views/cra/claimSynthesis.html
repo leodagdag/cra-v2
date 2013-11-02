@@ -6,7 +6,7 @@
 				<thead>
 					<tr>
 						<th>Semaine</th>
-						<th data-ng-repeat="week in header">{{week}}</th>
+						<th data-ng-repeat="week in header">{{week | formatYearWeek}}</th>
 					</tr>
 				</thead>
 				<tbody>

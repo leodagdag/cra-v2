@@ -7,6 +7,7 @@ import org.joda.time._
 import play.libs.F
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
+import org.apache.commons.lang3.StringUtils
 
 /**
  * @author f.patin
@@ -47,7 +48,7 @@ object TimeUtils {
       if (curr.getMonthOfYear != month) {
         xs
       } else {
-        add(curr.plusDays(1), xs + curr.getWeekOfWeekyear)
+        add(curr.plusDays(1), xs + s"${curr.getWeekyear}${StringUtils.leftPad(curr.getWeekOfWeekyear.toString,2,"0")}".toInt)
       }
     }
     add(firstDateOfMonth(year, month), Set.empty[Integer])
